@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "402854682550",
+    "project_id": "koombiyostaff",
+    "storage_bucket": "koombiyostaff.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:402854682550:android:d2465c09609b01ca81eb17",
+        "android_client_info": {
+          "package_name": "com.example.customer_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1HRcfPVg1-557pf4q6X7qQvlemgS6ddg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:402854682550:android:8357c8a8f476bf4281eb17",
+        "android_client_info": {
+          "package_name": "com.koombiyo.staff"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1HRcfPVg1-557pf4q6X7qQvlemgS6ddg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
