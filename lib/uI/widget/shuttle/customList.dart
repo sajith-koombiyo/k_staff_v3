@@ -32,7 +32,7 @@ class CustomList extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(right: 15),
                       child: Icon(
-                        Icons.airport_shuttle_rounded,
+                        Icons.add_business_sharp,
                         size: 45,
                         color:
                             Color(Random().nextInt(0xffffffff)).withAlpha(0xff),

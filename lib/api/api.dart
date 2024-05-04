@@ -856,16 +856,102 @@ class CustomApi {
     return _ids;
   }
 
-  getYoutubeDetails() async {
-    var url = 'https://koombiyodelivery.net/hr2/appVideo';
-    var res = await https.post(Uri.parse(url), body: {});
+  getYoutubeDetails(BuildContext context) async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      var url = 'https://koombiyodelivery.net/hr2/appVideo';
+      var res = await https.post(Uri.parse(url), body: {});
 
-    var yId = jsonDecode(res.body);
+      var yId = jsonDecode(res.body);
 
-    //   _ids;
-    return yId;
+      //   _ids;
+      return yId;
+    } else {
+      notification().warning(context, 'No Internet');
+    }
   }
 
+// assign pickup
+
+  assignPickupList(BuildContext context) async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      var url = '${ApiUrl}/Userpickuprequests/users';
+      var res = await https.post(Uri.parse(url), body: {});
+      var list = jsonDecode(res.body);
+      //   _ids;
+      return list;
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
+
+  assignRiderList(BuildContext context) async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      var url = '${ApiUrl}/Riderlist/users';
+      var res = await https.post(Uri.parse(url), body: {});
+      var list = jsonDecode(res.body);
+      //   _ids;
+      return list;
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
+
+  assignToRider(
+    BuildContext context,
+    String id,
+    String vehicleNo,
+    String riderPhone,
+    String pickId,
+  ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      final apiUrl = '${ApiUrl}/Assignrider/users';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      print(id);
+      print(vehicleNo);
+      print(riderPhone);
+      print(pickId);
+      print(id);
+      // Make POST request
+      var list = await https.post(headers: headers, Uri.parse(apiUrl), body: {
+        "rider_id": id,
+        "vehicle_no": vehicleNo,
+        "rider_phone": riderPhone,
+        "pick_id": pickId
+      });
+
+      print(list.body);
+      var data = jsonDecode(list.body);
+
+      print(data);
+      print(data['status']);
+
+      if (data['status'] == 200) {
+        print(data);
+        notification().info(context, 'Rider assigned successfully.');
+        Navigator.pop(context);
+      }
+      if (data['status'] == 403) {
+        notification().warning(context, 'Something went wrong');
+      }
+      return list;
+      //   _ids;
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
   // add user screen data
 
   addUser(

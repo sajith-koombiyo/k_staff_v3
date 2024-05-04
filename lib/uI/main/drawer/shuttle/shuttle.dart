@@ -68,7 +68,6 @@ class _ShuttleState extends State<Shuttle> {
                 setState(() {
                   x = value;
                 });
-               
               },
               indicatorSize: TabBarIndicatorSize.tab,
               unselectedLabelColor: white2,
@@ -122,7 +121,7 @@ class _ShuttleState extends State<Shuttle> {
                                       selectval, //implement initial value or selected value
                                   onChanged: (value) {
                                     setState(() {
-                                    ;
+                                      ;
                                       _runFilter(value.toString());
                                       //set state will update UI and State of your App
                                       selectval = value
@@ -211,14 +210,14 @@ class _ShuttleState extends State<Shuttle> {
                   ],
                 ),
               ),
-              Container(
-                color: white.withOpacity(0.7),
-                child: Center(
-                  child: SizedBox(
-                      height: h / 4,
-                      child: Image.asset('assets/page-under-maintenance.png')),
-                ),
-              )
+              // Container(
+              //   color: white.withOpacity(0.7),
+              //   child: Center(
+              //     child: SizedBox(
+              //         height: h / 4,
+              //         child: Image.asset('assets/page-under-maintenance.png')),
+              //   ),
+              // )
             ],
           )),
     );
@@ -248,8 +247,6 @@ class _ShuttleState extends State<Shuttle> {
       } else {
         product = results;
       }
-
-    
     });
   }
 }

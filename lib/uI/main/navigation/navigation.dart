@@ -223,7 +223,7 @@ class _NavigationScreenState extends State<NavigationScreen>
     setState(() {
       isLoading = false;
     });
-    var ytc = await CustomApi().getYoutubeDetails();
+    var ytc = await CustomApi().getYoutubeDetails(context);
     setState(() {
       // youTube = ytc;
     });
