@@ -16,6 +16,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as https;
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 import '../app_details/const.dart';
 import '../uI/login_and_signup/login.dart';
 import '../uI/main/navigation/navigation.dart';
@@ -34,6 +36,7 @@ class CustomApi {
 
 // splash screen api  this api checking user first time login and after login detail ,if user
   checkFirstSeen(BuildContext context) async {
+    print('dddddddddxxxxx');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var status = await Permission.location.request();
     Provider.of<ProviderS>(context, listen: false).permission = status;
@@ -79,6 +82,7 @@ class CustomApi {
                 '$responce dddddddddddddddddddddddaaaaaaaaaaaaaaaaaaaaaaaaa $key ddddddddddddddddd    $installDate');
 
             if (responce['userkey'] == userKey) {
+             
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => NavigationScreen(
                         staffId: userName,
@@ -142,6 +146,7 @@ class CustomApi {
     }
   }
 
+ 
   // user login
 
   login(String userNameController, BuildContext context) async {
@@ -222,6 +227,9 @@ class CustomApi {
                 length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
         var randomKey = await getRandomString(50);
         var temp = await DateTime.now().toString();
+        print(randomKey + temp);
+        print('1111111111111111111111111111111');
+        print(installDate);
         await prefs.setString('rKey', randomKey + temp);
         await prefs.setString('uName', username);
         final apiUrl = '${ApiUrl}/Saveid/users';
@@ -229,6 +237,8 @@ class CustomApi {
           "imei": randomKey + temp,
           "app_date": "$installDate",
         });
+
+        print(randomKey + temp);
         String staffName = userData['staff_name'];
         Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => NavigationScreen(

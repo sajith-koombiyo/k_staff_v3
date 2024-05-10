@@ -22,6 +22,9 @@ import 'dart:ui';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as https;
 
+import 'exchange/exchange.dart';
+import 'voice_call.dart';
+
 class MyDelivery extends StatefulWidget {
   const MyDelivery({super.key, required this.isFromHome});
   final bool isFromHome;
@@ -385,6 +388,29 @@ class _MyDeliveryState extends State<MyDelivery> {
                                                                               100)),
                                                               child: IconButton(
                                                                 onPressed:
+                                                                    () {},
+                                                                icon: Icon(
+                                                                  Icons
+                                                                      .voice_over_off_rounded,
+                                                                  size: 35,
+                                                                  color: Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          13,
+                                                                          173,
+                                                                          45),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Card(
+                                                              elevation: 20,
+                                                              shape: RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              100)),
+                                                              child: IconButton(
+                                                                onPressed:
                                                                     () async {
                                                                   final call =
                                                                       Uri.parse(
@@ -530,7 +556,13 @@ class _MyDeliveryState extends State<MyDelivery> {
                           itemLoading = false;
                         });
                       }
-                    : () {},
+                    : () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Exchange(),
+                            ));
+                      },
               )
             ],
             content: Stack(

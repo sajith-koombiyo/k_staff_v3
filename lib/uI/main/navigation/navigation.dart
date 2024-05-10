@@ -18,13 +18,17 @@ import 'package:provider/provider.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 import '../../../api/api.dart';
 import '../../../app_details/color.dart';
+import '../../../app_details/const.dart';
 import '../../../app_details/size.dart';
 import '../../home.dart';
 import '../../widget/tips_button.dart';
 import '../account/account.dart';
 import '../drawer/drawer.dart';
+import '../drawer/my_delivery/voice_call.dart';
 import '../drawer/my_deposit/my_deposite.dart';
 import '../map/map.dart';
 import '../notification/notification.dart';
@@ -79,8 +83,8 @@ class _NavigationScreenState extends State<NavigationScreen>
     Home(),
     MapScreen(),
     MyDeposit(),
-    // Account()
-    MyWidget()
+    Account()
+    // MyWidget()
   ];
   void _onItemTapped(int index) {
     setState(() {
@@ -91,6 +95,7 @@ class _NavigationScreenState extends State<NavigationScreen>
 
   @override
   void initState() {
+    onUserLogin();
     notificationCount();
     data();
     super.initState();
@@ -202,6 +207,7 @@ class _NavigationScreenState extends State<NavigationScreen>
     var deposit = await CustomApi().getMyDeposit(context);
     Provider.of<ProviderS>(context, listen: false).userData = data;
     Provider.of<ProviderS>(context, listen: false).deposit = deposit;
+
     var branchId = data[0]['branch_id'].toString();
     if (branchId.length == 1) {
       branchId = "00" + branchId;
@@ -662,6 +668,120 @@ class _NavigationScreenState extends State<NavigationScreen>
     setState(() {
       isLoading = false;
     });
+  }
+
+  void onUserLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var userId = await prefs.get(
+      'user_id',
+    );
+
+    ZegoUIKitPrebuiltCallInvitationService().init(
+      uiConfig: ZegoCallInvitationUIConfig(),
+      invitationEvents: ZegoUIKitPrebuiltCallInvitationEvents(
+        onError: (p0) {
+          print(
+              'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxaaaa');
+        },
+
+        onInvitationUserStateChanged: (value) {
+          print("$value xxxxxxxxxxxxxxxxxxxxxxxxxaaaaaaaaaaaaaaaa");
+          if (value[0].state ==
+              ZegoSignalingPluginInvitationUserState.rejected) {
+            notification().warning(context, 'rejected');
+          }
+          if (value[0].state ==
+              ZegoSignalingPluginInvitationUserState.cancelled) {
+            // notification().warning(context, 'cancelled');
+          }
+          if (value[0].state ==
+              ZegoSignalingPluginInvitationUserState.offline) {
+            notification().warning(context, 'offline');
+          }
+          if (value[0].state ==
+              ZegoSignalingPluginInvitationUserState.timeout) {
+            notification().warning(context, 'timeout');
+          }
+          if (value[0].state == ZegoSignalingPluginInvitationUserState.quited) {
+            notification().warning(context, 'quited');
+          }
+          print(
+              'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxaaaa');
+        },
+        onOutgoingCallTimeout: (callID, callees, isVideoCall) {
+          Navigator.pop(context);
+        },
+        // onIncomingCallCanceled: (callID, caller, customData) {
+        //   print(
+        //       '--------------------------------------------------------------------------------');
+
+        //   if (callID != userId) {
+        //     back('call canceled');
+        //   }
+        // },
+        // onIncomingCallDeclineButtonPressed: () {
+        //   back('Call Declined');
+        // },
+
+        // onOutgoingCallDeclined: (callID, callee, customData) async {
+        //   // ZegoUIKitPrebuiltCallInvitationService().cancel(callees: [callee]);
+        //   // await notification().info(context, 'call canceled');
+        //   // await ZegoCallEndEvent(
+        //   //     callID: callID,
+        //   //     reason: ZegoCallEndReason.kickOut,
+        //   //     isFromMinimizing: true);
+        //   back2('Call Declined');
+        // },
+        onOutgoingCallRejectedCauseBusy: (callID, callee, customData) {
+          print(
+              '------------sssssssssssssss--------------------------------------------------------------------');
+        },
+      ),
+      events: ZegoUIKitPrebuiltCallEvents(room: ZegoCallRoomEvents(
+        onStateChanged: (p0) {
+          print(p0);
+          print('ddddddddddddddddddddddddddddddddddddddddddddd');
+        },
+      )),
+      notificationConfig: ZegoCallInvitationNotificationConfig(
+          androidNotificationConfig: ZegoCallAndroidNotificationConfig(
+              channelID: "ZegoUIKit",
+              channelName: "Call Notifications",
+              sound: "notification",
+              icon: "appicon",
+              showFullScreen: true)),
+      appID: appId /*input your AppID*/,
+      appSign: signId /*input your AppSign*/,
+      userID: userId.toString(),
+      userName: userId.toString(),
+      plugins: [ZegoUIKitSignalingPlugin()],
+      requireConfig: (ZegoCallInvitationData data) {
+        var config = (data.invitees.length > 1)
+            ? ZegoCallType.videoCall == data.type
+                ? ZegoUIKitPrebuiltCallConfig.groupVideoCall()
+                : ZegoUIKitPrebuiltCallConfig.groupVoiceCall()
+            : ZegoCallType.videoCall == data.type
+                ? ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall()
+                : ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall();
+
+        // Modify your custom configurations here.
+        config
+          ..turnOnCameraWhenJoining = false
+          ..turnOnMicrophoneWhenJoining = false
+          ..useSpeakerWhenJoining = true;
+        config.topMenuBar.isVisible = true;
+        ZegoUIKitPrebuiltCallInvitationService()
+          ..innerText.incomingCallPageAcceptButton = "Accept"
+          ..innerText.incomingCallPageDeclineButton = "Decline";
+
+        return config;
+      },
+    );
+  }
+
+  back2(String text) async {
+    await notification().warning(context, text);
+    Navigator.pop(context, true);
   }
 }
 

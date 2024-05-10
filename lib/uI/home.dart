@@ -1,7 +1,10 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/api/api.dart';
+import 'package:flutter_application_2/app_details/const.dart';
 import 'package:flutter_application_2/class/class.dart';
+import 'package:flutter_application_2/uI/main/drawer/my_delivery/testCall.dart';
+import 'package:flutter_launcher_icons/config/config.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:geolocator/geolocator.dart';
@@ -11,15 +14,19 @@ import 'package:page_transition/page_transition.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import '../app_details/color.dart';
 import '../provider/provider.dart';
 import 'main/drawer/my_delivery/my_delivery.dart';
+import 'main/drawer/my_delivery/voice_call.dart';
 import 'main/navigation/navigation.dart';
 import 'widget/gauge/gauge.dart';
 import 'widget/home_screen_widget/card.dart';
 import 'widget/home_screen_widget/chart.dart';
 import 'widget/home_screen_widget/dashbord_card_2.dart';
 import 'widget/home_screen_widget/home_button.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 
 class Home extends StatefulWidget {
   const Home({
@@ -48,12 +55,16 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   int y = 0;
   @override
   void initState() {
+   
     WidgetsBinding.instance!.addObserver(this);
     dashBoardData();
     data();
     // TODO: implement initState
     super.initState();
   }
+
+
+
 
   @override
   void dispose() {
@@ -168,6 +179,19 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     return Scaffold(
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 100),
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => VoiceCall(
+                          id: userId,
+                        )));
+          },
+        ),
+      ),
       backgroundColor: Colors.white,
       body: RefreshIndicator(
         onRefresh: () {
@@ -217,15 +241,25 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                               child: FadeInAnimation(
                                 duration: Duration(milliseconds: 900),
                                 child: HomeButton(
-                                  onTap: () {
+                                  onTap: () async {
+                                    SharedPreferences prefs =
+                                        await SharedPreferences.getInstance();
+                                    var userId = await prefs.get(
+                                      'user_id',
+                                    );
+
                                     Navigator.push(
                                       context,
                                       PageTransition(
                                         duration: Duration(milliseconds: 200),
                                         type: PageTransitionType.bottomToTop,
                                         child: MyDelivery(isFromHome: true),
+                                        // child: VoiceCall(
+                                        //   usrId: userId.toString(),
+                                        // )
                                       ),
                                     );
+                                    // onUserLogin(userId.toString());
                                   },
                                   text: "Track Orders",
                                 ),
