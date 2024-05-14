@@ -731,37 +731,69 @@ class _MyDeliveryState extends State<MyDelivery> {
                         ),
                       ),
                     ),
-                    // InkWell(
-                    //   onTap: () {
-                    //     setstate(() {
-                    //       x = 4;
-                    //       updateBTN = false;
-                    //     });
-                    //   },
-                    //   child: Container(
-                    //     padding: EdgeInsets.symmetric(horizontal: 15),
-                    //     height: h / 16,
-                    //     child: Row(
-                    //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //       children: [
-                    //         Text('Remark',
-                    //             style: TextStyle(
-                    //               fontWeight: FontWeight.w500,
-                    //               color: black2,
-                    //               fontSize: 15.dp,
-                    //             )),
-                    //         Icon(
-                    //           x == 4
-                    //               ? Icons.check_circle_rounded
-                    //               : Icons.remove_circle_outline,
-                    //           color: x == 4
-                    //               ? Color.fromARGB(255, 74, 143, 136)
-                    //               : black3,
-                    //         )
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
+                    Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Card(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 15),
+                          alignment: Alignment.centerRight,
+                          width: w,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5.0),
+                            border: Border.all(
+                                color: black3,
+                                style: BorderStyle.solid,
+                                width: 0.80),
+                          ),
+                          child: Column(
+                            children: [
+                              DropdownButton(
+                                underline: Divider(
+                                  color: white,
+                                  height: 0,
+                                ),
+                                isExpanded: true,
+                                padding: EdgeInsets.only(right: 10),
+                                alignment: AlignmentDirectional.centerEnd,
+                                hint: Text(
+                                    'Select Rider Remark                                                                   '),
+                                value: dropdownvalue,
+                                //implement initial value or selected value
+                                onChanged: (value) {
+                                  setstate(() {
+                                    //set state will update UI and State of your App
+                                    dropdownvalue = value.toString();
+                                    if (value.toString().isNotEmpty &&
+                                        newImage.isNotEmpty) {
+                                      updateBTN = true;
+                                    } //change selectval to new value
+                                  });
+                                },
+                                items: _pdelivery.map((itemone) {
+                                  return DropdownMenuItem(
+                                      onTap: () {
+                                        setstate(() {
+                                          dropdownvalueItem =
+                                              itemone['reason'].toString();
+                                        });
+                                      },
+                                      value: itemone['reason_id'],
+                                      child: Card(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            itemone['reason'].toString(),
+                                            style: TextStyle(color: black2),
+                                          ),
+                                        ),
+                                      ));
+                                }).toList(),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                     x == 2
                         ? Padding(
                             padding: const EdgeInsets.all(12.0),
@@ -949,7 +981,6 @@ class _MyDeliveryState extends State<MyDelivery> {
                     Divider(
                       height: 0,
                     ),
-
                     Divider(
                       height: 0,
                     ),

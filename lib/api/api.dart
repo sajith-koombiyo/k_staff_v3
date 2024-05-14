@@ -82,7 +82,6 @@ class CustomApi {
                 '$responce dddddddddddddddddddddddaaaaaaaaaaaaaaaaaaaaaaaaa $key ddddddddddddddddd    $installDate');
 
             if (responce['userkey'] == userKey) {
-             
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => NavigationScreen(
                         staffId: userName,
@@ -146,7 +145,6 @@ class CustomApi {
     }
   }
 
- 
   // user login
 
   login(String userNameController, BuildContext context) async {
@@ -1014,7 +1012,7 @@ class CustomApi {
         'added_user_id': id
       });
 
-      return responsee.body;
+      //return responsee.body;
     }
   }
 // add user images upload
