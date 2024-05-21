@@ -152,34 +152,38 @@ class CustomApi {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
+      print('11111111111111111111');
       var urll = '${ApiUrl}Loginn/users';
+
       var response =
           await https.post(Uri.parse(urll), body: {'username': username});
+      print(response.statusCode);
+      if (response.statusCode != 500) {
+        Map<String, dynamic> map = jsonDecode(response.body);
+        if (map['status'] == 200) {
+          String userkey = map['userkey'].toString();
+          print(userkey);
+          print(response.body);
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('userkey', userkey);
 
-      Map<String, dynamic> map = jsonDecode(response.body);
-      if (map['status'] == 200) {
-        String userkey = map['userkey'].toString();
-
-        print(userkey);
-
-        print(response.body);
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('userkey', userkey);
-
-        Navigator.push(
-          context,
-          PageTransition(
-              type: PageTransitionType.fade,
-              child: OTP(userId: userkey, userName: username),
-              inheritTheme: true,
-              ctx: context),
-        );
-      } else if (map['status'] == 400) {
-        notification().info(context, 'Bad Request: Error Occurred');
-      } else if (map['status'] == 403) {
-        notification().info(context, 'Forbidden: Deactivated Account');
-      } else if (map['status'] == 404) {
-        notification().info(context, 'Invalid Username');
+          Navigator.push(
+            context,
+            PageTransition(
+                type: PageTransitionType.fade,
+                child: OTP(userId: userkey, userName: username),
+                inheritTheme: true,
+                ctx: context),
+          );
+        } else if (map['status'] == 400) {
+          notification().info(context, 'Bad Request: Error Occurred');
+        } else if (map['status'] == 403) {
+          notification().info(context, 'Forbidden: Deactivated Account');
+        } else if (map['status'] == 404) {
+          notification().info(context, 'Invalid Username');
+        }
+      } else {
+        notification().warning(context, 'technical error');
       }
     } else {
       notification().warning(context, 'No Internet');
@@ -204,12 +208,14 @@ class CustomApi {
         'otp': '$otpnumber',
       });
 
+      print(res.body);
+      print(res.body);
+
       Map<String, dynamic> map = jsonDecode(res.body);
 
-      Map<String, dynamic> userData = map['userdata'];
-      print(userData['username']);
-
       if (map['status'] == 202) {
+        Map<String, dynamic> userData = map['userdata'];
+        print(userData['username']);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String username = userData['username'].toString();
         String userId = userData['user_id'].toString();
@@ -888,9 +894,14 @@ class CustomApi {
         connectivityResult == ConnectivityResult.wifi) {
       var url = '${ApiUrl}/Userpickuprequests/users';
       var res = await https.post(Uri.parse(url), body: {});
+      print(res.body);
       var list = jsonDecode(res.body);
+      if (list['status'] == 200) {
+        return list;
+      } else {
+        return [];
+      }
       //   _ids;
-      return list;
     } else {
       notification().warning(context, 'No Internet');
     }
@@ -903,8 +914,11 @@ class CustomApi {
       var url = '${ApiUrl}/Riderlist/users';
       var res = await https.post(Uri.parse(url), body: {});
       var list = jsonDecode(res.body);
-      //   _ids;
-      return list;
+      if (list['status'] == 200) {
+        return list;
+      } else {
+        return [];
+      }
     } else {
       notification().warning(context, 'No Internet');
     }
