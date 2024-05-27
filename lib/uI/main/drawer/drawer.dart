@@ -15,6 +15,7 @@ import 'branch_operation/cod_0_approval.dart';
 import 'branch_operation/dd_aproval/dd_aproval.dart';
 import 'contact_us/contact_us.dart';
 import 'genaral/add_employe/add_employee.dart';
+import 'genaral/contact/contact.dart';
 import 'genaral/employee/employee_details.dart';
 import 'genaral/location/location_update.dart';
 import 'genaral/manage_users/manage_users.dart';
@@ -178,6 +179,9 @@ class _customDrawerState extends State<customDrawer> {
                                 drawwerList('Branch Operations',
                                     Icons.accessibility_outlined, () {
                                   setState(() {
+                                    if (drawOpen == 2 && drawTab) {
+                                      drawTab = false;
+                                    }
                                     drawOpen = 2;
                                     drawTab = true;
                                   });
@@ -279,6 +283,16 @@ class _customDrawerState extends State<customDrawer> {
                                       key = '5';
                                     });
                                   }, key, '5'),
+                                  tileButton('Employee Contact', () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Contact()),
+                                    );
+                                    setState(() {
+                                      key = '6';
+                                    });
+                                  }, key, '6'),
                                   tileButton('Location Update', () {
                                     Navigator.push(
                                       context,
@@ -287,9 +301,9 @@ class _customDrawerState extends State<customDrawer> {
                                               LocationScreen()),
                                     );
                                     setState(() {
-                                      key = '6';
+                                      key = '7';
                                     });
-                                  }, key, ''),
+                                  }, key, '7'),
                                 ]),
 
                                 CustomDrawerButton(

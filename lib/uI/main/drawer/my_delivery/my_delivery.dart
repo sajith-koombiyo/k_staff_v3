@@ -987,131 +987,137 @@ class _MyDeliveryState extends State<MyDelivery> {
                     SizedBox(
                       height: 12,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        newImage.isNotEmpty
-                            ? ClipRRect(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(12)),
-                                child: Container(
-                                    height: h / 7,
-                                    width: w / 2.2,
-                                    child: Image.file(
-                                      File(newImage),
-                                      fit: BoxFit.cover,
-                                    )))
-                            : DottedBorder(
-                                color: Colors.black38,
-                                borderType: BorderType.RRect,
-                                radius: Radius.circular(12),
-                                padding: EdgeInsets.all(6),
-                                child: ClipRRect(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(12)),
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    height: h / 7,
-                                    width: w / 2,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.cloud_upload_outlined,
-                                          size: 40,
-                                          color: const Color.fromARGB(
-                                              96, 77, 76, 76),
-                                        ),
-                                        Text('Please upload \nyour image',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black38,
-                                              fontSize: 12.dp,
-                                            )),
-                                        x == 2
-                                            ? Container(
-                                                alignment: Alignment.center,
-                                                child: Text(
-                                                  'image required',
+                    x == 7
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              newImage.isNotEmpty
+                                  ? ClipRRect(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(12)),
+                                      child: Container(
+                                          height: h / 7,
+                                          width: w / 2.2,
+                                          child: Image.file(
+                                            File(newImage),
+                                            fit: BoxFit.cover,
+                                          )))
+                                  : DottedBorder(
+                                      color: Colors.black38,
+                                      borderType: BorderType.RRect,
+                                      radius: Radius.circular(12),
+                                      padding: EdgeInsets.all(6),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(12)),
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          height: h / 7,
+                                          width: w / 2,
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                Icons.cloud_upload_outlined,
+                                                size: 40,
+                                                color: const Color.fromARGB(
+                                                    96, 77, 76, 76),
+                                              ),
+                                              Text('Please upload \nyour image',
+                                                  textAlign: TextAlign.center,
                                                   style: TextStyle(
-                                                      color: Colors.red),
-                                                ),
-                                              )
-                                            : SizedBox()
-                                      ],
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black38,
+                                                    fontSize: 12.dp,
+                                                  )),
+                                              x == 2
+                                                  ? Container(
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: Text(
+                                                        'image required',
+                                                        style: TextStyle(
+                                                            color: Colors.red),
+                                                      ),
+                                                    )
+                                                  : SizedBox()
+                                            ],
+                                          ),
+                                        ),
+                                      ),
                                     ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  InkWell(
+                                    onTap: () async {
+                                      provider.progress = 0.0;
+
+                                      final XFile? image =
+                                          await _picker.pickImage(
+                                              imageQuality: 25,
+                                              source: ImageSource.camera);
+
+                                      setstate(() {
+                                        newImage = image!.path;
+                                      });
+                                      CustomApi().immageUpload(
+                                          context, image, waybill);
+                                      setstate(() {
+                                        updateBTN = true;
+                                      });
+                                    },
+                                    child: Card(
+                                        elevation: 5,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(12.0),
+                                          child: Icon(
+                                            color: Colors.black38,
+                                            Icons.camera_alt,
+                                          ),
+                                        )),
                                   ),
-                                ),
+                                  InkWell(
+                                    borderRadius: BorderRadius.circular(20),
+                                    onTap: () async {
+                                      provider.progress = 0.0;
+                                      final XFile? image =
+                                          await _picker.pickImage(
+                                              imageQuality: 25,
+                                              source: ImageSource.gallery);
+
+                                      setstate(() {
+                                        newImage = image!.path;
+                                      });
+
+                                      setstate(() {
+                                        newImage = image!.path;
+                                      });
+                                      CustomApi().immageUpload(
+                                          context, image, waybill);
+                                      setstate(() {
+                                        updateBTN = true;
+                                      });
+                                      // source
+                                    },
+                                    child: Card(
+                                        elevation: 5,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(12.0),
+                                          child: Icon(
+                                            color: Colors.black38,
+                                            Icons.photo,
+                                          ),
+                                        )),
+                                  ),
+                                ],
                               ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            InkWell(
-                              onTap: () async {
-                                provider.progress = 0.0;
-
-                                final XFile? image = await _picker.pickImage(
-                                    imageQuality: 25,
-                                    source: ImageSource.camera);
-
-                                setstate(() {
-                                  newImage = image!.path;
-                                });
-                                CustomApi()
-                                    .immageUpload(context, image, waybill);
-                                setstate(() {
-                                  updateBTN = true;
-                                });
-                              },
-                              child: Card(
-                                  elevation: 5,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(12.0),
-                                    child: Icon(
-                                      color: Colors.black38,
-                                      Icons.camera_alt,
-                                    ),
-                                  )),
-                            ),
-                            InkWell(
-                              borderRadius: BorderRadius.circular(20),
-                              onTap: () async {
-                                provider.progress = 0.0;
-                                final XFile? image = await _picker.pickImage(
-                                    imageQuality: 25,
-                                    source: ImageSource.gallery);
-
-                                setstate(() {
-                                  newImage = image!.path;
-                                });
-
-                                setstate(() {
-                                  newImage = image!.path;
-                                });
-                                CustomApi()
-                                    .immageUpload(context, image, waybill);
-                                setstate(() {
-                                  updateBTN = true;
-                                });
-                                // source
-                              },
-                              child: Card(
-                                  elevation: 5,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(12.0),
-                                    child: Icon(
-                                      color: Colors.black38,
-                                      Icons.photo,
-                                    ),
-                                  )),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                            ],
+                          )
+                        : SizedBox(),
                     SizedBox(
                       height: 5,
                     ),
@@ -1288,6 +1294,10 @@ class _MyDeliveryState extends State<MyDelivery> {
     {"reason_id": "11", "reason": "Rescheduled Due to COVID-19"}
   ];
 }
+
+
+
+
 //  {
 //       'oid': '13911039',
 //       'waybill_id': '10000080',

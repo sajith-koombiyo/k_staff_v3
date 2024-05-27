@@ -561,9 +561,8 @@ class CustomApi {
         return data['status'];
       } else if (statusType == 2) {
         if (dropdownValue != '') {
-          if (cod != '') {
+          if (cod != '') {           
             final apiUrl = '${ApiUrl}/Pdelivery/users';
-
             var responses =
                 await https.post(headers: headers, Uri.parse(apiUrl), body: {
               'owner': id,
@@ -572,6 +571,7 @@ class CustomApi {
               'reason': dropdownValue,
               'pcod': cod
             });
+            
             var data = jsonDecode(responses.body);
             if (data['status'] == 200) {
               notification().info(context, 'Order Update Successfully');
@@ -693,10 +693,11 @@ class CustomApi {
       Map<String, String> headers = {
         'userkey': '$id',
       };
+
       var response =
           await https.post(headers: headers, Uri.parse(apiUrl), body: {});
       print(response.body);
-      print('xxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+      print('${id}xxxxxxxxxxxxxxxxxxxxxxxxxxxx');
       return jsonDecode(response.body);
     } else {
       notification().warning(context, 'No Internet');

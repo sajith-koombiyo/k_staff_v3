@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -16,6 +17,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
+import 'package:signature/signature.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../class/class.dart';
 import '../../widget/map/details.dart';
@@ -54,9 +56,20 @@ class _MapScreenState extends State<MapScreen> {
   bool isLoading = false;
   List<Marker> markerList = <Marker>[];
   Set<Marker> _marker = {};
+  bool sign = false;
+  final SignatureController _signController = SignatureController(
+    penStrokeWidth: 1,
+    penColor: Colors.red,
+    exportBackgroundColor: Colors.transparent,
+    exportPenColor: Colors.black,
+    onDrawStart: () => log('onDrawStart called!'),
+    onDrawEnd: () => log('onDrawEnd called!'),
+  );
   userLocation() async {
     status0Count = 0;
     status1Count = 0;
+
+    print('111122222222222222222222222222222222222222222222222');
     var temp = await CustomApi().getmypickups(context);
     var temp2 = await CustomApi().getMyPDeliveryMap(context);
     if (!mounted) return;
@@ -168,6 +181,9 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     getLocation();
+    _signController.addListener(() {
+      log('Value changed');
+    });
 
     // TODO: implement initState
     super.initState();
@@ -176,6 +192,7 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void dispose() {
     _controller;
+    _signController.dispose();
     // TODO: implement dispose
     super.dispose();
   }
@@ -296,24 +313,6 @@ class _MapScreenState extends State<MapScreen> {
                     ),
                   ),
                 ),
-                Center(
-                  child: InkWell(
-                    onTap: () async {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (BuildContext context) {
-                            return Sign();
-                          },
-                        ),
-                      );
-                    },
-                    child: Container(
-                      color: black,
-                      width: 100,
-                      height: 100,
-                    ),
-                  ),
-                ),
                 isOpen ? appbarSheet() : SizedBox(),
                 isLoading ? Loader().loader(context) : SizedBox()
               ],
@@ -322,6 +321,138 @@ class _MapScreenState extends State<MapScreen> {
         ),
       ),
     );
+  }
+
+  siganature() {
+    var w = MediaQuery.of(context).size.width;
+    var h = MediaQuery.of(context).size.height;
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(builder: (context, SetState) {
+        return AlertDialog(
+          scrollable: true,
+          insetPadding: EdgeInsets.all(0),
+          contentPadding: EdgeInsets.zero,
+          content: Container(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    alignment: Alignment.centerRight,
+                    child: CircleAvatar(
+                      child: IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: Icon(Icons.close),
+                      ),
+                    ),
+                  ),
+                ),
+                Text(
+                  'Customer Signature',
+                  style: TextStyle(color: black, fontSize: 17),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Signature(
+                  key: const Key('signature'),
+                  controller: _signController,
+                  height: 300,
+                  backgroundColor: Color.fromARGB(255, 9, 1, 51)!,
+                ),
+
+                Card(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                    
+                      IconButton(
+                        icon: const Icon(Icons.undo),
+                        color: Colors.blue,
+                        onPressed: () {
+                          setState(() => _signController.undo());
+                        },
+                        tooltip: 'Undo',
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.redo),
+                        color: Colors.blue,
+                        onPressed: () {
+                          setState(() => _signController.redo());
+                        },
+                        tooltip: 'Redo',
+                      ),
+                      //CLEAR CANVAS
+                      IconButton(
+                        key: const Key('clear'),
+                        icon: const Icon(Icons.clear),
+                        color: Colors.blue,
+                        onPressed: () {
+                          setState(() => _signController.clear());
+                        },
+                        tooltip: 'Clear',
+                      ),
+                    ],
+                  ),
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: DialogButton(
+                      text: 'Save',
+                      onTap: () {
+                        exportImage(context);
+                      },
+                      buttonHeight: h / 17,
+                      width: w / 1.5,
+                      color: Colors.green),
+                ),
+                // IconButton(
+                //   key: const Key('exportSVG'),
+                //   icon: const Icon(Icons.share),
+                //   color: Colors.blue,
+                //   onPressed: () => exportSVG(context),
+                //   tooltip: 'Export SVG',
+                // ),
+              ],
+            ),
+          ),
+        );
+      }),
+    );
+  }
+
+  Future<void> exportImage(BuildContext context) async {
+    if (_signController.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          key: Key('snackbarPNG'),
+          content: Text('No content'),
+        ),
+      );
+      return;
+    }
+
+    final Uint8List? data = await _signController.toPngBytes(
+      height: 300,
+    );
+    if (data == null) {
+      return;
+    }
+
+    if (!mounted) return;
+    await Printing.layoutPdf(onLayout: (PdfPageFormat format) async {
+      print(format);
+      return PDFView().makePdf(context, data);
+    });
+    setState(() {
+      sign = true;
+    });
+    Navigator.pop(context);
   }
 
   void getLocation() async {
@@ -373,7 +504,7 @@ class _MapScreenState extends State<MapScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     SizedBox(
-                      height: MediaQuery.of(context).padding.top + 50,
+                      height: MediaQuery.of(context).padding.top,
                     ),
                     isDelivery
                         ? Stack(
@@ -509,13 +640,17 @@ class _MapScreenState extends State<MapScreen> {
                             verticalOffset: 200,
                             duration: Duration(milliseconds: 900),
                             child: DialogButton(
-                                text: accept == '0' ? 'Accept' : "Pickup",
+                                text: accept == '0'
+                                    ? 'Accept'
+                                    : sign == false
+                                        ? 'Signature'
+                                        : "Pickup",
                                 onTap: accept == '0'
-                                    ? () async {
+                                    ? () async { 
                                         setState(() {
                                           isLoading = true;
                                         });
-                                        var res = await CustomApi()
+                                       await CustomApi()
                                             .sendSms(phone, pickId, context);
                                         await userLocation();
                                         setState(() {
@@ -523,18 +658,25 @@ class _MapScreenState extends State<MapScreen> {
                                           isLoading = false;
                                         });
                                       }
-                                    : () async {
-                                        setState(() {
-                                          isLoading = true;
-                                        });
-                                        await CustomApi().pickupComplete(
-                                            context, pickId, quantity.text);
-                                        await userLocation();
-                                        setState(() {
-                                          isOpen = false;
-                                          isLoading = false;
-                                        });
-                                      },
+                                    : sign==false
+                                        ? () { 
+                                            siganature();
+                                          }
+                                        :  () async {
+                                      
+                                              setState(() {
+                                                isLoading = true;
+                                              });
+                                              await CustomApi().pickupComplete(
+                                                  context,
+                                                  pickId,
+                                                  quantity.text);
+                                              await userLocation();
+                                              setState(() {
+                                                isOpen = false;
+                                                isLoading = false;
+                                              });
+                                            },
                                 buttonHeight: h / 14,
                                 width: w / 1.5,
                                 color: accept == '0'
@@ -568,6 +710,7 @@ class _MapScreenState extends State<MapScreen> {
                     InkWell(
                       onTap: () {
                         setState(() {
+                          _signController.clear();
                           isOpen = false;
                         });
                       },
