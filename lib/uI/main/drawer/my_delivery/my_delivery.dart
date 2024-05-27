@@ -1279,7 +1279,9 @@ class _MyDeliveryState extends State<MyDelivery> {
     {"reason_id": "36", "reason": "Damaged item"},
     {"reason_id": "37", "reason": "Waybill and system data mismatch"},
     {"reason_id": "38", "reason": "COD already paid in total"}
+
   ];
+
   final List<Map> _recheduled = [
     {"reason_id": "1", "reason": "Customer rescheduled"},
     {"reason_id": "2", "reason": "Customer phone switched off"},
@@ -1308,6 +1310,7 @@ class _MyDeliveryState extends State<MyDelivery> {
 //       'phone': '712345678',
 //       'status': 'Out for Delivery, cust_internal:'
 //     },
+
 //     {
 //       'oid': '13911039',
 //       'waybill_id': '10000080',

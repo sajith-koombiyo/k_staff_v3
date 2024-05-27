@@ -14,6 +14,7 @@ import 'attendance/attendance.dart';
 import 'branch_operation/cod_0_approval.dart';
 import 'branch_operation/dd_aproval/dd_aproval.dart';
 import 'contact_us/contact_us.dart';
+import 'darwer_clz.dart';
 import 'genaral/add_employe/add_employee.dart';
 import 'genaral/contact/contact.dart';
 import 'genaral/employee/employee_details.dart';
@@ -45,6 +46,7 @@ class _customDrawerState extends State<customDrawer> {
   String key = '';
   int temp = 0;
 
+  int accessGroupId = 17;
   List modeData = [];
   @override
   void initState() {
@@ -52,6 +54,7 @@ class _customDrawerState extends State<customDrawer> {
     super.initState();
   }
 
+  dataList() {}
   List drawerButtonList = [];
   @override
   Widget build(BuildContext context) {
@@ -105,117 +108,143 @@ class _customDrawerState extends State<customDrawer> {
                                 //   myPage: Picked(),
                                 //   text: 'Picked',
                                 // ),
+                                DrawerClz().pickedList(accessGroupId)
+                                    ? drawwerList(
+                                        'Picked', Icons.local_shipping_outlined,
+                                        () {
+                                        setState(() {
+                                          if (drawOpen == 1 && drawTab) {
+                                            drawTab = false;
+                                          } else {
+                                            drawOpen = 1;
+                                            // temp = drawOpen;
 
-                                drawwerList(
-                                    'Picked', Icons.local_shipping_outlined,
-                                    () {
-                                  setState(() {
-                                    if (drawOpen == 1 && drawTab) {
-                                      drawTab = false;
-                                    } else {
-                                      drawOpen = 1;
-                                      // temp = drawOpen;
+                                            drawTab = true;
+                                          }
+                                        });
+                                      }, 1, [
+                                        DrawerClz().pickup(accessGroupId)
+                                            ? tileButton(' Pickup', () {
+                                                setState(() {
+                                                  key = '1';
+                                                });
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          Picked()),
+                                                );
+                                              }, key, '1')
+                                            : SizedBox(),
+                                        DrawerClz().pendingPickup(accessGroupId)
+                                            ? tileButton('Pending Pickup', () {
+                                                setState(() {
+                                                  key = '2';
+                                                });
 
-                                      drawTab = true;
-                                    }
-                                  });
-                                }, 1, [
-                                  tileButton(' Pickup', () {
-                                    setState(() {
-                                      key = '1';
-                                    });
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => Picked()),
-                                    );
-                                  }, key, '1'),
-                                  tileButton('Pending Pickup', () {
-                                    setState(() {
-                                      key = '2';
-                                    });
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          PendingPicked()),
+                                                );
+                                              }, key, '2')
+                                            : SizedBox(),
+                                        DrawerClz().AssigngPickup(accessGroupId)
+                                            ? tileButton('Assign Pickup', () {
+                                                setState(() {
+                                                  key = '3';
+                                                });
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          AssignPickup()),
+                                                );
+                                              }, key, '3')
+                                            : SizedBox()
+                                      ])
+                                    : SizedBox(),
+                                DrawerClz().myDelivery(accessGroupId)
+                                    ? CustomDrawerButton(
+                                        icon: Icons.all_inbox_sharp,
+                                        onTap: () {
+                                          navigation(MyDelivery(
+                                            isFromHome: false,
+                                          ));
+                                        },
+                                        text: 'My Delivery',
+                                      )
+                                    : SizedBox(),
+                                DrawerClz().myOrders(accessGroupId)
+                                    ? CustomDrawerButton(
+                                        icon: Icons.border_outer_rounded,
+                                        onTap: () {
+                                          navigation(MyOrders());
+                                        },
+                                        text: 'My Orders',
+                                      )
+                                    : SizedBox(),
+                                DrawerClz().reschedule(accessGroupId)
+                                    ? CustomDrawerButton(
+                                        icon: Icons.query_builder,
+                                        onTap: () {
+                                          navigation(Reschedule());
+                                        },
+                                        text: 'Reschedule',
+                                      )
+                                    : SizedBox(),
+                                DrawerClz().branchOperation(accessGroupId)
+                                    ? drawwerList('Branch Operations',
+                                        Icons.accessibility_outlined, () {
+                                        setState(() {
+                                          print(drawOpen);
+                                          print(drawTab);
+                                          if (drawOpen == 2 && drawTab) {
+                                            drawTab = false;
+                                          } else {
+                                            drawOpen = 2;
+                                            drawTab = true;
+                                          }
+                                        });
+                                      }, 2, [
+                                        DrawerClz().ddApprove(accessGroupId)
+                                            ? tileButton('DD Approval', () {
+                                                setState(() {
+                                                  key = '1';
+                                                });
 
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              PendingPicked()),
-                                    );
-                                  }, key, '2'),
-                                  tileButton('Assign Pickup', () {
-                                    setState(() {
-                                      key = '3';
-                                    });
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => AssignPickup()),
-                                    );
-                                  }, key, '3'),
-                                ]),
-                                CustomDrawerButton(
-                                  icon: Icons.all_inbox_sharp,
-                                  onTap: () {
-                                    navigation(MyDelivery(
-                                      isFromHome: false,
-                                    ));
-                                  },
-                                  text: 'My Delivery',
-                                ),
-                                CustomDrawerButton(
-                                  icon: Icons.border_outer_rounded,
-                                  onTap: () {
-                                    navigation(MyOrders());
-                                  },
-                                  text: 'My Orders',
-                                ),
-                                CustomDrawerButton(
-                                  icon: Icons.query_builder,
-                                  onTap: () {
-                                    navigation(Reschedule());
-                                  },
-                                  text: 'Reschedule',
-                                ),
-                                drawwerList('Branch Operations',
-                                    Icons.accessibility_outlined, () {
-                                  setState(() {
-                                    if (drawOpen == 2 && drawTab) {
-                                      drawTab = false;
-                                    }
-                                    drawOpen = 2;
-                                    drawTab = true;
-                                  });
-                                }, 2, [
-                                  tileButton('DD Approval', () {
-                                    setState(() {
-                                      key = '1';
-                                    });
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          DDApproval()),
+                                                );
+                                                setState(() {
+                                                  key = '0';
+                                                });
+                                              }, key, '1')
+                                            : SizedBox(),
+                                        DrawerClz().codZero(accessGroupId)
+                                            ? tileButton(
+                                                'COD 0 (zero) Approval', () {
+                                                setState(() {
+                                                  key = '2';
+                                                });
 
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => DDApproval()),
-                                    );
-                                    setState(() {
-                                      key = '0';
-                                    });
-                                  }, key, '1'),
-                                  tileButton('COD 0 (zero) Approval', () {
-                                    setState(() {
-                                      key = '2';
-                                    });
-
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              CODZeroApproval()),
-                                    );
-                                    setState(() {
-                                      key = '0';
-                                    });
-                                  }, key, '2'),
-                                ]),
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          CODZeroApproval()),
+                                                );
+                                                setState(() {
+                                                  key = '0';
+                                                });
+                                              }, key, '2')
+                                            : SizedBox()
+                                      ])
+                                    : SizedBox(),
 
                                 drawwerList('General', Icons.gps_fixed_rounded,
                                     () {
@@ -249,50 +278,62 @@ class _customDrawerState extends State<customDrawer> {
                                       key = '0';
                                     });
                                   }, key, '1'),
-                                  tileButton('Add Employee', () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => AddEmployee(
-                                                branchId: color.userData[0]
-                                                    ['branch_id'],
-                                              )),
-                                    );
-                                    setState(() {
-                                      key = '2';
-                                    });
-                                  }, key, '2'),
-                                  tileButton('Manage Users', () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => ManageUsers()),
-                                    );
-                                    setState(() {
-                                      key = '4';
-                                    });
-                                  }, key, '4'),
-                                  tileButton('Employee', () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              EmployeeDetails()),
-                                    );
-                                    setState(() {
-                                      key = '5';
-                                    });
-                                  }, key, '5'),
-                                  tileButton('Employee Contact', () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => Contact()),
-                                    );
-                                    setState(() {
-                                      key = '6';
-                                    });
-                                  }, key, '6'),
+                                  DrawerClz().addEmployee(accessGroupId)
+                                      ? tileButton('Add Employee', () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    AddEmployee(
+                                                      branchId:
+                                                          color.userData[0]
+                                                              ['branch_id'],
+                                                    )),
+                                          );
+                                          setState(() {
+                                            key = '2';
+                                          });
+                                        }, key, '2')
+                                      : SizedBox(),
+                                  DrawerClz().manageUser(accessGroupId)
+                                      ? tileButton('Manage Users', () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ManageUsers()),
+                                          );
+                                          setState(() {
+                                            key = '4';
+                                          });
+                                        }, key, '4')
+                                      : SizedBox(),
+                                  DrawerClz().employee(accessGroupId)
+                                      ? tileButton('Employee', () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    EmployeeDetails()),
+                                          );
+                                          setState(() {
+                                            key = '5';
+                                          });
+                                        }, key, '5')
+                                      : SizedBox(),
+                                  DrawerClz().contact(accessGroupId)
+                                      ? tileButton('Employee Contact', () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    Contact()),
+                                          );
+                                          setState(() {
+                                            key = '6';
+                                          });
+                                        }, key, '6')
+                                      : SizedBox(),
                                   tileButton('Location Update', () {
                                     Navigator.push(
                                       context,
@@ -306,20 +347,24 @@ class _customDrawerState extends State<customDrawer> {
                                   }, key, '7'),
                                 ]),
 
-                                CustomDrawerButton(
-                                  icon: Icons.group,
-                                  onTap: () {
-                                    navigation(Attendance());
-                                  },
-                                  text: 'Attendance',
-                                ),
-                                CustomDrawerButton(
-                                  icon: Icons.departure_board_outlined,
-                                  onTap: () {
-                                    navigation(Shuttle());
-                                  },
-                                  text: 'Shuttle',
-                                ),
+                                DrawerClz().attendance(accessGroupId)
+                                    ? CustomDrawerButton(
+                                        icon: Icons.group,
+                                        onTap: () {
+                                          navigation(Attendance());
+                                        },
+                                        text: 'Attendance',
+                                      )
+                                    : SizedBox(),
+                                DrawerClz().shuttle(accessGroupId)
+                                    ? CustomDrawerButton(
+                                        icon: Icons.departure_board_outlined,
+                                        onTap: () {
+                                          navigation(Shuttle());
+                                        },
+                                        text: 'Shuttle',
+                                      )
+                                    : SizedBox(),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 10),
