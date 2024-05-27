@@ -6,6 +6,7 @@ import 'package:flutter_share/flutter_share.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../app_details/color.dart';
 import '../../../provider/provider.dart';
 import '../../widget/drower/drower_button.dart';
@@ -46,12 +47,27 @@ class _customDrawerState extends State<customDrawer> {
   String key = '';
   int temp = 0;
 
-  int accessGroupId = 17;
+  int accessGroupId = 1;
   List modeData = [];
   @override
   void initState() {
+    Data();
     // TODO: implement initState
     super.initState();
+  }
+
+  Data() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    var id = await prefs.getInt(
+      'accessesKey',
+    );
+    print(id);
+    setState(() {
+      if (id != null) {
+        accessGroupId = id!;
+      }
+    });
   }
 
   dataList() {}

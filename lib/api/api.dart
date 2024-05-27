@@ -162,10 +162,12 @@ class CustomApi {
         Map<String, dynamic> map = jsonDecode(response.body);
         if (map['status'] == 200) {
           String userkey = map['userkey'].toString();
+          int accessesKey = int.parse(map['access_group'].toString());
           print(userkey);
           print(response.body);
           SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setString('userkey', userkey);
+          await prefs.setInt('accessesKey', accessesKey);
 
           Navigator.push(
             context,
@@ -561,7 +563,7 @@ class CustomApi {
         return data['status'];
       } else if (statusType == 2) {
         if (dropdownValue != '') {
-          if (cod != '') {           
+          if (cod != '') {
             final apiUrl = '${ApiUrl}/Pdelivery/users';
             var responses =
                 await https.post(headers: headers, Uri.parse(apiUrl), body: {
@@ -571,7 +573,7 @@ class CustomApi {
               'reason': dropdownValue,
               'pcod': cod
             });
-            
+
             var data = jsonDecode(responses.body);
             if (data['status'] == 200) {
               notification().info(context, 'Order Update Successfully');
