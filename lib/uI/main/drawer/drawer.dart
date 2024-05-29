@@ -225,7 +225,7 @@ class _customDrawerState extends State<customDrawer> {
                                         });
                                       }, 2, [
                                         DrawerClz().ddApprove(accessGroupId)
-                                            ? tileButton('DD Approval', () {
+                                            ? tileButton('Pending DD', () {
                                                 setState(() {
                                                   key = '1';
                                                 });

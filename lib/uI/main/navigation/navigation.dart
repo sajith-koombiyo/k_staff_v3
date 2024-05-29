@@ -679,9 +679,22 @@ class _NavigationScreenState extends State<NavigationScreen>
     ZegoUIKitPrebuiltCallInvitationService().init(
       uiConfig: ZegoCallInvitationUIConfig(),
       invitationEvents: ZegoUIKitPrebuiltCallInvitationEvents(
+        onOutgoingCallCancelButtonPressed: () {
+          print(
+              'xxxxxqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxaaaa');
+        },
         onError: (p0) {
+          print(p0);
           print(
               'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxaaaa');
+        },
+        onOutgoingCallDeclined: (callID, callee, customData) {
+          Navigator.pop(context);
+          print(customData);
+          print(callID);
+          print(callee);
+          print(
+              'xxxxxxxxxxxxxxxxxsssssssssssxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxaaaa');
         },
 
         onInvitationUserStateChanged: (value) {
@@ -689,10 +702,12 @@ class _NavigationScreenState extends State<NavigationScreen>
           if (value[0].state ==
               ZegoSignalingPluginInvitationUserState.rejected) {
             notification().warning(context, 'rejected');
+            Navigator.pop(context);
           }
           if (value[0].state ==
               ZegoSignalingPluginInvitationUserState.cancelled) {
-            // notification().warning(context, 'cancelled');
+            notification().warning(context, 'cancelled');
+            Navigator.pop(context);
           }
           if (value[0].state ==
               ZegoSignalingPluginInvitationUserState.offline) {
@@ -711,17 +726,16 @@ class _NavigationScreenState extends State<NavigationScreen>
         onOutgoingCallTimeout: (callID, callees, isVideoCall) {
           Navigator.pop(context);
         },
-        // onIncomingCallCanceled: (callID, caller, customData) {
-        //   print(
-        //       '--------------------------------------------------------------------------------');
+        onIncomingCallCanceled: (callID, caller, customData) {
+          print(
+              '--------------------------------------------------------------------------------');
 
-        //   if (callID != userId) {
-        //     back('call canceled');
-        //   }
-        // },
-        // onIncomingCallDeclineButtonPressed: () {
-        //   back('Call Declined');
-        // },
+          if (callID != userId) {}
+        },
+        onIncomingCallDeclineButtonPressed: () {
+          print(
+              '------ssssssssssssss--------------------------------------------------------------------------');
+        },
 
         // onOutgoingCallDeclined: (callID, callee, customData) async {
         //   // ZegoUIKitPrebuiltCallInvitationService().cancel(callees: [callee]);

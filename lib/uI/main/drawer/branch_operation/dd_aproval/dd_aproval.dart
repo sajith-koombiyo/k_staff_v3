@@ -79,7 +79,6 @@ class _DDApprovalState extends State<DDApproval> {
                           selectval, //implement initial value or selected value
                       onChanged: (value) {
                         setState(() {
-                      
                           _runFilter(value.toString());
                           //set state will update UI and State of your App
                           selectval =
@@ -100,7 +99,7 @@ class _DDApprovalState extends State<DDApproval> {
               ),
             )),
         title: Text(
-          'DD Approval',
+          'Pending DD',
           style: TextStyle(
             fontSize: 18.dp,
             color: white,
@@ -325,9 +324,7 @@ class _DDApprovalState extends State<DDApproval> {
                       totalSwitches: 2,
                       labels: ['Confirm', ''],
                       icons: [null, Icons.close],
-                      onToggle: (index) {
-                        
-                      },
+                      onToggle: (index) {},
                     ),
                   ),
                   SizedBox(
@@ -361,7 +358,6 @@ class _DDApprovalState extends State<DDApproval> {
     // Refresh the UI
     setState(() {
       depositList = results;
-      
     });
   }
 
