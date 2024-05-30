@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/api/api.dart';
 import 'package:flutter_application_2/app_details/color.dart';
 import 'package:flutter_application_2/uI/widget/diloag_button.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
@@ -30,13 +31,23 @@ class _DDApprovalState extends State<DDApproval> {
   ];
   String? selectval;
   List<Map<String, dynamic>> depositListTemp = [];
+  List pendingDDList = [];
   @override
   void initState() {
+    data();
     setState(() {
       depositListTemp = depositList;
     });
     // TODO: implement initState
     super.initState();
+  }
+
+  data() async {
+    var dataList = await CustomApi().ddApprovalScreen(context, '1');
+    print(dataList.toString());
+    setState(() {
+      pendingDDList = dataList;
+    });
   }
 
   @override
@@ -118,7 +129,7 @@ class _DDApprovalState extends State<DDApproval> {
       backgroundColor: white,
       body: ListView.builder(
         shrinkWrap: true,
-        itemCount: depositList.length,
+        itemCount: pendingDDList.length,
         itemBuilder: (context, index) => Padding(
           padding: const EdgeInsets.all(4.0),
           child: Card(
@@ -130,15 +141,48 @@ class _DDApprovalState extends State<DDApproval> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: w / 3,
+                            child: Row(
+                              children: [
+                                Text(
+                                  "ID",
+                                  style: TextStyle(
+                                    fontSize: 17.dp,
+                                    color: black,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Text(
+                            "- ${pendingDDList[index]['waybill_id']}",
+                            style: TextStyle(
+                              fontSize: 17.dp,
+                              color: black,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                        ],
+                      ),
+                      IconButton(onPressed: () {}, icon: Icon(Icons.copy))
+                    ],
+                  ),
+                  Row(
                     children: [
                       SizedBox(
                         width: w / 3,
                         child: Row(
                           children: [
                             Text(
-                              "ID",
+                              "Client name",
                               style: TextStyle(
-                                fontSize: 17.dp,
+                                fontSize: 12.dp,
                                 color: black,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -147,9 +191,9 @@ class _DDApprovalState extends State<DDApproval> {
                         ),
                       ),
                       Text(
-                        "- 0711672439",
+                        "- ${pendingDDList[index]['cust_name']}",
                         style: TextStyle(
-                          fontSize: 17.dp,
+                          fontSize: 12.dp,
                           color: black,
                           fontWeight: FontWeight.normal,
                         ),
@@ -174,7 +218,7 @@ class _DDApprovalState extends State<DDApproval> {
                         ),
                       ),
                       Text(
-                        "- Darshana",
+                        "- ${pendingDDList[index]['name']}",
                         style: TextStyle(
                           fontSize: 12.dp,
                           color: black,
@@ -200,7 +244,7 @@ class _DDApprovalState extends State<DDApproval> {
                       SizedBox(
                         width: w / 2,
                         child: Text(
-                          "- 106/ 5 ihalagame Kirindiwela ",
+                          "- ${pendingDDList[index]['address']} ",
                           style: TextStyle(
                             fontSize: 12.dp,
                             color: black,
@@ -224,7 +268,7 @@ class _DDApprovalState extends State<DDApproval> {
                         ),
                       ),
                       Text(
-                        "- 0711672439",
+                        "- ${pendingDDList[index]['phone']}",
                         style: TextStyle(
                           fontSize: 12.dp,
                           color: black,
@@ -247,7 +291,7 @@ class _DDApprovalState extends State<DDApproval> {
                         ),
                       ),
                       Text(
-                        "- Kurunegala",
+                        "- ${pendingDDList[index]['dispatch_to_b_name']}",
                         style: TextStyle(
                           fontSize: 12.dp,
                           color: black,
@@ -270,7 +314,7 @@ class _DDApprovalState extends State<DDApproval> {
                         ),
                       ),
                       Text(
-                        "- 0711672439",
+                        "- ${pendingDDList[index]['dd_to_b_name']}",
                         style: TextStyle(
                           fontSize: 12.dp,
                           color: black,
@@ -283,6 +327,7 @@ class _DDApprovalState extends State<DDApproval> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
+                        width: w / 3,
                         child: Text(
                           "Remark",
                           style: TextStyle(
@@ -292,12 +337,12 @@ class _DDApprovalState extends State<DDApproval> {
                           ),
                         ),
                       ),
-                      SizedBox(
-                        width: 8,
-                      ),
+                      // SizedBox(
+                      //   width: 4,
+                      // ),
                       Flexible(
                         child: Text(
-                          "- 0711672439 sjnjna ajb ajba jabj a ajbdja da djajba ajdbjad ajdja d aj ja  adbaj d adaj d ad J D",
+                          "- ${pendingDDList[index]['status']}",
                           style: TextStyle(
                             fontSize: 12.dp,
                             color: black,
@@ -310,22 +355,12 @@ class _DDApprovalState extends State<DDApproval> {
                   Divider(),
                   Container(
                     alignment: Alignment.centerRight,
-                    child: ToggleSwitch(
-                      changeOnTap: true,
-                      customWidths: [90.0, 50.0],
-                      cornerRadius: 10.0,
-                      activeBgColors: [
-                        [Colors.cyan],
-                        [Colors.redAccent]
-                      ],
-                      activeFgColor: Colors.white,
-                      inactiveBgColor: Colors.grey,
-                      inactiveFgColor: Colors.white,
-                      totalSwitches: 2,
-                      labels: ['Confirm', ''],
-                      icons: [null, Icons.close],
-                      onToggle: (index) {},
-                    ),
+                    child: DialogButton(
+                        text: 'Confirm',
+                        onTap: () {},
+                        buttonHeight: h / 17,
+                        width: w / 3,
+                        color: Colors.cyan),
                   ),
                   SizedBox(
                     height: 0,

@@ -67,7 +67,7 @@ class _AddEmployeeState extends State<AddEmployee> {
                           var res = await CustomApi().nicValidate(nic.text);
 
                           var response = jsonDecode(res);
-                      
+
                           if (response['status'] == 1) {
                             Navigator.push(
                                 context,
@@ -363,13 +363,13 @@ class _AddEmployeeState extends State<AddEmployee> {
     if (front) {
       setState(() {
         frontImage = "data:image/jpeg;base64,$base64Image";
-     
+
         newImage = image!.path;
       });
     } else {
       setState(() {
         backImage = "data:image/jpeg;base64,$base64Image";
-      
+
         newImage2 = image!.path;
       });
     }
@@ -383,11 +383,11 @@ class _AddEmployeeState extends State<AddEmployee> {
     setState(() {
       if (front) {
         frontImage = "data:image/jpeg;base64,$base64Image";
-       
+
         newImage = image!.path;
       } else {
         backImage = "data:image/jpeg;base64,$base64Image";
-       
+
         newImage2 = image!.path;
       }
     });
@@ -403,7 +403,6 @@ class _AddEmployeeState extends State<AddEmployee> {
                 onPressed: () {
                   cameraImage(isFront);
                   Navigator.pop(context);
-               
                 },
                 child: Text('Use Camera'),
               ),

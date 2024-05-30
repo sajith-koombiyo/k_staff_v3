@@ -51,7 +51,7 @@ class _customDrawerState extends State<customDrawer> {
   List modeData = [];
   @override
   void initState() {
-    Data();
+    // Data();
     // TODO: implement initState
     super.initState();
   }

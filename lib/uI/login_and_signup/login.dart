@@ -90,7 +90,7 @@ class _LoginState extends State<Login> {
                                 padding: EdgeInsets.all(16),
                                 color: white.withOpacity(0.2),
                                 width: w,
-                                height: h / 1.5,
+                                height: h / 1.45,
                                 child: Column(
                                   children:
                                       AnimationConfiguration.toStaggeredList(

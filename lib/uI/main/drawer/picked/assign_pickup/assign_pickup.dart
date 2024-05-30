@@ -253,8 +253,6 @@ class _AssignPickupState extends State<AssignPickup> {
     );
   }
 
-
-
   oderInformation(String pickId) {
     phoneNumber.clear();
     String? selectval;

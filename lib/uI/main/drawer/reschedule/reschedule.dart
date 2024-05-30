@@ -63,7 +63,7 @@ class _RescheduleState extends State<Reschedule> {
     });
     rescheduleList =
         await CustomApi().getReScheduleData('', context, dateController.text);
-   
+
     setState(() {
       rescheduleList;
       isLoading = false;

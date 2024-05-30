@@ -16,8 +16,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as https;
-import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
-import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 import '../app_details/const.dart';
 import '../uI/login_and_signup/login.dart';
 import '../uI/main/navigation/navigation.dart';
@@ -317,6 +315,7 @@ class CustomApi {
     }
   }
 
+// notification  read
   Future<void> notificationMarkAsRead(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('userkey');
@@ -359,6 +358,7 @@ class CustomApi {
   }
 
 // oder screen data calling
+
   getmyorders(String sWaybill, String userID, BuildContext context) async {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
@@ -368,6 +368,8 @@ class CustomApi {
       Map<String, String> headers = {
         'userkey': '$id',
       };
+
+      print(id);
       if (sWaybill == '') {
         print(userID);
         final apiUrl = '${ApiUrl}/Pendings/users';
@@ -509,6 +511,27 @@ class CustomApi {
   //     notification().warning(context, 'No Internet');
   //   }
   // }
+// delivery orders screen dropdown data
+
+  Future dropdownDataMyDelivery(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      final apiUrl = '${ApiUrl}/Reasons/users';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      var resp =
+          await https.post(headers: headers, Uri.parse(apiUrl), body: {});
+      return jsonDecode(resp.body);
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
 
 // delivery  oder data this function use 3 api for same dialog   ,and use image upload
   oderData(
@@ -1100,6 +1123,27 @@ class CustomApi {
       var responsee = await https.post(Uri.parse(urll), body: {'NIC': nic});
 
       return responsee.body;
+    }
+  }
+
+  // dd aprovel screen
+
+  ddApprovalScreen(BuildContext context, String bId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      print(id);
+      final apiUrl = '${ApiUrl}/Pending_dd/users';
+      // Headers
+      Map<String, String> headers = {'userkey': '$id', 'dispatch_to': ''};
+      // Make POST request
+      var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {});
+      List data = jsonDecode(res.body);
+      return data;
+    } else {
+      notification().warning(context, 'No Internet');
     }
   }
 }

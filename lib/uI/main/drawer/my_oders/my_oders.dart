@@ -64,12 +64,12 @@ class _MyOrdersState extends State<MyOrders> {
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('userId');
-  
+
     var temp =
         await CustomApi().getAllOrders(search.text, id.toString(), context);
     setState(() {
       dataList = temp;
-     
+
       isLoading = false;
     });
   }
@@ -80,7 +80,6 @@ class _MyOrdersState extends State<MyOrders> {
     var w = MediaQuery.of(context).size.width;
     return RefreshIndicator(
       onRefresh: () {
-       
         return getData(false);
       },
       child: Scaffold(
@@ -358,7 +357,6 @@ class _MyOrdersState extends State<MyOrders> {
     // Refresh the UI
     setState(() {
       product = results;
-   
     });
   }
 
@@ -416,7 +414,6 @@ class _MyOrdersState extends State<MyOrders> {
     try {
       barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
           '#ff6666', 'Cancel', true, ScanMode.BARCODE);
-     
     } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';
     }

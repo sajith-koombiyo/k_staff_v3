@@ -369,7 +369,6 @@ class _MapScreenState extends State<MapScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                    
                       IconButton(
                         icon: const Icon(Icons.undo),
                         color: Colors.blue,
@@ -646,11 +645,11 @@ class _MapScreenState extends State<MapScreen> {
                                         ? 'Signature'
                                         : "Pickup",
                                 onTap: accept == '0'
-                                    ? () async { 
+                                    ? () async {
                                         setState(() {
                                           isLoading = true;
                                         });
-                                       await CustomApi()
+                                        await CustomApi()
                                             .sendSms(phone, pickId, context);
                                         await userLocation();
                                         setState(() {
@@ -658,25 +657,22 @@ class _MapScreenState extends State<MapScreen> {
                                           isLoading = false;
                                         });
                                       }
-                                    : sign==false
-                                        ? () { 
+                                    : sign == false
+                                        ? () {
                                             siganature();
                                           }
-                                        :  () async {
-                                      
-                                              setState(() {
-                                                isLoading = true;
-                                              });
-                                              await CustomApi().pickupComplete(
-                                                  context,
-                                                  pickId,
-                                                  quantity.text);
-                                              await userLocation();
-                                              setState(() {
-                                                isOpen = false;
-                                                isLoading = false;
-                                              });
-                                            },
+                                        : () async {
+                                            setState(() {
+                                              isLoading = true;
+                                            });
+                                            await CustomApi().pickupComplete(
+                                                context, pickId, quantity.text);
+                                            await userLocation();
+                                            setState(() {
+                                              isOpen = false;
+                                              isLoading = false;
+                                            });
+                                          },
                                 buttonHeight: h / 14,
                                 width: w / 1.5,
                                 color: accept == '0'

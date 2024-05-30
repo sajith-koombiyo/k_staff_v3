@@ -32,7 +32,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       isLoading = true;
     });
     notification = await CustomApi().getMyNotification(context);
-  
+
     setState(() {
       notification;
       isLoading = false;
@@ -42,7 +42,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   readNotification() async {
     await CustomApi().notificationMarkAsRead(context);
     var res = await CustomApi().notificationCount(widget.userId);
-  
+
     Provider.of<ProviderS>(context, listen: false).noteCount = res;
   }
 

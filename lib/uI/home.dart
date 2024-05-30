@@ -55,16 +55,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   int y = 0;
   @override
   void initState() {
-   
     WidgetsBinding.instance!.addObserver(this);
     dashBoardData();
     data();
     // TODO: implement initState
     super.initState();
   }
-
-
-
 
   @override
   void dispose() {

@@ -58,6 +58,9 @@ class _MyDeliveryState extends State<MyDelivery> {
   String dropdownvalueItem2 = '';
 
   DateTime selectedDate = DateTime.now();
+  List pdliveryList = [];
+  List rescheduleList = [];
+  List remarkList = [];
 
   @override
   void initState() {
@@ -71,6 +74,7 @@ class _MyDeliveryState extends State<MyDelivery> {
     setState(() {
       isLoading = load;
     });
+    await dropDownData();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('user_id');
 
@@ -81,6 +85,39 @@ class _MyDeliveryState extends State<MyDelivery> {
 
       isLoading = false;
     });
+  }
+
+  dropDownData() async {
+    List res = await CustomApi().dropdownDataMyDelivery(context);
+    print(res);
+    setState(() {
+      List.generate(res.length, (index) {
+        print(res[index]['reason']);
+        if (res[index]['type'] == '3') {
+          pdliveryList.add({
+            "reason_id": "${res[index]['reason_id']}",
+            "reason": "${res[index]['reason']}"
+          });
+        }
+        if (res[index]['type'] == '1') {
+          rescheduleList.add({
+            "reason_id": "${res[index]['reason_id']}",
+            "reason": "${res[index]['reason']}"
+          });
+        }
+        if (res[index]['type'] == '4') {
+          remarkList.add({
+            "reason_id": "${res[index]['reason_id']}",
+            "reason": "${res[index]['reason']}"
+          });
+        }
+      });
+    });
+
+    print('222222222222222222222');
+    print(pdliveryList);
+    print(rescheduleList);
+    print(remarkList);
   }
 
   @override
@@ -807,7 +844,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                                           } //change selectval to new value
                                         });
                                       },
-                                      items: _pdelivery.map((itemone) {
+                                      items: pdliveryList.map((itemone) {
                                         return DropdownMenuItem(
                                             onTap: () {
                                               setstate(() {
@@ -901,7 +938,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                                           } //change selectval to new value
                                         });
                                       },
-                                      items: _recheduled.map((itemone) {
+                                      items: rescheduleList.map((itemone) {
                                         return DropdownMenuItem(
                                             onTap: () {
                                               setstate(() {
@@ -992,7 +1029,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                                           } //change selectval to new value
                                         });
                                       },
-                                      items: _recheduled.map((itemone) {
+                                      items: remarkList.map((itemone) {
                                         return DropdownMenuItem(
                                             onTap: () {
                                               setstate(() {
@@ -1309,31 +1346,6 @@ class _MyDeliveryState extends State<MyDelivery> {
       }
     });
   }
-
-  final List<Map> _pdelivery = [
-    {
-      "reason_id": "34",
-      "reason": "Customer has already paid partially in advance"
-    },
-    {"reason_id": "35", "reason": "Requested by online store"},
-    {"reason_id": "36", "reason": "Damaged item"},
-    {"reason_id": "37", "reason": "Waybill and system data mismatch"},
-    {"reason_id": "38", "reason": "COD already paid in total"}
-  ];
-
-  final List<Map> _recheduled = [
-    {"reason_id": "1", "reason": "Customer rescheduled"},
-    {"reason_id": "2", "reason": "Customer phone switched off"},
-    {"reason_id": "3", "reason": "Customer phone no answer"},
-    {"reason_id": "4", "reason": "Customer out of city"},
-    {"reason_id": "5", "reason": "Customer unable to pay"},
-    {"reason_id": "6", "reason": "Different location"},
-    {"reason_id": "7", "reason": "Customer request to open the package"},
-    {"reason_id": "8", "reason": "Requested  online store"},
-    {"reason_id": "9", "reason": "Wrong quantity"},
-    {"reason_id": "10", "reason": "Bad weather (Floods)"},
-    {"reason_id": "11", "reason": "Rescheduled Due to COVID-19"}
-  ];
 }
 
 

@@ -159,10 +159,9 @@ class _WorkDetailsState extends State<WorkDetails> {
                       '', //vehicle number
                       '', // valuation amount
                     );
-                  
+
                     var respp = jsonDecode(res);
 
-               
                     if (respp['msg'] == 'Data inserted success') {
                       var resp = await CustomApi().addUserImages(
                           respp['temp_id'].toString(),
@@ -190,7 +189,7 @@ class _WorkDetailsState extends State<WorkDetails> {
 
                       var response = jsonDecode(resp);
                       // var document = parse(response['msg']);
-                     
+
                       notification().info(context, response['msg'].toString());
                       if (response['msg'] == 'Data inserted success') {
                         Navigator.pop(context);
@@ -227,10 +226,8 @@ class _WorkDetailsState extends State<WorkDetails> {
                           valuationAmount.text,
                         );
 
-                       
                         var respp = jsonDecode(res);
 
-                    
                         if (respp['msg'] == 'Data inserted success') {
                           var resp = await CustomApi().addUserImages(
                               respp['temp_id'].toString(),
@@ -255,7 +252,7 @@ class _WorkDetailsState extends State<WorkDetails> {
                               newImage5_64, // vehicle_right,
                               newImage6_64 // vehicle_back,
                               );
-                         
+
                           var response = jsonDecode(resp);
                           notification()
                               .info(context, response['msg'].toString());
@@ -775,7 +772,6 @@ class _WorkDetailsState extends State<WorkDetails> {
                 .toList(),
             value: selectedValue,
             onChanged: (value) async {
-            
               // Provider.of<ProviderDropDown>(context).designation =
               //     value.toString();
               setState(() {
