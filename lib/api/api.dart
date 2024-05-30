@@ -1137,7 +1137,7 @@ class CustomApi {
       print(id);
       final apiUrl = '${ApiUrl}/Pending_dd/users';
       // Headers
-      Map<String, String> headers = {'userkey': '$id', 'dispatch_to': ''};
+      Map<String, String> headers = {'userkey': '$id', 'dispatch_to': bId};
       // Make POST request
       var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {});
       List data = jsonDecode(res.body);

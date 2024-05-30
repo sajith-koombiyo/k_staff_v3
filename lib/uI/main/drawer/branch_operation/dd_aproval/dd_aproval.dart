@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_application_2/api/api.dart';
 import 'package:flutter_application_2/app_details/color.dart';
 import 'package:flutter_application_2/uI/widget/diloag_button.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:toggle_switch/toggle_switch.dart';
+
+import '../../../../../class/class.dart';
+import '../../../../widget/nothig_found.dart';
 
 class DDApproval extends StatefulWidget {
   const DDApproval({super.key});
@@ -14,6 +18,7 @@ class DDApproval extends StatefulWidget {
 
 class _DDApprovalState extends State<DDApproval> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool isLoading = false;
   List<Map<String, dynamic>> depositList = [
     {'date': '2023/01/23'},
     {'date': '2023/11/23'},
@@ -34,7 +39,7 @@ class _DDApprovalState extends State<DDApproval> {
   List pendingDDList = [];
   @override
   void initState() {
-    data();
+    data('');
     setState(() {
       depositListTemp = depositList;
     });
@@ -42,11 +47,15 @@ class _DDApprovalState extends State<DDApproval> {
     super.initState();
   }
 
-  data() async {
-    var dataList = await CustomApi().ddApprovalScreen(context, '1');
+  data(String data) async {
+    setState(() {
+      isLoading = true;
+    });
+    var dataList = await CustomApi().ddApprovalScreen(context, data);
     print(dataList.toString());
     setState(() {
       pendingDDList = dataList;
+      isLoading = false;
     });
   }
 
@@ -92,8 +101,8 @@ class _DDApprovalState extends State<DDApproval> {
                         setState(() {
                           _runFilter(value.toString());
                           //set state will update UI and State of your App
-                          selectval =
-                              value.toString(); //change selectval to new value
+                          selectval = value.toString();
+                          data('8'); //change selectval to new value
                         });
                       },
                       items: listitems.map((itemone) {
@@ -127,250 +136,276 @@ class _DDApprovalState extends State<DDApproval> {
             )),
       ),
       backgroundColor: white,
-      body: ListView.builder(
-        shrinkWrap: true,
-        itemCount: pendingDDList.length,
-        itemBuilder: (context, index) => Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: Card(
-            // color: Color.fromARGB(255, 217, 238, 255),
-            elevation: 20,
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
+      body: pendingDDList.isEmpty && isLoading == false
+          ? SizedBox(
+              height: h,
+              width: w,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: w / 3,
-                            child: Row(
+                  Center(child: NoData()),
+                ],
+              ))
+          : Stack(
+              children: [
+                ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: pendingDDList.length,
+                  itemBuilder: (context, index) => Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Card(
+                      // color: Color.fromARGB(255, 217, 238, 255),
+                      elevation: 20,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      width: w / 3,
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            "ID",
+                                            style: TextStyle(
+                                              fontSize: 17.dp,
+                                              color: black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Text(
+                                      "- ${pendingDDList[index]['waybill_id']}",
+                                      style: TextStyle(
+                                        fontSize: 17.dp,
+                                        color: black,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                IconButton(
+                                    onPressed: () {
+                                      Clipboard.setData(ClipboardData(
+                                              text:
+                                                  "${pendingDDList[index]['waybill_id']}"))
+                                          .then((_) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                                content: Text(
+                                                    'Copied to your waybill id !')));
+                                      });
+                                    },
+                                    icon: Icon(Icons.copy))
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: w / 3,
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        "Client name",
+                                        style: TextStyle(
+                                          fontSize: 12.dp,
+                                          color: black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                                 Text(
-                                  "ID",
+                                  "- ${pendingDDList[index]['cust_name']}",
                                   style: TextStyle(
-                                    fontSize: 17.dp,
+                                    fontSize: 12.dp,
                                     color: black,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.normal,
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                          Text(
-                            "- ${pendingDDList[index]['waybill_id']}",
-                            style: TextStyle(
-                              fontSize: 17.dp,
-                              color: black,
-                              fontWeight: FontWeight.normal,
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: w / 3,
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        "Receiver name",
+                                        style: TextStyle(
+                                          fontSize: 12.dp,
+                                          color: black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Text(
+                                  "- ${pendingDDList[index]['name']}",
+                                  style: TextStyle(
+                                    fontSize: 12.dp,
+                                    color: black,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                      IconButton(onPressed: () {}, icon: Icon(Icons.copy))
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: w / 3,
-                        child: Row(
-                          children: [
-                            Text(
-                              "Client name",
-                              style: TextStyle(
-                                fontSize: 12.dp,
-                                color: black,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  width: w / 3,
+                                  child: Text(
+                                    "Address",
+                                    style: TextStyle(
+                                      fontSize: 12.dp,
+                                      color: black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: w / 2,
+                                  child: Text(
+                                    "- ${pendingDDList[index]['address']} ",
+                                    style: TextStyle(
+                                      fontSize: 12.dp,
+                                      color: black,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: w / 3,
+                                  child: Text(
+                                    "Receiver phone",
+                                    style: TextStyle(
+                                      fontSize: 12.dp,
+                                      color: black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  "- ${pendingDDList[index]['phone']}",
+                                  style: TextStyle(
+                                    fontSize: 12.dp,
+                                    color: black,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: w / 3,
+                                  child: Text(
+                                    "From Branch",
+                                    style: TextStyle(
+                                      fontSize: 12.dp,
+                                      color: black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  "- ${pendingDDList[index]['dispatch_to_b_name']}",
+                                  style: TextStyle(
+                                    fontSize: 12.dp,
+                                    color: black,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: w / 3,
+                                  child: Text(
+                                    "To branch",
+                                    style: TextStyle(
+                                      fontSize: 12.dp,
+                                      color: black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  "- ${pendingDDList[index]['dd_to_b_name']}",
+                                  style: TextStyle(
+                                    fontSize: 12.dp,
+                                    color: black,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  width: w / 3,
+                                  child: Text(
+                                    "Remark",
+                                    style: TextStyle(
+                                      fontSize: 12.dp,
+                                      color: black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                // SizedBox(
+                                //   width: 4,
+                                // ),
+                                Flexible(
+                                  child: Text(
+                                    "- ${pendingDDList[index]['status']}",
+                                    style: TextStyle(
+                                      fontSize: 12.dp,
+                                      color: black,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Divider(),
+                            Container(
+                              alignment: Alignment.centerRight,
+                              child: DialogButton(
+                                  text: 'Confirm',
+                                  onTap: () {},
+                                  buttonHeight: h / 17,
+                                  width: w / 3,
+                                  color: Colors.cyan),
+                            ),
+                            SizedBox(
+                              height: 0,
                             ),
                           ],
                         ),
                       ),
-                      Text(
-                        "- ${pendingDDList[index]['cust_name']}",
-                        style: TextStyle(
-                          fontSize: 12.dp,
-                          color: black,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: w / 3,
-                        child: Row(
-                          children: [
-                            Text(
-                              "Receiver name",
-                              style: TextStyle(
-                                fontSize: 12.dp,
-                                color: black,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Text(
-                        "- ${pendingDDList[index]['name']}",
-                        style: TextStyle(
-                          fontSize: 12.dp,
-                          color: black,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: w / 3,
-                        child: Text(
-                          "Address",
-                          style: TextStyle(
-                            fontSize: 12.dp,
-                            color: black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: w / 2,
-                        child: Text(
-                          "- ${pendingDDList[index]['address']} ",
-                          style: TextStyle(
-                            fontSize: 12.dp,
-                            color: black,
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: w / 3,
-                        child: Text(
-                          "Receiver phone",
-                          style: TextStyle(
-                            fontSize: 12.dp,
-                            color: black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      Text(
-                        "- ${pendingDDList[index]['phone']}",
-                        style: TextStyle(
-                          fontSize: 12.dp,
-                          color: black,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: w / 3,
-                        child: Text(
-                          "From Branch",
-                          style: TextStyle(
-                            fontSize: 12.dp,
-                            color: black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      Text(
-                        "- ${pendingDDList[index]['dispatch_to_b_name']}",
-                        style: TextStyle(
-                          fontSize: 12.dp,
-                          color: black,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: w / 3,
-                        child: Text(
-                          "To branch",
-                          style: TextStyle(
-                            fontSize: 12.dp,
-                            color: black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      Text(
-                        "- ${pendingDDList[index]['dd_to_b_name']}",
-                        style: TextStyle(
-                          fontSize: 12.dp,
-                          color: black,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: w / 3,
-                        child: Text(
-                          "Remark",
-                          style: TextStyle(
-                            fontSize: 12.dp,
-                            color: black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      // SizedBox(
-                      //   width: 4,
-                      // ),
-                      Flexible(
-                        child: Text(
-                          "- ${pendingDDList[index]['status']}",
-                          style: TextStyle(
-                            fontSize: 12.dp,
-                            color: black,
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Divider(),
-                  Container(
-                    alignment: Alignment.centerRight,
-                    child: DialogButton(
-                        text: 'Confirm',
-                        onTap: () {},
-                        buttonHeight: h / 17,
-                        width: w / 3,
-                        color: Colors.cyan),
-                  ),
-                  SizedBox(
-                    height: 0,
-                  ),
-                ],
-              ),
+                ),
+                isLoading ? Loader().loader(context) : SizedBox()
+              ],
             ),
-          ),
-        ),
-      ),
     );
   }
 
