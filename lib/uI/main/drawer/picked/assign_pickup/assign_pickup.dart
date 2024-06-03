@@ -53,11 +53,14 @@ class _AssignPickupState extends State<AssignPickup> {
     });
     var dataList = await CustomApi().assignPickupList(context);
     var dataList2 = await CustomApi().assignRiderList(context);
+    print(
+        'ssssssssssssssssssssssssssssssssssssccccccccccccccccccccccccccccccccccc');
+    print(dataList2);
     setState(() {
       assignList = dataList;
       tempList = dataList;
       riderList = dataList2;
-      print(assignList);
+      // print(assignList);
       print(dataList2);
       isLoading = false;
     });

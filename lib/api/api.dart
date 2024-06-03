@@ -380,7 +380,7 @@ class CustomApi {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       final String? id = await prefs.getString('userkey');
       Map<String, String> headers = {
-        'userkey': '',
+        'userkey': '$id',
       };
 
       print(id);
@@ -439,8 +439,6 @@ class CustomApi {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       final String? id = await prefs.getString('userkey');
       if (sWaybill == '') {
-        print('ddddddddddddddddddddd');
-        print(userID);
         final apiUrl = '${ApiUrl}/Allorders/users';
         // Headers
         Map<String, String> headers = {
@@ -450,9 +448,17 @@ class CustomApi {
         var resp =
             await https.post(headers: headers, Uri.parse(apiUrl), body: {});
         print(resp.body);
-        return List<Map>.from(jsonDecode(resp.body) as List);
+        var data = jsonDecode(resp.body);
+        if (data['status'] == 200) {
+          Provider.of<ProviderS>(context, listen: false).isanotherUserLog =
+              false;
+          return data['users'];
+        } else if (data['status'] == 403) {
+          Provider.of<ProviderS>(context, listen: false).isanotherUserLog =
+              true;
+          return [];
+        }
       } else {
-        print('ddssssssssssssssssssssssssssssssssssddddddddddddddddddd');
         final apiUrl = '${ApiUrl}/Singleorder/users';
         // Headers
         Map<String, String> headers = {
@@ -463,9 +469,12 @@ class CustomApi {
             headers: headers,
             Uri.parse(apiUrl),
             body: {'status': '5,7', 'search': sWaybill});
-        print(resp.body);
-
-        return List<Map>.from(jsonDecode(resp.body) as List);
+        var data = jsonDecode(resp.body);
+        if (data['status'] == 200) {
+          return data['order'];
+        } else if (data['status'] == 403) {
+          return [];
+        }
       }
     } else {
       notification().warning(context, 'No Internet');
@@ -485,7 +494,6 @@ class CustomApi {
     var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {});
     print(res.body);
     print('notification count');
-
     List map = jsonDecode(res.body);
 
     return map;
@@ -799,13 +807,13 @@ class CustomApi {
     }
   }
 
-  Future pendingPickup( BuildContext context) async {
+  Future pendingPickup(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('userkey');
     final apiUrl = '${ApiUrl}/Allpickups/users';
     // Headers
     Map<String, String> headers = {
-      'userkey': '',
+      'userkey': '$id',
     };
     var resp = await https.post(headers: headers, Uri.parse(apiUrl), body: {});
     print(id);
@@ -813,12 +821,10 @@ class CustomApi {
     var data = jsonDecode(resp.body);
 
     if (data['status'] == 403) {
-        Provider.of<ProviderS>(context, listen: false).isanotherUserLog =
-                true;
+      Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
       return [];
     } else if (data['status'] == 200) {
-        Provider.of<ProviderS>(context, listen: false).isanotherUserLog =
-                false;
+      Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
       return data['users'];
     }
   }
@@ -829,7 +835,7 @@ class CustomApi {
     final apiUrl = '${ApiUrl}/Allpicked/users';
     // Headers
     Map<String, String> headers = {
-      'userkey': '',
+      'userkey': '$id',
     };
     var resp = await https.post(headers: headers, Uri.parse(apiUrl), body: {});
     print(resp);
@@ -885,8 +891,15 @@ class CustomApi {
       var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {
         'nextdate': date,
       });
-
-      return List<Map>.from(jsonDecode(res.body) as List);
+      var data = jsonDecode(res.body);
+      print(res.body);
+      if (data['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+        return [];
+      } else if (data['status'] == 200) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+        return data['users'];
+      }
     } else {
       notification().warning(context, 'No Internet');
     }
@@ -972,15 +985,27 @@ class CustomApi {
 // assign pickup
 
   assignPickupList(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
+      print(
+          'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd');
+      print(id);
+      print(
+          'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd');
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
       var url = '${ApiUrl}/Userpickuprequests/users';
-      var res = await https.post(Uri.parse(url), body: {});
+      var res = await https.post(headers: headers, Uri.parse(url), body: {});
       print(res.body);
+      print('ssssssssssssss');
       var list = jsonDecode(res.body);
       if (list['status'] == 200) {
-        return list;
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+        return list['users'];
       }
       if (list['status'] == 403) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
@@ -997,11 +1022,21 @@ class CustomApi {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? id = await prefs.getString('userkey');
+      print(id);
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
       var url = '${ApiUrl}/Riderlist/users';
-      var res = await https.post(Uri.parse(url), body: {});
+      var res = await https.post(headers: headers, Uri.parse(url), body: {});
       var list = jsonDecode(res.body);
+      // Headers
+      print(list);
       if (list['status'] == 200) {
-        return list;
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+
+        return list['users'];
       }
       if (list['status'] == 403) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
@@ -1205,8 +1240,17 @@ class CustomApi {
       Map<String, String> headers = {'userkey': '$id', 'dispatch_to': bId};
       // Make POST request
       var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {});
-      List data = jsonDecode(res.body);
-      return data;
+      var data = jsonDecode(res.body);
+
+      if (data['status'] == 200) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+        print(data);
+        return data['users'];
+      }
+      if (data['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+        return [];
+      }
     } else {
       notification().warning(context, 'No Internet');
     }

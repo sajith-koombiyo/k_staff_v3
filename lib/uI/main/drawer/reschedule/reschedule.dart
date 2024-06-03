@@ -3,8 +3,11 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/app_details/color.dart';
 import 'package:flutter_application_2/class/class.dart';
+import 'package:flutter_application_2/provider/provider.dart';
+import 'package:flutter_application_2/uI/main/navigation/navigation.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../api/api.dart';
 import '../../../widget/nothig_found.dart';
@@ -74,212 +77,226 @@ class _RescheduleState extends State<Reschedule> {
   Widget build(BuildContext context) {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: appliteBlue,
-        bottom: PreferredSize(
-            preferredSize: Size(w, 70),
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: serchBarr(context),
-            )),
-        title: Text(
-          'My Rescheduled',
-          style: TextStyle(
-            fontSize: 18.dp,
-            color: white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(
-              Icons.arrow_back_ios_new,
+    return Consumer<ProviderS>(
+      builder: (context, provider, child) => Scaffold(
+        appBar: AppBar(
+          backgroundColor: appliteBlue,
+          bottom: PreferredSize(
+              preferredSize: Size(w, 70),
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: serchBarr(context),
+              )),
+          title: Text(
+            'My Rescheduled',
+            style: TextStyle(
+              fontSize: 18.dp,
               color: white,
-            )),
-      ),
-      backgroundColor: white,
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: SizedBox(
-              child: Column(children: [
-                rescheduleList.isEmpty && isLoading == false
-                    ? NoData()
-                    : ListView.builder(
-                        padding: EdgeInsets.all(0),
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: rescheduleList.length,
-                        itemBuilder: (context, index) {
-                          return Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Material(
-                                  color: Colors.transparent,
-                                  child: InkWell(
-                                    borderRadius: BorderRadius.circular(20),
-                                    splashColor: blue,
-                                    onTap: () {
-                                      bool updateBTN = true;
-                                    },
-                                    onLongPress: () {},
-                                    child: Card(
-                                      margin: EdgeInsets.only(left: 0),
-                                      color: appliteBlue,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: white,
+              )),
+        ),
+        backgroundColor: white,
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              child: SizedBox(
+                child: Column(children: [
+                  rescheduleList.isEmpty && isLoading == false
+                      ? NoData()
+                      : ListView.builder(
+                          padding: EdgeInsets.all(0),
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: rescheduleList.length,
+                          itemBuilder: (context, index) {
+                            return Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      borderRadius: BorderRadius.circular(20),
+                                      splashColor: blue,
+                                      onTap: () {
+                                        bool updateBTN = true;
+                                      },
+                                      onLongPress: () {},
                                       child: Card(
-                                        elevation: 50,
-                                        margin: EdgeInsets.only(left: 3),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(12.0),
-                                          child: Column(
-                                            children: [
-                                              SizedBox(
-                                                width: w,
-                                                child: Row(
-                                                  children: [
-                                                    Card(
-                                                      elevation: 1,
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(8.0),
-                                                        child: Icon(
-                                                          Icons
-                                                              .delivery_dining_sharp,
-                                                          size: 40,
-                                                          color: Color(Random()
-                                                                  .nextInt(
-                                                                      0xffffffff))
-                                                              .withAlpha(0xff),
+                                        margin: EdgeInsets.only(left: 0),
+                                        color: appliteBlue,
+                                        child: Card(
+                                          elevation: 50,
+                                          margin: EdgeInsets.only(left: 3),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(12.0),
+                                            child: Column(
+                                              children: [
+                                                SizedBox(
+                                                  width: w,
+                                                  child: Row(
+                                                    children: [
+                                                      Card(
+                                                        elevation: 1,
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: Icon(
+                                                            Icons
+                                                                .delivery_dining_sharp,
+                                                            size: 40,
+                                                            color: Color(Random()
+                                                                    .nextInt(
+                                                                        0xffffffff))
+                                                                .withAlpha(
+                                                                    0xff),
+                                                          ),
                                                         ),
                                                       ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    SizedBox(
-                                                      width: w / 2.4,
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Text(
-                                                              'ID:${rescheduleList[index]['waybill_id']}',
-                                                              style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color: black,
-                                                                fontSize: 14.dp,
-                                                              )),
-                                                          Text(
-                                                              'Client:-${rescheduleList[index]['cust_name']}',
-                                                              style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                color: Colors
-                                                                    .black87,
-                                                                fontSize: 14.dp,
-                                                              )),
-                                                          Text(
-                                                              '${rescheduleList[index]['address']}',
-                                                              style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .normal,
-                                                                color: Colors
-                                                                    .black87,
-                                                                fontSize: 12.dp,
-                                                              )),
-                                                          Text(
-                                                              'COD:-${rescheduleList[index]['cod_final']}',
-                                                              style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                        221,
-                                                                        31,
-                                                                        116,
-                                                                        152),
-                                                                fontSize: 14.dp,
-                                                              )),
-                                                          Text(
-                                                              'Phone:-${rescheduleList[index]['phone']}',
-                                                              style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .normal,
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                        221,
-                                                                        220,
-                                                                        44,
-                                                                        44),
-                                                                fontSize: 14.dp,
-                                                              )),
-                                                          Card(
-                                                            elevation: 20,
-                                                            margin:
-                                                                EdgeInsets.all(
-                                                                    0),
-                                                            color:
-                                                                Color.fromARGB(
-                                                                    255,
-                                                                    62,
-                                                                    13,
-                                                                    130),
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(8.0),
-                                                              child: Text(
-                                                                  '${rescheduleList[index]['status']}',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .normal,
-                                                                    color:
-                                                                        white,
-                                                                    fontSize:
-                                                                        10.dp,
-                                                                  )),
-                                                            ),
-                                                          ),
-                                                        ],
+                                                      SizedBox(
+                                                        width: 10,
                                                       ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                  ],
+                                                      SizedBox(
+                                                        width: w / 2.4,
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                                'ID:${rescheduleList[index]['waybill_id']}',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: black,
+                                                                  fontSize:
+                                                                      14.dp,
+                                                                )),
+                                                            Text(
+                                                                'Client:-${rescheduleList[index]['cust_name']}',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  color: Colors
+                                                                      .black87,
+                                                                  fontSize:
+                                                                      14.dp,
+                                                                )),
+                                                            Text(
+                                                                '${rescheduleList[index]['address']}',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal,
+                                                                  color: Colors
+                                                                      .black87,
+                                                                  fontSize:
+                                                                      12.dp,
+                                                                )),
+                                                            Text(
+                                                                'COD:-${rescheduleList[index]['cod_final']}',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  color: Color
+                                                                      .fromARGB(
+                                                                          221,
+                                                                          31,
+                                                                          116,
+                                                                          152),
+                                                                  fontSize:
+                                                                      14.dp,
+                                                                )),
+                                                            Text(
+                                                                'Phone:-${rescheduleList[index]['phone']}',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal,
+                                                                  color: Color
+                                                                      .fromARGB(
+                                                                          221,
+                                                                          220,
+                                                                          44,
+                                                                          44),
+                                                                  fontSize:
+                                                                      14.dp,
+                                                                )),
+                                                            Card(
+                                                              elevation: 20,
+                                                              margin: EdgeInsets
+                                                                  .all(0),
+                                                              color: Color
+                                                                  .fromARGB(
+                                                                      255,
+                                                                      62,
+                                                                      13,
+                                                                      130),
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(
+                                                                        8.0),
+                                                                child: Text(
+                                                                    '${rescheduleList[index]['status']}',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .normal,
+                                                                      color:
+                                                                          white,
+                                                                      fontSize:
+                                                                          10.dp,
+                                                                    )),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 10,
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-              ]),
+                              ],
+                            );
+                          },
+                        ),
+                ]),
+              ),
             ),
-          ),
-          isLoading ? Loader().loader(context) : SizedBox()
-        ],
+            isLoading ? Loader().loader(context) : SizedBox(),
+            provider.isanotherUserLog ? UserLoginCheck() : SizedBox()
+          ],
+        ),
       ),
     );
   }

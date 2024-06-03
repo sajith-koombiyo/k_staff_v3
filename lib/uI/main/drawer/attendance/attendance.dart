@@ -1,12 +1,9 @@
 import 'dart:io';
-
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/app_details/color.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:lottie/lottie.dart';
-
 import '../../../widget/diloag_button.dart';
 
 class Attendance extends StatefulWidget {
@@ -92,14 +89,14 @@ class _AttendanceState extends State<Attendance> {
                                   padding: EdgeInsets.all(6),
                                   child: Container(
                                     alignment: Alignment.center,
-                                    height: h / 6,
+                                    height: h / 5.5,
                                     width: w / 2.3,
                                     child: startMeter.isNotEmpty
                                         ? ClipRRect(
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(12)),
                                             child: Container(
-                                                height: h / 6,
+                                                height: h / 5.5,
                                                 width: w / 2.3,
                                                 child: Image.file(
                                                   File(startMeter),
@@ -171,14 +168,14 @@ class _AttendanceState extends State<Attendance> {
                                   padding: EdgeInsets.all(6),
                                   child: Container(
                                     alignment: Alignment.center,
-                                    height: h / 6,
+                                    height: h / 5.5,
                                     width: w / 2.3,
                                     child: endMeter.isNotEmpty
                                         ? ClipRRect(
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(12)),
                                             child: Container(
-                                                height: h / 6,
+                                                height: h / 5.5,
                                                 width: w / 2.3,
                                                 child: Image.file(
                                                   File(endMeter),
@@ -225,22 +222,13 @@ class _AttendanceState extends State<Attendance> {
                       Spacer(),
                       DialogButton(
                         buttonHeight: h / 14,
-                        width: w / 1.5,
+                        width: w / 1.4,
                         text: 'Save',
                         color: Color.fromARGB(255, 8, 152, 219),
                         onTap: () {},
                       ),
                       Spacer(),
                     ]),
-                Container(
-                  color: white.withOpacity(0.7),
-                  child: Center(
-                    child: SizedBox(
-                        height: h / 4,
-                        child:
-                            Image.asset('assets/page-under-maintenance.png')),
-                  ),
-                )
               ],
             ),
           ),

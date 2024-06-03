@@ -26,11 +26,11 @@ class _MyOrdersState extends State<MyOrders> {
   TextEditingController search = TextEditingController();
   TextEditingController waybill = TextEditingController();
   TextEditingController codController = TextEditingController();
-  List<Map<String, dynamic>> product = [];
-  List<Map<String, dynamic>> allProduct = [];
+  List product = [];
+  List allProduct = [];
   String newImage = '';
   String formattedDate = '';
-  List<Map<dynamic, dynamic>> dataList = [];
+  List dataList = [];
   final ImagePicker _picker = ImagePicker();
   bool isLoading = false;
   double progress = 0.0;
@@ -339,7 +339,7 @@ class _MyOrdersState extends State<MyOrders> {
   }
 
   void _runFilter(String enteredKeyword) {
-    List<Map<String, dynamic>> results = [];
+    List results = [];
     if (enteredKeyword.isEmpty) {
       // if the search field is empty or only contains white-space, we'll display all users
       results = allProduct;
