@@ -264,10 +264,8 @@ class CustomApi {
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-
       final apiUrl = '${ApiUrl}NotifictionCount/users';
       // Headers
-
       Map<String, String> headers = {
         'userkey': '$userId',
       };
@@ -275,8 +273,7 @@ class CustomApi {
       // Make POST request
       var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {});
       List map = jsonDecode(res.body);
-      print(map);
-      print('111111111111111111111111111111111111111111');
+
       var noti_count = map[0]['noticount'].toString();
       if (noti_count == "null") {
         noti_count = "0";
@@ -307,9 +304,17 @@ class CustomApi {
       var resp =
           await https.post(headers: headers, Uri.parse(apiUrl), body: {});
       print(resp.body);
+
       print('notification list');
       var data = jsonDecode(resp.body);
-      return data;
+      if (data["status"] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+        print('notifsssssssication list');
+        return [];
+      } else if (data["status"] == 200) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+        return data['notifications'];
+      }
     } else {
       notification().warning(context, 'No Internet');
     }
@@ -339,7 +344,7 @@ class CustomApi {
 
 // dash board custom data
 
-  Future dashboardData(String userId) async {
+  Future dashboardData(String userId, BuildContext context) async {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
@@ -353,20 +358,29 @@ class CustomApi {
           await https.post(headers: headers, Uri.parse(apiUrl), body: {});
 
       var map = jsonDecode(resp.body);
-      return map;
+      print(map);
+      if (map["status"] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+        print('notifsssssssication list');
+        return [];
+      } else if (map["status"] == 200) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+        return map['pickups'];
+      }
     }
   }
 
 // oder screen data calling
 
   getmyorders(String sWaybill, String userID, BuildContext context) async {
+    print('sssssssssssssssssssssssssssssssssssssssssss');
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       final String? id = await prefs.getString('userkey');
       Map<String, String> headers = {
-        'userkey': '$id',
+        'userkey': '',
       };
 
       print(id);
@@ -378,9 +392,19 @@ class CustomApi {
         // Make POST request
         var resp =
             await https.post(headers: headers, Uri.parse(apiUrl), body: {});
-
+        var data = jsonDecode(resp.body);
         print(resp.body);
-        return List<Map>.from(jsonDecode(resp.body) as List);
+        // print(data);
+
+        if (data['status'] == 403) {
+          Provider.of<ProviderS>(context, listen: false).isanotherUserLog =
+              true;
+          return [];
+        } else if (data['status'] == 200) {
+          Provider.of<ProviderS>(context, listen: false).isanotherUserLog =
+              false;
+          return data['pendings'];
+        }
       } else {
         final apiUrl = '${ApiUrl}/Singleorder/users';
         // Headers
@@ -391,9 +415,16 @@ class CustomApi {
             Uri.parse(apiUrl),
             body: {'status': '5,7', 'search': sWaybill});
 
+        var data = jsonDecode(resp.body);
         print(resp.body);
-
-        return List<Map>.from(jsonDecode(resp.body) as List);
+        // print(data);
+        print('qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq');
+        if (data['status'] == 403) {
+          return [];
+        } else if (data['status'] == 200) {
+          print('11111111111111111111111qqqqqqqqqqqqqqqqq1111111');
+          return data['order'];
+        }
       }
     } else {
       notification().warning(context, 'No Internet');
@@ -571,6 +602,9 @@ class CustomApi {
           Navigator.pop(context);
         } else if (data['status'] == 400) {
           notification().info(context, 'Bad Request: Error Occurred');
+        } else if (data['status'] == 403) {
+          Provider.of<ProviderS>(context, listen: false).isanotherUserLog =
+              true;
         } else if (data['status'] == 406) {
           notification().info(context, 'Not Acceptable: Please Upload the POD');
         }
@@ -603,6 +637,9 @@ class CustomApi {
               Navigator.pop(context);
             } else if (data['status'] == 400) {
               notification().info(context, 'Bad Request: Order Update Failed');
+            } else if (data['status'] == 403) {
+              Provider.of<ProviderS>(context, listen: false).isanotherUserLog =
+                  true;
             } else if (data['status'] == 406) {
               notification()
                   .info(context, 'Not Acceptable: Please Upload the POD');
@@ -629,6 +666,9 @@ class CustomApi {
           if (data['status'] == 200) {
             notification().info(context, 'Order Delivered Successfully');
             Navigator.pop(context);
+          } else if (data['status'] == 403) {
+            Provider.of<ProviderS>(context, listen: false).isanotherUserLog =
+                true;
           } else if (data['status'] == 400) {
             notification().info(context, 'Bad Request: Order Update Failed');
           } else if (data['status'] == 406) {
@@ -759,33 +799,49 @@ class CustomApi {
     }
   }
 
-  Future pendingPickup() async {
+  Future pendingPickup( BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('userkey');
     final apiUrl = '${ApiUrl}/Allpickups/users';
     // Headers
     Map<String, String> headers = {
-      'userkey': '$id',
+      'userkey': '',
     };
     var resp = await https.post(headers: headers, Uri.parse(apiUrl), body: {});
     print(id);
     print(resp.body);
-    print('qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq');
-    return List<Map<String, dynamic>>.from(jsonDecode(resp.body) as List);
+    var data = jsonDecode(resp.body);
+
+    if (data['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog =
+                true;
+      return [];
+    } else if (data['status'] == 200) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog =
+                false;
+      return data['users'];
+    }
   }
 
-  Future pickup() async {
+  Future pickup(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('userkey');
     final apiUrl = '${ApiUrl}/Allpicked/users';
     // Headers
     Map<String, String> headers = {
-      'userkey': '$id',
+      'userkey': '',
     };
     var resp = await https.post(headers: headers, Uri.parse(apiUrl), body: {});
-
+    print(resp);
+    var data = jsonDecode(resp.body);
     print(resp.body);
-    return List<Map<String, dynamic>>.from(jsonDecode(resp.body));
+    if (data['status'] == 403) {
+      Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+      return [];
+    } else if (data['status'] == 200) {
+      Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+      return data['users'];
+    }
   }
 
   Future getMyDeposit(BuildContext context) async {
@@ -802,6 +858,7 @@ class CustomApi {
       // Make POST request
       var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {});
       print(res.body);
+
       print('deposit');
       return List<Map<String, dynamic>>.from(jsonDecode(res.body));
     } else {
@@ -924,6 +981,9 @@ class CustomApi {
       var list = jsonDecode(res.body);
       if (list['status'] == 200) {
         return list;
+      }
+      if (list['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
       } else {
         return [];
       }
@@ -942,6 +1002,9 @@ class CustomApi {
       var list = jsonDecode(res.body);
       if (list['status'] == 200) {
         return list;
+      }
+      if (list['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
       } else {
         return [];
       }
@@ -992,6 +1055,8 @@ class CustomApi {
         Navigator.pop(context);
       }
       if (data['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+
         notification().warning(context, 'Something went wrong');
       }
       return list;

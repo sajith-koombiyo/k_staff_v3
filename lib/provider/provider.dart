@@ -67,6 +67,13 @@ class ProviderS with ChangeNotifier {
     notifyListeners();
   }
 
+  bool _isanotherUserLog = false;
+  bool get isanotherUserLog => _isanotherUserLog;
+  set isanotherUserLog(bool i) {
+    _isanotherUserLog = i;
+    notifyListeners();
+  }
+
   PermissionStatus? _permission;
   PermissionStatus get permission => _permission!;
   set permission(PermissionStatus i) {

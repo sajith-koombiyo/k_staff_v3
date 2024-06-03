@@ -17,8 +17,8 @@ class PendingPicked extends StatefulWidget {
 }
 
 class _PendingPickedState extends State<PendingPicked> {
-  List<Map<String, dynamic>> pickup = [];
-  List<Map<String, dynamic>> pendingPickup = [];
+  List pickup = [];
+  List pendingPickup = [];
   bool isLoading = false;
   @override
   void initState() {
@@ -248,7 +248,7 @@ class _PendingPickedState extends State<PendingPicked> {
     setState(() {
       isLoading = true;
     });
-    var temp = await CustomApi().pendingPickup();
+    var temp = await CustomApi().pendingPickup(context);
     if (mounted)
       setState(() {
         pendingPickup = temp;
@@ -258,7 +258,7 @@ class _PendingPickedState extends State<PendingPicked> {
   }
 
   void _runFilter(String enteredKeyword) {
-    List<Map<String, dynamic>> results = [];
+    List results = [];
     if (enteredKeyword.isEmpty) {
       // if the search field is empty or only contains white-space, we'll display all users
       results = pendingPickup;

@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/class/class.dart';
 import 'package:flutter_application_2/uI/main/drawer/my_oders/my_oders.dart';
+import 'package:flutter_application_2/uI/main/navigation/navigation.dart';
 import 'package:flutter_share/flutter_share.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:page_transition/page_transition.dart';
@@ -51,7 +52,13 @@ class _customDrawerState extends State<customDrawer> {
   List modeData = [];
   @override
   void initState() {
-    // Data();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (Provider.of<ProviderS>(context, listen: false).isanotherUserLog) {
+        CustomDialog().userLoginCheck(context);
+      }
+    });
+
+    Data();
     // TODO: implement initState
     super.initState();
   }
@@ -77,432 +84,442 @@ class _customDrawerState extends State<customDrawer> {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     return Consumer<ProviderS>(
-      builder: (context, color, child) => ClipRRect(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Drawer(
-            backgroundColor: white.withOpacity(0.4),
-            child: Container(
-              width: w / 1.7,
-              child: Container(
-                child: Padding(
-                  padding: EdgeInsets.only(left: 0, right: 1),
-                  child: SizedBox(
-                    height: h,
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: h / 1.1,
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                SizedBox(
-                                  height: AppBar().preferredSize.height,
-                                ),
+      builder: (context, color, child) => Stack(
+        children: [
+          ClipRRect(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Drawer(
+                backgroundColor: white.withOpacity(0.4),
+                child: Container(
+                  width: w / 1.7,
+                  child: Container(
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 0, right: 1),
+                      child: SizedBox(
+                        height: h,
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: h / 1.1,
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      height: AppBar().preferredSize.height,
+                                    ),
 
-                                Container(
-                                    height: h / 7,
-                                    decoration: BoxDecoration(boxShadow: [
-                                      BoxShadow(
-                                          blurRadius: 300,
-                                          color: Color.fromARGB(
-                                              255, 180, 230, 253))
+                                    Container(
+                                        height: h / 7,
+                                        decoration: BoxDecoration(boxShadow: [
+                                          BoxShadow(
+                                              blurRadius: 300,
+                                              color: Color.fromARGB(
+                                                  255, 180, 230, 253))
+                                        ]),
+                                        child: Image.asset(
+                                            'assets/Untitled-1-01.png')),
+
+                                    // SizedBox(
+                                    //   height: 20,
+                                    // ),
+                                    // CustomDrawerButton(
+                                    //   icon: Icons.account_balance_wallet_rounded,
+                                    //   myPage: PendingPicked(),
+                                    //   text: 'Pending Pickups',
+                                    // ),
+                                    // CustomDrawerButton(
+                                    //   icon: Icons.ad_units_outlined,
+                                    //   myPage: Picked(),
+                                    //   text: 'Picked',
+                                    // ),
+                                    DrawerClz().pickedList(accessGroupId)
+                                        ? drawwerList('Picked',
+                                            Icons.local_shipping_outlined, () {
+                                            setState(() {
+                                              if (drawOpen == 1 && drawTab) {
+                                                drawTab = false;
+                                              } else {
+                                                drawOpen = 1;
+                                                // temp = drawOpen;
+
+                                                drawTab = true;
+                                              }
+                                            });
+                                          }, 1, [
+                                            DrawerClz().pickup(accessGroupId)
+                                                ? tileButton(' Pickup', () {
+                                                    setState(() {
+                                                      key = '1';
+                                                    });
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              Picked()),
+                                                    );
+                                                  }, key, '1')
+                                                : SizedBox(),
+                                            DrawerClz().pendingPickup(
+                                                    accessGroupId)
+                                                ? tileButton('Pending Pickup',
+                                                    () {
+                                                    setState(() {
+                                                      key = '2';
+                                                    });
+
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              PendingPicked()),
+                                                    );
+                                                  }, key, '2')
+                                                : SizedBox(),
+                                            DrawerClz().AssigngPickup(
+                                                    accessGroupId)
+                                                ? tileButton('Assign Pickup',
+                                                    () {
+                                                    setState(() {
+                                                      key = '3';
+                                                    });
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              AssignPickup()),
+                                                    );
+                                                  }, key, '3')
+                                                : SizedBox()
+                                          ])
+                                        : SizedBox(),
+                                    DrawerClz().myDelivery(accessGroupId)
+                                        ? CustomDrawerButton(
+                                            icon: Icons.all_inbox_sharp,
+                                            onTap: () {
+                                              navigation(MyDelivery(
+                                                isFromHome: false,
+                                              ));
+                                            },
+                                            text: 'My Delivery',
+                                          )
+                                        : SizedBox(),
+                                    DrawerClz().myOrders(accessGroupId)
+                                        ? CustomDrawerButton(
+                                            icon: Icons.border_outer_rounded,
+                                            onTap: () {
+                                              navigation(MyOrders());
+                                            },
+                                            text: 'My Orders',
+                                          )
+                                        : SizedBox(),
+                                    DrawerClz().reschedule(accessGroupId)
+                                        ? CustomDrawerButton(
+                                            icon: Icons.query_builder,
+                                            onTap: () {
+                                              navigation(Reschedule());
+                                            },
+                                            text: 'Reschedule',
+                                          )
+                                        : SizedBox(),
+                                    DrawerClz().branchOperation(accessGroupId)
+                                        ? drawwerList('Branch Operations',
+                                            Icons.accessibility_outlined, () {
+                                            setState(() {
+                                              print(drawOpen);
+                                              print(drawTab);
+                                              if (drawOpen == 2 && drawTab) {
+                                                drawTab = false;
+                                              } else {
+                                                drawOpen = 2;
+                                                drawTab = true;
+                                              }
+                                            });
+                                          }, 2, [
+                                            DrawerClz().ddApprove(accessGroupId)
+                                                ? tileButton('Pending DD', () {
+                                                    setState(() {
+                                                      key = '1';
+                                                    });
+
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              DDApproval()),
+                                                    );
+                                                    setState(() {
+                                                      key = '0';
+                                                    });
+                                                  }, key, '1')
+                                                : SizedBox(),
+                                            DrawerClz().codZero(accessGroupId)
+                                                ? tileButton(
+                                                    'COD 0 (zero) Approval',
+                                                    () {
+                                                    setState(() {
+                                                      key = '2';
+                                                    });
+
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              CODZeroApproval()),
+                                                    );
+                                                    setState(() {
+                                                      key = '0';
+                                                    });
+                                                  }, key, '2')
+                                                : SizedBox()
+                                          ])
+                                        : SizedBox(),
+
+                                    drawwerList(
+                                        'General', Icons.gps_fixed_rounded, () {
+                                      setState(() {
+                                        if (drawOpen == 3 && drawTab) {
+                                          drawTab = false;
+                                        } else {
+                                          drawOpen = 3;
+                                          // temp = drawOpen;
+
+                                          drawTab = true;
+                                        }
+                                      });
+                                    }, 3, [
+                                      tileButton('Tutorial', () {
+                                        setState(() {
+                                          key = '1';
+                                        });
+                                        widget.ytc.isEmpty
+                                            ? notification().warning(context,
+                                                "Apologies, couldn't connect to the tutorial video.")
+                                            : Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        YoutubeTutorial(
+                                                          ytc: widget.ytc,
+                                                        )),
+                                              );
+                                        setState(() {
+                                          key = '0';
+                                        });
+                                      }, key, '1'),
+                                      DrawerClz().addEmployee(accessGroupId)
+                                          ? tileButton('Add Employee', () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        AddEmployee(
+                                                          branchId:
+                                                              color.userData[0]
+                                                                  ['branch_id'],
+                                                        )),
+                                              );
+                                              setState(() {
+                                                key = '2';
+                                              });
+                                            }, key, '2')
+                                          : SizedBox(),
+                                      DrawerClz().manageUser(accessGroupId)
+                                          ? tileButton('Manage Users', () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ManageUsers()),
+                                              );
+                                              setState(() {
+                                                key = '4';
+                                              });
+                                            }, key, '4')
+                                          : SizedBox(),
+                                      DrawerClz().employee(accessGroupId)
+                                          ? tileButton('Employee', () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        EmployeeDetails()),
+                                              );
+                                              setState(() {
+                                                key = '5';
+                                              });
+                                            }, key, '5')
+                                          : SizedBox(),
+                                      DrawerClz().contact(accessGroupId)
+                                          ? tileButton('Employee Contact', () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        Contact()),
+                                              );
+                                              setState(() {
+                                                key = '6';
+                                              });
+                                            }, key, '6')
+                                          : SizedBox(),
+                                      tileButton('Location Update', () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  LocationScreen()),
+                                        );
+                                        setState(() {
+                                          key = '7';
+                                        });
+                                      }, key, '7'),
                                     ]),
-                                    child: Image.asset(
-                                        'assets/Untitled-1-01.png')),
 
-                                // SizedBox(
-                                //   height: 20,
-                                // ),
-                                // CustomDrawerButton(
-                                //   icon: Icons.account_balance_wallet_rounded,
-                                //   myPage: PendingPicked(),
-                                //   text: 'Pending Pickups',
-                                // ),
-                                // CustomDrawerButton(
-                                //   icon: Icons.ad_units_outlined,
-                                //   myPage: Picked(),
-                                //   text: 'Picked',
-                                // ),
-                                DrawerClz().pickedList(accessGroupId)
-                                    ? drawwerList(
-                                        'Picked', Icons.local_shipping_outlined,
-                                        () {
-                                        setState(() {
-                                          if (drawOpen == 1 && drawTab) {
-                                            drawTab = false;
-                                          } else {
-                                            drawOpen = 1;
-                                            // temp = drawOpen;
-
-                                            drawTab = true;
-                                          }
-                                        });
-                                      }, 1, [
-                                        DrawerClz().pickup(accessGroupId)
-                                            ? tileButton(' Pickup', () {
-                                                setState(() {
-                                                  key = '1';
-                                                });
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          Picked()),
-                                                );
-                                              }, key, '1')
-                                            : SizedBox(),
-                                        DrawerClz().pendingPickup(accessGroupId)
-                                            ? tileButton('Pending Pickup', () {
-                                                setState(() {
-                                                  key = '2';
-                                                });
-
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          PendingPicked()),
-                                                );
-                                              }, key, '2')
-                                            : SizedBox(),
-                                        DrawerClz().AssigngPickup(accessGroupId)
-                                            ? tileButton('Assign Pickup', () {
-                                                setState(() {
-                                                  key = '3';
-                                                });
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          AssignPickup()),
-                                                );
-                                              }, key, '3')
-                                            : SizedBox()
-                                      ])
-                                    : SizedBox(),
-                                DrawerClz().myDelivery(accessGroupId)
-                                    ? CustomDrawerButton(
-                                        icon: Icons.all_inbox_sharp,
+                                    DrawerClz().attendance(accessGroupId)
+                                        ? CustomDrawerButton(
+                                            icon: Icons.group,
+                                            onTap: () {
+                                              navigation(Attendance());
+                                            },
+                                            text: 'Attendance',
+                                          )
+                                        : SizedBox(),
+                                    DrawerClz().shuttle(accessGroupId)
+                                        ? CustomDrawerButton(
+                                            icon:
+                                                Icons.departure_board_outlined,
+                                            onTap: () {
+                                              navigation(Shuttle());
+                                            },
+                                            text: 'Shuttle',
+                                          )
+                                        : SizedBox(),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10),
+                                      child: InkWell(
+                                        borderRadius: BorderRadius.circular(10),
+                                        focusColor: white,
                                         onTap: () {
-                                          navigation(MyDelivery(
-                                            isFromHome: false,
-                                          ));
+                                          share();
                                         },
-                                        text: 'My Delivery',
-                                      )
-                                    : SizedBox(),
-                                DrawerClz().myOrders(accessGroupId)
-                                    ? CustomDrawerButton(
-                                        icon: Icons.border_outer_rounded,
-                                        onTap: () {
-                                          navigation(MyOrders());
-                                        },
-                                        text: 'My Orders',
-                                      )
-                                    : SizedBox(),
-                                DrawerClz().reschedule(accessGroupId)
-                                    ? CustomDrawerButton(
-                                        icon: Icons.query_builder,
-                                        onTap: () {
-                                          navigation(Reschedule());
-                                        },
-                                        text: 'Reschedule',
-                                      )
-                                    : SizedBox(),
-                                DrawerClz().branchOperation(accessGroupId)
-                                    ? drawwerList('Branch Operations',
-                                        Icons.accessibility_outlined, () {
-                                        setState(() {
-                                          print(drawOpen);
-                                          print(drawTab);
-                                          if (drawOpen == 2 && drawTab) {
-                                            drawTab = false;
-                                          } else {
-                                            drawOpen = 2;
-                                            drawTab = true;
-                                          }
-                                        });
-                                      }, 2, [
-                                        DrawerClz().ddApprove(accessGroupId)
-                                            ? tileButton('Pending DD', () {
-                                                setState(() {
-                                                  key = '1';
-                                                });
-
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          DDApproval()),
-                                                );
-                                                setState(() {
-                                                  key = '0';
-                                                });
-                                              }, key, '1')
-                                            : SizedBox(),
-                                        DrawerClz().codZero(accessGroupId)
-                                            ? tileButton(
-                                                'COD 0 (zero) Approval', () {
-                                                setState(() {
-                                                  key = '2';
-                                                });
-
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          CODZeroApproval()),
-                                                );
-                                                setState(() {
-                                                  key = '0';
-                                                });
-                                              }, key, '2')
-                                            : SizedBox()
-                                      ])
-                                    : SizedBox(),
-
-                                drawwerList('General', Icons.gps_fixed_rounded,
-                                    () {
-                                  setState(() {
-                                    if (drawOpen == 3 && drawTab) {
-                                      drawTab = false;
-                                    } else {
-                                      drawOpen = 3;
-                                      // temp = drawOpen;
-
-                                      drawTab = true;
-                                    }
-                                  });
-                                }, 3, [
-                                  tileButton('Tutorial', () {
-                                    setState(() {
-                                      key = '1';
-                                    });
-                                    widget.ytc.isEmpty
-                                        ? notification().warning(context,
-                                            "Apologies, couldn't connect to the tutorial video.")
-                                        : Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    YoutubeTutorial(
-                                                      ytc: widget.ytc,
-                                                    )),
-                                          );
-                                    setState(() {
-                                      key = '0';
-                                    });
-                                  }, key, '1'),
-                                  DrawerClz().addEmployee(accessGroupId)
-                                      ? tileButton('Add Employee', () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    AddEmployee(
-                                                      branchId:
-                                                          color.userData[0]
-                                                              ['branch_id'],
-                                                    )),
-                                          );
-                                          setState(() {
-                                            key = '2';
-                                          });
-                                        }, key, '2')
-                                      : SizedBox(),
-                                  DrawerClz().manageUser(accessGroupId)
-                                      ? tileButton('Manage Users', () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ManageUsers()),
-                                          );
-                                          setState(() {
-                                            key = '4';
-                                          });
-                                        }, key, '4')
-                                      : SizedBox(),
-                                  DrawerClz().employee(accessGroupId)
-                                      ? tileButton('Employee', () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    EmployeeDetails()),
-                                          );
-                                          setState(() {
-                                            key = '5';
-                                          });
-                                        }, key, '5')
-                                      : SizedBox(),
-                                  DrawerClz().contact(accessGroupId)
-                                      ? tileButton('Employee Contact', () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    Contact()),
-                                          );
-                                          setState(() {
-                                            key = '6';
-                                          });
-                                        }, key, '6')
-                                      : SizedBox(),
-                                  tileButton('Location Update', () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              LocationScreen()),
-                                    );
-                                    setState(() {
-                                      key = '7';
-                                    });
-                                  }, key, '7'),
-                                ]),
-
-                                DrawerClz().attendance(accessGroupId)
-                                    ? CustomDrawerButton(
-                                        icon: Icons.group,
-                                        onTap: () {
-                                          navigation(Attendance());
-                                        },
-                                        text: 'Attendance',
-                                      )
-                                    : SizedBox(),
-                                DrawerClz().shuttle(accessGroupId)
-                                    ? CustomDrawerButton(
-                                        icon: Icons.departure_board_outlined,
-                                        onTap: () {
-                                          navigation(Shuttle());
-                                        },
-                                        text: 'Shuttle',
-                                      )
-                                    : SizedBox(),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  child: InkWell(
-                                    borderRadius: BorderRadius.circular(10),
-                                    focusColor: white,
-                                    onTap: () {
-                                      share();
-                                    },
-                                    child: Card(
-                                      color: color.pwhite1.withOpacity(0.2),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Icon(
-                                              Icons.share_outlined,
-                                              color: white,
+                                        child: Card(
+                                          color: color.pwhite1.withOpacity(0.2),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                Icon(
+                                                  Icons.share_outlined,
+                                                  color: white,
+                                                ),
+                                                SizedBox(
+                                                  width: w / 15,
+                                                ),
+                                                Text(
+                                                  'Share',
+                                                  style: TextStyle(
+                                                    fontSize: 12.dp,
+                                                    color: white,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                            SizedBox(
-                                              width: w / 15,
-                                            ),
-                                            Text(
-                                              'Share',
-                                              style: TextStyle(
-                                                fontSize: 12.dp,
-                                                color: white,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ],
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
+                                    // InkWell(
+                                    //   borderRadius: BorderRadius.circular(10),
+                                    //   onTap: () async {
+                                    //     final InAppReview inAppReview =
+                                    //         InAppReview.instance;
+
+                                    //     if (await inAppReview.isAvailable()) {
+                                    //       inAppReview.requestReview();
+                                    //     }
+
+                                    //     Navigator.push(
+                                    //       context,
+                                    //       MaterialPageRoute(
+                                    //           builder: (context) => Review()),
+                                    //     );
+                                    //   },
+                                    //   child: Card(
+                                    //     color: color.pwhite1.withOpacity(0.2),
+                                    //     child: Padding(
+                                    //       padding: const EdgeInsets.all(8.0),
+                                    //       child: Row(
+                                    //         mainAxisAlignment: MainAxisAlignment.start,
+                                    //         children: [
+                                    //           Icon(
+                                    //             Icons.star_border_outlined,
+                                    //             color: white,
+                                    //           ),
+                                    //           SizedBox(
+                                    //             width: w / 15,
+                                    //           ),
+                                    //           Text(
+                                    //             'Review',
+                                    //             style: TextStyle(
+                                    //               fontSize: 12.dp,
+                                    //               color: white,
+                                    //               fontWeight: FontWeight.bold,
+                                    //             ),
+                                    //           ),
+                                    //         ],
+                                    //       ),
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                    CustomDrawerButton(
+                                      icon: Icons.check_circle_outline_outlined,
+                                      onTap: () {
+                                        navigation(About());
+                                      },
+                                      text: 'About',
+                                    ),
+                                    CustomDrawerButton(
+                                      icon: Icons.add_call,
+                                      onTap: () {
+                                        navigation(ContactUs());
+                                      },
+                                      text: 'Contact Us',
+                                    ),
+
+                                    // Spacer(),
+
+                                    // Spacer(),
+                                  ],
                                 ),
-                                // InkWell(
-                                //   borderRadius: BorderRadius.circular(10),
-                                //   onTap: () async {
-                                //     final InAppReview inAppReview =
-                                //         InAppReview.instance;
-
-                                //     if (await inAppReview.isAvailable()) {
-                                //       inAppReview.requestReview();
-                                //     }
-
-                                //     Navigator.push(
-                                //       context,
-                                //       MaterialPageRoute(
-                                //           builder: (context) => Review()),
-                                //     );
-                                //   },
-                                //   child: Card(
-                                //     color: color.pwhite1.withOpacity(0.2),
-                                //     child: Padding(
-                                //       padding: const EdgeInsets.all(8.0),
-                                //       child: Row(
-                                //         mainAxisAlignment: MainAxisAlignment.start,
-                                //         children: [
-                                //           Icon(
-                                //             Icons.star_border_outlined,
-                                //             color: white,
-                                //           ),
-                                //           SizedBox(
-                                //             width: w / 15,
-                                //           ),
-                                //           Text(
-                                //             'Review',
-                                //             style: TextStyle(
-                                //               fontSize: 12.dp,
-                                //               color: white,
-                                //               fontWeight: FontWeight.bold,
-                                //             ),
-                                //           ),
-                                //         ],
-                                //       ),
-                                //     ),
-                                //   ),
-                                // ),
-                                CustomDrawerButton(
-                                  icon: Icons.check_circle_outline_outlined,
-                                  onTap: () {
-                                    navigation(About());
-                                  },
-                                  text: 'About',
-                                ),
-                                CustomDrawerButton(
-                                  icon: Icons.add_call,
-                                  onTap: () {
-                                    navigation(ContactUs());
-                                  },
-                                  text: 'Contact Us',
-                                ),
-
-                                // Spacer(),
-
-                                // Spacer(),
-                              ],
+                              ),
                             ),
-                          ),
+                            Spacer(),
+                            Text("Copyright 2024 by \nKoobiyo IT (pvt)Ltd",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: black1,
+                                  fontSize: 12.dp,
+                                  fontWeight: FontWeight.normal,
+                                )),
+                            SizedBox(
+                              height: 12,
+                            )
+                          ],
                         ),
-                        Spacer(),
-                        Text("Copyright 2024 by \nKoobiyo IT (pvt)Ltd",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: black1,
-                              fontSize: 12.dp,
-                              fontWeight: FontWeight.normal,
-                            )),
-                        SizedBox(
-                          height: 12,
-                        )
-                      ],
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
+          color.isanotherUserLog ? UserLoginCheck() : SizedBox()
+        ],
       ),
     );
   }

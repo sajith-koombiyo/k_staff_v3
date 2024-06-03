@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../../../class/class.dart';
 import '../../../provider/provider.dart';
 import '../../widget/nothig_found.dart';
+import '../navigation/navigation.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key, required this.userId});
@@ -50,107 +51,110 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget build(BuildContext context) {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: appliteBlue,
-          title: Text(
-            'Notification',
-            style: TextStyle(
-              fontSize: 18.dp,
-              color: white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          leading: IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(
-                Icons.arrow_back_ios_new,
+    return Consumer<ProviderS>(
+      builder: (context, provider, child) => Scaffold(
+          appBar: AppBar(
+            backgroundColor: appliteBlue,
+            title: Text(
+              'Notification',
+              style: TextStyle(
+                fontSize: 18.dp,
                 color: white,
-              )),
-        ),
-        backgroundColor: white,
-        body: RefreshIndicator(
-          onRefresh: () {
-            return getData();
-          },
-          child: SingleChildScrollView(
-            child: SizedBox(
-              height: h,
-              width: w,
-              child: Stack(
-                children: [
-                  Container(
-                    height: h,
-                    width: w,
-                  ),
-                  isLoading == false && notification.isEmpty
-                      ? NoData()
-                      : ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: notification.length,
-                          itemBuilder: (context, index) => Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(15),
-                              onTap: () async {
-                                await readNotification();
-                              },
-                              child: Card(
-                                elevation: 20,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          notification[index]['title'],
-                                          style: TextStyle(
-                                            fontSize: 18.dp,
-                                            color: black,
-                                            fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            leading: IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                  Icons.arrow_back_ios_new,
+                  color: white,
+                )),
+          ),
+          backgroundColor: white,
+          body: RefreshIndicator(
+            onRefresh: () {
+              return getData();
+            },
+            child: SingleChildScrollView(
+              child: SizedBox(
+                height: h,
+                width: w,
+                child: Stack(
+                  children: [
+                    Container(
+                      height: h,
+                      width: w,
+                    ),
+                    isLoading == false && notification.isEmpty
+                        ? NoData()
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: notification.length,
+                            itemBuilder: (context, index) => Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(15),
+                                onTap: () async {
+                                  await readNotification();
+                                },
+                                child: Card(
+                                  elevation: 20,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            notification[index]['title'],
+                                            style: TextStyle(
+                                              fontSize: 18.dp,
+                                              color: black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        height: 12,
-                                      ),
-                                      Text(
-                                        notification[index]['message'],
-                                        style: TextStyle(
-                                          fontSize: 12.dp,
-                                          color: black1,
-                                          fontWeight: FontWeight.normal,
+                                        SizedBox(
+                                          height: 12,
                                         ),
-                                      ),
-                                      SizedBox(
-                                        height: 12,
-                                      ),
-                                      Container(
-                                        alignment: Alignment.centerRight,
-                                        child: Text(
-                                          notification[index]['notify_date'],
+                                        Text(
+                                          notification[index]['message'],
                                           style: TextStyle(
                                             fontSize: 12.dp,
-                                            color: black2,
+                                            color: black1,
                                             fontWeight: FontWeight.normal,
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                        SizedBox(
+                                          height: 12,
+                                        ),
+                                        Container(
+                                          alignment: Alignment.centerRight,
+                                          child: Text(
+                                            notification[index]['notify_date'],
+                                            style: TextStyle(
+                                              fontSize: 12.dp,
+                                              color: black2,
+                                              fontWeight: FontWeight.normal,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                  isLoading ? Loader().loader(context) : SizedBox()
-                ],
+                    isLoading ? Loader().loader(context) : SizedBox(),
+                    provider.isanotherUserLog ? UserLoginCheck() : SizedBox()
+                  ],
+                ),
               ),
             ),
-          ),
-        ));
+          )),
+    );
   }
 }

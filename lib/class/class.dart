@@ -1,11 +1,15 @@
 // import 'package:awesome_dialog/awesome_dialog.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/uI/login_and_signup/login.dart';
+import 'package:flutter_application_2/uI/widget/diloag_button.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
+
+import '../app_details/color.dart';
 
 class Navigation {
   Nav(BuildContext context, Widget page) {
@@ -91,8 +95,6 @@ class notification {
 }
 
 class CustomDialog {
-
-
   alert(BuildContext context, String title, String desc, VoidCallback onTap) {
     QuickAlert.show(
       onConfirmBtnTap: onTap,
@@ -116,6 +118,72 @@ class CustomDialog {
       confirmBtnText: 'Yes',
       cancelBtnText: 'No',
       confirmBtnColor: Colors.green,
+    );
+  }
+
+  userLoginCheck(BuildContext context) {
+    var h = MediaQuery.of(context).size.height;
+    var w = MediaQuery.of(context).size.width;
+    showDialog(
+      barrierColor: Colors.transparent,
+      barrierDismissible: false,
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.transparent,
+        content: Container(
+          color: Colors.transparent,
+          height: h,
+          width: w,
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 2, 26, 63).withOpacity(0.9),
+                    borderRadius: BorderRadius.circular(25)),
+                height: h / 4,
+                width: w,
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
+                        "Your user account uses another device. \nPlease log out.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 17,
+                            color: white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Spacer(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        DialogButton(
+                            text: 'Log out',
+                            onTap: () {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const Login()));
+                            },
+                            buttonHeight: h / 17,
+                            width: w / 2,
+                            color: Color.fromARGB(57, 255, 238, 6)),
+                      ],
+                    ),
+                    Spacer(),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 

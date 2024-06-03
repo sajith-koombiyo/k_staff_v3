@@ -10,6 +10,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_application_2/class/class.dart';
 import 'package:flutter_application_2/provider/provider.dart';
+import 'package:flutter_application_2/uI/widget/diloag_button.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:page_transition/page_transition.dart';
@@ -25,16 +26,14 @@ import '../../../app_details/color.dart';
 import '../../../app_details/const.dart';
 import '../../../app_details/size.dart';
 import '../../home.dart';
+import '../../login_and_signup/login.dart';
 import '../../widget/tips_button.dart';
 import '../account/account.dart';
 import '../drawer/drawer.dart';
-import '../drawer/my_delivery/voice_call.dart';
 import '../drawer/my_deposit/my_deposite.dart';
 import '../map/map.dart';
 import '../notification/notification.dart';
 import 'package:badges/badges.dart' as badges;
-
-import '../testing/mytest.dart';
 
 class NavigationScreen extends StatefulWidget {
   const NavigationScreen(
@@ -617,7 +616,8 @@ class _NavigationScreenState extends State<NavigationScreen>
                             bottom: 0,
                             top: 0,
                             child: Loader().loader(context))
-                        : SizedBox()
+                        : SizedBox(),
+                    provider.isanotherUserLog ? UserLoginCheck() : SizedBox()
                   ],
                 ),
               )),
@@ -870,5 +870,68 @@ class userLoaction {
           cancelBtnText: 'No',
           confirmBtnColor: Color.fromARGB(255, 25, 114, 174),
         ));
+  }
+}
+
+class UserLoginCheck extends StatelessWidget {
+  const UserLoginCheck({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    var h = MediaQuery.of(context).size.height;
+    var w = MediaQuery.of(context).size.width;
+    return Container(
+      color: Colors.transparent,
+      height: h,
+      width: w,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            decoration: BoxDecoration(
+                color: Color.fromARGB(255, 2, 26, 63).withOpacity(0.9),
+                borderRadius: BorderRadius.circular(25)),
+            height: h / 4,
+            width: w,
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Spacer(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Text(
+                    "Your user account uses another device. \nPlease log out.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 17,
+                        color: white,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Spacer(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    DialogButton(
+                        text: 'Log out',
+                        onTap: () {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const Login()));
+                        },
+                        buttonHeight: h / 17,
+                        width: w / 2,
+                        color: Color.fromARGB(57, 255, 238, 6)),
+                  ],
+                ),
+                Spacer(),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

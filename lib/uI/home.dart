@@ -112,7 +112,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('userkey');
-    var temp = await CustomApi().dashboardData(id.toString());
+    var temp = await CustomApi().dashboardData(id.toString(), context);
 
     setState(() {
       userId = id.toString();
