@@ -20,8 +20,8 @@ import 'package:provider/provider.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
-import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
+// import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+// import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 import '../../../api/api.dart';
 import '../../../app_details/color.dart';
 import '../../../app_details/const.dart';
@@ -95,7 +95,7 @@ class _NavigationScreenState extends State<NavigationScreen>
 
   @override
   void initState() {
-    onUserLogin();
+    // onUserLogin();
     notificationCount();
     data();
     super.initState();
@@ -683,128 +683,128 @@ class _NavigationScreenState extends State<NavigationScreen>
     });
   }
 
-  void onUserLogin() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var userId = await prefs.get(
-      'user_id',
-    );
+  // void onUserLogin() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   var userId = await prefs.get(
+  //     'user_id',
+  //   );
 
-    ZegoUIKitPrebuiltCallInvitationService().init(
-      uiConfig: ZegoCallInvitationUIConfig(),
-      invitationEvents: ZegoUIKitPrebuiltCallInvitationEvents(
-        onOutgoingCallCancelButtonPressed: () {
-          print(
-              'xxxxxqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxaaaa');
-        },
-        onError: (p0) {
-          print(p0);
-          print(
-              'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxaaaa');
-        },
-        onOutgoingCallDeclined: (callID, callee, customData) {
-          Navigator.pop(context);
-          print(customData);
-          print(callID);
-          print(callee);
-          print(
-              'xxxxxxxxxxxxxxxxxsssssssssssxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxaaaa');
-        },
+  //   ZegoUIKitPrebuiltCallInvitationService().init(
+  //     uiConfig: ZegoCallInvitationUIConfig(),
+  //     invitationEvents: ZegoUIKitPrebuiltCallInvitationEvents(
+  //       onOutgoingCallCancelButtonPressed: () {
+  //         print(
+  //             'xxxxxqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxaaaa');
+  //       },
+  //       onError: (p0) {
+  //         print(p0);
+  //         print(
+  //             'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxaaaa');
+  //       },
+  //       onOutgoingCallDeclined: (callID, callee, customData) {
+  //         Navigator.pop(context);
+  //         print(customData);
+  //         print(callID);
+  //         print(callee);
+  //         print(
+  //             'xxxxxxxxxxxxxxxxxsssssssssssxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxaaaa');
+  //       },
 
-        onInvitationUserStateChanged: (value) {
-          print("$value xxxxxxxxxxxxxxxxxxxxxxxxxaaaaaaaaaaaaaaaa");
-          if (value[0].state ==
-              ZegoSignalingPluginInvitationUserState.rejected) {
-            notification().warning(context, 'rejected');
-            Navigator.pop(context);
-          }
-          if (value[0].state ==
-              ZegoSignalingPluginInvitationUserState.cancelled) {
-            notification().warning(context, 'cancelled');
-            Navigator.pop(context);
-          }
-          if (value[0].state ==
-              ZegoSignalingPluginInvitationUserState.offline) {
-            notification().warning(context, 'offline');
-          }
-          if (value[0].state ==
-              ZegoSignalingPluginInvitationUserState.timeout) {
-            notification().warning(context, 'timeout');
-          }
-          if (value[0].state == ZegoSignalingPluginInvitationUserState.quited) {
-            notification().warning(context, 'quited');
-          }
-          print(
-              'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxaaaa');
-        },
-        onOutgoingCallTimeout: (callID, callees, isVideoCall) {
-          Navigator.pop(context);
-        },
-        onIncomingCallCanceled: (callID, caller, customData) {
-          print(
-              '--------------------------------------------------------------------------------');
+  //       onInvitationUserStateChanged: (value) {
+  //         print("$value xxxxxxxxxxxxxxxxxxxxxxxxxaaaaaaaaaaaaaaaa");
+  //         if (value[0].state ==
+  //             ZegoSignalingPluginInvitationUserState.rejected) {
+  //           notification().warning(context, 'rejected');
+  //           Navigator.pop(context);
+  //         }
+  //         if (value[0].state ==
+  //             ZegoSignalingPluginInvitationUserState.cancelled) {
+  //           notification().warning(context, 'cancelled');
+  //           Navigator.pop(context);
+  //         }
+  //         if (value[0].state ==
+  //             ZegoSignalingPluginInvitationUserState.offline) {
+  //           notification().warning(context, 'offline');
+  //         }
+  //         if (value[0].state ==
+  //             ZegoSignalingPluginInvitationUserState.timeout) {
+  //           notification().warning(context, 'timeout');
+  //         }
+  //         if (value[0].state == ZegoSignalingPluginInvitationUserState.quited) {
+  //           notification().warning(context, 'quited');
+  //         }
+  //         print(
+  //             'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxaaaa');
+  //       },
+  //       onOutgoingCallTimeout: (callID, callees, isVideoCall) {
+  //         Navigator.pop(context);
+  //       },
+  //       onIncomingCallCanceled: (callID, caller, customData) {
+  //         print(
+  //             '--------------------------------------------------------------------------------');
 
-          if (callID != userId) {}
-        },
-        onIncomingCallDeclineButtonPressed: () {
-          print(
-              '------ssssssssssssss--------------------------------------------------------------------------');
-        },
+  //         if (callID != userId) {}
+  //       },
+  //       onIncomingCallDeclineButtonPressed: () {
+  //         print(
+  //             '------ssssssssssssss--------------------------------------------------------------------------');
+  //       },
 
-        // onOutgoingCallDeclined: (callID, callee, customData) async {
-        //   // ZegoUIKitPrebuiltCallInvitationService().cancel(callees: [callee]);
-        //   // await notification().info(context, 'call canceled');
-        //   // await ZegoCallEndEvent(
-        //   //     callID: callID,
-        //   //     reason: ZegoCallEndReason.kickOut,
-        //   //     isFromMinimizing: true);
-        //   back2('Call Declined');
-        // },
-        onOutgoingCallRejectedCauseBusy: (callID, callee, customData) {
-          print(
-              '------------sssssssssssssss--------------------------------------------------------------------');
-        },
-      ),
-      events: ZegoUIKitPrebuiltCallEvents(room: ZegoCallRoomEvents(
-        onStateChanged: (p0) {
-          print(p0);
-          print('ddddddddddddddddddddddddddddddddddddddddddddd');
-        },
-      )),
-      notificationConfig: ZegoCallInvitationNotificationConfig(
-          androidNotificationConfig: ZegoCallAndroidNotificationConfig(
-              channelID: "ZegoUIKit",
-              channelName: "Call Notifications",
-              sound: "notification",
-              icon: "appicon",
-              showFullScreen: true)),
-      appID: appId /*input your AppID*/,
-      appSign: signId /*input your AppSign*/,
-      userID: userId.toString(),
-      userName: userId.toString(),
-      plugins: [ZegoUIKitSignalingPlugin()],
-      requireConfig: (ZegoCallInvitationData data) {
-        var config = (data.invitees.length > 1)
-            ? ZegoCallType.videoCall == data.type
-                ? ZegoUIKitPrebuiltCallConfig.groupVideoCall()
-                : ZegoUIKitPrebuiltCallConfig.groupVoiceCall()
-            : ZegoCallType.videoCall == data.type
-                ? ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall()
-                : ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall();
+  //       // onOutgoingCallDeclined: (callID, callee, customData) async {
+  //       //   // ZegoUIKitPrebuiltCallInvitationService().cancel(callees: [callee]);
+  //       //   // await notification().info(context, 'call canceled');
+  //       //   // await ZegoCallEndEvent(
+  //       //   //     callID: callID,
+  //       //   //     reason: ZegoCallEndReason.kickOut,
+  //       //   //     isFromMinimizing: true);
+  //       //   back2('Call Declined');
+  //       // },
+  //       onOutgoingCallRejectedCauseBusy: (callID, callee, customData) {
+  //         print(
+  //             '------------sssssssssssssss--------------------------------------------------------------------');
+  //       },
+  //     ),
+  //     events: ZegoUIKitPrebuiltCallEvents(room: ZegoCallRoomEvents(
+  //       onStateChanged: (p0) {
+  //         print(p0);
+  //         print('ddddddddddddddddddddddddddddddddddddddddddddd');
+  //       },
+  //     )),
+  //     notificationConfig: ZegoCallInvitationNotificationConfig(
+  //         androidNotificationConfig: ZegoCallAndroidNotificationConfig(
+  //             channelID: "ZegoUIKit",
+  //             channelName: "Call Notifications",
+  //             sound: "notification",
+  //             icon: "appicon",
+  //             showFullScreen: true)),
+  //     appID: appId /*input your AppID*/,
+  //     appSign: signId /*input your AppSign*/,
+  //     userID: userId.toString(),
+  //     userName: userId.toString(),
+  //     plugins: [ZegoUIKitSignalingPlugin()],
+  //     requireConfig: (ZegoCallInvitationData data) {
+  //       var config = (data.invitees.length > 1)
+  //           ? ZegoCallType.videoCall == data.type
+  //               ? ZegoUIKitPrebuiltCallConfig.groupVideoCall()
+  //               : ZegoUIKitPrebuiltCallConfig.groupVoiceCall()
+  //           : ZegoCallType.videoCall == data.type
+  //               ? ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall()
+  //               : ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall();
 
-        // Modify your custom configurations here.
-        config
-          ..turnOnCameraWhenJoining = false
-          ..turnOnMicrophoneWhenJoining = false
-          ..useSpeakerWhenJoining = true;
-        config.topMenuBar.isVisible = true;
-        ZegoUIKitPrebuiltCallInvitationService()
-          ..innerText.incomingCallPageAcceptButton = "Accept"
-          ..innerText.incomingCallPageDeclineButton = "Decline";
+  //       // Modify your custom configurations here.
+  //       config
+  //         ..turnOnCameraWhenJoining = false
+  //         ..turnOnMicrophoneWhenJoining = false
+  //         ..useSpeakerWhenJoining = true;
+  //       config.topMenuBar.isVisible = true;
+  //       ZegoUIKitPrebuiltCallInvitationService()
+  //         ..innerText.incomingCallPageAcceptButton = "Accept"
+  //         ..innerText.incomingCallPageDeclineButton = "Decline";
 
-        return config;
-      },
-    );
-  }
+  //       return config;
+  //     },
+  //   );
+  // }
 
   back2(String text) async {
     await notification().warning(context, text);

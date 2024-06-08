@@ -14,7 +14,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+// import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import '../app_details/color.dart';
 import '../provider/provider.dart';
 import 'main/drawer/my_delivery/my_delivery.dart';
@@ -25,8 +25,8 @@ import 'widget/home_screen_widget/card.dart';
 import 'widget/home_screen_widget/chart.dart';
 import 'widget/home_screen_widget/dashbord_card_2.dart';
 import 'widget/home_screen_widget/home_button.dart';
-import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
-import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
+// import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+// import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 
 class Home extends StatefulWidget {
   const Home({
@@ -175,19 +175,19 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     return Scaffold(
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 100),
-        child: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => VoiceCall(
-                          id: userId,
-                        )));
-          },
-        ),
-      ),
+      // floatingActionButton: Padding(
+      //   padding: const EdgeInsets.only(bottom: 100),
+      //   child: FloatingActionButton(
+      //     onPressed: () {
+      //       Navigator.push(
+      //           context,
+      //           MaterialPageRoute(
+      //               builder: (context) => VoiceCall(
+      //                     id: userId,
+      //                   )));
+      //     },
+      //   ),
+      // ),
       backgroundColor: Colors.white,
       body: RefreshIndicator(
         onRefresh: () {

@@ -66,12 +66,17 @@ class _WorkDetailsState extends State<WorkDetails> {
   String newImage4 = '';
   String newImage5 = '';
   String newImage6 = '';
+  String newImage7 = '';
+  String newImage8 = '';
   String newImage_64 = '';
   String newImage2_64 = '';
   String newImage3_64 = '';
   String newImage4_64 = '';
   String newImage5_64 = '';
   String newImage6_64 = '';
+  String newImage7_64 = '';
+  String newImage8_64 = '';
+  String newImage8_64IsEmpty = '1';
   String designation = "";
   bool isLoading = false;
   final List<String> items = [
@@ -139,7 +144,10 @@ class _WorkDetailsState extends State<WorkDetails> {
                     sAmount.text.isNotEmpty &&
                     provider.salaryType.isNotEmpty) {
                   if (provider.designation != '55') {
+                    print(
+                        '2222222222222222222222222211111111111111111111111111111111111111122');
                     var res = await CustomApi().addUser(
+                      context,
                       widget.name,
                       widget.addres,
                       widget.pConNumber,
@@ -162,8 +170,10 @@ class _WorkDetailsState extends State<WorkDetails> {
 
                     var respp = jsonDecode(res);
 
-                    if (respp['msg'] == 'Data inserted success') {
+                    if (respp['status'] == 1) {
+                      print('111111111111111111111111111111');
                       var resp = await CustomApi().addUserImages(
+                          context,
                           respp['temp_id'].toString(),
                           '', //bond_type,
                           '0', // idFrontIsEmpty,
@@ -184,29 +194,41 @@ class _WorkDetailsState extends State<WorkDetails> {
                           '', // vehicle_license,
                           '', // vehicle_front,
                           '', // vehicle_right,
-                          '' // vehicle_back,
+                          '', // vehicle_back,
+                          //sssssssssss
+                          '', // valuation_report  image
+                          '', // valuation_report  image is empty
+                          '', //chkByAM  image
+                          '' //chkByAM  image is empty
                           );
 
                       var response = jsonDecode(resp);
                       // var document = parse(response['msg']);
 
                       notification().info(context, response['msg'].toString());
-                      if (response['msg'] == 'Data inserted success') {
+                      if (response['status'] == 1) {
                         Navigator.pop(context);
                         Navigator.pop(context);
+                      }
+                      if (response['status'] == 0) {
+                        notification()
+                            .info(context, response['msg'].toString());
                       }
                     } else {
                       notification().warning(context, "Something went wrong");
                     }
                   } else {
                     if (provider.bondType == '1') {
+                      print('111111111111111111111111111111');
                       if (newImage.isNotEmpty &&
                           newImage2.isNotEmpty &&
                           newImage3.isNotEmpty &&
                           newImage4.isNotEmpty &&
                           newImage5.isNotEmpty &&
                           newImage6.isNotEmpty) {
+                        print('11111111111111111111111dddddddddddd1111111');
                         var res = await CustomApi().addUser(
+                          context,
                           widget.name, widget.addres,
                           widget.pConNumber,
                           widget.oConnumber,
@@ -227,9 +249,10 @@ class _WorkDetailsState extends State<WorkDetails> {
                         );
 
                         var respp = jsonDecode(res);
-
-                        if (respp['msg'] == 'Data inserted success') {
+                        print(respp);
+                        if (respp['status'] == 1) {
                           var resp = await CustomApi().addUserImages(
+                              context,
                               respp['temp_id'].toString(),
                               '1', //bond_type,
                               '0', // idFrontIsEmpty,
@@ -250,20 +273,29 @@ class _WorkDetailsState extends State<WorkDetails> {
                               newImage3_64, // vehicle_license,
                               newImage4_64, // vehicle_front,
                               newImage5_64, // vehicle_right,
-                              newImage6_64 // vehicle_back,
+                              newImage6_64, // vehicle_back,
+                              //sssssssssss
+                              newImage7_64, // valuation_report  image
+                              '0', // valuation_report  image is empty
+                              newImage8_64, //chkByAM  image
+                              newImage8_64.isEmpty
+                                  ? '1'
+                                  : '0' //chkByAM  image is empty
                               );
 
                           var response = jsonDecode(resp);
                           notification()
                               .info(context, response['msg'].toString());
 
-                          if (response['msg'] == 'Data inserted success') {
+                          if (response['status'] == 1) {
                             Navigator.pop(context);
                             Navigator.pop(context);
                           }
                         } else {
-                          notification()
-                              .warning(context, "Something went wrong");
+                          print(respp['msg'].toString());
+                          String data =
+                              removeAllHtmlTags(respp['msg'].toString());
+                          notification().warning(context, data);
                         }
                       } else {
                         notification()
@@ -271,6 +303,7 @@ class _WorkDetailsState extends State<WorkDetails> {
                       }
                     } else {
                       var res = await CustomApi().addUser(
+                        context,
                         widget.name,
                         widget.addres,
                         widget.pConNumber,
@@ -549,6 +582,41 @@ class _WorkDetailsState extends State<WorkDetails> {
                                                   () {
                                                 show(6);
                                               }),
+                                              SizedBox(
+                                                height: 12,
+                                              ),
+                                              Text(
+                                                'Valuation Report',
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              SizedBox(
+                                                height: 12,
+                                              ),
+                                              imgCard(newImage7,
+                                                  'Please upload \nValuation Report',
+                                                  () {
+                                                show(7);
+                                              }),
+                                              SizedBox(
+                                                height: 12,
+                                              ),
+                                              Text(
+                                                'ChkBy AM ',
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              SizedBox(
+                                                height: 12,
+                                              ),
+                                              imgCard(newImage8,
+                                                  'Please upload \nimage', () {
+                                                show(8);
+                                              }),
                                             ],
                                           )
                                         : SizedBox()
@@ -570,6 +638,12 @@ class _WorkDetailsState extends State<WorkDetails> {
         ),
       ),
     );
+  }
+
+  String removeAllHtmlTags(String htmlText) {
+    RegExp exp = RegExp(r"<[^>]*>", multiLine: true, caseSensitive: true);
+
+    return htmlText.replaceAll(exp, '');
   }
 
   Widget imgCard(String img, String title, VoidCallback onTap) {
@@ -645,6 +719,12 @@ class _WorkDetailsState extends State<WorkDetails> {
       } else if (front == 6) {
         newImage6_64 = "data:image/jpeg;base64,$base64Image";
         newImage6 = image!.path;
+      } else if (front == 7) {
+        newImage7_64 = "data:image/jpeg;base64,$base64Image";
+        newImage7 = image!.path;
+      } else if (front == 8) {
+        newImage8_64 = "data:image/jpeg;base64,$base64Image";
+        newImage8 = image!.path;
       }
     });
   }
@@ -673,6 +753,12 @@ class _WorkDetailsState extends State<WorkDetails> {
       } else if (front == 6) {
         newImage6_64 = "data:image/jpeg;base64,$base64Image";
         newImage6 = image!.path;
+      } else if (front == 7) {
+        newImage7_64 = "data:image/jpeg;base64,$base64Image";
+        newImage7 = image!.path;
+      } else if (front == 7) {
+        newImage7_64 = "data:image/jpeg;base64,$base64Image";
+        newImage7 = image!.path;
       }
     });
   }

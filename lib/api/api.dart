@@ -1146,6 +1146,7 @@ class CustomApi {
   // add user screen data
 
   addUser(
+    BuildContext context,
     String name,
     String address,
     String personal_contact,
@@ -1165,8 +1166,9 @@ class CustomApi {
     String vehicle_no,
     String vehicle_amount,
   ) async {
+    print('ccccccccccccccccccccc');
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? id = await prefs.getString('userId');
+    final String? id = await prefs.getString('userkey');
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
@@ -1194,13 +1196,15 @@ class CustomApi {
         'vehicle_amount': vehicle_amount,
         'added_user_id': id
       });
-
-      //return responsee.body;
+      return responsee.body;
+    } else {
+      notification().warning(context, 'No Internet');
     }
   }
 // add user images upload
 
   addUserImages(
+    BuildContext context,
     String tempId,
     String bond_type,
     String idFrontIsEmpty,
@@ -1222,6 +1226,10 @@ class CustomApi {
     String vehicle_front,
     String vehicle_right,
     String vehicle_back,
+    String valuation_report,
+    String valReportIsEmpty,
+    String chkByAM,
+    String chkByAMIsEmpty,
   ) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('userId');
@@ -1251,7 +1259,11 @@ class CustomApi {
         'vehicle_license': vehicle_license,
         'vehicle_front': vehicle_front,
         'vehicle_right': vehicle_right,
-        'vehicle_back': vehicle_back
+        'vehicle_back': vehicle_back,
+        'valuation_report': valuation_report,
+        'valReportIsEmpty': valReportIsEmpty,
+        'chkByAM': chkByAM,
+        'chkByAMIsEmpty': chkByAMIsEmpty
       });
 
       return responsee.body;

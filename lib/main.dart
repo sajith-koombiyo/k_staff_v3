@@ -6,8 +6,8 @@ import 'package:flutter_application_2/push_notification/push_notification.dart';
 import 'package:flutter_application_2/uI/splash/splash.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:provider/provider.dart';
-import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
-import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
+// import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+// import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 import 'provider/provider.dart';
 import 'uI/app_permission/app_permission.dart';
 
@@ -17,14 +17,14 @@ void main() async {
   await Firebase.initializeApp();
   await notify().initNotifications();
 
-  ZegoUIKitPrebuiltCallInvitationService().setNavigatorKey(navigatorKey);
+  // ZegoUIKitPrebuiltCallInvitationService().setNavigatorKey(navigatorKey);
 
-  // call the useSystemCallingUI
-  ZegoUIKit().initLog().then((value) {
-    ZegoUIKitPrebuiltCallInvitationService().useSystemCallingUI(
-      [ZegoUIKitSignalingPlugin()],
-    );
-  });
+  // // call the useSystemCallingUI
+  // ZegoUIKit().initLog().then((value) {
+  //   ZegoUIKitPrebuiltCallInvitationService().useSystemCallingUI(
+  //     [ZegoUIKitSignalingPlugin()],
+  //   );
+  // });
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => ProviderS()),
