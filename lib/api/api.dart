@@ -46,6 +46,11 @@ class CustomApi {
         var urll = '${ApiUrl}/Version/users';
         var res = await https.post(Uri.parse(urll), body: {});
         var responce = jsonDecode(res.body);
+        if (res.statusCode == 200) {
+          Provider.of<ProviderS>(context, listen: false).isServerDown = true;
+        } else {
+          Provider.of<ProviderS>(context, listen: false).isServerDown = false;
+        }
         print(responce);
         if (responce == "3.0") {
           late String installDate;
@@ -580,7 +585,8 @@ class CustomApi {
       String dropdownValue,
       String dropdownValue2,
       String cod,
-      String rescheduleDate) async {
+      String rescheduleDate,
+      String oId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('userkey');
     var connectivityResult = await (Connectivity().checkConnectivity());
@@ -693,6 +699,41 @@ class CustomApi {
         } else {
           notification().info(context, 'Please Select the Update Type');
         }
+      } else if (statusType == 4) {
+        print(statusType);
+        print(wayBillId);
+        print(dropdownValue2);
+
+        if (dropdownValue2 != '') {
+          print('wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww');
+          final apiUrl = '${ApiUrl}/Allorders/remark';
+          var responses =
+              await https.post(headers: headers, Uri.parse(apiUrl), body: {
+            "order_id": oId,
+            "remarks": dropdownValue2.toString(),
+            "internal": "",
+            "branch_id": Provider.of<ProviderS>(context, listen: false).bId,
+          });
+          print(wayBillId);
+          print(responses.body);
+          print('ssssssssssssss');
+          var data = jsonDecode(responses.body);
+
+          print(data);
+          if (data['status'] == 200) {
+            notification().info(context, 'Remark successfully Updated');
+            Navigator.pop(context);
+          } else if (data['status'] == 403) {
+            Provider.of<ProviderS>(context, listen: false).isanotherUserLog =
+                true;
+          } else if (data['status'] == 406) {
+            notification().info(context, 'Not Acceptable: Please Try Again');
+          }
+
+          return data['status'];
+        } else {
+          notification().info(context, 'Please Select the Update Type');
+        }
       } else {
         notification().info(context, 'Please Select the Reason');
       }
@@ -742,8 +783,9 @@ class CustomApi {
           headers: headers,
           Uri.parse(apiUrl),
           body: {'phone': phone, 'pick_id': pickId});
-
-      if (response.body == '"SMS Sent To Client.."') {
+      print(response.body);
+      var res = jsonDecode(response.body);
+      if (res['status'] == 200) {
         notification().info(context, 'SMS Sent To Client..');
       } else {}
       return response.body;
@@ -795,7 +837,7 @@ class CustomApi {
             headers: headers,
             Uri.parse(apiUrl),
             body: {'pick_id': pickId, 'qty': qty});
-
+        print(resp.body);
         // testingddddddddddddddddddddd   ddddddddddddddddddddddddddddddddddddd
 
         // notification().info(context, newString);
@@ -849,6 +891,7 @@ class CustomApi {
       return data['users'];
     }
   }
+// my deposit screen data
 
   Future getMyDeposit(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -1250,6 +1293,170 @@ class CustomApi {
       if (data['status'] == 403) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
         return [];
+      }
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
+
+  ddUpdate(
+    BuildContext context,
+    String oderId,
+  ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      print(id);
+      print('ssssssssssssssssssss');
+      final apiUrl = '${ApiUrl}Pending_dd/confirm';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      // Make POST request
+      var res = await https.post(
+          headers: headers, Uri.parse(apiUrl), body: {"order_id": oderId});
+      var data = jsonDecode(res.body);
+      print(data);
+
+      if (data['status'] == 200) {
+        notification().info(context, 'Pending DD successfully Confirmed');
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+        print(data);
+        return data['branches'];
+      }
+      if (data['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+        return [];
+      }
+      if (data['status'] == 406) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+        notification()
+            .warning(context, 'Not Applicable: Database operation faile');
+        return [];
+      }
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
+
+  userActiveBranches(
+    BuildContext context,
+  ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      print(id);
+      final apiUrl = '${ApiUrl}/Mybranches/users';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      // Make POST request
+      var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {});
+      var data = jsonDecode(res.body);
+
+      if (data['status'] == 200) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+        print(data);
+        return data['branches'];
+      }
+      if (data['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+        return [];
+      }
+      if (data['status'] == 404) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+        notification().warning(context, 'No branches found');
+        return [];
+      }
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
+  // atendance screen data
+
+  Future attendanceStartMeter(BuildContext context, String img) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      final apiUrl = '${ApiUrl}/Vehicle_meter/start';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      var resp = await https.post(
+          headers: headers,
+          Uri.parse(apiUrl),
+          body: {"start": "1234", "start_img": "$img"});
+
+      print(resp.body);
+      return jsonDecode(resp.body);
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
+
+  Future attendanceEndMeter(BuildContext context, String img, String mid,
+      String end, String donKm) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      final apiUrl = '${ApiUrl}/Vehicle_meter/end';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      var resp = await https.post(headers: headers, Uri.parse(apiUrl), body: {
+        "mid": "$mid",
+        "end": "$end",
+        "end_img": "$img",
+        "done_km": "$donKm"
+      });
+      return jsonDecode(resp.body);
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
+
+  attendanceVehicleMeter(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      final apiUrl = '${ApiUrl}/Vehicle_meter';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      var resp =
+          await https.post(headers: headers, Uri.parse(apiUrl), body: {});
+
+      var res = jsonDecode(resp.body);
+      print(res);
+      if (res['status'] == 404) {
+        return 1;
+      }
+      if (res['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+        return 0;
+      } else if (res['status'] == 200) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+        List data = res['latest_meter'];
+
+        return data;
       }
     } else {
       notification().warning(context, 'No Internet');

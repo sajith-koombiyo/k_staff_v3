@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_application_2/class/class.dart';
+import 'package:flutter_application_2/class/location.dart';
 import 'package:flutter_application_2/provider/provider.dart';
 import 'package:flutter_application_2/uI/widget/diloag_button.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
@@ -224,7 +225,7 @@ class _NavigationScreenState extends State<NavigationScreen>
       bId = "0" + bId;
     }
     Provider.of<ProviderS>(context, listen: false).dpCode = branchId + bId;
-
+    Provider.of<ProviderS>(context, listen: false).bId = branchId;
     setState(() {
       isLoading = false;
     });
@@ -293,6 +294,18 @@ class _NavigationScreenState extends State<NavigationScreen>
                   ),
                 ),
                 actions: [
+                  _selectedIndex == 1 && provider.isAppbarsheerOpen
+                      ? IconButton(
+                          onPressed: () async {
+                            MapUtils.openMap(
+                                provider.mapDLat, provider.mapDLong);
+                          },
+                          icon: SizedBox(
+                            height: 40,
+                            child: Image.asset(
+                                'assets/icons8-google-maps-old-48.png'),
+                          ))
+                      : SizedBox(),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: CircleAvatar(

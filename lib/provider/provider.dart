@@ -39,6 +39,13 @@ class ProviderS with ChangeNotifier {
     notifyListeners();
   }
 
+  String _bId = '';
+  String get bId => _bId;
+  set bId(String i) {
+    _bId = i;
+    notifyListeners();
+  }
+
   double _progress = 0.0;
   double get progress => _progress;
   set progress(double i) {
@@ -57,6 +64,14 @@ class ProviderS with ChangeNotifier {
   bool get location => _location;
   set location(bool i) {
     _location = i;
+    notifyListeners();
+  }
+
+  bool _isServerDown = false;
+  bool get isServerDown => _isServerDown;
+
+  set isServerDown(bool time) {
+    _isServerDown = time;
     notifyListeners();
   }
 
@@ -116,6 +131,30 @@ class ProviderS with ChangeNotifier {
     notifyListeners();
   }
 
+  bool _isAppbarsheerOpen = false;
+  bool get isAppbarsheerOpen => _isAppbarsheerOpen;
+
+  set isAppbarsheerOpen(bool time) {
+    _isAppbarsheerOpen = time;
+    notifyListeners();
+  }
+
+  double _mapDLat = 0.0;
+  double get mapDLat => _mapDLat;
+
+  set mapDLat(double time) {
+    _mapDLat = time;
+    notifyListeners();
+  }
+
+  double _mapDLong = 0.0;
+  double get mapDLong => _mapDLong;
+
+  set mapDLong(double time) {
+    _mapDLong = time;
+    notifyListeners();
+  }
+
   String _noteCount = '';
   String get noteCount => _noteCount;
   set noteCount(String i) {
@@ -143,6 +182,13 @@ class ProviderDropDown with ChangeNotifier {
   String get branch => _branch;
   set branch(String i) {
     _branch = i;
+    notifyListeners();
+  }
+
+  String _branchID = '';
+  String get branchID => _branchID;
+  set branchID(String i) {
+    _branchID = i;
     notifyListeners();
   }
 

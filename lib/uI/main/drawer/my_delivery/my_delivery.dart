@@ -66,7 +66,7 @@ class _MyDeliveryState extends State<MyDelivery> {
   @override
   void initState() {
     getData(true);
-
+    dropDownData();
     // TODO: implement initState
     super.initState();
   }
@@ -75,7 +75,7 @@ class _MyDeliveryState extends State<MyDelivery> {
     setState(() {
       isLoading = load;
     });
-    await dropDownData();
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('user_id');
 
@@ -243,9 +243,11 @@ class _MyDeliveryState extends State<MyDelivery> {
                                               codController.clear();
                                             });
                                             itemDetails(
-                                                dataList[index]['waybill_id'],
-                                                updateBTN,
-                                                dataList[index]['cod_final']);
+                                              dataList[index]['waybill_id'],
+                                              updateBTN,
+                                              dataList[index]['cod_final'],
+                                              dataList[index]['oid'],
+                                            );
                                           },
                                           onLongPress: () {},
                                           child: Card(
@@ -543,7 +545,7 @@ class _MyDeliveryState extends State<MyDelivery> {
     );
   }
 
-  itemDetails(String waybill, bool updateBTN, String cod) {
+  itemDetails(String waybill, bool updateBTN, String cod, String oId) {
     String? dropdownvalue;
     String? dropdownvalue2;
     String dropdownvalueItem = '';
@@ -591,9 +593,9 @@ class _MyDeliveryState extends State<MyDelivery> {
                               dropdownvalueItem.toString(),
                               dropdownvalueItem2.toString(),
                               codController.text,
-                              provider.fomatedDate);
+                              provider.fomatedDate,
+                              oId);
 
-                          print(res);
                           if (res == 200) {
                             getData(false);
                             codController.clear();

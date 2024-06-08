@@ -38,7 +38,7 @@ class _MapScreenState extends State<MapScreen> {
   Position? position;
   List pickupLocation = [];
   List deliveryLocation = [];
-  bool isOpen = false;
+  int qnt = 0;
   bool isDelivery = false;
   String accept = '';
   int x = 0;
@@ -51,6 +51,7 @@ class _MapScreenState extends State<MapScreen> {
   String phone = '';
   String pickId = '';
   String COD = '';
+  String MarkerTempId = '';
   int status0Count = 0;
   int status1Count = 0;
   bool isLoading = false;
@@ -83,7 +84,8 @@ class _MapScreenState extends State<MapScreen> {
         }
       }
     });
-
+    print(
+        '111122sssssssssssssssssssssssssssssssssssssssssssssssssssss222222222222222222222222222222222222222222222');
     BitmapDescriptor markerBitMap = await BitmapDescriptor.fromAssetImage(
       ImageConfiguration(size: Size(40, 40)),
       "assets/location_pin_gradient_set-red.png",
@@ -116,7 +118,9 @@ class _MapScreenState extends State<MapScreen> {
             onTap: () async {
               if (!mounted) return;
               setState(() {
-                isOpen = true;
+                Provider.of<ProviderS>(context, listen: false)
+                    .isAppbarsheerOpen = true;
+
                 isDelivery = false;
                 name = pickupLocation[index]['cust_name'];
                 address = pickupLocation[index]['address'];
@@ -139,6 +143,7 @@ class _MapScreenState extends State<MapScreen> {
       };
       _marker.addAll(_markertemp);
     });
+    print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
     List.generate(deliveryLocation.length, (index) {
       double lat = double.parse(deliveryLocation[index]['latitude']);
       double long = double.parse(deliveryLocation[index]['longitude']);
@@ -148,7 +153,9 @@ class _MapScreenState extends State<MapScreen> {
             onTap: () async {
               if (!mounted) return;
               setState(() {
-                isOpen = true;
+                Provider.of<ProviderS>(context, listen: false)
+                    .isAppbarsheerOpen = true;
+
                 isDelivery = true;
                 name = deliveryLocation[index]['name'];
                 address = deliveryLocation[index]['address'];
@@ -172,6 +179,8 @@ class _MapScreenState extends State<MapScreen> {
       };
       _marker.addAll(_markertemp2);
     });
+    print(_marker);
+    print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
     _marker.isEmpty
         ? notification().warning(
             context, 'Any delivery location is not available at this moment.')
@@ -313,7 +322,9 @@ class _MapScreenState extends State<MapScreen> {
                     ),
                   ),
                 ),
-                isOpen ? appbarSheet() : SizedBox(),
+                Provider.of<ProviderS>(context, listen: false).isAppbarsheerOpen
+                    ? appbarSheet()
+                    : SizedBox(),
                 isLoading ? Loader().loader(context) : SizedBox()
               ],
             ),
@@ -653,25 +664,50 @@ class _MapScreenState extends State<MapScreen> {
                                             .sendSms(phone, pickId, context);
                                         await userLocation();
                                         setState(() {
-                                          isOpen = false;
+                                          Provider.of<ProviderS>(context,
+                                                  listen: false)
+                                              .isAppbarsheerOpen = false;
+
                                           isLoading = false;
                                         });
                                       }
                                     : sign == false
                                         ? () {
+                                            print('ffffffffffffffffffffff');
                                             siganature();
                                           }
                                         : () async {
-                                            setState(() {
-                                              isLoading = true;
-                                            });
-                                            await CustomApi().pickupComplete(
-                                                context, pickId, quantity.text);
-                                            await userLocation();
-                                            setState(() {
-                                              isOpen = false;
-                                              isLoading = false;
-                                            });
+                                            print(
+                                                'ffffwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwffffffffffffffffff');
+
+                                            qnt = int.parse(quantity.text);
+                                            if (qnt < 5000) {
+                                              setState(() {
+                                                isLoading = true;
+                                              });
+
+                                              await CustomApi().pickupComplete(
+                                                  context,
+                                                  pickId,
+                                                  quantity.text);
+                                              print(
+                                                  '444444444444eeeeeeeeeee4444444');
+                                              await userLocation();
+                                              // _marker.remove(value)
+                                              await CustomApi().sendSms(
+                                                  phone, pickId, context);
+                                              print('4444444444444444444');
+                                              setState(() {
+                                                Provider.of<ProviderS>(context,
+                                                        listen: false)
+                                                    .isAppbarsheerOpen = false;
+
+                                                isLoading = false;
+                                              });
+                                            } else {
+                                              notification().warning(context,
+                                                  ' maximum quantity is 5000 ');
+                                            }
                                           },
                                 buttonHeight: h / 14,
                                 width: w / 1.5,
@@ -707,7 +743,8 @@ class _MapScreenState extends State<MapScreen> {
                       onTap: () {
                         setState(() {
                           _signController.clear();
-                          isOpen = false;
+                          Provider.of<ProviderS>(context, listen: false)
+                              .isAppbarsheerOpen = false;
                         });
                       },
                       child: Padding(

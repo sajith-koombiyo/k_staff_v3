@@ -6,6 +6,8 @@ import 'package:flutter_application_2/provider/provider.dart';
 import 'package:flutter_application_2/uI/widget/diloag_button.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:provider/provider.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/quickalert.dart';
 import '../../../../../class/class.dart';
 import '../../../../widget/nothig_found.dart';
 import '../../../navigation/navigation.dart';
@@ -20,14 +22,7 @@ class DDApproval extends StatefulWidget {
 class _DDApprovalState extends State<DDApproval> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool isLoading = false;
-  List<Map<String, dynamic>> depositList = [
-    {'date': '2023/01/23'},
-    {'date': '2023/11/23'},
-    {'date': '2023/02/23'},
-    {'date': '2023/01/21'},
-    {'date': '2023/01/23'},
-    {'date': '2023/01/24'}
-  ];
+
   List listitems = [
     'All',
     'Gampaha',
@@ -35,17 +30,32 @@ class _DDApprovalState extends State<DDApproval> {
     'Colombo',
     'Nugegoda',
   ];
+  List userBranchList = [
+    {"dname": "All", "did": ''}
+  ];
   String? selectval;
   List<Map<String, dynamic>> depositListTemp = [];
   List pendingDDList = [];
   @override
   void initState() {
     data('');
-    setState(() {
-      depositListTemp = depositList;
-    });
+    getUserBranch();
+    setState(() {});
     // TODO: implement initState
     super.initState();
+  }
+
+  getUserBranch() async {
+    setState(() {
+      isLoading = true;
+    });
+    var brancheList = await CustomApi().userActiveBranches(context);
+
+    setState(() {
+      userBranchList.addAll(brancheList);
+
+      isLoading = false;
+    });
   }
 
   data(String data) async {
@@ -53,6 +63,7 @@ class _DDApprovalState extends State<DDApproval> {
       isLoading = true;
     });
     var dataList = await CustomApi().ddApprovalScreen(context, data);
+
     print(dataList.toString());
     setState(() {
       pendingDDList = dataList;
@@ -107,17 +118,21 @@ class _DDApprovalState extends State<DDApproval> {
                               selectval, //implement initial value or selected value
                           onChanged: (value) {
                             setState(() {
-                              _runFilter(value.toString());
-                              //set state will update UI and State of your App
-                              selectval = value.toString();
-                              data('8'); //change selectval to new value
+                              // _runFilter(value.toString());
+                              // //set state will update UI and State of your App
+                              // selectval = value.toString();
+                              // print(value);
+                              //change selectval to new value
                             });
                           },
-                          items: listitems.map((itemone) {
+                          items: userBranchList.map((itemone) {
                             return DropdownMenuItem(
-                                value: itemone,
+                                onTap: () {
+                                  data(itemone['did']);
+                                },
+                                value: itemone['dname'],
                                 child: Text(
-                                  itemone,
+                                  itemone['dname'],
                                   style: TextStyle(color: black2),
                                 ));
                           }).toList(),
@@ -403,7 +418,22 @@ class _DDApprovalState extends State<DDApproval> {
                                   alignment: Alignment.centerRight,
                                   child: DialogButton(
                                       text: 'Confirm',
-                                      onTap: () {},
+                                      onTap: () {
+                                        QuickAlert.show(
+                                          context: context,
+                                          type: QuickAlertType.confirm,
+                                          text: 'Do you want to Confirm',
+                                          confirmBtnText: 'Yes',
+                                          cancelBtnText: 'No',
+                                          onConfirmBtnTap: () async {
+                                            CustomApi().ddUpdate(context,
+                                                pendingDDList[index]['oid']);
+                                            data('');
+                                            Navigator.pop(context);
+                                          },
+                                          confirmBtnColor: Colors.green,
+                                        );
+                                      },
                                       buttonHeight: h / 17,
                                       width: w / 3,
                                       color: Colors.cyan),
@@ -418,36 +448,12 @@ class _DDApprovalState extends State<DDApproval> {
                       ),
                     ),
                     isLoading ? Loader().loader(context) : SizedBox(),
-                    provider.isanotherUserLog == false
-                        ? UserLoginCheck()
-                        : SizedBox()
+                    provider.isanotherUserLog ? UserLoginCheck() : SizedBox()
                   ],
                 ),
         ),
       ),
     );
-  }
-
-  void _runFilter(String enteredKeyword) {
-    List<Map<String, dynamic>> results = [];
-    if (enteredKeyword.isEmpty) {
-      // if the search field is empty or only contains white-space, we'll display all users
-      results = depositListTemp;
-    } else if (depositListTemp
-        .where((user) =>
-            user["date"].toLowerCase().contains(enteredKeyword.toLowerCase()))
-        .toList()
-        .isNotEmpty) {
-      results = depositListTemp
-          .where((user) =>
-              user["date"].toLowerCase().contains(enteredKeyword.toLowerCase()))
-          .toList();
-    }
-
-    // Refresh the UI
-    setState(() {
-      depositList = results;
-    });
   }
 
   Widget serchBarr(BuildContext con) {
@@ -460,9 +466,7 @@ class _DDApprovalState extends State<DDApproval> {
         child: Row(
           children: [
             TextFormField(
-              onChanged: (value) {
-                _runFilter(value);
-              },
+              onChanged: (value) {},
               // controller: search,
               style: TextStyle(color: black, fontSize: 13.sp),
               validator: (value) {},
