@@ -240,6 +240,7 @@ class _LocationScreenState extends State<LocationScreen> {
                               setState(() {
                                 isLoading = true;
                               });
+
                               print(
                                   Provider.of<ProviderS>(context, listen: false)
                                       .bImage

@@ -160,6 +160,8 @@ class CustomApi {
 
       var response =
           await https.post(Uri.parse(urll), body: {'username': username});
+      print(response.body);
+      print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
       print(response.statusCode);
       if (response.statusCode != 500) {
         Map<String, dynamic> map = jsonDecode(response.body);

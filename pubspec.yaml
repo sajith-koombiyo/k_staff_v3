@@ -64,6 +64,7 @@ dependencies:
   firebase_core: ^2.14.0
   firebase_messaging: ^14.7.19
   flutter_local_notifications: ^17.0.0
+  latlong2: ^0.9.1
   # zego_uikit_prebuilt_call: ^4.9.0
   # zego_uikit: ^2.22.2
   # zego_zpns: ^2.2.0
