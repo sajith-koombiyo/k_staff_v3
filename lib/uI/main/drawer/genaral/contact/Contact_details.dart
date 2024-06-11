@@ -3,7 +3,20 @@ import 'package:flutter_application_2/app_details/color.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 
 class ContactDetails extends StatelessWidget {
-  const ContactDetails({super.key});
+  final String destination;
+  final String name;
+  final String phone;
+  final String land;
+  final String email;
+  final String address;
+  const ContactDetails(
+      {super.key,
+      required this.land,
+      required this.destination,
+      required this.address,
+      required this.email,
+      required this.name,
+      required this.phone});
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +55,7 @@ class ContactDetails extends StatelessWidget {
               backgroundColor: Color.fromARGB(255, 159, 188, 203),
               radius: 50,
               child: Text(
-                'c',
+                name[0],
                 style: TextStyle(
                   fontSize: 35.dp,
                   color: Color.fromARGB(255, 13, 62, 91),
@@ -51,7 +64,7 @@ class ContactDetails extends StatelessWidget {
               ),
             ),
             Text(
-              'Srinath',
+              name,
               style: TextStyle(
                 fontSize: 25.dp,
                 color: Color.fromARGB(255, 13, 62, 91),
@@ -59,7 +72,7 @@ class ContactDetails extends StatelessWidget {
               ),
             ),
             Text(
-              'HR Manager',
+              destination,
               style: TextStyle(
                 fontSize: 12.dp,
                 color: Color.fromARGB(255, 13, 62, 91),
@@ -107,7 +120,7 @@ class ContactDetails extends StatelessWidget {
               children: [
                 IconButton(onPressed: () {}, icon: Icon(Icons.call)),
                 Text(
-                  '0716232004',
+                  phone,
                   style: TextStyle(
                     fontSize: 14.dp,
                     color: Color.fromARGB(255, 13, 62, 91),
@@ -123,7 +136,7 @@ class ContactDetails extends StatelessWidget {
               children: [
                 IconButton(onPressed: () {}, icon: Icon(Icons.email)),
                 Text(
-                  'archchi0908@gmail.com',
+                  email,
                   style: TextStyle(
                     fontSize: 14.dp,
                     color: Color.fromARGB(255, 13, 62, 91),
@@ -139,7 +152,7 @@ class ContactDetails extends StatelessWidget {
               children: [
                 IconButton(onPressed: () {}, icon: Icon(Icons.home_filled)),
                 Text(
-                  '105/05 Ihalagama,Kirindiwela',
+                  address,
                   style: TextStyle(
                     fontSize: 14.dp,
                     color: Color.fromARGB(255, 13, 62, 91),

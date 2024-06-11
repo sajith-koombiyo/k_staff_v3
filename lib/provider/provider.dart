@@ -39,6 +39,13 @@ class ProviderS with ChangeNotifier {
     notifyListeners();
   }
 
+  String _bImage = '';
+  String get bImage => _bImage;
+  set bImage(String i) {
+    _bImage = i;
+    notifyListeners();
+  }
+
   String _bId = '';
   String get bId => _bId;
   set bId(String i) {

@@ -351,7 +351,7 @@ class _customDrawerState extends State<customDrawer> {
                                             }, key, '5')
                                           : SizedBox(),
                                       DrawerClz().contact(accessGroupId)
-                                          ? tileButton('Employee Contact', () {
+                                          ? tileButton('Koombiyo Contact', () {
                                               Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
@@ -363,7 +363,7 @@ class _customDrawerState extends State<customDrawer> {
                                               });
                                             }, key, '6')
                                           : SizedBox(),
-                                      tileButton('Location Update', () {
+                                      tileButton('Branch Visit', () {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
