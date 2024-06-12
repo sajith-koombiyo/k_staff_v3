@@ -289,7 +289,10 @@ class _AssignPickupState extends State<AssignPickup> {
                     setstate(() {
                       isLoading = true;
                     });
-
+                    print(riderId);
+                    print(vehicleNo);
+                    print(riderPhone);
+                    print(pickId);
                     var res = await CustomApi().assignToRider(
                         context, riderId, vehicleNo, riderPhone, pickId);
                     data();

@@ -82,8 +82,8 @@ class notification {
   info(BuildContext context, String text) {
     showTopSnackBar(
       //jjjjj
-      displayDuration: Duration(milliseconds: 20),
-      animationDuration: Duration(milliseconds: 80),
+      // displayDuration: Duration(milliseconds: 20),
+      // animationDuration: Duration(milliseconds: 80),
       Overlay.of(context),
       CustomSnackBar.info(
         // backgroundColor: black1.withOpacity(0.3),
@@ -150,13 +150,17 @@ class CustomDialog {
                     Spacer(),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Text(
-                        "Your user account uses another device. \nPlease log out.",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 17,
-                            color: white,
-                            fontWeight: FontWeight.bold),
+                      child: Column(
+                        children: [
+                          Text(
+                            "Your user account uses another device. \nPlease log out.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 17,
+                                color: white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
                       ),
                     ),
                     Spacer(),

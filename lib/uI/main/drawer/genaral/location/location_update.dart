@@ -33,18 +33,35 @@ class _LocationScreenState extends State<LocationScreen> {
   bool isOpen = false;
   bool lConfirm = false;
   String newImage = '';
+  String visitBranchId = '';
   bool isLoading = false;
   final ImagePicker _picker = ImagePicker();
   String lat = '';
   String long = '';
   String image64 = '';
+  // List userBranchList = [];
+  String? selectval;
   List userBranchList = [];
 
   @override
   void initState() {
     getLocation();
+    getUserBranch();
     // TODO: implement initState
     super.initState();
+  }
+
+  getUserBranch() async {
+    setState(() {
+      isLoading = true;
+    });
+    List brancheList = await CustomApi().userActiveBranches(context);
+    print(brancheList);
+    setState(() {
+      userBranchList = brancheList;
+
+      isLoading = false;
+    });
   }
 
   void getLocation() async {
@@ -84,6 +101,64 @@ class _LocationScreenState extends State<LocationScreen> {
                     fontSize: 18.dp,
                     color: white,
                     fontWeight: FontWeight.bold,
+                  ),
+                ),
+                bottom: PreferredSize(
+                  preferredSize: Size(w, h / 12),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Card(
+                      child: Container(
+                        height: h / 17,
+                        padding: EdgeInsets.symmetric(horizontal: 15),
+                        alignment: Alignment.centerRight,
+                        width: w,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5.0),
+                          border: Border.all(
+                              color: black3,
+                              style: BorderStyle.solid,
+                              width: 0.80),
+                        ),
+                        child: DropdownButton(
+                          isExpanded: true,
+                          alignment: AlignmentDirectional.centerEnd,
+                          hint: Container(
+                            //and here
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "Select branch",
+                              style: TextStyle(color: black1),
+                              textAlign: TextAlign.end,
+                            ),
+                          ),
+                          value:
+                              selectval, //implement initial value or selected value
+                          onChanged: (value) {
+                            setState(() {
+                              // _runFilter(value.toString());
+                              //set state will update UI and State of your App
+                              selectval = value
+                                  .toString(); //change selectval to new value
+                            });
+                          },
+                          items: userBranchList.map((itemone) {
+                            return DropdownMenuItem(
+                                onTap: () {
+                                  setState(() {
+                                    visitBranchId = itemone['did'];
+                                  });
+                                  // getData(itemone['did']);
+                                },
+                                value: itemone['dname'],
+                                child: Text(
+                                  itemone['dname'],
+                                  style: TextStyle(color: black2),
+                                ));
+                          }).toList(),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
                 leading: IconButton(
@@ -247,16 +322,17 @@ class _LocationScreenState extends State<LocationScreen> {
                                       .toString());
                               print(position!.latitude.toString());
                               print(position!.longitude.toString());
+                              print(visitBranchId);
                               await CustomApi().branchVisit(
                                   context,
-                                  Provider.of<ProviderS>(context, listen: false)
-                                      .bId,
+                                  visitBranchId,
                                   position!.latitude.toString(),
                                   position!.longitude.toString(),
                                   Provider.of<ProviderS>(context, listen: false)
                                       .bImage);
-                              Navigator.pop(context);
+                              // Navigator.pop(context);
                               setState(() {
+                                lConfirm = false;
                                 isLoading = false;
                               });
                             }
@@ -265,17 +341,22 @@ class _LocationScreenState extends State<LocationScreen> {
                                   show();
                                 }
                               : () {
-                                  CustomDialog().alert(
-                                      context, 'Info', 'Are sure my location',
-                                      () {
-                                    Provider.of<ProviderS>(context,
-                                            listen: false)
-                                        .lImage = '';
-                                    setState(() {
-                                      lConfirm = true;
-                                      Navigator.pop(context);
+                                  if (visitBranchId != '') {
+                                    CustomDialog().alert(context, 'Info',
+                                        'Can you provide your current location?',
+                                        () {
+                                      Provider.of<ProviderS>(context,
+                                              listen: false)
+                                          .lImage = '';
+                                      setState(() {
+                                        lConfirm = true;
+                                        Navigator.pop(context);
+                                      });
                                     });
-                                  });
+                                  } else {
+                                    notification().warning(
+                                        context, 'Please select the branch');
+                                  }
                                 },
                       buttonHeight: h / 16,
                       width: w / 1.5,

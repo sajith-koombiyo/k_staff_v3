@@ -1095,7 +1095,7 @@ class CustomApi {
 
   assignToRider(
     BuildContext context,
-    String id,
+    String riderId,
     String vehicleNo,
     String riderPhone,
     String pickId,
@@ -1110,25 +1110,16 @@ class CustomApi {
       Map<String, String> headers = {
         'userkey': '$id',
       };
-      print(id);
-      print(vehicleNo);
-      print(riderPhone);
-      print(pickId);
-      print(id);
+
       // Make POST request
       var list = await https.post(headers: headers, Uri.parse(apiUrl), body: {
-        "rider_id": id,
+        "rider_id": riderId,
         "vehicle_no": vehicleNo,
         "rider_phone": riderPhone,
         "pick_id": pickId
       });
-
-      print(list.body);
+      // var list;
       var data = jsonDecode(list.body);
-
-      print(data);
-      print(data['status']);
-
       if (data['status'] == 200) {
         print(data);
         notification().info(context, 'Rider assigned successfully.');
@@ -1485,6 +1476,54 @@ class CustomApi {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
 
         return data['my_visits'];
+      }
+      if (data['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+        return [];
+      }
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
+
+// branch exit data
+  branchExit(
+    BuildContext context,
+    String bId,
+    String bv_id,
+    String lati,
+    String longt,
+  ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      print(id);
+      final apiUrl = '${ApiUrl}/Branchvisit/exit';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      // Make POST request
+      var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {
+        "branch_id": bId,
+        "bv_id": bv_id,
+        "lati": lati,
+        "longt": longt
+      });
+      var data = jsonDecode(res.body);
+      print(data);
+
+      if (data['status'] == 200) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+        notification().info(context, 'Branch exit successfully completed');
+        Navigator.pop(context);
+      }
+      if (data['status'] == 400) {
+        notification().warning(context, 'Invalid branch location');
+        Navigator.pop(context);
+        return [];
       }
       if (data['status'] == 403) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
