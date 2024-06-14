@@ -1,8 +1,6 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/api/api.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
-
 import '../../../../app_details/color.dart';
 import '../../../widget/shuttle/customList.dart';
 
@@ -14,6 +12,7 @@ class Shuttle extends StatefulWidget {
 
 class _ShuttleState extends State<Shuttle> {
   var list = Iterable<int>.generate(100).toList();
+  List allBinList = [];
   List<Map<String, dynamic>> product = [
     {'branch': 'Gampaha'},
     {'branch': 'Nittmbuwa'},
@@ -34,8 +33,17 @@ class _ShuttleState extends State<Shuttle> {
   @override
   void initState() {
     allProduct = product;
+    getData();
     // TODO: implement initState
     super.initState();
+  }
+
+  getData() async {
+    List res = await CustomApi().shuttelBinList(context, '1', '', '', '');
+    print(res);
+    setState(() {
+      allBinList = res;
+    });
   }
 
   @override
@@ -43,7 +51,7 @@ class _ShuttleState extends State<Shuttle> {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
           appBar: AppBar(
             backgroundColor: Color.fromARGB(255, 6, 101, 148),
@@ -81,6 +89,10 @@ class _ShuttleState extends State<Shuttle> {
                   text: "Branch Out",
                   icon: new Icon(Icons.add_home_work_sharp),
                 ),
+                Tab(
+                  text: "WareHouse Out",
+                  icon: new Icon(Icons.warehouse_outlined),
+                ),
               ],
             ),
           ),
@@ -110,9 +122,10 @@ class _ShuttleState extends State<Shuttle> {
                                   isExpanded: true,
                                   alignment: AlignmentDirectional.centerEnd,
                                   hint: Container(
+                                    alignment: Alignment.centerLeft,
                                     //and here
                                     child: Text(
-                                      "Select branch",
+                                      "Select branch ...........",
                                       style: TextStyle(color: black1),
                                       textAlign: TextAlign.end,
                                     ),
@@ -141,55 +154,55 @@ class _ShuttleState extends State<Shuttle> {
                             ),
                           ),
                         ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Card(
-                              child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 15),
-                                alignment: Alignment.centerRight,
-                                width: w,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5.0),
-                                  border: Border.all(
-                                      color: black3,
-                                      style: BorderStyle.solid,
-                                      width: 0.80),
-                                ),
-                                child: DropdownButton(
-                                  isExpanded: true,
-                                  alignment: AlignmentDirectional.centerEnd,
-                                  hint: Container(
-                                    //and here
-                                    child: Text(
-                                      "Total bin",
-                                      style: TextStyle(color: black),
-                                      textAlign: TextAlign.end,
-                                    ),
-                                  ),
-                                  value:
-                                      num, //implement initial value or selected value
-                                  onChanged: (int? value) {
-                                    setState(() {
-                                      //set state will update UI and State of your App
-                                      num = value!.toInt();
+                        // Expanded(
+                        //   child: Padding(
+                        //     padding: const EdgeInsets.all(12.0),
+                        //     child: Card(
+                        //       child: Container(
+                        //         padding: EdgeInsets.symmetric(horizontal: 15),
+                        //         alignment: Alignment.centerRight,
+                        //         width: w,
+                        //         decoration: BoxDecoration(
+                        //           borderRadius: BorderRadius.circular(5.0),
+                        //           border: Border.all(
+                        //               color: black3,
+                        //               style: BorderStyle.solid,
+                        //               width: 0.80),
+                        //         ),
+                        //         child: DropdownButton(
+                        //           isExpanded: true,
+                        //           alignment: AlignmentDirectional.centerEnd,
+                        //           hint: Container(
+                        //             //and here
+                        //             child: Text(
+                        //               "Total bin",
+                        //               style: TextStyle(color: black),
+                        //               textAlign: TextAlign.end,
+                        //             ),
+                        //           ),
+                        //           value:
+                        //               num, //implement initial value or selected value
+                        //           onChanged: (int? value) {
+                        //             setState(() {
+                        //               //set state will update UI and State of your App
+                        //               num = value!.toInt();
 
-                                      //change selectval to new value
-                                    });
-                                  },
-                                  items: list.map((itemone) {
-                                    return DropdownMenuItem(
-                                        value: itemone,
-                                        child: Text(
-                                          itemone.toString(),
-                                          style: TextStyle(color: black2),
-                                        ));
-                                  }).toList(),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
+                        //               //change selectval to new value
+                        //             });
+                        //           },
+                        //           items: list.map((itemone) {
+                        //             return DropdownMenuItem(
+                        //                 value: itemone,
+                        //                 child: Text(
+                        //                   itemone.toString(),
+                        //                   style: TextStyle(color: black2),
+                        //                 ));
+                        //           }).toList(),
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                     SingleChildScrollView(
@@ -200,10 +213,15 @@ class _ShuttleState extends State<Shuttle> {
                                   list: product,
                                   icon: Icons.add_circle,
                                 )
-                              : CustomList(
-                                  list: product,
-                                  icon: Icons.check_circle,
-                                )
+                              : x == 1
+                                  ? CustomList(
+                                      list: product,
+                                      icon: Icons.check_circle,
+                                    )
+                                  : CustomList(
+                                      list: product,
+                                      icon: Icons.check_circle,
+                                    )
                         ],
                       ),
                     )

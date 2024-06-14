@@ -46,7 +46,7 @@ class CustomApi {
         var urll = '${ApiUrl}/Version/users';
         var res = await https.post(Uri.parse(urll), body: {});
         var responce = jsonDecode(res.body);
-        if (res.statusCode == 200) {
+        if (res.statusCode == 500) {
           Provider.of<ProviderS>(context, listen: false).isServerDown = true;
         } else {
           Provider.of<ProviderS>(context, listen: false).isServerDown = false;
@@ -1650,6 +1650,72 @@ class CustomApi {
 
         return data;
       }
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
+
+  //shuttle screen data
+
+  Future shuttelBinList(BuildContext context, String root_id, String search_bin,
+      String select_branch, String status) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      final apiUrl = '${ApiUrl}/Shuttle/bins';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      var resp = await https.post(headers: headers, Uri.parse(apiUrl), body: {
+        "root_id": root_id,
+        "search_bin": search_bin,
+        "select_branch": select_branch,
+        "status": status
+//  in bins =3, return bins =4"
+      });
+      print('fffffffffffffffffffffffffffffffffffff');
+      print(resp.body);
+      print('fffffffffffffffffffffffffffffffffffff');
+      var data = jsonDecode(resp.body);
+      if (data['status'] == 200) {
+        return data['bins'];
+      } else if (data['status'] == 403) {}
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
+
+  //gggggggggg
+
+  Future shuttelBinLists(BuildContext context, String root_id,
+      String search_bin, String select_branch, String status) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      final apiUrl = '${ApiUrl}/Shuttle/bins';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      var resp = await https.post(headers: headers, Uri.parse(apiUrl), body: {
+        "root_id": root_id,
+        "search_bin": search_bin,
+        "select_branch": select_branch,
+        "status": status
+//  in bins =3, return bins =4"
+      });
+      print('fffffffffffffffffffffffffffffffffffff');
+      print(resp.body);
+      print('fffffffffffffffffffffffffffffffffffff');
+      var data = jsonDecode(resp.body);
+      if (data['status'] == 200) {
+        return data['bins'];
+      } else if (data['status'] == 403) {}
     } else {
       notification().warning(context, 'No Internet');
     }

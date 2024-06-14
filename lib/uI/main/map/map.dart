@@ -652,9 +652,9 @@ class _MapScreenState extends State<MapScreen> {
                             child: DialogButton(
                                 text: accept == '0'
                                     ? 'Accept'
-                                    : sign == false
-                                        ? 'Signature'
-                                        : "Pickup",
+                                    // : sign == false
+                                    //     ? 'Signature'
+                                    : "Pickup",
                                 onTap: accept == '0'
                                     ? () async {
                                         setState(() {
@@ -671,44 +671,47 @@ class _MapScreenState extends State<MapScreen> {
                                           isLoading = false;
                                         });
                                       }
-                                    : sign == false
-                                        ? () {
-                                            print('ffffffffffffffffffffff');
-                                            siganature();
-                                          }
-                                        : () async {
+                                    // : sign == false
+                                    //     ? () {
+                                    //         print('ffffffffffffffffffffff');
+                                    //         siganature();
+                                    //       }
+                                    : () async {
+                                        print(
+                                            'ffffwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwffffffffffffffffff');
+
+                                        qnt = int.parse(quantity.text);
+                                        if (qnt < 5000) {
+                                          if (qnt != 0) {
+                                            setState(() {
+                                              isLoading = true;
+                                            });
+
+                                            await CustomApi().pickupComplete(
+                                                context, pickId, quantity.text);
                                             print(
-                                                'ffffwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwffffffffffffffffff');
+                                                '444444444444eeeeeeeeeee4444444');
+                                            await userLocation();
+                                            // _marker.remove(value)
+                                            await CustomApi().sendSms(
+                                                phone, pickId, context);
+                                            print('4444444444444444444');
+                                            setState(() {
+                                              Provider.of<ProviderS>(context,
+                                                      listen: false)
+                                                  .isAppbarsheerOpen = false;
 
-                                            qnt = int.parse(quantity.text);
-                                            if (qnt < 5000) {
-                                              setState(() {
-                                                isLoading = true;
-                                              });
-
-                                              await CustomApi().pickupComplete(
-                                                  context,
-                                                  pickId,
-                                                  quantity.text);
-                                              print(
-                                                  '444444444444eeeeeeeeeee4444444');
-                                              await userLocation();
-                                              // _marker.remove(value)
-                                              await CustomApi().sendSms(
-                                                  phone, pickId, context);
-                                              print('4444444444444444444');
-                                              setState(() {
-                                                Provider.of<ProviderS>(context,
-                                                        listen: false)
-                                                    .isAppbarsheerOpen = false;
-
-                                                isLoading = false;
-                                              });
-                                            } else {
-                                              notification().warning(context,
-                                                  ' maximum quantity is 5000 ');
-                                            }
-                                          },
+                                              isLoading = false;
+                                            });
+                                          } else {
+                                            notification().warning(
+                                                context, 'Invalid quantity');
+                                          }
+                                        } else {
+                                          notification().warning(context,
+                                              ' maximum quantity is 5000');
+                                        }
+                                      },
                                 buttonHeight: h / 14,
                                 width: w / 1.5,
                                 color: accept == '0'

@@ -56,6 +56,14 @@ class _NavigationScreenState extends State<NavigationScreen>
   late Animation<double> _animation;
   late AnimationController animationController;
   late Animation<double> animation;
+  var selectval;
+  List listitems = [
+    'All',
+    'Gampaha',
+    'Nittmbuwa',
+    'Colombo',
+    'Nugegoda',
+  ];
   bool tap = false;
   bool button2 = false;
   bool button3 = false;
@@ -335,6 +343,49 @@ class _NavigationScreenState extends State<NavigationScreen>
                                 )),
                     ),
                   ),
+                  _selectedIndex == 1 && provider.isAppbarsheerOpen
+                      ? PopupMenuButton<int>(
+                          iconColor: white,
+                          itemBuilder: (context) => [
+                            // popupmenu item 1
+                            PopupMenuItem(
+                              onTap: () {
+                                cancelButton();
+                              },
+                              value: 1,
+                              // row has two child icon and text.
+                              child: Row(
+                                children: [
+                                  Icon(Icons.star),
+                                  SizedBox(
+                                    // sized box with width 10
+                                    width: 10,
+                                  ),
+                                  Text("Cancel pickup")
+                                ],
+                              ),
+                            ),
+                            // popupmenu item 2
+                            PopupMenuItem(
+                              value: 2,
+                              // row has two child icon and text
+                              child: Row(
+                                children: [
+                                  Icon(Icons.chrome_reader_mode),
+                                  SizedBox(
+                                    // sized box with width 10
+                                    width: 10,
+                                  ),
+                                  Text("About")
+                                ],
+                              ),
+                            ),
+                          ],
+                          offset: Offset(0, 70),
+                          color: Colors.grey,
+                          elevation: 2,
+                        )
+                      : SizedBox(),
                 ],
               ),
               extendBodyBehindAppBar: true,
@@ -683,6 +734,94 @@ class _NavigationScreenState extends State<NavigationScreen>
     });
   }
 
+  cancelButton() {
+    var h = MediaQuery.of(context).size.height;
+    var w = MediaQuery.of(context).size.width;
+
+    QuickAlert.show(
+      context: context,
+      type: QuickAlertType.custom,
+      barrierDismissible: true,
+      confirmBtnText: '       Save       ',
+      widget: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Text(
+            'Pickup Cancellation',
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+          ),
+          Divider(),
+          SizedBox(
+            height: 12,
+          ),
+          Card(
+            child: Container(
+              height: h / 17,
+              padding: EdgeInsets.all(8),
+              alignment: Alignment.centerRight,
+              // width: 400,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5.0),
+                border: Border.all(
+                    color: black3, style: BorderStyle.solid, width: 0.80),
+              ),
+              child: DropdownButton(
+                isExpanded: true,
+                alignment: AlignmentDirectional.centerEnd,
+                hint: Container(
+                  alignment: Alignment.centerLeft,
+                  //and here
+                  child: Text(
+                    "Select reason",
+                    style: TextStyle(color: black1),
+                    textAlign: TextAlign.end,
+                  ),
+                ),
+                value: selectval, //implement initial value or selected value
+                onChanged: (value) {
+                  setState(() {
+                    //set state will update UI and State of your App
+                    selectval =
+                        value.toString(); //change selectval to new value
+                  });
+                },
+                items: listitems.map((itemone) {
+                  return DropdownMenuItem(
+                      value: itemone,
+                      child: Text(
+                        itemone,
+                        style: TextStyle(color: black2),
+                      ));
+                }).toList(),
+              ),
+            ),
+          ),
+        ],
+      ),
+      onConfirmBtnTap: () async {
+        if (1 < 5) {
+          await QuickAlert.show(
+            context: context,
+            type: QuickAlertType.error,
+            text: 'Please input something',
+          );
+          return;
+        }
+        Navigator.pop(context);
+        await Future.delayed(const Duration(milliseconds: 1000));
+        await QuickAlert.show(
+          context: context,
+          type: QuickAlertType.success,
+          text: "Phone number '' has been saved!.",
+        );
+      },
+    );
+
+//  title: 'Custom',
+//  text: 'Custom Widget Alert',
+//  leadingImage: 'assets/custom.gif',
+  }
+// audio call all function are working
   // void onUserLogin() async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
   //   var userId = await prefs.get(
