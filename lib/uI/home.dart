@@ -1,10 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/api/api.dart';
-import 'package:flutter_application_2/app_details/const.dart';
 import 'package:flutter_application_2/class/class.dart';
-import 'package:flutter_application_2/uI/main/drawer/my_delivery/testCall.dart';
-import 'package:flutter_launcher_icons/config/config.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:geolocator/geolocator.dart';
@@ -18,7 +15,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../app_details/color.dart';
 import '../provider/provider.dart';
 import 'main/drawer/my_delivery/my_delivery.dart';
-import 'main/drawer/my_delivery/voice_call.dart';
 import 'main/navigation/navigation.dart';
 import 'widget/gauge/gauge.dart';
 import 'widget/home_screen_widget/card.dart';
@@ -47,6 +43,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   String nextday = '';
   String bankAmount = '';
   String formattedDate = '';
+  String isPickup = '';
   var cashOutstanding;
   var totalOutstanding;
   var rider;
@@ -117,6 +114,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     setState(() {
       userId = id.toString();
       dataList = temp;
+      isPickup = temp[0]['is_pickup'];
     });
     var noteCount = await CustomApi().notificationCount(id.toString());
 
@@ -283,6 +281,27 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                     ),
                   ],
                 ),
+                isPickup == '1'
+                    ? Container(
+                        decoration: BoxDecoration(
+                            color: Color.fromARGB(31, 19, 146, 225),
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(5),
+                                topRight: Radius.circular(5)),
+                            border: Border.all(color: Colors.black12)),
+                        // alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Text(
+                            "Pickup Quantity ${dataList[0]['total_item_qty']}",
+                            style: TextStyle(
+                                fontSize: 12.sp,
+                                color: Color.fromARGB(255, 47, 45, 47),
+                                fontWeight: FontWeight.normal),
+                          ),
+                        ),
+                      )
+                    : SizedBox(),
                 AnimationLimiter(
                   child: AnimationConfiguration.synchronized(
                     duration: Duration(milliseconds: 900),
@@ -295,101 +314,125 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Icon(Icons.query_builder_rounded,
-                                      size: 25.sp, color: Colors.black54),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      dataList.isEmpty
-                                          ? loader()
-                                          : Text(
-                                              "~${dataList[0]['total_pickups']}"
-                                                  .toString(),
-                                              style: TextStyle(
-                                                  letterSpacing: 0,
-                                                  fontFamily: '',
-                                                  fontSize: 13.sp,
-                                                  color: appBlue,
-                                                  fontWeight: FontWeight.bold),
+                              isPickup == '1'
+                                  ? dataList.isEmpty
+                                      ? loader2()
+                                      : Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            Icon(Icons.query_builder_rounded,
+                                                size: 25.sp,
+                                                color: Colors.black54),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                dataList.isEmpty
+                                                    ? loader()
+                                                    : Text(
+                                                        "~${dataList[0]['total_pickups']}"
+                                                            .toString(),
+                                                        style: TextStyle(
+                                                            letterSpacing: 0,
+                                                            fontFamily: '',
+                                                            fontSize: 13.sp,
+                                                            color: appBlue,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                Text(
+                                                  "Total\npickups",
+                                                  style: TextStyle(
+                                                      fontFamily: '',
+                                                      fontSize: 10.dp,
+                                                      color: Colors.black54),
+                                                ),
+                                              ],
                                             ),
-                                      Text(
-                                        "Total\npickups",
-                                        style: TextStyle(
-                                            fontFamily: '',
-                                            fontSize: 10.dp,
-                                            color: Colors.black54),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Icon(Icons.landslide_outlined,
-                                      size: 25.sp, color: Colors.black54),
-                                  Column(
-                                    children: [
-                                      dataList.isEmpty
-                                          ? loader()
-                                          : Text(
-                                              "~${dataList[0]['pending_pickups']}"
-                                                  .toString(),
-                                              style: TextStyle(
-                                                  letterSpacing: 0,
-                                                  fontFamily: '',
-                                                  fontSize: 13.sp,
-                                                  color: appBlue,
-                                                  fontWeight: FontWeight.bold),
+                                          ],
+                                        )
+                                  : SizedBox(),
+                              isPickup == '1'
+                                  ? dataList.isEmpty
+                                      ? loader2()
+                                      : Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            Icon(Icons.landslide_outlined,
+                                                size: 25.sp,
+                                                color: Colors.black54),
+                                            Column(
+                                              children: [
+                                                dataList.isEmpty
+                                                    ? loader()
+                                                    : Text(
+                                                        "~${dataList[0]['pending_pickups']}"
+                                                            .toString(),
+                                                        style: TextStyle(
+                                                            letterSpacing: 0,
+                                                            fontFamily: '',
+                                                            fontSize: 13.sp,
+                                                            color: appBlue,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                Text(
+                                                  "Pending\npickups",
+                                                  style: TextStyle(
+                                                      fontFamily: '',
+                                                      fontSize: 10.sp,
+                                                      color: Colors.black54),
+                                                ),
+                                              ],
                                             ),
-                                      Text(
-                                        "Pending\npickups",
-                                        style: TextStyle(
-                                            fontFamily: '',
-                                            fontSize: 10.sp,
-                                            color: Colors.black54),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.check_circle_outline,
-                                      size: 25.sp, color: Colors.black54),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      dataList.isEmpty
-                                          ? loader()
-                                          : Text(
-                                              "~${dataList[0]['completed_pickups'].toString()}",
-                                              style: TextStyle(
-                                                  letterSpacing: 0,
-                                                  fontFamily: '',
-                                                  fontSize: 13.dp,
-                                                  color: appBlue,
-                                                  fontWeight: FontWeight.bold),
+                                          ],
+                                        )
+                                  : SizedBox(),
+                              isPickup == '1'
+                                  ? dataList.isEmpty
+                                      ? loader2()
+                                      : Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(Icons.check_circle_outline,
+                                                size: 25.sp,
+                                                color: Colors.black54),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                dataList.isEmpty
+                                                    ? loader()
+                                                    : Text(
+                                                        "~${dataList[0]['completed_pickups'].toString()}",
+                                                        style: TextStyle(
+                                                            letterSpacing: 0,
+                                                            fontFamily: '',
+                                                            fontSize: 13.dp,
+                                                            color: appBlue,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                Text(
+                                                  "Completed\npickups",
+                                                  style: TextStyle(
+                                                      fontFamily: '',
+                                                      fontSize: 10.sp,
+                                                      color: Colors.black54),
+                                                ),
+                                              ],
                                             ),
-                                      Text(
-                                        "Completed\npickups",
-                                        style: TextStyle(
-                                            fontFamily: '',
-                                            fontSize: 10.sp,
-                                            color: Colors.black54),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                          ],
+                                        )
+                                  : SizedBox()
                             ],
                           ),
                         ),
@@ -397,6 +440,45 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                     ),
                   ),
                 ),
+                // isPickup == '1'
+                //     ? dataList.isEmpty
+                //         ? loader2()
+                //         : Padding(
+                //             padding: const EdgeInsets.only(left: 15),
+                //             child: Row(
+                //               crossAxisAlignment: CrossAxisAlignment.end,
+                //               children: [
+                //                 Icon(Icons.query_builder_rounded,
+                //                     size: 25.sp, color: Colors.black54),
+                //                 Column(
+                //                   crossAxisAlignment: CrossAxisAlignment.start,
+                //                   children: [
+                //                     dataList.isEmpty
+                //                         ? loader()
+                //                         : Text(
+                //                             "~${dataList[0]['total_pickups']}"
+                //                                 .toString(),
+                //                             style: TextStyle(
+                //                                 letterSpacing: 0,
+                //                                 fontFamily: '',
+                //                                 fontSize: 13.sp,
+                //                                 color: appBlue,
+                //                                 fontWeight: FontWeight.bold),
+                //                           ),
+                //                     Text(
+                //                       "Total\np",
+                //                       style: TextStyle(
+                //                           fontFamily: '',
+                //                           fontSize: 10.dp,
+                //                           color: Colors.black54),
+                //                     ),
+                //                   ],
+                //                 ),
+                //               ],
+                //             ),
+                //           )
+                //     : SizedBox(),
+
                 Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Column(
@@ -703,6 +785,20 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       child: SizedBox(
         height: 20,
         width: 20,
+        child: LoadingAnimationWidget.threeArchedCircle(
+          color: Color.fromARGB(255, 153, 166, 177),
+          size: 30,
+        ),
+      ),
+    );
+  }
+
+  Widget loader2() {
+    return Padding(
+      padding: const EdgeInsets.all(0.0),
+      child: SizedBox(
+        height: 50,
+        width: 50,
         child: LoadingAnimationWidget.threeArchedCircle(
           color: Color.fromARGB(255, 153, 166, 177),
           size: 30,

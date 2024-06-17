@@ -426,29 +426,29 @@ class _MyDeliveryState extends State<MyDelivery> {
                                                           Spacer(),
                                                           Column(
                                                             children: [
-                                                              Card(
-                                                                elevation: 20,
-                                                                shape: RoundedRectangleBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            100)),
-                                                                child:
-                                                                    IconButton(
-                                                                  onPressed:
-                                                                      () {},
-                                                                  icon: Icon(
-                                                                    Icons
-                                                                        .voice_over_off_rounded,
-                                                                    size: 35,
-                                                                    color: Color
-                                                                        .fromARGB(
-                                                                            255,
-                                                                            13,
-                                                                            173,
-                                                                            45),
-                                                                  ),
-                                                                ),
-                                                              ),
+                                                              // Card(
+                                                              //   elevation: 20,
+                                                              //   shape: RoundedRectangleBorder(
+                                                              //       borderRadius:
+                                                              //           BorderRadius.circular(
+                                                              //               100)),
+                                                              //   child:
+                                                              //       IconButton(
+                                                              //     onPressed:
+                                                              //         () {},
+                                                              //     icon: Icon(
+                                                              //       Icons
+                                                              //           .voice_over_off_rounded,
+                                                              //       size: 35,
+                                                              //       color: Color
+                                                              //           .fromARGB(
+                                                              //               255,
+                                                              //               13,
+                                                              //               173,
+                                                              //               45),
+                                                              //     ),
+                                                              //   ),
+                                                              // ),
                                                               Card(
                                                                 elevation: 20,
                                                                 shape: RoundedRectangleBorder(
@@ -564,7 +564,8 @@ class _MyDeliveryState extends State<MyDelivery> {
           builder: (context, provider, child) => AlertDialog(
             scrollable: true,
             contentPadding: EdgeInsets.all(0),
-            actionsPadding: EdgeInsets.all(20),
+            actionsPadding: EdgeInsets.all(10),
+            insetPadding: EdgeInsets.all(30),
             actionsAlignment: MainAxisAlignment.spaceBetween,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -816,7 +817,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                     ),
                     x == 2
                         ? Padding(
-                            padding: const EdgeInsets.all(12.0),
+                            padding: const EdgeInsets.all(1.0),
                             child: Card(
                               child: Container(
                                 padding: EdgeInsets.symmetric(horizontal: 15),
@@ -832,6 +833,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                                 child: Column(
                                   children: [
                                     DropdownButton(
+                                      itemHeight: 70,
                                       underline: Divider(
                                         color: white,
                                         height: 0,
@@ -912,7 +914,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                         : SizedBox(),
                     x == 3
                         ? Padding(
-                            padding: const EdgeInsets.all(12.0),
+                            padding: const EdgeInsets.all(1.0),
                             child: Card(
                               child: Container(
                                 padding: EdgeInsets.symmetric(horizontal: 15),
@@ -928,6 +930,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                                 child: Column(
                                   children: [
                                     DropdownButton(
+                                      itemHeight: 70,
                                       underline: Divider(
                                         color: white,
                                         height: 0,
@@ -1002,70 +1005,75 @@ class _MyDeliveryState extends State<MyDelivery> {
                       height: 0,
                     ),
                     x == 4
-                        ? Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Card(
-                              child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 15),
-                                alignment: Alignment.centerRight,
-                                width: w,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5.0),
-                                  border: Border.all(
-                                      color: black3,
-                                      style: BorderStyle.solid,
-                                      width: 0.80),
-                                ),
-                                child: Column(
-                                  children: [
-                                    DropdownButton(
-                                      underline: Divider(
-                                        color: white,
-                                        height: 0,
-                                      ),
-                                      isExpanded: true,
-                                      padding: EdgeInsets.only(right: 10),
-                                      alignment: AlignmentDirectional.centerEnd,
-                                      hint: Text(
-                                          'Select Reason                                                                   '),
+                        ? Card(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 15),
+                              alignment: Alignment.centerRight,
+                              width: w,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.0),
+                                border: Border.all(
+                                    color: black3,
+                                    style: BorderStyle.solid,
+                                    width: 0.80),
+                              ),
+                              child: Column(
+                                children: [
+                                  DropdownButton(
+                                    itemHeight: 70,
+                                    autofocus: true,
+                                    underline: Divider(
+                                      color: white,
+                                      height: 6,
+                                    ),
+                                    elevation: 20,
+                                    isExpanded: true,
+                                    padding: EdgeInsets.all(10),
+                                    alignment: AlignmentDirectional.centerStart,
+                                    hint: Text('Select Reason'),
 
-                                      value: dropdownvalue2,
+                                    value: dropdownvalue2,
 
-                                      //implement initial value or selected value
-                                      onChanged: (value) {
-                                        setstate(() {
-                                          //set state will update UI and State of your App
-                                          dropdownvalue2 = value.toString();
-                                          if (dropdownvalue2!.isNotEmpty) {
-                                            updateBTN = true;
-                                          } //change selectval to new value
-                                        });
-                                      },
-                                      items: remarkList.map((itemone) {
-                                        return DropdownMenuItem(
-                                            onTap: () {
-                                              setstate(() {
-                                                dropdownvalueItem2 =
-                                                    itemone['reason']
-                                                        .toString();
-                                              });
-                                            },
-                                            value: itemone["reason_id"],
-                                            child: Card(
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
+                                    //implement initial value or selected value
+                                    onChanged: (value) {
+                                      setstate(() {
+                                        //set state will update UI and State of your App
+                                        dropdownvalue2 = value.toString();
+                                        if (dropdownvalue2!.isNotEmpty) {
+                                          updateBTN = true;
+                                        } //change selectval to new value
+                                      });
+                                    },
+                                    items: remarkList.map((itemone) {
+                                      return DropdownMenuItem(
+                                          alignment: Alignment.centerLeft,
+                                          onTap: () {
+                                            setstate(() {
+                                              dropdownvalueItem2 =
+                                                  itemone['reason'].toString();
+                                            });
+                                          },
+                                          value: itemone["reason_id"],
+                                          child: Card(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: SizedBox(
                                                 child: Text(
-                                                  itemone["reason"],
-                                                  style:
-                                                      TextStyle(color: black2),
+                                                  '${itemone["reason"]}',
+                                                  style: TextStyle(
+                                                    color: black2,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.visible,
+                                                  softWrap: true,
                                                 ),
                                               ),
-                                            ));
-                                      }).toList(),
-                                    ),
-                                  ],
-                                ),
+                                            ),
+                                          ));
+                                    }).toList(),
+                                  ),
+                                ],
                               ),
                             ),
                           )

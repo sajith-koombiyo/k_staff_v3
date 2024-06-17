@@ -1720,4 +1720,47 @@ class CustomApi {
       notification().warning(context, 'No Internet');
     }
   }
+
+  // employee list
+
+  Future employeList(
+    BuildContext context,
+    String bId,
+    String start,
+    String length,
+  ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      final apiUrl = 'https://www.koombiyodelivery.net/hr2/appEmpList';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      var resp = await https.post(headers: headers, Uri.parse(apiUrl), body: {
+        "branch_id": bId,
+        "start": start,
+        "length": length,
+
+//  in bins =3, return bins =4"
+      });
+      print('fffffffffffffffffffffffffffffffffffff');
+      print(resp.body);
+      print('fffffffffffffffffffffffffffffffffffff');
+      var data = jsonDecode(resp.body);
+      if (data['status'] == 1) {
+        return data['data']['list'];
+      } else if (data['status'] == 204) {
+        notification().warning(context, 'No Empty Data');
+        return [];
+      } else {
+        notification().warning(context, data['message']);
+        return [];
+      }
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
 }
