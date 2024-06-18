@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/class/class.dart';
+import 'package:flutter_application_2/uI/main/drawer/branch_List/branch_list.dart';
 import 'package:flutter_application_2/uI/main/drawer/my_oders/my_oders.dart';
 import 'package:flutter_application_2/uI/main/navigation/navigation.dart';
 import 'package:flutter_share/flutter_share.dart';
@@ -489,6 +490,13 @@ class _customDrawerState extends State<customDrawer> {
                                         navigation(ContactUs());
                                       },
                                       text: 'Contact Us',
+                                    ),
+                                    CustomDrawerButton(
+                                      icon: Icons.add_business,
+                                      onTap: () {
+                                        navigation(BranchList());
+                                      },
+                                      text: 'Branch List',
                                     ),
 
                                     // Spacer(),

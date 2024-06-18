@@ -92,7 +92,9 @@ class _BranchVisitHistoryState extends State<BranchVisitHistory> {
                     child: Card(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20)),
-                      color: Color.fromARGB(255, 215, 225, 232),
+                      color: branchVisit[index]['out_time'] == null
+                          ? Color.fromARGB(255, 215, 225, 232)
+                          : Color.fromARGB(255, 228, 201, 199),
                       child: SizedBox(
                         width: w - 16,
                         child: Padding(
@@ -120,7 +122,26 @@ class _BranchVisitHistoryState extends State<BranchVisitHistory> {
                               ),
                               Spacer(),
                               branchVisit[index]['out_time'] != null
-                                  ? Container()
+                                  ? Container(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Out Time',
+                                            style: TextStyle(
+                                                color: black2, fontSize: 14),
+                                          ),
+                                          Text(
+                                            '${branchVisit[index]['out_time']}',
+                                            style: TextStyle(
+                                                color: const Color.fromARGB(
+                                                    255, 46, 124, 164),
+                                                fontSize: 14),
+                                          ),
+                                        ],
+                                      ),
+                                    )
                                   : DialogButton(
                                       text: 'Exit',
                                       onTap: () async {
