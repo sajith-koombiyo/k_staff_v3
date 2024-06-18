@@ -823,31 +823,30 @@ class CustomApi {
   // if rider collect delivery   and update quantity  then after hide marker from map
   // oder complete api
 
-  pickupComplete(BuildContext context, String pickId, String qty) async {
-    if (qty.isNotEmpty) {
-      var connectivityResult = await (Connectivity().checkConnectivity());
-      if (connectivityResult == ConnectivityResult.mobile ||
-          connectivityResult == ConnectivityResult.wifi) {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        final String? id = await prefs.getString('userkey');
-        final apiUrl = '${ApiUrl}/Picked/users';
-        // Headers
-        Map<String, String> headers = {
-          'userkey': '$id',
-        };
-        var resp = await https.post(
-            headers: headers,
-            Uri.parse(apiUrl),
-            body: {'pick_id': pickId, 'qty': qty});
-        print(resp.body);
-        // testingddddddddddddddddddddd   ddddddddddddddddddddddddddddddddddddd
+  pickupComplete(
+      BuildContext context, String pickId, String qty, String phone) async {
+    print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
 
-        // notification().info(context, newString);
-      } else {
-        notification().warning(context, 'No Internet');
-      }
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? id = await prefs.getString('userkey');
+      final apiUrl = '${ApiUrl}/Picked/users';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      var resp = await https.post(
+          headers: headers,
+          Uri.parse(apiUrl),
+          body: {'pick_id': pickId, 'qty': qty, 'phone': phone});
+      print(resp.body);
+      // testingddddddddddddddddddddd   ddddddddddddddddddddddddddddddddddddd
+
+      // notification().info(context, newString);
     } else {
-      notification().info(context, 'Invalid Quantity');
+      notification().warning(context, 'No Internet');
     }
   }
 
@@ -1734,7 +1733,7 @@ class CustomApi {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
-      final apiUrl = 'https://www.koombiyodelivery.net/hr2/appEmpList';
+      final apiUrl = 'https://hr.koombiyodelivery.lk/appEmpList';
       // Headers
       Map<String, String> headers = {
         'userkey': '$id',
@@ -1746,9 +1745,6 @@ class CustomApi {
 
 //  in bins =3, return bins =4"
       });
-      print('fffffffffffffffffffffffffffffffffffff');
-      print(resp.body);
-      print('fffffffffffffffffffffffffffffffffffff');
       var data = jsonDecode(resp.body);
       if (data['status'] == 1) {
         return data['data']['list'];

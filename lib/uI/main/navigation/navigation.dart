@@ -239,7 +239,7 @@ class _NavigationScreenState extends State<NavigationScreen>
     });
     var ytc = await CustomApi().getYoutubeDetails(context);
     setState(() {
-      // youTube = ytc;
+      youTube = ytc;
     });
   }
 

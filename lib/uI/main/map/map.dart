@@ -679,37 +679,45 @@ class _MapScreenState extends State<MapScreen> {
                                     : () async {
                                         print(
                                             'ffffwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwffffffffffffffffff');
+                                        if (quantity.text.isNotEmpty) {
+                                          int qnt = int.parse(quantity.text);
+                                          if (qnt < 5000) {
+                                            if (qnt != 0) {
+                                              setState(() {
+                                                isLoading = true;
+                                              });
 
-                                        qnt = int.parse(quantity.text);
-                                        if (qnt < 5000) {
-                                          if (qnt != 0) {
-                                            setState(() {
-                                              isLoading = true;
-                                            });
+                                              await CustomApi().pickupComplete(
+                                                  context,
+                                                  pickId,
+                                                  quantity.text,
+                                                  phone);
+                                              print(
+                                                  '444444444444eeeeeeeeeee4444444');
+                                              _marker.clear();
+                                              await userLocation();
+                                              // _marker.remove(value)
+                                              await CustomApi().sendSms(
+                                                  phone, pickId, context);
+                                              print('4444444444444444444');
+                                              setState(() {
+                                                Provider.of<ProviderS>(context,
+                                                        listen: false)
+                                                    .isAppbarsheerOpen = false;
 
-                                            await CustomApi().pickupComplete(
-                                                context, pickId, quantity.text);
-                                            print(
-                                                '444444444444eeeeeeeeeee4444444');
-                                            await userLocation();
-                                            // _marker.remove(value)
-                                            await CustomApi().sendSms(
-                                                phone, pickId, context);
-                                            print('4444444444444444444');
-                                            setState(() {
-                                              Provider.of<ProviderS>(context,
-                                                      listen: false)
-                                                  .isAppbarsheerOpen = false;
-
-                                              isLoading = false;
-                                            });
+                                                isLoading = false;
+                                              });
+                                            } else {
+                                              notification().info(
+                                                  context, 'Invalid Quantity');
+                                            }
                                           } else {
-                                            notification().warning(
-                                                context, 'Invalid quantity');
+                                            notification().info(
+                                                context, 'Invalid Quantity');
                                           }
                                         } else {
-                                          notification().warning(context,
-                                              ' maximum quantity is 5000');
+                                          notification().info(
+                                              context, 'Quantity is required');
                                         }
                                       },
                                 buttonHeight: h / 14,
