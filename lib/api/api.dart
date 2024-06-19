@@ -995,32 +995,47 @@ class CustomApi {
     }
   }
 
-  getYoutubeData() async {
-    List _ids = [];
-    var url = 'https://koombiyodelivery.net/hr2/appVideo';
-    var res = await https.post(Uri.parse(url), body: {});
+  // getYoutubeData() async {
+  //   List _ids = [];
+  //   var url = 'https://koombiyodelivery.net/hr2/appVideo';
+  //   var res = await https.post(Uri.parse(url), body: {});
 
-    var yId = jsonDecode(res.body);
+  //   var yId = jsonDecode(res.body);
 
-    List.generate(yId.length, (index) {
-      _ids.add(yId[index]['link']);
-    });
+  //   List.generate(yId.length, (index) {
+  //     _ids.add(yId[index]['link']);
+  //   });
 
-    //   _ids;
-    return _ids;
-  }
+  //   //   _ids;
+  //   return _ids;
+  // }
 
   getYoutubeDetails(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
-      var url = 'https://koombiyodelivery.net/hr2/appVideo';
-      var res = await https.post(Uri.parse(url), body: {});
+      final apiUrl = '${ApiUrl}/Appvideos/users';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      var url =
+          // http://koombiyodelivery.net/api.koombiyodelivery.lk/staffapi/v3/delivery/
+          'http://koombiyodelivery.net/api.koombiyodelivery.lk/staffapi/v3/delivery/Appvideos/users';
+      var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {});
 
       var yId = jsonDecode(res.body);
-
+      print('wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww');
+      print(yId);
+      print('wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwaaaaaaaaaaaaaaaaaaaaaaaaaawwwwwww');
       //   _ids;
-      return yId;
+      if (yId["status"] == 200) {
+        return yId['app_videos'];
+      } else {
+        return [];
+      }
     } else {
       notification().warning(context, 'No Internet');
     }
@@ -1748,6 +1763,39 @@ class CustomApi {
       var data = jsonDecode(resp.body);
       if (data['status'] == 1) {
         return data['data']['list'];
+      } else if (data['status'] == 204) {
+        notification().warning(context, 'No Empty Data');
+        return [];
+      } else {
+        notification().warning(context, data['message']);
+        return [];
+      }
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
+
+  // All branch list
+
+  Future branchList(
+    BuildContext context,
+  ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      final apiUrl = '${ApiUrl}/Branchlocation/users';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      var resp =
+          await https.post(headers: headers, Uri.parse(apiUrl), body: {});
+      print(resp.body);
+      var data = jsonDecode(resp.body);
+      if (data['status'] == 200) {
+        return data['branches'];
       } else if (data['status'] == 204) {
         notification().warning(context, 'No Empty Data');
         return [];

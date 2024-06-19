@@ -57,13 +57,7 @@ class _NavigationScreenState extends State<NavigationScreen>
   late AnimationController animationController;
   late Animation<double> animation;
   var selectval;
-  List listitems = [
-    'All',
-    'Gampaha',
-    'Nittmbuwa',
-    'Colombo',
-    'Nugegoda',
-  ];
+  List listitems = [];
   bool tap = false;
   bool button2 = false;
   bool button3 = false;
@@ -239,6 +233,8 @@ class _NavigationScreenState extends State<NavigationScreen>
     });
     var ytc = await CustomApi().getYoutubeDetails(context);
     setState(() {
+      print(ytc);
+      print('111111111111111111111111111111111111111111111111111111111');
       youTube = ytc;
     });
   }
