@@ -242,12 +242,29 @@ class _MyDeliveryState extends State<MyDelivery> {
                                               dropdownvalue = null;
                                               codController.clear();
                                             });
-                                            itemDetails(
-                                              dataList[index]['waybill_id'],
-                                              updateBTN,
-                                              dataList[index]['cod_final'],
-                                              dataList[index]['oid'],
-                                            );
+                                            dataList[index]['order_type'] == "1"
+                                                ? itemDetails(
+                                                    dataList[index]
+                                                        ['waybill_id'],
+                                                    updateBTN,
+                                                    dataList[index]
+                                                        ['cod_final'],
+                                                    dataList[index]['oid'],
+                                                  )
+                                                : Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          Exchange(
+                                                        cod: dataList[index]
+                                                            ['cod_final'],
+                                                        oId: dataList[index]
+                                                            ['oid'],
+                                                        updateBTN: updateBTN,
+                                                        waybill: dataList[index]
+                                                            ['waybill_id'],
+                                                      ),
+                                                    ));
                                           },
                                           onLongPress: () {},
                                           child: Card(
@@ -607,11 +624,11 @@ class _MyDeliveryState extends State<MyDelivery> {
                         });
                       }
                     : () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Exchange(),
-                            ));
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //       builder: (context) => Exchange(),
+                        //     ));
                       },
               )
             ],

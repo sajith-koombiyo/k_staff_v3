@@ -15,6 +15,7 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      readOnly: true,
       controller: controller,
       style: TextStyle(color: black, fontSize: 13.sp),
       validator: (value) {},
@@ -25,6 +26,11 @@ class CustomTextField extends StatelessWidget {
           borderSide: BorderSide(color: Colors.white),
           borderRadius: BorderRadius.circular(15.0),
         ),
+        focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+          color: Colors.black12,
+          // color: pink.withOpacity(0.1),
+        )),
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(
             color: Colors.black12,
@@ -34,7 +40,6 @@ class CustomTextField extends StatelessWidget {
         ),
         filled: true,
         hintStyle: TextStyle(fontSize: 13.dp),
-        hintText: text,
         fillColor: white.withOpacity(0.3),
       ),
     );

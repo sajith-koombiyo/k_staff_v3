@@ -10,8 +10,16 @@ import '../../../../widget/home_screen_widget/home_button.dart';
 import '../../../../widget/textField.dart';
 
 class Exchange extends StatefulWidget {
-  const Exchange({super.key});
-
+  const Exchange(
+      {super.key,
+      required this.cod,
+      required this.oId,
+      required this.updateBTN,
+      required this.waybill});
+  final String waybill;
+  final bool updateBTN;
+  final String cod;
+  final String oId;
   @override
   State<Exchange> createState() => _ExchangeState();
 }
@@ -42,7 +50,7 @@ class _ExchangeState extends State<Exchange> {
             SizedBox(
               height: 20,
             ),
-            Text('Hand Over',
+            Text('Old waybill',
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                   color: black2,
@@ -59,7 +67,7 @@ class _ExchangeState extends State<Exchange> {
             SizedBox(
               height: 20,
             ),
-            Text('Old exchange',
+            Text('New waybill',
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                   color: black2,
@@ -202,7 +210,7 @@ class _ExchangeState extends State<Exchange> {
               padding: const EdgeInsets.all(20.0),
               child: HomeButton(
                 onTap: () {},
-                text: 'LOGOUT',
+                text: 'COLLECT',
               ),
             ),
           ]),
