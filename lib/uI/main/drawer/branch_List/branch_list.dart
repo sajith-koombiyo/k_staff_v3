@@ -55,7 +55,7 @@ class _BranchListState extends State<BranchList> {
     });
 
     BitmapDescriptor markerBitMap2 = await BitmapDescriptor.fromAssetImage(
-      ImageConfiguration(size: Size(20, 20)),
+      ImageConfiguration(size: Size(5, 5), devicePixelRatio: 10),
       "assets/location_d.png",
     );
 
@@ -65,8 +65,8 @@ class _BranchListState extends State<BranchList> {
 
       Set<Marker> _markertemp = {
         Marker(
+            icon: BitmapDescriptor.defaultMarkerWithHue(0.4),
             // icon: markerBitMap2,
-            
             infoWindow: InfoWindow(title: branchList[index]['branch_name']),
             markerId: MarkerId(branchList[index]['branch_id']),
             position: LatLng(lat, long))

@@ -15,6 +15,7 @@ import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import '../../../../widget/diloag_button.dart';
@@ -42,10 +43,12 @@ class _LocationScreenState extends State<LocationScreen> {
   // List userBranchList = [];
   String? selectval;
   List userBranchList = [];
+  List branchList = [];
 
   @override
   void initState() {
     getLocation();
+    userLocation();
     getUserBranch();
     // TODO: implement initState
     super.initState();
@@ -65,6 +68,7 @@ class _LocationScreenState extends State<LocationScreen> {
   }
 
   void getLocation() async {
+    userLocation();
     LocationPermission permission;
     permission = await Geolocator.requestPermission();
 
@@ -77,6 +81,47 @@ class _LocationScreenState extends State<LocationScreen> {
 
     setState(() {
       position;
+    });
+  }
+
+  String MarkerTempId = '';
+
+  List<Marker> markerList = <Marker>[];
+  Set<Marker> _marker = {};
+
+  userLocation() async {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+    var temp = await CustomApi().branchVisitHistroy(context);
+    if (!mounted) return;
+    setState(() {
+      branchList = temp;
+    });
+    BitmapDescriptor markerBitMap2 = await BitmapDescriptor.fromAssetImage(
+      ImageConfiguration(size: Size(5, 5), devicePixelRatio: 10),
+      "assets/location_d.png",
+    );
+
+    List.generate(branchList.length, (index) {
+      double lat = double.parse(branchList[index]['bv_lati']);
+      double long = double.parse(branchList[index]['bv_longt']);
+      if (formattedDate == branchList[index]['bv_branch_name']) {
+        Set<Marker> _markertemp = {
+          Marker(
+              icon: BitmapDescriptor.defaultMarkerWithHue(0.4),
+              // icon: markerBitMap2,
+              infoWindow: InfoWindow(
+                  title: branchList[index]['bv_branch_name'],
+                  snippet: 'Visit Time'),
+              markerId: MarkerId(branchList[index]['bv_id']),
+              position: LatLng(lat, long))
+        };
+
+        _marker.addAll(_markertemp);
+      }
+    });
+    setState(() {
+      _marker;
     });
   }
 
@@ -259,6 +304,7 @@ class _LocationScreenState extends State<LocationScreen> {
                                       )
                                     : Expanded(
                                         child: GoogleMap(
+                                          markers: _marker,
                                           onCameraMoveStarted: () {},
                                           padding: EdgeInsets.only(
                                             top: h / 2.0,
@@ -330,6 +376,7 @@ class _LocationScreenState extends State<LocationScreen> {
                                   position!.longitude.toString(),
                                   Provider.of<ProviderS>(context, listen: false)
                                       .bImage);
+                              await userLocation();
                               // Navigator.pop(context);
                               setState(() {
                                 lConfirm = false;

@@ -184,6 +184,9 @@ class _AccountState extends State<Account> {
                                 padding: const EdgeInsets.all(20.0),
                                 child: HomeButton(
                                   onTap: () {
+                                    Provider.of<ProviderS>(context,
+                                            listen: false)
+                                        .isanotherUserLog = false;
                                     Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(

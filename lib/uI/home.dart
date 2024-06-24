@@ -14,6 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import '../app_details/color.dart';
 import '../provider/provider.dart';
+import 'main/drawer/branch_List/branch_list.dart';
 import 'main/drawer/my_delivery/my_delivery.dart';
 import 'main/navigation/navigation.dart';
 import 'widget/gauge/gauge.dart';
@@ -750,6 +751,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                     ),
                   ),
                 ),
+
                 dataList.isEmpty
                     ? loader()
                     : Chart(
@@ -760,6 +762,34 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                         oders: dataList[0]['total_orders'],
                         bankAmount: bankAmount,
                       ),
+
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    child: Row(
+                      children: [
+                        Text(
+                          "Koombiyo Branch List",
+                          style: TextStyle(
+                              fontFamily: '',
+                              fontSize: 14.sp,
+                              color: black,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: SizedBox(
+                      height: h,
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(15),
+                          child: BranchList())),
+                ),
+
                 SizedBox(
                   height: 90,
                 ),

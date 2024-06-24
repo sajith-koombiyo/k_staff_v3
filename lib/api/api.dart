@@ -85,11 +85,13 @@ class CustomApi {
                 '$responce dddddddddddddddddddddddaaaaaaaaaaaaaaaaaaaaaaaaa $key ddddddddddddddddd    $installDate');
 
             if (responce['userkey'] == userKey) {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => NavigationScreen(
-                        staffId: userName,
-                        userId: responce['userkey'],
-                      )));
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => NavigationScreen(
+                            staffId: userName,
+                            userId: responce['userkey'],
+                          )));
             } else {
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => const Login()));
@@ -1449,10 +1451,17 @@ class CustomApi {
           Uri.parse(apiUrl),
           body: {"branch_id": bId, "lati": lat, "longt": long, "image": img});
       var data = jsonDecode(res.body);
-      print(data);
+      print(data.toString());
+      print('wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww');
 
       if (data['status'] == 200) {
         notification().info(context, 'Data Saved Successfully');
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+
+        return data['contacts'];
+      }
+      if (data['status'] == 400) {
+        notification().warning(context, 'Invalid branch locations');
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
 
         return data['contacts'];
