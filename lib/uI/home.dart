@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/api/api.dart';
 import 'package:flutter_application_2/class/class.dart';
+import 'package:flutter_application_2/uI/main/drawer/my_delivery/my_delivery.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:geolocator/geolocator.dart';
@@ -15,7 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../app_details/color.dart';
 import '../provider/provider.dart';
 import 'main/drawer/branch_List/branch_list.dart';
-import 'main/drawer/my_delivery/my_delivery.dart';
+import 'main/drawer/my_delivery/oder_all_details.dart';
 import 'main/navigation/navigation.dart';
 import 'widget/gauge/gauge.dart';
 import 'widget/home_screen_widget/card.dart';
@@ -248,7 +249,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                       PageTransition(
                                         duration: Duration(milliseconds: 200),
                                         type: PageTransitionType.bottomToTop,
-                                        child: MyDelivery(isFromHome: true),
+                                        child: OderAllDetails(),
+                                        // MyDelivery(isFromHome: true),
                                         // child: VoiceCall(
                                         //   usrId: userId.toString(),
                                         // )

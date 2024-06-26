@@ -1816,4 +1816,37 @@ class CustomApi {
       notification().warning(context, 'No Internet');
     }
   }
+
+  // track order above superviser data
+
+  Future oderDetailAndTimeLine(BuildContext context, String waybill) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      final apiUrl = '${ApiUrl}/Timeline/users';
+      // Headers
+      print(id);
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      var resp = await https.post(
+          headers: headers, Uri.parse(apiUrl), body: {"waybill_id": waybill});
+
+      var data = jsonDecode(resp.body);
+
+      if (data['status'] == 200) {
+        return data['data'];
+      } else if (data['status'] == 204) {
+        notification().warning(context, 'No Empty Data');
+        return {};
+      } else {
+        notification().warning(context, data['message']);
+        return {};
+      }
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
 }
