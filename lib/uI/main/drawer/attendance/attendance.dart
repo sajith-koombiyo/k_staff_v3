@@ -394,34 +394,40 @@ class _AttendanceState extends State<Attendance> {
                                             'Please provide your vehicle meter details');
                                       }
                                     } else if (end64.isNotEmpty) {
-                                      if (endController.text.isNotEmpty) {
-                                        end = int.parse(
-                                            endController.text.toString());
-                                        if (end > startKM) {
-                                          int doneKm = end - startKM;
-                                          print(doneKm);
-                                          setState(() {
-                                            isLoading = true;
-                                          });
-                                          var res = await CustomApi()
-                                              .attendanceEndMeter(
-                                            context,
-                                            end64,
-                                            apiMidId,
-                                            endController.text,
-                                            doneKm.toString(),
-                                          );
-                                          data();
+                                      if (start64.isNotEmpty) {
+                                        if (endController.text.isNotEmpty) {
+                                          end = int.parse(
+                                              endController.text.toString());
+                                          if (end > startKM) {
+                                            int doneKm = end - startKM;
+                                            print(doneKm);
+                                            setState(() {
+                                              isLoading = true;
+                                            });
+                                            var res = await CustomApi()
+                                                .attendanceEndMeter(
+                                              context,
+                                              end64,
+                                              apiMidId,
+                                              endController.text,
+                                              doneKm.toString(),
+                                            );
+                                            data();
+                                          } else {
+                                            notification().warning(context,
+                                                'Please provide valid details');
+                                          }
                                         } else {
                                           notification().warning(context,
-                                              'Please provide valid details');
+                                              'Please provide your vehicle meter details');
                                         }
                                       } else {
                                         notification().warning(context,
-                                            'Please provide your vehicle meter details');
+                                            'Please provide your vehicle start meter detail');
                                       }
                                     }
                                   },
+                                  //0765639176
                           ),
                         ]),
                   ),
@@ -435,6 +441,7 @@ class _AttendanceState extends State<Attendance> {
       ),
     );
   }
+  
 
   String convertIntoBase64(File file) {
     List<int> imageBytes = file.readAsBytesSync();

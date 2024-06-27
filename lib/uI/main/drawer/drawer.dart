@@ -59,7 +59,7 @@ class _customDrawerState extends State<customDrawer> {
       }
     });
 
-    // Data();
+    Data();
     // TODO: implement initState
     super.initState();
   }

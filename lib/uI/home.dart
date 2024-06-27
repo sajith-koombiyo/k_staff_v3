@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/api/api.dart';
 import 'package:flutter_application_2/class/class.dart';
+import 'package:flutter_application_2/uI/main/drawer/darwer_clz.dart';
 import 'package:flutter_application_2/uI/main/drawer/my_delivery/my_delivery.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
@@ -36,6 +37,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with WidgetsBindingObserver {
+  int accessGroupId = 1;
   String userId = '';
   bool isLoading = false;
   String successRate = '';
@@ -113,6 +115,15 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     final String? id = await prefs.getString('userkey');
     var temp = await CustomApi().dashboardData(id.toString(), context);
 
+    var acId = await prefs.getInt(
+      'accessesKey',
+    );
+    print(id);
+    setState(() {
+      if (acId != null) {
+        accessGroupId = acId!;
+      }
+    });
     setState(() {
       userId = id.toString();
       dataList = temp;
@@ -249,7 +260,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                       PageTransition(
                                         duration: Duration(milliseconds: 200),
                                         type: PageTransitionType.bottomToTop,
-                                        child: OderAllDetails(),
+                                        child: DrawerClz()
+                                                .pickedList(accessGroupId)
+                                            ? MyDelivery(isFromHome: true)
+                                            : OderAllDetails(),
                                         // MyDelivery(isFromHome: true),
                                         // child: VoiceCall(
                                         //   usrId: userId.toString(),
