@@ -1835,7 +1835,7 @@ class CustomApi {
           headers: headers, Uri.parse(apiUrl), body: {"waybill_id": waybill});
 
       var data = jsonDecode(resp.body);
-
+      print(data);
       if (data['status'] == 200) {
         return data['data'];
       } else if (data['status'] == 204) {

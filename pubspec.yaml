@@ -68,6 +68,7 @@ dependencies:
   expansion_tile_group:
   timeline_tile: ^2.0.0
   timelines: ^0.1.0
+  chat_bubbles: ^1.6.0
   # zego_uikit_prebuilt_call: ^4.9.0
   # zego_uikit: ^2.22.2
   # zego_zpns: ^2.2.0

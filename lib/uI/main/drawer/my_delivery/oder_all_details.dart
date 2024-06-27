@@ -46,6 +46,10 @@ class _OderAllDetailsState extends State<OderAllDetails> {
   ScrollController _scrollController = ScrollController();
   List item = [];
   List timeLine = [];
+  List oderData = [];
+  List ger_owner = [];
+  List payments = [];
+  List return_note = [];
   int x = 0;
   @override
   void initState() {
@@ -65,7 +69,18 @@ class _OderAllDetailsState extends State<OderAllDetails> {
     print('22222222222222222222');
     setState(() {
       dataList = data;
+
+      print(dataList);
       timeLine = dataList['timeline'];
+      oderData = dataList['order_data'];
+      ger_owner = dataList['ger_owner'];
+      payments = dataList['payments'];
+      return_note = dataList['return_note'];
+
+      print(oderData);
+      print(ger_owner);
+      print(payments);
+      print(return_note);
 
       isLoading = false;
     });
@@ -109,7 +124,9 @@ class _OderAllDetailsState extends State<OderAllDetails> {
               controller: _scrollController,
               child: Column(
                 children: [
-                  dataList.isEmpty && isLoading == false
+                  oderData.isEmpty ||
+                          payments.isEmpty ||
+                          return_note.isEmpty && isLoading == false
                       ? SizedBox(
                           height: h,
                           width: w,
@@ -120,7 +137,7 @@ class _OderAllDetailsState extends State<OderAllDetails> {
                           ))
                       : dataList.isNotEmpty
                           ? Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(12.0),
                               child: Column(
                                 children: [
                                   ExpansionTileGroup(
@@ -138,61 +155,73 @@ class _OderAllDetailsState extends State<OderAllDetails> {
                                           ),
                                           expendedBorderColor: Colors.blue,
                                           children: [
-                                            myRow(
-                                                'Client Name',
-                                                dataList['order_data'][0]
-                                                        ['cust_name']
-                                                    .toString()),
-                                            myRow(
-                                                'Waybill ID',
-                                                dataList['order_data'][0]
-                                                        ['waybill_id']
-                                                    .toString()),
-                                            myRow(
-                                                'COD',
-                                                dataList['order_data'][0]
-                                                        ['cod_final']
-                                                    .toString()),
-                                            myRow(
-                                                'Weight',
-                                                dataList['order_data'][0]
-                                                        ['weight']
-                                                    .toString()),
-                                            myRow(
-                                                'Delivery Charge',
-                                                dataList['order_data'][0]
-                                                        ['delivery_charge']
-                                                    .toString()),
-                                            myRow(
-                                                'Description',
-                                                dataList['order_data'][0]
-                                                        ['description']
-                                                    .toString()),
-                                            myRow(
-                                                'Payment No',
-                                                dataList['payments'][0]
-                                                        ['payment_no']
-                                                    .toString()),
-                                            myRow(
-                                                'Paid Date',
-                                                dataList['payments'][0]
-                                                        ['paid_date']
-                                                    .toString()),
-                                            myRow(
-                                                'Paid Amount',
-                                                dataList['payments'][0]
-                                                        ['paid_amount']
-                                                    .toString()),
-                                            myRow(
-                                                'Return Note ID',
-                                                dataList['return_note'][0]
-                                                        ['note_id']
-                                                    .toString()),
-                                            myRow(
-                                                'Return Note Date',
-                                                dataList['return_note'][0]
-                                                        ['note_date']
-                                                    .toString()),
+                                            oderData.isEmpty
+                                                ? SizedBox()
+                                                : myRow(
+                                                    'Client Name',
+                                                    oderData[0]['cust_name']
+                                                        .toString()),
+                                            oderData.isEmpty
+                                                ? SizedBox()
+                                                : myRow(
+                                                    'Waybill ID',
+                                                    oderData[0]['waybill_id']
+                                                        .toString()),
+                                            oderData.isEmpty
+                                                ? SizedBox()
+                                                : myRow(
+                                                    'COD',
+                                                    oderData[0]['cod_final']
+                                                        .toString()),
+                                            oderData.isEmpty
+                                                ? SizedBox()
+                                                : myRow(
+                                                    'Weight',
+                                                    oderData[0]['weight']
+                                                        .toString()),
+                                            oderData.isEmpty
+                                                ? SizedBox()
+                                                : myRow(
+                                                    'Delivery Charge',
+                                                    oderData[0]
+                                                            ['delivery_charge']
+                                                        .toString()),
+                                            oderData.isEmpty
+                                                ? SizedBox()
+                                                : myRow(
+                                                    'Description',
+                                                    oderData[0]['description']
+                                                        .toString()),
+                                            payments.isEmpty
+                                                ? SizedBox()
+                                                : myRow(
+                                                    'Payment No',
+                                                    payments[0]['payment_no']
+                                                        .toString()),
+                                            payments.isEmpty
+                                                ? SizedBox()
+                                                : myRow(
+                                                    'Paid Date',
+                                                    payments[0]['paid_date']
+                                                        .toString()),
+                                            payments.isEmpty
+                                                ? SizedBox()
+                                                : myRow(
+                                                    'Paid Amount',
+                                                    payments[0]['paid_amount']
+                                                        .toString()),
+                                            return_note.isEmpty
+                                                ? SizedBox()
+                                                : myRow(
+                                                    'Return Note ID',
+                                                    return_note[0]['note_id']
+                                                        .toString()),
+                                            return_note.isEmpty
+                                                ? SizedBox()
+                                                : myRow(
+                                                    'Return Note Date',
+                                                    return_note[0]['note_date']
+                                                        .toString()),
                                           ],
                                         ),
                                         ExpansionTileBorderItem(
@@ -206,26 +235,30 @@ class _OderAllDetailsState extends State<OderAllDetails> {
                                           ),
                                           expendedBorderColor: Colors.blue,
                                           children: [
-                                            myRow(
-                                                'Customer Name',
-                                                dataList['order_data'][0]
-                                                        ['cust_name']
-                                                    .toString()),
-                                            myRow(
-                                                'Address',
-                                                dataList['order_data'][0]
-                                                        ['address']
-                                                    .toString()),
-                                            myRow(
-                                                'Destination',
-                                                dataList['order_data'][0]
-                                                        ['dname']
-                                                    .toString()),
-                                            myRow(
-                                                'Phone',
-                                                dataList['order_data'][0]
-                                                        ['phone']
-                                                    .toString()),
+                                            oderData.isEmpty
+                                                ? SizedBox()
+                                                : myRow(
+                                                    'Customer Name',
+                                                    oderData[0]['cust_name']
+                                                        .toString()),
+                                            oderData.isEmpty
+                                                ? SizedBox()
+                                                : myRow(
+                                                    'Address',
+                                                    oderData[0]['address']
+                                                        .toString()),
+                                            oderData.isEmpty
+                                                ? SizedBox()
+                                                : myRow(
+                                                    'Destination',
+                                                    oderData[0]['dname']
+                                                        .toString()),
+                                            oderData.isEmpty
+                                                ? SizedBox()
+                                                : myRow(
+                                                    'Phone',
+                                                    oderData[0]['phone']
+                                                        .toString()),
                                           ],
                                         ),
                                         ExpansionTileBorderItem(
@@ -239,46 +272,54 @@ class _OderAllDetailsState extends State<OderAllDetails> {
                                           ),
                                           expendedBorderColor: Colors.blue,
                                           children: [
-                                            myRow(
-                                                'Destination',
-                                                dataList['order_data'][0]
-                                                        ['dname']
-                                                    .toString()),
-                                            myRow(
-                                                'Received At',
-                                                dataList['order_data'][0]
-                                                        ['dname']
-                                                    .toString()),
-                                            myRow(
-                                                'Dispatch To',
-                                                dataList['order_data'][0]
-                                                        ['dname']
-                                                    .toString()),
-                                            myRow(
-                                                'Create Date',
-                                                dataList['order_data'][0]
-                                                        ['odate']
-                                                    .toString()),
-                                            myRow(
-                                                'Owner',
-                                                dataList['ger_owner'][0]
-                                                        ['staff_name']
-                                                    .toString()),
-                                            myRow(
-                                                'Branch Supervisor',
-                                                dataList['ger_owner'][0]
-                                                        ['sp_name']
-                                                    .toString()),
-                                            myRow(
-                                                'Branch Manager',
-                                                dataList['ger_owner'][0]
-                                                        ['am_name']
-                                                    .toString()),
-                                            myRow(
-                                                'Bin Code',
-                                                dataList['ger_owner'][0]
-                                                        ['bin_code']
-                                                    .toString()),
+                                            oderData.isEmpty
+                                                ? SizedBox()
+                                                : myRow(
+                                                    'Destination',
+                                                    oderData[0]['dname']
+                                                        .toString()),
+                                            oderData.isEmpty
+                                                ? SizedBox()
+                                                : myRow(
+                                                    'Received At',
+                                                    oderData[0]['dname']
+                                                        .toString()),
+                                            oderData.isEmpty
+                                                ? SizedBox()
+                                                : myRow(
+                                                    'Dispatch To',
+                                                    oderData[0]['dname']
+                                                        .toString()),
+                                            oderData.isEmpty
+                                                ? SizedBox()
+                                                : myRow(
+                                                    'Create Date',
+                                                    oderData[0]['odate']
+                                                        .toString()),
+                                            ger_owner.isEmpty
+                                                ? SizedBox()
+                                                : myRow(
+                                                    'Owner',
+                                                    ger_owner[0]['staff_name']
+                                                        .toString()),
+                                            ger_owner.isEmpty
+                                                ? SizedBox()
+                                                : myRow(
+                                                    'Branch Supervisor',
+                                                    ger_owner[0]['sp_name']
+                                                        .toString()),
+                                            ger_owner.isEmpty
+                                                ? SizedBox()
+                                                : myRow(
+                                                    'Branch Manager',
+                                                    ger_owner[0]['am_name']
+                                                        .toString()),
+                                            ger_owner.isEmpty
+                                                ? SizedBox()
+                                                : myRow(
+                                                    'Bin Code',
+                                                    ger_owner[0]['bin_code']
+                                                        .toString()),
                                           ],
                                         ),
                                       ]),
@@ -302,73 +343,86 @@ class _OderAllDetailsState extends State<OderAllDetails> {
                       ),
                     ),
                   ),
-                  SizedBox(
-                    // height: h / 1.5,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListView.builder(
-                        reverse: true,
-                        controller: _scrollController,
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: timeLine.length,
-                        itemBuilder: (context, index) {
-                          bool isLast = index == timeLine.length - 1;
-                          print(index);
-                          return TimelineTile(
-                            isFirst: isLast ? true : false,
-                            isLast: index == 0 ? true : false,
-                            indicatorStyle: IndicatorStyle(
-                                width: 60,
-                                height: 60,
-                                indicator: CircleAvatar(
-                                    backgroundColor:
-                                        Color(Random().nextInt(0xffffffff))
-                                            .withAlpha(0xff),
-                                    radius: 30,
-                                    child: Icon(
-                                      index == 0
-                                          ? Icons.ac_unit_rounded
-                                          : Icons.home,
-                                      color: black,
-                                      size: 35,
-                                    ))),
-                            alignment: TimelineAlign.start,
-                            endChild: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                padding: EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                    color: Color.fromARGB(255, 110, 147, 152),
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      timeLine[index]['status'],
-                                      style:
-                                          TextStyle(color: white, fontSize: 18),
-                                    ),
-                                    Text(
-                                      timeLine[index]['comments'],
-                                      style: TextStyle(color: white1),
-                                    ),
-                                    Container(
-                                      alignment: Alignment.topRight,
-                                      child: Text(
-                                        timeLine[index]['status_date'],
-                                        style: TextStyle(color: white2),
+                  dataList.isNotEmpty
+                      ? SizedBox(
+                          // height: h / 1.5,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ListView.builder(
+                              reverse: true,
+                              controller: _scrollController,
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: timeLine.length,
+                              itemBuilder: (context, index) {
+                                bool isLast = index == timeLine.length - 1;
+                                print(index);
+                                return TimelineTile(
+                                  isFirst: isLast ? true : false,
+                                  isLast: index == 0 ? true : false,
+                                  indicatorStyle: IndicatorStyle(
+                                      width: 60,
+                                      height: 60,
+                                      indicator: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(14),
+                                            color:
+                                                //  const Color.fromARGB(
+                                                //         255, 126, 156, 156)
+
+                                                Color(Random()
+                                                        .nextInt(0xffffffff))
+                                                    .withAlpha(0xff)
+                                                    .withOpacity(0.2),
+                                          ),
+                                          child: Icon(
+                                            index == 0
+                                                ? Icons.ac_unit_rounded
+                                                : Icons.home,
+                                            color: black,
+                                            size: 35,
+                                          ))),
+                                  alignment: TimelineAlign.start,
+                                  endChild: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      padding: EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                          color:
+                                              Color.fromARGB(255, 88, 108, 155),
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            timeLine[index]['status'],
+                                            style: TextStyle(
+                                                color: white, fontSize: 18),
+                                          ),
+                                          Text(
+                                            timeLine[index]['comments'],
+                                            style: TextStyle(color: white1),
+                                          ),
+                                          Container(
+                                            alignment: Alignment.topRight,
+                                            child: Text(
+                                              timeLine[index]['status_date'],
+                                              style: TextStyle(color: white2),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ),
+                                  ),
+                                );
+                              },
                             ),
-                          );
-                        },
-                      ),
-                    ),
-                  )
+                          ),
+                        )
+                      : SizedBox()
                 ],
               ),
             ),
