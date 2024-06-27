@@ -431,6 +431,7 @@ class _AttendanceState extends State<Attendance> {
                           ),
                         ]),
                   ),
+                  
                   isLoading ? Loader().loader(context) : SizedBox(),
                   provider.isanotherUserLog ? UserLoginCheck() : SizedBox()
                 ],
