@@ -19,9 +19,10 @@ import 'branch_operation/dd_aproval/pending_DD.dart';
 import 'contact_us/contact_us.dart';
 import 'darwer_clz.dart';
 import 'genaral/add_employe/add_employee.dart';
+import 'genaral/branch_deposit/branch_deposit.dart';
 import 'genaral/contact/contact.dart';
 import 'genaral/employee/employee_details.dart';
-import 'genaral/location/location_update.dart';
+import 'genaral/branch_visit/location_update.dart';
 import 'genaral/manage_users/manage_users.dart';
 import 'genaral/youtube_tutorial.dart';
 import 'my_delivery/my_delivery.dart';
@@ -375,6 +376,17 @@ class _customDrawerState extends State<customDrawer> {
                                           key = '7';
                                         });
                                       }, key, '7'),
+                                      tileButton('Branch Deposit', () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  BranchDeposit()),
+                                        );
+                                        setState(() {
+                                          key = '8';
+                                        });
+                                      }, key, '8'),
                                     ]),
 
                                     DrawerClz().attendance(accessGroupId)
@@ -507,6 +519,8 @@ class _customDrawerState extends State<customDrawer> {
                               ),
                             ),
                             Spacer(),
+                            //0764826420
+
                             Text("Copyright 2024 by \nKoobiyo IT (pvt)Ltd",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(

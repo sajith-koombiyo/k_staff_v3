@@ -10,6 +10,7 @@ import 'package:flutter_application_2/provider/provider.dart';
 import 'package:flutter_application_2/uI/widget/nothig_found.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'dart:ui';
@@ -66,21 +67,16 @@ class _OderAllDetailsState extends State<OderAllDetails> {
         );
     print('22222222222222222222');
 
-    print('22222222222222222222');
     setState(() {
       dataList = data;
-
-      print(dataList);
       timeLine = dataList['timeline'];
+      print(timeLine);
+      print('22222222222222222222');
+
       oderData = dataList['order_data'];
       ger_owner = dataList['ger_owner'];
       payments = dataList['payments'];
       return_note = dataList['return_note'];
-
-      print(oderData);
-      print(ger_owner);
-      print(payments);
-      print(return_note);
 
       isLoading = false;
     });
@@ -364,25 +360,75 @@ class _OderAllDetailsState extends State<OderAllDetails> {
                                       width: 60,
                                       height: 60,
                                       indicator: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(14),
-                                            color:
-                                                //  const Color.fromARGB(
-                                                //         255, 126, 156, 156)
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(14),
+                                          color:
+                                              //  const Color.fromARGB(
+                                              //         255, 126, 156, 156)
 
-                                                Color(Random()
-                                                        .nextInt(0xffffffff))
-                                                    .withAlpha(0xff)
-                                                    .withOpacity(0.2),
-                                          ),
-                                          child: Icon(
-                                            index == 0
-                                                ? Icons.ac_unit_rounded
-                                                : Icons.home,
-                                            color: black,
-                                            size: 35,
-                                          ))),
+                                              Color(Random()
+                                                      .nextInt(0xffffffff))
+                                                  .withAlpha(0xff)
+                                                  .withOpacity(0.1),
+                                        ),
+                                        child: FaIcon(
+                                          timeLine[index]['status_id'] == '1'
+                                              ? FontAwesomeIcons.star
+                                              : timeLine[index]['status_id'] ==
+                                                      '2'
+                                                  ? FontAwesomeIcons.gift
+                                                  : timeLine[index]
+                                                              ['status_id'] ==
+                                                          '3'
+                                                      ? FontAwesomeIcons.truck
+                                                      : timeLine[index][
+                                                                  'status_id'] ==
+                                                              '4'
+                                                          ? FontAwesomeIcons
+                                                              .basketShopping
+                                                          : timeLine[index][
+                                                                      'status_id'] ==
+                                                                  '9'
+                                                              ? FontAwesomeIcons
+                                                                  .close
+                                                              : timeLine[index][
+                                                                          'status_id'] ==
+                                                                      '7'
+                                                                  ? FontAwesomeIcons
+                                                                      .circle
+                                                                  : timeLine[index]
+                                                                              [
+                                                                              'status_id'] ==
+                                                                          '6'
+                                                                      ? FontAwesomeIcons
+                                                                          .check
+                                                                      : timeLine[index]['status_id'] ==
+                                                                              '10'
+                                                                          ? FontAwesomeIcons
+                                                                              .info
+                                                                          : timeLine[index]['status_id'] == '14'
+                                                                              ? FontAwesomeIcons.arrowDown
+                                                                              : timeLine[index]['status_id'] == '11'
+                                                                                  ? FontAwesomeIcons.undo
+                                                                                  : timeLine[index]['status_id'] == '12'
+                                                                                      ? FontAwesomeIcons.arrowsRotate
+                                                                                      : timeLine[index]['status_id'] == '13'
+                                                                                          ? FontAwesomeIcons.anchor
+                                                                                          : timeLine[index]['status_id'] == '5'
+                                                                                              ? FontAwesomeIcons.plane
+                                                                                              : timeLine[index]['status_id'] == '15'
+                                                                                                  ? FontAwesomeIcons.archive
+                                                                                                  : timeLine[index]['status_id'] == '18'
+                                                                                                      ? FontAwesomeIcons.pencil
+                                                                                                      : timeLine[index]['status_id'] == '19'
+                                                                                                          ? FontAwesomeIcons.thumbsUp
+                                                                                                          : FontAwesomeIcons.addressCard,
+                                          size: 35,
+                                    
+                                        ),
+                                      )),
                                   alignment: TimelineAlign.start,
                                   endChild: Padding(
                                     padding: const EdgeInsets.all(8.0),

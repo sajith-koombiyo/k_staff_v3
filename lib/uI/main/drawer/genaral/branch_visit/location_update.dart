@@ -9,7 +9,7 @@ import 'package:flutter_application_2/api/api.dart';
 import 'package:flutter_application_2/app_details/color.dart';
 import 'package:flutter_application_2/class/class.dart';
 import 'package:flutter_application_2/provider/provider.dart';
-import 'package:flutter_application_2/uI/main/drawer/genaral/location/branch_visit_history.dart';
+import 'package:flutter_application_2/uI/main/drawer/genaral/branch_visit/branch_visit_history.dart';
 import 'package:flutter_application_2/uI/main/navigation/navigation.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:geolocator/geolocator.dart';

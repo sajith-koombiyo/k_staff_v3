@@ -36,6 +36,16 @@ class DrawerClz {
     }
   }
 
+  oderAllDetail(int accessId) {
+    List data = [17];
+
+    if (data.contains(accessId) == true) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   branchOperation(int accessId) {
     List data = [1, 2, 3];
 
