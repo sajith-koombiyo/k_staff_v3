@@ -136,6 +136,19 @@ class _OderAllDetailsState extends State<OderAllDetails> {
                               padding: const EdgeInsets.all(12.0),
                               child: Column(
                                 children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Container(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        'Delivery Detail',
+                                        style: TextStyle(
+                                            color: black,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
                                   ExpansionTileGroup(
                                       spaceBetweenItem: 20,
                                       toggleType: ToggleType.expandOnlyCurrent,
@@ -409,7 +422,7 @@ class _OderAllDetailsState extends State<OderAllDetails> {
                                                                           ? FontAwesomeIcons
                                                                               .info
                                                                           : timeLine[index]['status_id'] == '14'
-                                                                              ? FontAwesomeIcons.arrowDown
+                                                                              ? FontAwesomeIcons.arrowTrendUp
                                                                               : timeLine[index]['status_id'] == '11'
                                                                                   ? FontAwesomeIcons.undo
                                                                                   : timeLine[index]['status_id'] == '12'
@@ -426,7 +439,8 @@ class _OderAllDetailsState extends State<OderAllDetails> {
                                                                                                           ? FontAwesomeIcons.thumbsUp
                                                                                                           : FontAwesomeIcons.addressCard,
                                           size: 35,
-                                    
+                                          color:
+                                              Color.fromARGB(255, 69, 108, 77),
                                         ),
                                       )),
                                   alignment: TimelineAlign.start,
@@ -449,7 +463,13 @@ class _OderAllDetailsState extends State<OderAllDetails> {
                                                 color: white, fontSize: 18),
                                           ),
                                           Text(
-                                            timeLine[index]['comments'],
+                                            timeLine[index]['comments'] == '-'
+                                                ? ""
+                                                : timeLine[index]['comments'],
+                                            style: TextStyle(color: white1),
+                                          ),
+                                          Text(
+                                            "${timeLine[index]['staff_name']} - ${timeLine[index]['dname']}",
                                             style: TextStyle(color: white1),
                                           ),
                                           Container(
