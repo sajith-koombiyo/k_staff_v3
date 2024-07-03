@@ -416,32 +416,43 @@ class _BranchDepositState extends State<BranchDeposit> {
                               Navigator.pop(context);
                             },
                             icon: Icon(Icons.close))),
+                    Container(
+                      alignment: Alignment.center,
+                      child: Text('Update  your oder detail',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: black1,
+                            fontSize: 18.dp,
+                          )),
+                    ),
+                    Divider(),
+                    SizedBox(
+                      height: 12,
+                    ),
                     Text(
                       'Date',
                       style: TextStyle(
-                        fontSize: 14.dp,
-                        color: black,
+                        fontSize: 12.dp,
+                        color: black2,
                         fontWeight: FontWeight.bold,
                       ),
-                    ),
-                    SizedBox(
-                      height: 12,
                     ),
                     serchBarr(context),
                     Text(
                       'Agent',
                       style: TextStyle(
-                        fontSize: 14.dp,
-                        color: black,
+                        fontSize: 12.dp,
+                        color: black2,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     SizedBox(
-                      height: 12,
+                      height: 8,
                     ),
                     drop(),
                     SizedBox(
-                      height: 20,
+                      height: 8,
                     ),
                     Container(
                       alignment: Alignment.center,
@@ -482,12 +493,13 @@ class _BranchDepositState extends State<BranchDeposit> {
                                     size: 40,
                                     color: const Color.fromARGB(96, 77, 76, 76),
                                   ),
-                                  Text('Please upload \nyour image',
+                                  Text(
+                                      'Please upload \nyour image \n -Click here-',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontWeight: FontWeight.w500,
                                         color: Colors.black38,
-                                        fontSize: 12.dp,
+                                        fontSize: 11.dp,
                                       )),
                                   x == 2
                                       ? Container(

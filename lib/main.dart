@@ -14,8 +14,8 @@ import 'uI/app_permission/app_permission.dart';
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  await notify().initNotifications();
+  // await Firebase.initializeApp();
+  // await notify().initNotifications();
 
   // ZegoUIKitPrebuiltCallInvitationService().setNavigatorKey(navigatorKey);
 

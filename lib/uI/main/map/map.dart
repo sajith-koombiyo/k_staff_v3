@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -21,6 +23,7 @@ import 'package:signature/signature.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../class/class.dart';
 import '../../widget/map/details.dart';
+import 'barcode_scanner/barcode_scanner.dart';
 import 'pdf/pdf.dart';
 
 class MapScreen extends StatefulWidget {
@@ -57,6 +60,7 @@ class _MapScreenState extends State<MapScreen> {
   bool isLoading = false;
   List<Marker> markerList = <Marker>[];
   Set<Marker> _marker = {};
+  List barcodeScanData = [];
   bool sign = false;
   final SignatureController _signController = SignatureController(
     penStrokeWidth: 1,
@@ -619,10 +623,22 @@ class _MapScreenState extends State<MapScreen> {
                     isDelivery == false && accept == '1'
                         ? Card(
                             child: TextField(
+                                readOnly: true,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    PageTransition(
+                                        type: PageTransitionType.leftToRight,
+                                        duration: Duration(milliseconds: 600),
+                                        child: BarcodeScanDeliveryItem(),
+                                        inheritTheme: true,
+                                        ctx: context),
+                                  );
+                                },
                                 controller: quantity,
                                 keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
-                                    hintText: 'Type your Quantity',
+                                    hintText: 'Scan your pickups',
                                     contentPadding: EdgeInsets.all(8),
                                     prefixIcon: Padding(
                                       padding: const EdgeInsets.all(4.0),
@@ -633,6 +649,12 @@ class _MapScreenState extends State<MapScreen> {
                                     ),
                                     fillColor: white3,
                                     filled: true,
+                                    suffixIcon: IconButton(
+                                        onPressed: () async {
+                                          scanBarcodeNormal();
+                                        },
+                                        icon:
+                                            Icon(Icons.qr_code_scanner_sharp)),
                                     enabledBorder: OutlineInputBorder(
                                         borderRadius:
                                             BorderRadius.circular(11)),
@@ -780,5 +802,71 @@ class _MapScreenState extends State<MapScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> scanBarcodeNormal() async {
+    String barcodeScanRes;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+          '#ff6666', 'Cancel', true, ScanMode.BARCODE);
+    } on PlatformException {
+      barcodeScanRes = 'Failed to get platform version.';
+    }
+    if (!mounted) return;
+
+    setState(() {
+      var _scanBarcode = barcodeScanRes;
+      if (_scanBarcode == "-1") {
+        quantity.text = "";
+      } else {
+        barcodeScanData.add(_scanBarcode.toString());
+        print(barcodeScanData);
+        quantity.text = " Quantity ${barcodeScanData.length.toString()}";
+      }
+    });
+  }
+
+  Future<void> scanBarcodeNormal2() async {
+    // QrImageView(
+    //   data: 'This QR code will show the error state instead',
+    //   version: 1,
+    //   size: 320,
+    //   gapless: false,
+    //   errorStateBuilder: (cxt, err) {
+    //     return Container(
+    //       child: Center(
+    //         child: Text(
+    //           'Uh oh! Something went wrong...',
+    //           textAlign: TextAlign.center,
+    //         ),
+    //       ),
+    //     );
+    //   },
+    // );
+
+    String barcodeScanRes;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+        '#ff6666',
+        'Cancel',
+        true,
+        ScanMode.BARCODE,
+      );
+    } on PlatformException {
+      barcodeScanRes = 'Failed to get platform version.';
+    }
+    if (!mounted) return;
+
+    setState(() {
+      var _scanBarcode = barcodeScanRes;
+      if (_scanBarcode == "-1") {
+        // search.text = "";
+      } else {
+        // search.text = _scanBarcode.toString();
+        // getData(true);
+      }
+    });
   }
 }

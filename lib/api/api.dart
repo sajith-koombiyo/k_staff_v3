@@ -253,11 +253,13 @@ class CustomApi {
 
         print(randomKey + temp);
         String staffName = userData['staff_name'];
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => NavigationScreen(
-                  staffId: staffName,
-                  userId: userKey,
-                )));
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => NavigationScreen(
+                      staffId: staffName,
+                      userId: userKey,
+                    )));
       } else {
         notification().info(context, 'Invalid OTP');
       }
@@ -502,6 +504,8 @@ class CustomApi {
     // Make POST request
     var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {});
     print(res.body);
+    print(
+        'kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
     print('notification count');
     List map = jsonDecode(res.body);
 
@@ -1844,6 +1848,47 @@ class CustomApi {
       } else {
         notification().warning(context, data['message']);
         return {};
+      }
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
+
+  // acount profile image
+
+  profileImage(BuildContext context, String img) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      print(id);
+      final apiUrl = '${ApiUrl}/Profile/update';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      // Make POST request
+      var res = await https
+          .post(headers: headers, Uri.parse(apiUrl), body: {"image": img});
+      var data = jsonDecode(res.body);
+      print(data.toString());
+      print('wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww');
+
+      if (data['status'] == 200) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+
+        return data['contacts'];
+      }
+      if (data['status'] == 400) {
+        notification().warning(context, 'Invalid branch locations');
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+
+        return data['contacts'];
+      }
+      if (data['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+        return [];
       }
     } else {
       notification().warning(context, 'No Internet');

@@ -1,10 +1,14 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/api/api.dart';
 import 'package:flutter_application_2/app_details/color.dart';
 import 'package:flutter_application_2/provider/provider.dart';
 import 'package:flutter_application_2/uI/login_and_signup/login.dart';
 import 'package:flutter_application_2/uI/widget/diloag_button.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_ripple_animation/simple_ripple_animation.dart';
@@ -20,6 +24,8 @@ class Account extends StatefulWidget {
 }
 
 class _AccountState extends State<Account> {
+  final ImagePicker _picker = ImagePicker();
+  bool imageLoading = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -229,8 +235,61 @@ class _AccountState extends State<Account> {
                   right: 0,
                   child: SizedBox(
                     height: h / 3,
-                    child: Lottie.asset('assets/default_user.json',
-                        fit: BoxFit.fitHeight),
+                    child: Stack(
+                      children: [
+                        provider.userData[0]['image'] == null
+                            ? Center(
+                                child: Lottie.asset(
+                                  'assets/default_user.json',
+                                  fit: BoxFit.fitHeight,
+                                ),
+                              )
+                            : Center(
+                                child: CircleAvatar(
+                                child: Center(
+                                    child: CircleAvatar(
+                                  backgroundImage: MemoryImage(
+                                    base64Decode(provider.userData[0]['image']),
+                                  ),
+                                  radius: 95,
+                                )),
+                                radius: 95,
+                              )),
+                        // imageLoading == false
+                        //     ? provider.userData[0]['image'] == null
+                        //         ? Center(
+                        //             child: Lottie.asset(
+                        //               'assets/default_user.json',
+                        //               fit: BoxFit.fitHeight,
+                        //             ),
+                        //           )
+                        //         : Center(
+                        //             child: CircleAvatar(
+                        //             backgroundImage: MemoryImage(
+                        //               base64Decode(
+                        //                   provider.userData[0]['image']),
+                        //             ),
+                        //             radius: 90,
+                        //           ))
+                        //     : Center(child: CircularProgressIndicator()),
+                        Positioned(
+                          bottom: 40,
+                          right: w / 3.5,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.blue.withOpacity(0.5),
+                            radius: 27,
+                            child: IconButton(
+                                onPressed: () {
+                                  bottomDialog();
+                                },
+                                icon: Icon(
+                                  Icons.camera_alt,
+                                  size: 30,
+                                )),
+                          ),
+                        ),
+                      ],
+                    ),
                   )),
             ],
           ),
@@ -294,5 +353,82 @@ class _AccountState extends State<Account> {
         ]),
       ),
     );
+  }
+
+  String convertIntoBase64(File file) {
+    List<int> imageBytes = file.readAsBytesSync();
+    String base64File = base64Encode(imageBytes);
+    return base64File;
+  }
+
+  bottomDialog() {
+    showModalBottomSheet(
+        showDragHandle: true,
+        context: context,
+        builder: (context) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading: new Icon(Icons.camera_alt),
+                title: Text('From Camera',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                      fontSize: 14.dp,
+                    )),
+                onTap: () {
+                  fromCamera();
+
+                  Navigator.pop(context);
+                },
+              ),
+              Divider(
+                height: 0,
+              ),
+              ListTile(
+                leading: new Icon(Icons.photo),
+                title: Text('From Gallery',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                      fontSize: 14.dp,
+                    )),
+                onTap: () {
+                  fromGallery();
+
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  fromGallery() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    await imageUpload(image!);
+  }
+
+  imageUpload(XFile image) async {
+    setState(() {
+      imageLoading = true;
+    });
+    final bytes = File(image!.path).readAsBytesSync();
+    String base64Image = base64Encode(bytes);
+    print("imgbytes : $base64Image");
+    await CustomApi().profileImage(context, base64Image);
+    var data = await CustomApi().getProfile();
+    Provider.of<ProviderS>(context, listen: false).userData = data;
+    notification().info(context, 'Image Upload Successfully');
+    // });
+    setState(() {
+      imageLoading = false;
+    });
+  }
+
+  fromCamera() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+    await imageUpload(image!);
   }
 }
