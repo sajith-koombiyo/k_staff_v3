@@ -9,6 +9,7 @@ import 'package:flutter_application_2/uI/login_and_signup/login.dart';
 import 'package:flutter_application_2/uI/widget/diloag_button.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_ripple_animation/simple_ripple_animation.dart';
@@ -290,6 +291,14 @@ class _AccountState extends State<Account> {
                                 )),
                           ),
                         ),
+
+                        imageLoading
+                            ? Center(
+                                child: LoadingAnimationWidget.inkDrop(
+                                color: Color.fromARGB(255, 206, 40, 28),
+                                size: 55,
+                              ))
+                            : SizedBox()
                       ],
                     ),
                   )),
@@ -419,7 +428,8 @@ class _AccountState extends State<Account> {
     final bytes = File(image!.path).readAsBytesSync();
     String base64Image = base64Encode(bytes);
     print("imgbytes : $base64Image");
-    await CustomApi().profileImage(context, base64Image);
+    var res = await CustomApi().profileImage(context, base64Image);
+    print(res);
     var data = await CustomApi().getProfile();
     Provider.of<ProviderS>(context, listen: false).userData = data;
     notification().info(context, 'Image Upload Successfully');
@@ -431,6 +441,7 @@ class _AccountState extends State<Account> {
 
   fromCamera() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.camera);
-    await imageUpload(image!);
+    var res = await imageUpload(image!);
+    print(res);
   }
 }

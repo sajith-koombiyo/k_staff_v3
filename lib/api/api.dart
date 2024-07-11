@@ -1860,7 +1860,7 @@ class CustomApi {
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
       print(id);
-      final apiUrl = '${ApiUrl}/Profile/update';
+      final apiUrl = '${ApiUrl}Profile/update';
       // Headers
       Map<String, String> headers = {
         'userkey': '$id',
