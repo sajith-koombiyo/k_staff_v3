@@ -33,6 +33,7 @@ import '../account/account.dart';
 import '../drawer/drawer.dart';
 import '../drawer/my_deposit/my_deposite.dart';
 import '../map/map.dart';
+import '../map/map2.dart';
 import '../notification/notification.dart';
 import 'package:badges/badges.dart' as badges;
 
@@ -83,7 +84,9 @@ class _NavigationScreenState extends State<NavigationScreen>
   final Geolocator _geolocator = Geolocator();
   static List<Widget> _pages = <Widget>[
     Home(),
+    // MapScreen(),
     MapScreen(),
+
     MyDeposit(),
     Account()
     // MyWidget()
@@ -201,15 +204,23 @@ class _NavigationScreenState extends State<NavigationScreen>
       }
       isLoading = true;
     });
+    var data = await CustomApi().getProfile();
     var temp = await CustomApi().notificationCount(userKey.toString());
+
     count = temp;
     Provider.of<ProviderS>(context, listen: false).noteCount = temp;
-    var data = await CustomApi().getProfile();
+
+    print(
+        ',,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,');
+    Provider.of<ProviderS>(context, listen: false).userData = data;
     var id = data[0]['user_id'].toString();
     var deposit = await CustomApi().getMyDeposit(context);
-    Provider.of<ProviderS>(context, listen: false).userData = data;
-    Provider.of<ProviderS>(context, listen: false).deposit = deposit;
 
+    print('1111111111111111111111111111111111111111111111111');
+    log(Provider.of<ProviderS>(context, listen: false).userData.toString());
+    print(
+        '11111ddddddddddddddddddddddddddddddddddddddd11111111111111111111111111111111111111111111');
+    Provider.of<ProviderS>(context, listen: false).deposit = deposit;
     var branchId = data[0]['branch_id'].toString();
     if (branchId.length == 1) {
       branchId = "00" + branchId;
@@ -228,14 +239,12 @@ class _NavigationScreenState extends State<NavigationScreen>
     }
     Provider.of<ProviderS>(context, listen: false).dpCode = branchId + bId;
     Provider.of<ProviderS>(context, listen: false).bId = branchId;
-    setState(() {
-      isLoading = false;
-    });
     var ytc = await CustomApi().getYoutubeDetails(context);
     setState(() {
       print(ytc);
       print('111111111111111111111111111111111111111111111111111111111');
       youTube = ytc;
+      isLoading = false;
     });
   }
 

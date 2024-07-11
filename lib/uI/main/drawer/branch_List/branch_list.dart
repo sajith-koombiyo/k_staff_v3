@@ -76,7 +76,7 @@ class _BranchListState extends State<BranchList> {
     setState(() {
       _marker;
     });
-    log(_marker.toString());
+    
   }
 
   @override

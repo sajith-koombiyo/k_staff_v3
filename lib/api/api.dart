@@ -176,14 +176,11 @@ class CustomApi {
           await prefs.setString('userkey', userkey);
           await prefs.setInt('accessesKey', accessesKey);
 
-          Navigator.push(
-            context,
-            PageTransition(
-                type: PageTransitionType.fade,
-                child: OTP(userId: userkey, userName: username),
-                inheritTheme: true,
-                ctx: context),
-          );
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => OTP(userId: userkey, userName: username),
+              ));
         } else if (map['status'] == 400) {
           notification().info(context, 'Bad Request: Error Occurred');
         } else if (map['status'] == 403) {

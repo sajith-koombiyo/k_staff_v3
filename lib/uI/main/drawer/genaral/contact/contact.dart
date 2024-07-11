@@ -51,7 +51,7 @@ class _ContactState extends State<Contact> {
       });
       _page += 20;
       print('222222222222222222222');
-      log(_page.toString());
+   
       print('222222222222222222222');
       var res = await CustomApi()
           .koombiyoContact(context, '', _page.toString(), '20');

@@ -237,7 +237,29 @@ class _AccountState extends State<Account> {
                     height: h / 3,
                     child: Stack(
                       children: [
-                        provider.userData[0]['image'] == null
+                        // base64Decode(provider.userData[0]['image']).isEmpty ||
+                        //         provider.userData[0]['image'] == null
+                        //     ? Center(
+                        //         child: Lottie.asset(
+                        //           'assets/default_user.json',
+                        //           fit: BoxFit.fitHeight,
+                        //         ),
+                        //       )
+                        //     : Center(
+                        //         child: CircleAvatar(
+                        //         child: Center(
+                        //             child: CircleAvatar(
+                        //           backgroundImage: MemoryImage(
+                        //             base64Decode(provider.userData[0]['image']),
+                        //           ),
+                        //           radius: 95,
+                        //         )),
+                        //         radius: 95,
+                        //       )),
+
+                        provider.userData.isEmpty ||
+                                provider.userData[0]['image'] == null ||
+                                provider.userData[0]['image'] == ''
                             ? Center(
                                 child: Lottie.asset(
                                   'assets/default_user.json',
@@ -246,32 +268,12 @@ class _AccountState extends State<Account> {
                               )
                             : Center(
                                 child: CircleAvatar(
-                                child: Center(
-                                    child: CircleAvatar(
-                                  backgroundImage: MemoryImage(
-                                    base64Decode(provider.userData[0]['image']),
-                                  ),
-                                  radius: 95,
-                                )),
-                                radius: 95,
+                                backgroundImage: MemoryImage(
+                                  base64Decode(provider.userData[0]['image']),
+                                ),
+                                radius: 90,
                               )),
-                        // imageLoading == false
-                        //     ? provider.userData[0]['image'] == null
-                        //         ? Center(
-                        //             child: Lottie.asset(
-                        //               'assets/default_user.json',
-                        //               fit: BoxFit.fitHeight,
-                        //             ),
-                        //           )
-                        //         : Center(
-                        //             child: CircleAvatar(
-                        //             backgroundImage: MemoryImage(
-                        //               base64Decode(
-                        //                   provider.userData[0]['image']),
-                        //             ),
-                        //             radius: 90,
-                        //           ))
-                        //     : Center(child: CircularProgressIndicator()),
+
                         Positioned(
                           bottom: 40,
                           right: w / 3.5,
