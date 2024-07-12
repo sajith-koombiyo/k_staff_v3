@@ -268,7 +268,12 @@ class _AttendanceState extends State<Attendance> {
                                             context, 'Image Already uploaded');
                                       }
                                     : () {
-                                        bottomDialog(false);
+                                        if (start64.isNotEmpty) {
+                                          bottomDialog(false);
+                                        } else {
+                                          notification().warning(context,
+                                              'Please Upload start meter details Image');
+                                        }
                                       },
                                 child: Container(
                                   child: Card(
@@ -427,11 +432,10 @@ class _AttendanceState extends State<Attendance> {
                                       }
                                     }
                                   },
-                                  //0765639176
+                            //0765639176
                           ),
                         ]),
                   ),
-                  
                   isLoading ? Loader().loader(context) : SizedBox(),
                   provider.isanotherUserLog ? UserLoginCheck() : SizedBox()
                 ],
@@ -442,7 +446,6 @@ class _AttendanceState extends State<Attendance> {
       ),
     );
   }
-  
 
   String convertIntoBase64(File file) {
     List<int> imageBytes = file.readAsBytesSync();
