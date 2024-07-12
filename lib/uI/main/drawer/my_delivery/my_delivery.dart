@@ -251,6 +251,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                                               BorderRadius.circular(20),
                                           splashColor: blue,
                                           onTap: () {
+                                            print('sssssssssssssssssssssss');
                                             bool updateBTN = false;
                                             setState(() {
                                               newImage = '';
@@ -264,12 +265,29 @@ class _MyDeliveryState extends State<MyDelivery> {
                                                 dataList[index]['cod_final'],
                                                 dataList[index]['oid'],
                                                 dataList[index]['order_type'],
-                                                dataList[index]
-                                                    ['ex_bag_waybill'],
-                                                dataList[index]
-                                                    ['prev_waybill']);
+                                                dataList[index]['order_type'] ==
+                                                        '1'
+                                                    ? dataList[index]
+                                                        ['ex_bag_waybill']
+                                                    : "".toString(),
+                                                dataList[index]['order_type'] ==
+                                                        '1'
+                                                    ? dataList[index]
+                                                            ['prev_waybill']
+                                                        .toString()
+                                                    : '');
+
+                                            print(
+                                                dataList[index]['waybill_id']);
+                                            print(dataList[index]['cod_final']);
+                                            print(dataList[index]['oid']);
+                                            print(
+                                                dataList[index]['order_type']);
+                                            print(dataList[index]
+                                                ['ex_bag_waybill']);
+                                            print(dataList[index]
+                                                ['prev_waybill']);
                                           },
-                                          onLongPress: () {},
                                           child: Card(
                                             margin: EdgeInsets.only(left: 0),
                                             color: dataList[index]
@@ -278,6 +296,12 @@ class _MyDeliveryState extends State<MyDelivery> {
                                                 ? Colors.red
                                                 : appliteBlue,
                                             child: Card(
+                                              color: dataList[index]
+                                                          ['order_type'] ==
+                                                      '1'
+                                                  ? Color.fromARGB(
+                                                      255, 224, 212, 106)
+                                                  : white,
                                               elevation: 50,
                                               margin: EdgeInsets.only(left: 3),
                                               child: Padding(
@@ -290,6 +314,17 @@ class _MyDeliveryState extends State<MyDelivery> {
                                                       child: Row(
                                                         children: [
                                                           Card(
+                                                            color: dataList[index]
+                                                                        [
+                                                                        'order_type'] ==
+                                                                    '1'
+                                                                ? Color
+                                                                    .fromARGB(
+                                                                        255,
+                                                                        210,
+                                                                        208,
+                                                                        191)
+                                                                : white,
                                                             elevation: 1,
                                                             child: Padding(
                                                               padding:

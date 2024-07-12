@@ -1891,4 +1891,49 @@ class CustomApi {
       notification().warning(context, 'No Internet');
     }
   }
+
+  deleveryExchangeitem(
+      BuildContext context, String img, String exWaybill) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      print(id);
+      final apiUrl = '${ApiUrl}Updateexchange/users';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      // Make POST request
+      print(img);
+      print(exWaybill);
+      print('ffffffffffffffffffff');
+      var res = await https.post(
+          headers: headers,
+          Uri.parse(apiUrl),
+          body: {"image": img, "ex_waybill": exWaybill});
+      var data = jsonDecode(res.body);
+      print(data.toString());
+      print('wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww');
+
+      if (data['status'] == 200) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+
+        return 1;
+      }
+      if (data['status'] == 400) {
+        notification().warning(context, 'Invalid branch locations');
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+
+        return 0;
+      }
+      if (data['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+        return 0;
+      }
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
 }
