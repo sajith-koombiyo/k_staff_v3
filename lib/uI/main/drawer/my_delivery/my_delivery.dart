@@ -652,7 +652,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                             updateBTN = false;
                           });
                         } else {
-                          if (oderType == '1') {
+                          if (oderType == '1' && x == 1 || x == 2) {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
