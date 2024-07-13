@@ -14,6 +14,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as https;
 import '../app_details/const.dart';
@@ -987,8 +989,8 @@ class CustomApi {
                   sent / total;
             },
           );
-
           notification().info(context, 'Image uploaded successfully');
+          return responce;
         } catch (error) {
           notification().info(context, 'Error uploading image');
         }

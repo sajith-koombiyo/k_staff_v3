@@ -41,6 +41,7 @@ class Exchange extends StatefulWidget {
 }
 
 class _ExchangeState extends State<Exchange> {
+  bool check = false;
   TextEditingController pWayBill = TextEditingController();
   TextEditingController exWayBill = TextEditingController();
   TextEditingController exBagWayBill = TextEditingController();
@@ -252,45 +253,66 @@ class _ExchangeState extends State<Exchange> {
                     SizedBox(
                       height: 20,
                     ),
+                    Row(
+                      children: [
+                        Checkbox(
+                          checkColor: white,
+                          value: check,
+                          onChanged: (value) {
+                            setState(() {
+                              check = value!;
+                            });
+                          },
+                        ),
+                        Text(
+                          "I've collected the delivery item.",
+                          style: TextStyle(color: appButtonColorLite),
+                        ),
+                      ],
+                    ),
                     Padding(
                       padding: const EdgeInsets.all(20.0),
-                      child: HomeButton(
-                        onTap: () async {
-                          if (Image64.isNotEmpty) {
-                            setState(() {
-                              isLoading = true;
-                            });
-                            var res = await CustomApi().deleveryExchangeitem(
-                                context, Image64, exWayBill.text);
-                            print(res);
-                            if (res == 1) {
-                              var res = await CustomApi().oderData(
-                                  widget.statusTyp,
-                                  widget.waybill,
-                                  context,
-                                  widget.dropdownvalueItem.toString(),
-                                  widget.dropdownvalueItem2.toString(),
-                                  widget.codController,
-                                  widget.date,
-                                  widget.date);
+                      child: check
+                          ? HomeButton(
+                              onTap: () async {
+                                if (Image64.isNotEmpty) {
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+                                  var res = await CustomApi()
+                                      .deleveryExchangeitem(
+                                          context, Image64, exWayBill.text);
+                                  print(res);
+                                  if (res == 1) {
+                                    var res = await CustomApi().oderData(
+                                        widget.statusTyp,
+                                        widget.waybill,
+                                        context,
+                                        widget.dropdownvalueItem.toString(),
+                                        widget.dropdownvalueItem2.toString(),
+                                        widget.codController,
+                                        widget.date,
+                                        widget.date);
 
-                              if (res == 200) {
-                                widget.backDataLoad();
-                                Navigator.pop(context);
-                              }
-                            } else {
-                              notification().warning(context, 'Update failed');
-                            }
-                          } else {
-                            notification().warning(context,
-                                'Please upload the exchange item image');
-                          }
-                          setState(() {
-                            isLoading = false;
-                          });
-                        },
-                        text: 'COLLECT',
-                      ),
+                                    if (res == 200) {
+                                      widget.backDataLoad();
+                                      Navigator.pop(context);
+                                    }
+                                  } else {
+                                    notification()
+                                        .warning(context, 'Update failed');
+                                  }
+                                } else {
+                                  notification().warning(context,
+                                      'Please upload the exchange item image');
+                                }
+                                setState(() {
+                                  isLoading = false;
+                                });
+                              },
+                              text: 'COLLECT',
+                            )
+                          : SizedBox(),
                     ),
                   ]),
             ),

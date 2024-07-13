@@ -16,6 +16,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:math';
 import 'dart:ui';
@@ -300,7 +301,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                                                           ['order_type'] ==
                                                       '1'
                                                   ? Color.fromARGB(
-                                                      255, 224, 212, 106)
+                                                      255, 243, 240, 210)
                                                   : white,
                                               elevation: 50,
                                               margin: EdgeInsets.only(left: 3),
@@ -611,6 +612,8 @@ class _MyDeliveryState extends State<MyDelivery> {
 
   itemDetails(String waybill, bool updateBTN, String cod, String oId,
       String oderType, String exchangeWayBill, String pWaybill) {
+    double codValue = double.parse(cod);
+
     String? dropdownvalue;
     String? dropdownvalue2;
     String dropdownvalueItem = '';
@@ -710,7 +713,9 @@ class _MyDeliveryState extends State<MyDelivery> {
                                     spreadRadius: 2,
                                     color: Color.fromARGB(31, 227, 94, 94))
                               ],
-                              color: Colors.black12,
+                              color: oderType == '1'
+                                  ? Color.fromARGB(255, 189, 145, 0)
+                                  : Colors.black38,
                               borderRadius: BorderRadius.only(
                                   topLeft: Radius.circular(10))),
                           child: Row(
@@ -718,14 +723,16 @@ class _MyDeliveryState extends State<MyDelivery> {
                               Text("  $waybill  ",
                                   style: TextStyle(
                                     fontWeight: FontWeight.w500,
-                                    color: black,
+                                    color: oderType == '1'
+                                        ? Color.fromARGB(255, 5, 57, 147)
+                                        : black,
                                     fontSize: 14.dp,
                                   )),
                               oderType == '1'
                                   ? Text("  Exchange  ",
                                       style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.red,
+                                        fontWeight: FontWeight.bold,
+                                        color: white,
                                         fontSize: 14.dp,
                                       ))
                                   : SizedBox(),
@@ -776,7 +783,11 @@ class _MyDeliveryState extends State<MyDelivery> {
                       onTap: () {
                         setstate(() {
                           x = 1;
-                          updateBTN = true;
+                          if (x == 1 &&
+                              codValue >= 100.00 &&
+                              newImage.isEmpty) {
+                            updateBTN = true;
+                          }
                         });
                       },
                       child: Container(
@@ -1177,7 +1188,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                     SizedBox(
                       height: 12,
                     ),
-                    x != 4
+                    x == 1 || x == 2 || x == 3
                         ? Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -1221,7 +1232,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                                                     color: Colors.black38,
                                                     fontSize: 12.dp,
                                                   )),
-                                              x == 2
+                                              x == 2 || codValue <= 100.00
                                                   ? Container(
                                                       alignment:
                                                           Alignment.center,
@@ -1254,11 +1265,21 @@ class _MyDeliveryState extends State<MyDelivery> {
                                       setstate(() {
                                         newImage = image!.path;
                                       });
-                                      CustomApi().immageUpload(
+                                      imageProgress();
+                                      var res = await CustomApi().immageUpload(
                                           context, image, waybill);
+
+                                      print(res);
+                                      if (res != 1) {
+                                        setstate(() {
+                                          newImage = '';
+                                          provider.progress = 0;
+                                        });
+                                      }
                                       setstate(() {
                                         updateBTN = true;
                                       });
+                                      Navigator.pop(context);
                                     },
                                     child: Card(
                                         elevation: 5,
@@ -1286,11 +1307,14 @@ class _MyDeliveryState extends State<MyDelivery> {
                                       setstate(() {
                                         newImage = image!.path;
                                       });
-                                      CustomApi().immageUpload(
+                                      imageProgress();
+                                      await CustomApi().immageUpload(
                                           context, image, waybill);
+
                                       setstate(() {
                                         updateBTN = true;
                                       });
+                                      Navigator.pop(context);
                                       // source
                                     },
                                     child: Card(
@@ -1332,6 +1356,38 @@ class _MyDeliveryState extends State<MyDelivery> {
           ),
         );
       }),
+    );
+  }
+
+  imageProgress() {
+    QuickAlert.show(
+      context: context,
+      type: QuickAlertType.loading,
+      barrierDismissible: true,
+      showConfirmBtn: false,
+      showCancelBtn: false,
+      widget: Consumer<ProviderS>(
+        builder: (context, provider, child) => Column(
+          children: [
+            Text('Image Uploading...',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black38,
+                  fontSize: 12.dp,
+                )),
+            LinearProgressIndicator(
+              borderRadius: BorderRadius.circular(10),
+              semanticsValue: provider.progress.toString(),
+              value: provider.progress,
+              minHeight: 7.0,
+              backgroundColor: Colors.grey[300],
+              valueColor: AlwaysStoppedAnimation<Color>(
+                  const Color.fromARGB(255, 21, 107, 177)),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
