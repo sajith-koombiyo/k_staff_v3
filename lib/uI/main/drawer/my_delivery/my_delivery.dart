@@ -630,6 +630,8 @@ class _MyDeliveryState extends State<MyDelivery> {
       builder: (context) => StatefulBuilder(builder: (context, setstate) {
         return Consumer<ProviderS>(
           builder: (context, provider, child) => AlertDialog(
+            backgroundColor:
+                Color.fromARGB(255, 238, 240, 241).withOpacity(0.95),
             scrollable: true,
             contentPadding: EdgeInsets.all(0),
             actionsPadding: EdgeInsets.all(10),

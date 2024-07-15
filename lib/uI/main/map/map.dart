@@ -71,12 +71,19 @@ class _MapScreenState extends State<MapScreen> {
     onDrawEnd: () => log('onDrawEnd called!'),
   );
   userLocation() async {
+    setState(() {
+      isLoading = true;
+    });
     status0Count = 0;
     status1Count = 0;
 
     print('111122222222222222222222222222222222222222222222222');
     var temp = await CustomApi().getmypickups(context);
     var temp2 = await CustomApi().getMyPDeliveryMap(context);
+
+    print(temp);
+    print(temp2);
+
     if (!mounted) return;
     setState(() {
       pickupLocation = temp;
@@ -189,6 +196,9 @@ class _MapScreenState extends State<MapScreen> {
         ? notification().warning(
             context, 'Any delivery location is not available at this moment.')
         : null;
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
