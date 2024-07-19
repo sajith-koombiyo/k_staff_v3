@@ -11,7 +11,7 @@ import 'package:flutter_application_2/api/api.dart';
 import 'package:flutter_application_2/app_details/color.dart';
 import 'package:flutter_application_2/class/location.dart';
 import 'package:flutter_application_2/provider/provider.dart';
-import 'package:flutter_application_2/uI/main/map/sign.dart';
+
 import 'package:flutter_application_2/uI/widget/diloag_button.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:geolocator/geolocator.dart';
@@ -23,7 +23,6 @@ import 'package:signature/signature.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../class/class.dart';
 import '../../widget/map/details.dart';
-import 'barcode_scanner/barcode_scanner.dart';
 import 'pdf/pdf.dart';
 
 class MapScreen extends StatefulWidget {
@@ -36,6 +35,7 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
+      
   BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
   TextEditingController quantity = TextEditingController();
   Position? position;
@@ -76,14 +76,10 @@ class _MapScreenState extends State<MapScreen> {
     });
     status0Count = 0;
     status1Count = 0;
-
-    print('111122222222222222222222222222222222222222222222222');
     var temp = await CustomApi().getmypickups(context);
     var temp2 = await CustomApi().getMyPDeliveryMap(context);
-
     print(temp);
-    print(temp2);
-
+    log(temp2.toString());
     if (!mounted) return;
     setState(() {
       pickupLocation = temp;
@@ -95,8 +91,6 @@ class _MapScreenState extends State<MapScreen> {
         }
       }
     });
-    print(
-        '111122sssssssssssssssssssssssssssssssssssssssssssssssssssss222222222222222222222222222222222222222222222');
     BitmapDescriptor markerBitMap = await BitmapDescriptor.fromAssetImage(
       ImageConfiguration(size: Size(40, 40)),
       "assets/location_pin_gradient_set-red.png",
@@ -154,7 +148,6 @@ class _MapScreenState extends State<MapScreen> {
       };
       _marker.addAll(_markertemp);
     });
-    print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
     List.generate(deliveryLocation.length, (index) {
       double lat = double.parse(deliveryLocation[index]['latitude']);
       double long = double.parse(deliveryLocation[index]['longitude']);
@@ -190,8 +183,7 @@ class _MapScreenState extends State<MapScreen> {
       };
       _marker.addAll(_markertemp2);
     });
-    print(_marker);
-    print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+
     _marker.isEmpty
         ? notification().warning(
             context, 'Any delivery location is not available at this moment.')
@@ -203,6 +195,7 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   void initState() {
+    userLocation();
     getLocation();
     _signController.addListener(() {
       log('Value changed');
@@ -232,19 +225,20 @@ class _MapScreenState extends State<MapScreen> {
             height: h,
             child: Stack(
               children: [
-                position == null
-                    ? Loader().loader(context)
-                    : GoogleMap(
-                        padding: EdgeInsets.only(top: h / 2, bottom: 100),
-                        myLocationEnabled: true,
-                        initialCameraPosition: CameraPosition(
-                          target:
-                              LatLng(position!.latitude, position!.longitude),
-                          zoom: 14.4746,
-                        ),
-                        markers: _marker,
-                        onMapCreated: (GoogleMapController _controller) {},
-                      ),
+                // position == null
+                //     ? Loader().loader(context)
+                //     :
+                GoogleMap(
+                  padding: EdgeInsets.only(top: h / 2, bottom: 100),
+                  myLocationEnabled: true,
+                  initialCameraPosition: CameraPosition(
+                    target: LatLng(7.8731, 80.7718),
+                    // LatLng(position!.latitude, position!.longitude),
+                    zoom: 8,
+                  ),
+                  markers: _marker,
+                  onMapCreated: (GoogleMapController _controller) {},
+                ),
                 Positioned(
                   top: 100,
                   left: 10,
@@ -495,6 +489,7 @@ class _MapScreenState extends State<MapScreen> {
     Future.delayed(const Duration(milliseconds: 200), () async {
       setState(() {
         position;
+        log(position.toString());
       });
       userLocation();
     });
@@ -633,17 +628,17 @@ class _MapScreenState extends State<MapScreen> {
                     isDelivery == false && accept == '1'
                         ? Card(
                             child: TextField(
-                                readOnly: true,
+                                // readOnly: true,
                                 onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    PageTransition(
-                                        type: PageTransitionType.leftToRight,
-                                        duration: Duration(milliseconds: 600),
-                                        child: BarcodeScanDeliveryItem(),
-                                        inheritTheme: true,
-                                        ctx: context),
-                                  );
+                                  // Navigator.push(
+                                  //   context,
+                                  //   PageTransition(
+                                  //       type: PageTransitionType.leftToRight,
+                                  //       duration: Duration(milliseconds: 600),
+                                  //       child: BarcodeScanDeliveryItem(),
+                                  //       inheritTheme: true,
+                                  //       ctx: context),
+                                  // );
                                 },
                                 controller: quantity,
                                 keyboardType: TextInputType.number,
@@ -709,8 +704,7 @@ class _MapScreenState extends State<MapScreen> {
                                     //         siganature();
                                     //       }
                                     : () async {
-                                        print(
-                                            'ffffwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwffffffffffffffffff');
+                                   
                                         if (quantity.text.isNotEmpty) {
                                           int qnt = int.parse(quantity.text);
                                           if (qnt < 5000) {

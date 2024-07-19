@@ -226,8 +226,10 @@ class CustomApi {
         print(userData['username']);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String username = userData['username'].toString();
+        String pickupDevice = userData['pickup_device'].toString();
         String userId = userData['user_id'].toString();
         var res = await prefs.setString("user_id", userId);
+        var res2 = await prefs.setString("pickup_device", pickupDevice);
         late String installDate;
         final DateTime date = await AppInstallDate().installDate;
         installDate = date.toString();

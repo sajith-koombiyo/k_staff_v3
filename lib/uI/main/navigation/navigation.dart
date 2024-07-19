@@ -11,6 +11,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_application_2/class/class.dart';
 import 'package:flutter_application_2/class/location.dart';
 import 'package:flutter_application_2/provider/provider.dart';
+
 import 'package:flutter_application_2/uI/widget/diloag_button.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:geolocator/geolocator.dart';
@@ -84,8 +85,8 @@ class _NavigationScreenState extends State<NavigationScreen>
   final Geolocator _geolocator = Geolocator();
   static List<Widget> _pages = <Widget>[
     Home(),
+    Map2(),
     // MapScreen(),
-    MapScreen(),
 
     MyDeposit(),
     Account()
@@ -95,6 +96,10 @@ class _NavigationScreenState extends State<NavigationScreen>
     setState(() {
       _selectedIndex = index;
       log(_selectedIndex.toString());
+      if (index != 1) {
+        Provider.of<ProviderS>(context, listen: false).isAppbarsheerOpen =
+            false;
+      }
     });
   }
 

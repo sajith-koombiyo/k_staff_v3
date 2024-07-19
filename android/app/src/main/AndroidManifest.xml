@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.INTERNET"/> 
     <!-- <uses-permission android:name="android.permission.RECEIVE_SMS"/>
 <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -78,8 +80,15 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+            <meta-data android:name="com.google.android.gms.version" 
+ android:value="@integer/google_play_services_version" />
             <meta-data android:name="com.google.android.geo.API_KEY"
-               android:value="AIzaSyCltJsI4DHeWIOszGvGgBtydWy9GAtJC2E"/>
+               android:value=
+             
+               "AIzaSyAkp4lKYkr-FXVcVHmrezbCBVmcTT7xn8A"
+               
+               />
+                 <!-- "AIzaSyCltJsI4DHeWIOszGvGgBtydWy9GAtJC2E" -->
               <!-- ios AIzaSyCGHHqq2iO0bI0szLjpsZ7roHq97Uu9C6A -->
                <!-- old AIzaSyCltJsI4DHeWIOszGvGgBtydWy9GAtJC2E -->
 

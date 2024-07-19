@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,9 @@ class MyDelivery extends StatefulWidget {
 }
 
 class _MyDeliveryState extends State<MyDelivery> {
+  String? _latestHardwareButtonEvent;
+
+  StreamSubscription<String>? _buttonSubscription;
   ScrollController _controller = ScrollController();
   TextEditingController search = TextEditingController();
   TextEditingController waybill = TextEditingController();
@@ -66,10 +70,17 @@ class _MyDeliveryState extends State<MyDelivery> {
 
   @override
   void initState() {
+    print('sssssssssssssssss');
     getData(true);
     dropDownData();
     // TODO: implement initState
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _buttonSubscription?.cancel();
   }
 
   getData(bool load) async {
@@ -186,6 +197,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                 controller: _scrollController,
                 child: Column(
                   children: [
+                    Text('Button name: $_latestHardwareButtonEvent\n'),
                     widget.isFromHome
                         ? Stack(
                             children: [

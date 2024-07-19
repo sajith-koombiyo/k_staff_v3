@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,8 +15,21 @@ import 'uI/app_permission/app_permission.dart';
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp();
-  // await notify().initNotifications();
+  await Firebase.initializeApp();
+  await notify().initNotifications();
+  await AwesomeNotifications().initialize(
+    null,
+    [
+      NotificationChannel(
+        channelShowBadge: true,
+        channelKey: 'call_channel',
+        defaultColor: Colors.blue,
+        channelName: "Basic Notifications",
+        importance: NotificationImportance.High,
+        channelDescription: "Description",
+      ),
+    ],
+  );
 
   // ZegoUIKitPrebuiltCallInvitationService().setNavigatorKey(navigatorKey);
 

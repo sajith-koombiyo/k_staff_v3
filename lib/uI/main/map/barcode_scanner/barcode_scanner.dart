@@ -8,7 +8,8 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 import '../../../widget/home_screen_widget/home_button.dart';
 
 class BarcodeScanDeliveryItem extends StatefulWidget {
-  const BarcodeScanDeliveryItem({super.key});
+  const BarcodeScanDeliveryItem({super.key, required this.barcodeCount});
+  final Function barcodeCount;
 
   @override
   State<BarcodeScanDeliveryItem> createState() =>
@@ -27,7 +28,6 @@ class _BarcodeScanDeliveryItemState extends State<BarcodeScanDeliveryItem> {
   // is android, or resume the camera if the platform is iOS.
   @override
   void reassemble() {
-    
     super.reassemble();
     if (Platform.isAndroid) {
       controller!.pauseCamera();
@@ -68,12 +68,35 @@ class _BarcodeScanDeliveryItemState extends State<BarcodeScanDeliveryItem> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
+                // Card(
+                //   elevation: 40,
+                //   color: Color.fromARGB(255, 29, 41, 50),
+                //   child: Container(
+                //       alignment: Alignment.center,
+                //       // color: Color.fromARGB(255, 29, 41, 50),
+                //       height: h / 6.5,
+                //       width: w / 2.5,
+                //       child: Column(
+                //         mainAxisSize: MainAxisSize.min,
+                //         children: [
+                //           Text(
+                //             textAlign: TextAlign.center,
+                //             'Pending',
+                //             style: TextStyle(fontSize: 14, color: white),
+                //           ),
+                //           Text(
+                //             textAlign: TextAlign.center,
+                //             x.toString(),
+                //             style: TextStyle(fontSize: 50, color: white),
+                //           ),
+                //         ],
+                //       )),
+                // ),
                 Card(
                   elevation: 40,
                   color: Color.fromARGB(255, 29, 41, 50),
                   child: Container(
                       alignment: Alignment.center,
-                      // color: Color.fromARGB(255, 29, 41, 50),
                       height: h / 6.5,
                       width: w / 2.5,
                       child: Column(
@@ -81,30 +104,7 @@ class _BarcodeScanDeliveryItemState extends State<BarcodeScanDeliveryItem> {
                         children: [
                           Text(
                             textAlign: TextAlign.center,
-                            'Pending',
-                            style: TextStyle(fontSize: 14, color: white),
-                          ),
-                          Text(
-                            textAlign: TextAlign.center,
-                            x.toString(),
-                            style: TextStyle(fontSize: 50, color: white),
-                          ),
-                        ],
-                      )),
-                ),
-                Card(
-                  elevation: 40,
-                  color: Color.fromARGB(255, 29, 41, 50),
-                  child: Container(
-                      alignment: Alignment.center,
-                      height: h / 6.5,
-                      width: w / 2.5,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            textAlign: TextAlign.center,
-                            'Assign',
+                            'Count',
                             style: TextStyle(fontSize: 14, color: white),
                           ),
                           Text(

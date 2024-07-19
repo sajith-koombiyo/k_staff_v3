@@ -27,7 +27,7 @@ dependencies:
   otp_text_field: ^1.1.3
   # sms_autofill: ^2.3.0
   loading_animation_widget: ^1.2.0+4
-  google_maps_flutter:
+  google_maps_flutter: ^2.1.4
   url_launcher: 
   flutter_barcode_scanner: ^2.0.0
   dotted_border: ^2.1.0
@@ -63,14 +63,18 @@ dependencies:
   printing: ^5.12.0
   firebase_core: ^2.14.0
   firebase_messaging: ^14.7.19
-  flutter_local_notifications: ^17.0.0
+  # flutter_local_notifications: ^17.0.0
+  awesome_notifications: ^0.9.3+1
   latlong2: ^0.9.1
   expansion_tile_group:
   timeline_tile: ^2.0.0
   timelines: ^0.1.0
   font_awesome_flutter: ^10.7.0
   qr_code_scanner: ^1.0.1
-  flutter_map:
+  flutter_map: 
+  flutter_map_marker_popup:
+  flutter_map_location_marker:
+  flutter_barcode_listener: ^0.1.4
   # syncfusion_flutter_maps: ^26.1.40
 
   # zego_uikit_prebuilt_call: ^4.9.0
