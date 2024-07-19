@@ -197,7 +197,6 @@ class _MyDeliveryState extends State<MyDelivery> {
                 controller: _scrollController,
                 child: Column(
                   children: [
-                    Text('Button name: $_latestHardwareButtonEvent\n'),
                     widget.isFromHome
                         ? Stack(
                             children: [

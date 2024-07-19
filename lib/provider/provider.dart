@@ -39,6 +39,13 @@ class ProviderS with ChangeNotifier {
     notifyListeners();
   }
 
+  TextEditingController _scanQnt = TextEditingController();
+  TextEditingController get scanQnt => _scanQnt;
+  set scanQnt(TextEditingController i) {
+    _scanQnt = i;
+    notifyListeners();
+  }
+
   String _bImage = '';
   String get bImage => _bImage;
   set bImage(String i) {

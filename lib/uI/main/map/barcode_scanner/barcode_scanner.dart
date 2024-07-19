@@ -2,14 +2,17 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_application_2/app_details/color.dart';
+import 'package:flutter_application_2/class/class.dart';
+import 'package:flutter_application_2/provider/provider.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import '../../../widget/home_screen_widget/home_button.dart';
 
 class BarcodeScanDeliveryItem extends StatefulWidget {
-  const BarcodeScanDeliveryItem({super.key, required this.barcodeCount});
-  final Function barcodeCount;
+  const BarcodeScanDeliveryItem({super.key, required this.isDevice});
+  final String isDevice;
 
   @override
   State<BarcodeScanDeliveryItem> createState() =>
@@ -150,7 +153,9 @@ class _BarcodeScanDeliveryItemState extends State<BarcodeScanDeliveryItem> {
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: HomeButton(
-              onTap: () {},
+              onTap: () {
+                Navigator.pop(context);
+              },
               text: 'Save',
             ),
           ),
@@ -168,9 +173,13 @@ class _BarcodeScanDeliveryItemState extends State<BarcodeScanDeliveryItem> {
         print(result!.format);
         data = [result!.code];
         if (barcodeList.contains(result!.code)) {
+          notification().warning(
+              context, 'Scan item ${result!.code} already exists in the list.');
         } else {
           x = x - 1;
           barcodeList.add(result!.code);
+          Provider.of<ProviderS>(context, listen: false).scanQnt.text =
+              barcodeList.length.toString();
         }
 
         // Function to add a value to the list if it doesn't already exist
