@@ -1,25 +1,19 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:flutter_application_2/class/class.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
+import 'package:flutter_map/flutter_map.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_application_2/api/api.dart';
-import 'package:flutter_application_2/app_details/color.dart';
-import 'package:flutter_application_2/class/location.dart';
+
 import 'package:flutter_application_2/provider/provider.dart';
-import 'package:flutter_application_2/uI/main/map/sign.dart';
-import 'package:flutter_application_2/uI/widget/diloag_button.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
-import 'package:signature/signature.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class BranchList extends StatefulWidget {
   const BranchList({super.key});
@@ -29,22 +23,18 @@ class BranchList extends StatefulWidget {
 }
 
 class _BranchListState extends State<BranchList> {
-  final Completer<GoogleMapController> _controller =
-      Completer<GoogleMapController>();
-  BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
   TextEditingController quantity = TextEditingController();
   Position? position;
   List branchList = [];
-
+  MapController mapController = MapController();
   bool isDelivery = false;
   String lat = '';
   String lon = '';
-
+  List<Marker> _marker = [];
   String branchName = '';
   String MarkerTempId = '';
   bool isLoading = false;
   List<Marker> markerList = <Marker>[];
-  Set<Marker> _marker = {};
 
   userLocation() async {
     var temp = await CustomApi().branchList(context);
@@ -54,29 +44,25 @@ class _BranchListState extends State<BranchList> {
       branchList = temp;
     });
 
-    BitmapDescriptor markerBitMap2 = await BitmapDescriptor.fromAssetImage(
-      ImageConfiguration(size: Size(5, 5), devicePixelRatio: 10),
-      "assets/location_d.png",
-    );
-
     List.generate(branchList.length, (index) {
       double lat = double.parse(branchList[index]['lati']);
       double long = double.parse(branchList[index]['longt']);
 
-      Set<Marker> _markertemp = {
+      final _markertemp = <Marker>[
         Marker(
-            icon: BitmapDescriptor.defaultMarkerWithHue(0.4),
-            // icon: markerBitMap2,
-            infoWindow: InfoWindow(title: branchList[index]['branch_name']),
-            markerId: MarkerId(branchList[index]['branch_id']),
-            position: LatLng(lat, long))
-      };
+          // key: Key(pickupLocation[index]['pickr_id']),
+          point: LatLng(lat, long),
+
+          child: InkWell(
+              onTap: () {}, child: Image.asset('assets/location_d.png')),
+        )
+      ];
+
       _marker.addAll(_markertemp);
     });
     setState(() {
       _marker;
     });
-    
   }
 
   @override
@@ -89,8 +75,6 @@ class _BranchListState extends State<BranchList> {
 
   @override
   void dispose() {
-    _controller;
-
     // TODO: implement dispose
     super.dispose();
   }
@@ -109,20 +93,23 @@ class _BranchListState extends State<BranchList> {
               children: [
                 position == null
                     ? Loader().loader(context)
-                    : GoogleMap(
-                        padding: EdgeInsets.only(top: h / 2, bottom: 100),
-                        myLocationEnabled: true,
-                        initialCameraPosition: CameraPosition(
-                          target: LatLng(7.8731, 80.7718),
-                          zoom: 7.4746,
+                    : FlutterMap(
+                        mapController: mapController,
+                        // mapController: mapController,
+                        options: MapOptions(
+                          initialCenter: LatLng(7.8731, 80.7718),
+                          minZoom: 8,
+                          maxZoom: 40,
+                          zoom: 7.5,
                         ),
-                        markers: _marker,
-                        //  {
-                        //   Marker(
-                        //       markerId: MarkerId('5'),
-                        //       position: LatLng(6.9271, 79.8612))
-                        // },
-                        onMapCreated: (GoogleMapController _controller) {},
+                        children: [
+                          TileLayer(
+                            urlTemplate:
+                                'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                            subdomains: ['a', 'b', 'c'],
+                          ),
+                          MarkerLayer(markers: _marker),
+                        ],
                       ),
                 isLoading ? Loader().loader(context) : SizedBox()
               ],

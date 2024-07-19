@@ -349,23 +349,27 @@ class _Map2State extends State<Map2> {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 100),
-                  child: FloatingActionButton.small(
-                      backgroundColor: white.withOpacity(0.5),
-                      child: Icon(Icons.location_searching_rounded),
-                      onPressed: () {
-                        Geolocator.getCurrentPosition(
-                                desiredAccuracy: LocationAccuracy.high)
-                            .then((pickedCurrentLocation) {
-                          setState(() {
-                            position = pickedCurrentLocation;
+                Positioned(
+                  bottom: 100,
+                  right: 12,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 100),
+                    child: FloatingActionButton.small(
+                        backgroundColor: white.withOpacity(0.5),
+                        child: Icon(Icons.location_searching_rounded),
+                        onPressed: () {
+                          Geolocator.getCurrentPosition(
+                                  desiredAccuracy: LocationAccuracy.high)
+                              .then((pickedCurrentLocation) {
+                            setState(() {
+                              position = pickedCurrentLocation;
+                            });
+                            mapController.move(
+                                LatLng(position!.latitude, position!.longitude),
+                                2);
                           });
-                          mapController.move(
-                              LatLng(position!.latitude, position!.longitude),
-                              2);
-                        });
-                      }),
+                        }),
+                  ),
                 ),
                 Provider.of<ProviderS>(context, listen: false).isAppbarsheerOpen
                     ? appbarSheet()

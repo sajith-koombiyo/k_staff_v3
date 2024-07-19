@@ -11,11 +11,13 @@ import 'package:flutter_application_2/class/class.dart';
 import 'package:flutter_application_2/provider/provider.dart';
 import 'package:flutter_application_2/uI/main/drawer/genaral/branch_visit/branch_visit_history.dart';
 import 'package:flutter_application_2/uI/main/navigation/navigation.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import '../../../../widget/diloag_button.dart';
@@ -28,8 +30,7 @@ class LocationScreen extends StatefulWidget {
 }
 
 class _LocationScreenState extends State<LocationScreen> {
-  final Completer<GoogleMapController> _controller =
-      Completer<GoogleMapController>();
+  MapController mapController = MapController();
   Position? position;
   bool isOpen = false;
   bool lConfirm = false;
@@ -87,7 +88,7 @@ class _LocationScreenState extends State<LocationScreen> {
   String MarkerTempId = '';
 
   List<Marker> markerList = <Marker>[];
-  Set<Marker> _marker = {};
+  List<Marker> _marker = [];
 
   userLocation() async {
     DateTime now = DateTime.now();
@@ -97,25 +98,20 @@ class _LocationScreenState extends State<LocationScreen> {
     setState(() {
       branchList = temp;
     });
-    BitmapDescriptor markerBitMap2 = await BitmapDescriptor.fromAssetImage(
-      ImageConfiguration(size: Size(5, 5), devicePixelRatio: 10),
-      "assets/location_d.png",
-    );
 
     List.generate(branchList.length, (index) {
       double lat = double.parse(branchList[index]['bv_lati']);
       double long = double.parse(branchList[index]['bv_longt']);
       if (formattedDate == branchList[index]['bv_branch_name']) {
-        Set<Marker> _markertemp = {
+        final _markertemp = <Marker>[
           Marker(
-              icon: BitmapDescriptor.defaultMarkerWithHue(0.4),
-              // icon: markerBitMap2,
-              infoWindow: InfoWindow(
-                  title: branchList[index]['bv_branch_name'],
-                  snippet: 'Visit Time'),
-              markerId: MarkerId(branchList[index]['bv_id']),
-              position: LatLng(lat, long))
-        };
+            // key: Key(pickupLocation[index]['pickr_id']),
+            point: LatLng(lat, long),
+
+            child: InkWell(
+                onTap: () {}, child: Image.asset('assets/location_d.png')),
+          )
+        ];
 
         _marker.addAll(_markertemp);
       }
@@ -138,6 +134,27 @@ class _LocationScreenState extends State<LocationScreen> {
     var w = MediaQuery.of(context).size.width;
     return Consumer<ProviderS>(
         builder: (context, provider, child) => Scaffold(
+              floatingActionButton: lConfirm
+                  ? SizedBox()
+                  : Padding(
+                      padding: const EdgeInsets.only(bottom: 100),
+                      child: FloatingActionButton.small(
+                          backgroundColor: white.withOpacity(0.5),
+                          child: Icon(Icons.location_searching_rounded),
+                          onPressed: () {
+                            Geolocator.getCurrentPosition(
+                                    desiredAccuracy: LocationAccuracy.high)
+                                .then((pickedCurrentLocation) {
+                              setState(() {
+                                position = pickedCurrentLocation;
+                              });
+                              mapController.move(
+                                  LatLng(
+                                      position!.latitude, position!.longitude),
+                                  2);
+                            });
+                          }),
+                    ),
               appBar: AppBar(
                 backgroundColor: appliteBlue,
                 title: Text(
@@ -303,34 +320,67 @@ class _LocationScreenState extends State<LocationScreen> {
                                               ),
                                       )
                                     : Expanded(
-                                        child: GoogleMap(
-                                          markers: _marker,
-                                          onCameraMoveStarted: () {},
-                                          padding: EdgeInsets.only(
-                                            top: h / 2.0,
-                                          ),
-                                          // on below line specifying map type.
-                                          mapType: MapType.normal,
-                                          // on below line setting user location enabled.
-                                          myLocationEnabled: true,
-                                          // on below line setting compass enabled.
+                                        child:
+                                            // GoogleMap(
+                                            //   markers: _marker,
+                                            //   onCameraMoveStarted: () {},
+                                            //   padding: EdgeInsets.only(
+                                            //     top: h / 2.0,
+                                            //   ),
+                                            //   // on below line specifying map type.
+                                            //   mapType: MapType.normal,
+                                            //   // on below line setting user location enabled.
+                                            //   myLocationEnabled: true,
+                                            //   // on below line setting compass enabled.
 
-                                          initialCameraPosition: CameraPosition(
-                                            target: LatLng(position!.latitude,
-                                                position!.longitude),
-                                            zoom: 11.4746,
-                                          ),
-                                          onTap: (argument) {
-                                            argument.latitude;
-                                            argument.longitude;
-                                            // MapUtils.openMap(
-                                            //     argument.latitude, argument.longitude);
-                                          },
+                                            //   initialCameraPosition: CameraPosition(
+                                            //     target: LatLng(position!.latitude,
+                                            //         position!.longitude),
+                                            //     zoom: 11.4746,
+                                            //   ),
+                                            //   onTap: (argument) {
+                                            //     argument.latitude;
+                                            //     argument.longitude;
+                                            //     // MapUtils.openMap(
+                                            //     //     argument.latitude, argument.longitude);
+                                            //   },
 
-                                          onMapCreated:
-                                              (GoogleMapController controller) {
-                                            _controller.complete(controller);
-                                          },
+                                            //   onMapCreated:
+                                            //       (GoogleMapController controller) {
+                                            //     _controller.complete(controller);
+                                            //   },
+                                            // ),
+                                            FlutterMap(
+                                          mapController: mapController,
+                                          // mapController: mapController,
+                                          options: MapOptions(
+                                            initialCenter:
+                                                LatLng(7.8731, 80.7718),
+                                            minZoom: 8,
+                                            maxZoom: 40,
+                                            zoom: 7.5,
+                                          ),
+                                          children: [
+                                            TileLayer(
+                                              urlTemplate:
+                                                  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                              subdomains: ['a', 'b', 'c'],
+                                            ),
+                                            MarkerLayer(markers: _marker),
+                                            MarkerLayer(markers: [
+                                              Marker(
+                                                  point: LatLng(
+                                                      position!.latitude,
+                                                      position!.longitude),
+                                                  child: Icon(
+                                                    Icons
+                                                        .person_pin_circle_rounded,
+                                                    size: 20,
+                                                    color: Color.fromARGB(
+                                                        255, 240, 27, 4),
+                                                  ))
+                                            ]),
+                                          ],
                                         ),
                                       ),
                               ],
