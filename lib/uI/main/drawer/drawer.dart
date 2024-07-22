@@ -20,6 +20,7 @@ import 'contact_us/contact_us.dart';
 import 'darwer_clz.dart';
 import 'genaral/add_employe/add_employee.dart';
 import 'genaral/branch_deposit/branch_deposit.dart';
+import 'genaral/branch_visit/location_update_googlMap.dart';
 import 'genaral/contact/contact.dart';
 import 'genaral/employee/employee_details.dart';
 import 'genaral/branch_visit/location_update.dart';
@@ -49,7 +50,7 @@ class _customDrawerState extends State<customDrawer> {
   int drawOpen = 0;
   String key = '';
   int temp = 0;
-
+  String pickupDevice = '';
   int accessGroupId = 1;
   List modeData = [];
   @override
@@ -68,11 +69,13 @@ class _customDrawerState extends State<customDrawer> {
   Data() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
+    var res = await prefs.getString('pickup_device');
     var id = await prefs.getInt(
       'accessesKey',
     );
     print(id);
     setState(() {
+      pickupDevice = res.toString();
       if (id != null) {
         accessGroupId = id!;
       }
@@ -370,7 +373,9 @@ class _customDrawerState extends State<customDrawer> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  LocationScreen()),
+                                                  pickupDevice == '1'
+                                                      ? LocationScreen()
+                                                      : LocationUpdateGoogleMap()),
                                         );
                                         setState(() {
                                           key = '7';

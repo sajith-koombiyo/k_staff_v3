@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'package:flutter_application_2/app_details/color.dart';
 import 'package:flutter_application_2/class/class.dart';
 import 'package:flutter_map/flutter_map.dart';
 
@@ -86,34 +87,40 @@ class _BranchListState extends State<BranchList> {
     return Consumer<ProviderS>(
       builder: (context, provider, child) => Scaffold(
         backgroundColor: Color.fromARGB(255, 229, 232, 238),
-        body: SingleChildScrollView(
-          child: SizedBox(
-            height: h,
-            child: Stack(
-              children: [
-                position == null
-                    ? Loader().loader(context)
-                    : FlutterMap(
-                        mapController: mapController,
-                        // mapController: mapController,
-                        options: MapOptions(
-                          initialCenter: LatLng(7.8731, 80.7718),
-                          minZoom: 8,
-                          maxZoom: 40,
-                          zoom: 7.5,
-                        ),
-                        children: [
-                          TileLayer(
-                            urlTemplate:
-                                'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                            subdomains: ['a', 'b', 'c'],
-                          ),
-                          MarkerLayer(markers: _marker),
-                        ],
+        body: SizedBox(
+          height: h,
+          child: Stack(
+            children: [
+              position == null
+                  ? Loader().loader(context)
+                  : FlutterMap(
+                      // mapController: mapController,
+                      // mapController: mapController,
+                      options: MapOptions(
+                        enableScrollWheel: false,
+                        keepAlive: false,
+                        applyPointerTranslucencyToLayers: false,
+                        initialCenter: LatLng(7.8731, 80.7718),
+                        minZoom: 6,
+                        maxZoom: 7,
+                        zoom: 7.5,
                       ),
-                isLoading ? Loader().loader(context) : SizedBox()
-              ],
-            ),
+                      children: [
+                        TileLayer(
+                          urlTemplate:
+                              'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                          subdomains: ['a', 'b', 'c'],
+                        ),
+                        MarkerLayer(markers: _marker),
+                      ],
+                    ),
+              Container(
+                color: white.withOpacity(0.1),
+                height: h,
+                width: w,
+              ),
+              isLoading ? Loader().loader(context) : SizedBox()
+            ],
           ),
         ),
       ),

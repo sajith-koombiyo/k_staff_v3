@@ -16,6 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import '../app_details/color.dart';
 import '../provider/provider.dart';
+import 'main/drawer/branch_List/branchListGooglemap.dart';
 import 'main/drawer/branch_List/branch_list.dart';
 import 'main/drawer/my_delivery/oder_all_details.dart';
 import 'main/navigation/navigation.dart';
@@ -54,6 +55,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   var pending;
   int x = 0;
   int y = 0;
+  String pickupDevice = '';
   @override
   void initState() {
     WidgetsBinding.instance!.addObserver(this);
@@ -113,6 +115,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('userkey');
+    var pickupD = await prefs.getString('pickup_device');
     var temp = await CustomApi().dashboardData(id.toString(), context);
 
     var acId = await prefs.getInt(
@@ -120,6 +123,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     );
     print(id);
     setState(() {
+      pickupDevice = pickupD.toString();
       if (acId != null) {
         accessGroupId = acId!;
       }
@@ -799,12 +803,18 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                   ),
                 ),
                 Padding(
+            
                   padding: const EdgeInsets.all(12.0),
                   child: SizedBox(
                       height: h,
                       child: ClipRRect(
                           borderRadius: BorderRadius.circular(15),
-                          child: BranchList())),
+                          child:
+                              // pickupDevice == '1'
+                              //     ?
+                              BranchList()
+                          // : BranchListGoogleMap()
+                          )),
                 ),
 
                 SizedBox(
