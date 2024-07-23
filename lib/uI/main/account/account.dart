@@ -260,7 +260,8 @@ class _AccountState extends State<Account> {
 
                         provider.userData.isEmpty ||
                                 provider.userData[0]['image'] == null ||
-                                provider.userData[0]['image'] == ''
+                                provider.userData[0]['image'] == '' ||
+                                provider.userData[0]['image'] == 'default.jpg'
                             ? Center(
                                 child: Lottie.asset(
                                   'assets/default_user.json',
