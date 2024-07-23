@@ -246,8 +246,11 @@ class _NavigationScreenState extends State<NavigationScreen>
     Provider.of<ProviderS>(context, listen: false).bId = branchId;
     var ytc = await CustomApi().getYoutubeDetails(context);
     setState(() {
+      
       print(ytc);
-      print('111111111111111111111111111111111111111111111111111111111');
+      log(ytc.toString());
+      print(
+          '111111111111111111ssssssssssssssssss111111111111111111111111111111111111111');
       youTube = ytc;
       isLoading = false;
     });
