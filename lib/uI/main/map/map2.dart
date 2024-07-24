@@ -406,6 +406,7 @@ class _Map2State extends State<Map2> {
     var w = MediaQuery.of(context).size.width;
 
     log(pickupDevice);
+    pickupDevice = '1';
     pickupDevice == '0'
         ? SystemChannels.textInput.invokeMethod('TextInput.hide')
         : SystemChannels.textInput.invokeMethod('TextInput.hide');
@@ -741,7 +742,7 @@ class _Map2State extends State<Map2> {
                                                                 LocationAccuracy
                                                                     .high);
                                                     log(position.toString());
-                                                    await CustomApi()
+                                                    var res = await CustomApi()
                                                         .pickupComplete(
                                                       context,
                                                       pickId,
@@ -753,23 +754,15 @@ class _Map2State extends State<Map2> {
                                                           .toString(),
                                                       position!.longitude
                                                           .toString(),
-                                                      [
-                                                        19194704,
-                                                        80005200,
-                                                        17808346,
-                                                        123456
-                                                      ].toString(),
+                                                      barcodeScanData
+                                                          .toString(),
                                                     );
                                                     setState(() {
                                                       _marker.clear();
                                                     });
-                                                    log('narker');
-                                                    log(_marker.toString());
-                                                    // await CustomApi().sendSms(
-                                                    //     phone, pickId, context);
+
                                                     await userLoaction();
-                                                    print(
-                                                        '4444444444444444444');
+
                                                     setState(() {
                                                       Provider.of<ProviderS>(
                                                                   context,

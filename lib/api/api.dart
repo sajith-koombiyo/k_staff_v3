@@ -853,9 +853,14 @@ class CustomApi {
         'longt': long,
         'pickup_items': pickup_items
       });
+      print('=======================================================');
       print(resp.body);
+      print('=======================================================');
       // testingddddddddddddddddddddd   ddddddddddddddddddddddddddddddddddddd
-
+      var res = jsonDecode(resp.body);
+      if (res['status'] == 200) {
+        notification().info(context, 'Pickup Collected Successfully');
+      }
       // notification().info(context, newString);
     } else {
       notification().warning(context, 'No Internet');
