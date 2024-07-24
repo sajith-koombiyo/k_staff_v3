@@ -76,7 +76,7 @@ class CustomApi {
             Map<String, String> headers = {
               'userkey': '$userKey',
             };
-            
+
             var urll = '${ApiUrl}/Remember/users';
             var res = await https.post(
                 headers: headers,
@@ -831,8 +831,8 @@ class CustomApi {
   // if rider collect delivery   and update quantity  then after hide marker from map
   // oder complete api
 
-  pickupComplete(
-      BuildContext context, String pickId, String qty, String phone) async {
+  pickupComplete(BuildContext context, String pickId, String qty, String phone,
+      String lat, String long, String pickup_items) async {
     print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
 
     var connectivityResult = await (Connectivity().checkConnectivity());
@@ -845,10 +845,14 @@ class CustomApi {
       Map<String, String> headers = {
         'userkey': '$id',
       };
-      var resp = await https.post(
-          headers: headers,
-          Uri.parse(apiUrl),
-          body: {'pick_id': pickId, 'qty': qty, 'phone': phone});
+      var resp = await https.post(headers: headers, Uri.parse(apiUrl), body: {
+        'pick_id': pickId,
+        'qty': qty,
+        'phone': phone,
+        'lati': lat,
+        'longt': long,
+        'pickup_items': pickup_items
+      });
       print(resp.body);
       // testingddddddddddddddddddddd   ddddddddddddddddddddddddddddddddddddd
 

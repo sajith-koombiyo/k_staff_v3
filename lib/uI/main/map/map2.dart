@@ -41,7 +41,7 @@ class _Map2State extends State<Map2> {
 
   TextEditingController quantity = TextEditingController();
   TextEditingController SacanQuantity = TextEditingController();
-
+  final FocusNode _focusNode = FocusNode();
   int qnt = 0;
   bool isDelivery = false;
   String accept = '';
@@ -199,10 +199,28 @@ class _Map2State extends State<Map2> {
     // userLoaction();
     // TODO: implement initState
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
+    });
+
+    // Add a listener to keep the TextField focused
+    _focusNode.addListener(() {
+      if (!_focusNode.hasFocus) {
+        _focusNode.requestFocus();
+      }
+    });
     // SystemChannels.textInput.invokeMethod('TextInput.hide');
     // FocusScope.of(context).requestFocus(FocusNode());
   }
 
+  @override
+  void dispose() {
+    SacanQuantity.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   @override
   Widget build(BuildContext context) {
     var h = MediaQuery.of(context).size.height;
@@ -389,7 +407,7 @@ class _Map2State extends State<Map2> {
 
     log(pickupDevice);
     pickupDevice == '0'
-        ? null
+        ? SystemChannels.textInput.invokeMethod('TextInput.hide')
         : SystemChannels.textInput.invokeMethod('TextInput.hide');
     return Consumer<ProviderS>(
       builder: (context, pValue, child) => AnimationLimiter(
@@ -521,12 +539,13 @@ class _Map2State extends State<Map2> {
                                   ? Stack(
                                       children: [
                                         Card(
-                                          child: TextField(
+                                          child: TextFormField(
+                                              focusNode: _focusNode,
+                                              textInputAction: TextInputAction
+                                                  .search,
                                               autofocus: true,
                                               showCursor: true,
                                               // readOnly: true,
-
-                                              enabled: true,
                                               onChanged: (value) async {
                                                 log('$value vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvdddd');
 
@@ -541,19 +560,24 @@ class _Map2State extends State<Map2> {
                                                 } else {
                                                   if (SacanQuantity
                                                       .text.isNotEmpty) {
-                                                    setState(() {
-                                                      notification().info(
-                                                          context,
-                                                          'Scan item $value successfully saved');
-                                                      barcodeScanData
-                                                          .add(value);
-                                                      quantity.text =
-                                                          barcodeScanData.length
-                                                              .toString();
-                                                      SacanQuantity.clear();
-                                                      log(barcodeScanData
-                                                          .toString());
-                                                    });
+                                                    if (SacanQuantity
+                                                            .text.length >
+                                                        4) {
+                                                      setState(() {
+                                                        notification().info(
+                                                            context,
+                                                            'Scan item $value successfully saved');
+                                                        barcodeScanData
+                                                            .add(value);
+                                                        quantity.text =
+                                                            barcodeScanData
+                                                                .length
+                                                                .toString();
+                                                        SacanQuantity.clear();
+                                                        log(barcodeScanData
+                                                            .toString());
+                                                      });
+                                                    }
                                                   }
                                                 }
                                               },
@@ -693,6 +717,7 @@ class _Map2State extends State<Map2> {
                                               if (quantity.text.isNotEmpty ||
                                                   pValue.scanQnt.text
                                                       .isNotEmpty) {
+                                                log('sssssssssssssssssssssssss');
                                                 int qnt = int.parse(
                                                     pickupDevice == '1'
                                                         ? quantity.text
@@ -701,26 +726,48 @@ class _Map2State extends State<Map2> {
                                                   print(
                                                       'qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq');
                                                   if (qnt != 0) {
+                                                    print('fffffffffffffff');
                                                     setState(() {
                                                       isLoading = true;
                                                     });
-
+                                                    Position? position;
+                                                    LocationPermission
+                                                        permission;
+                                                    permission = await Geolocator
+                                                        .requestPermission();
+                                                    position = await Geolocator
+                                                        .getCurrentPosition(
+                                                            desiredAccuracy:
+                                                                LocationAccuracy
+                                                                    .high);
+                                                    log(position.toString());
                                                     await CustomApi()
                                                         .pickupComplete(
-                                                            context,
-                                                            pickId,
-                                                            pickupDevice == '0'
-                                                                ? pValue.scanQnt
-                                                                    .text
-                                                                : quantity.text,
-                                                            phone);
-                                                    print(
-                                                        '444444444444eeeeeeeeeee4444444');
-                                                    _marker.clear();
+                                                      context,
+                                                      pickId,
+                                                      pickupDevice == '0'
+                                                          ? pValue.scanQnt.text
+                                                          : quantity.text,
+                                                      phone,
+                                                      position!.latitude
+                                                          .toString(),
+                                                      position!.longitude
+                                                          .toString(),
+                                                      [
+                                                        19194704,
+                                                        80005200,
+                                                        17808346,
+                                                        123456
+                                                      ].toString(),
+                                                    );
+                                                    setState(() {
+                                                      _marker.clear();
+                                                    });
+                                                    log('narker');
+                                                    log(_marker.toString());
+                                                    // await CustomApi().sendSms(
+                                                    //     phone, pickId, context);
                                                     await userLoaction();
-                                                    // _marker.remove(value)
-                                                    await CustomApi().sendSms(
-                                                        phone, pickId, context);
                                                     print(
                                                         '4444444444444444444');
                                                     setState(() {
@@ -815,13 +862,6 @@ class _Map2State extends State<Map2> {
 
   barcodeDataCount() {
     setState(() {});
-  }
-
-  @override
-  void dispose() {
-    quantity.dispose();
-    SacanQuantity.dispose();
-    super.dispose();
   }
 
   void getLocation() async {

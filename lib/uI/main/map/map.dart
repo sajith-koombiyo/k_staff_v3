@@ -35,7 +35,7 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
-      
+
   BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
   TextEditingController quantity = TextEditingController();
   Position? position;
@@ -704,7 +704,6 @@ class _MapScreenState extends State<MapScreen> {
                                     //         siganature();
                                     //       }
                                     : () async {
-                                   
                                         if (quantity.text.isNotEmpty) {
                                           int qnt = int.parse(quantity.text);
                                           if (qnt < 5000) {
@@ -717,7 +716,10 @@ class _MapScreenState extends State<MapScreen> {
                                                   context,
                                                   pickId,
                                                   quantity.text,
-                                                  phone);
+                                                  phone,
+                                                  'lat',
+                                                  'lon',
+                                                  'pick');
                                               print(
                                                   '444444444444eeeeeeeeeee4444444');
                                               _marker.clear();
