@@ -68,11 +68,11 @@ class _AttendanceState extends State<Attendance> {
 
         startKM = int.parse(res[0]['start']);
 
-        print(startKM);
+      
         if (res[0]['start_img'] != null) {
           sMeter = true;
           start64ConvertData = base64Decode(res[0]['start_img']);
-          print(start64ConvertData);
+       
           startController.text = res[0]['start'];
         }
         if (res[0]['end_img'] != null) {
@@ -405,7 +405,7 @@ class _AttendanceState extends State<Attendance> {
                                               endController.text.toString());
                                           if (end > startKM) {
                                             int doneKm = end - startKM;
-                                            print(doneKm);
+                                         
                                             setState(() {
                                               isLoading = true;
                                             });
@@ -566,14 +566,14 @@ class _AttendanceState extends State<Attendance> {
       if (isStart) {
         final bytes = File(image!.path).readAsBytesSync();
         String base64Image = base64Encode(bytes);
-        print("imgbytes : $base64Image");
+       
         startMeter = image!.path;
         start64 = base64Image;
         end64 = '';
       } else {
         final bytes = File(image!.path).readAsBytesSync();
         String base64Image = base64Encode(bytes);
-        print("imgbytes : $base64Image");
+     
         startMeter = image!.path;
         end64 = base64Image;
         start64 = '';
@@ -589,7 +589,7 @@ class _AttendanceState extends State<Attendance> {
       if (isStart) {
         final bytes = File(image!.path).readAsBytesSync();
         String base64Image = base64Encode(bytes);
-        print("imgbytes : $base64Image");
+      
         startMeter = image!.path;
         start64 = base64Image;
         end64 = '';

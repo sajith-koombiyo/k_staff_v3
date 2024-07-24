@@ -60,7 +60,7 @@ class _LocationUpdateGoogleMapState extends State<LocationUpdateGoogleMap> {
       isLoading = true;
     });
     List brancheList = await CustomApi().userActiveBranches(context);
-    print(brancheList);
+  
     setState(() {
       userBranchList = brancheList;
 
@@ -363,13 +363,8 @@ class _LocationUpdateGoogleMapState extends State<LocationUpdateGoogleMap> {
                                 isLoading = true;
                               });
 
-                              print(
-                                  Provider.of<ProviderS>(context, listen: false)
-                                      .bImage
-                                      .toString());
-                              print(position!.latitude.toString());
-                              print(position!.longitude.toString());
-                              print(visitBranchId);
+                        
+                     
                               await CustomApi().branchVisit(
                                   context,
                                   visitBranchId,

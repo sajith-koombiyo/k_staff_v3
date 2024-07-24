@@ -50,7 +50,7 @@ class _ManageUsersState extends State<ManageUsers> {
     setState(() {
       userList = res;
       isLoading = false;
-      print(res);
+  
     });
   }
 

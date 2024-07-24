@@ -144,8 +144,7 @@ class _WorkDetailsState extends State<WorkDetails> {
                     sAmount.text.isNotEmpty &&
                     provider.salaryType.isNotEmpty) {
                   if (provider.designation != '55') {
-                    print(
-                        '2222222222222222222222222211111111111111111111111111111111111111122');
+                 
                     var res = await CustomApi().addUser(
                       context,
                       widget.name,
@@ -171,7 +170,7 @@ class _WorkDetailsState extends State<WorkDetails> {
                     var respp = jsonDecode(res);
 
                     if (respp['status'] == 1) {
-                      print('111111111111111111111111111111');
+                     
                       var resp = await CustomApi().addUserImages(
                           context,
                           respp['temp_id'].toString(),
@@ -219,14 +218,14 @@ class _WorkDetailsState extends State<WorkDetails> {
                     }
                   } else {
                     if (provider.bondType == '1') {
-                      print('111111111111111111111111111111');
+                   
                       if (newImage.isNotEmpty &&
                           newImage2.isNotEmpty &&
                           newImage3.isNotEmpty &&
                           newImage4.isNotEmpty &&
                           newImage5.isNotEmpty &&
                           newImage6.isNotEmpty) {
-                        print('11111111111111111111111dddddddddddd1111111');
+                    
                         var res = await CustomApi().addUser(
                           context,
                           widget.name, widget.addres,
@@ -249,7 +248,7 @@ class _WorkDetailsState extends State<WorkDetails> {
                         );
 
                         var respp = jsonDecode(res);
-                        print(respp);
+                     
                         if (respp['status'] == 1) {
                           var resp = await CustomApi().addUserImages(
                               context,
@@ -292,7 +291,7 @@ class _WorkDetailsState extends State<WorkDetails> {
                             Navigator.pop(context);
                           }
                         } else {
-                          print(respp['msg'].toString());
+                      
                           String data =
                               removeAllHtmlTags(respp['msg'].toString());
                           notification().warning(context, data);

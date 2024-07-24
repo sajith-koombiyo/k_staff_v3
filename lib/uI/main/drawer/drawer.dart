@@ -73,7 +73,7 @@ class _customDrawerState extends State<customDrawer> {
     var id = await prefs.getInt(
       'accessesKey',
     );
-    print(id);
+   
     setState(() {
       pickupDevice = res.toString();
       if (id != null) {
@@ -231,8 +231,7 @@ class _customDrawerState extends State<customDrawer> {
                                         ? drawwerList('Branch Operations',
                                             Icons.accessibility_outlined, () {
                                             setState(() {
-                                              print(drawOpen);
-                                              print(drawTab);
+                                            
                                               if (drawOpen == 2 && drawTab) {
                                                 drawTab = false;
                                               } else {

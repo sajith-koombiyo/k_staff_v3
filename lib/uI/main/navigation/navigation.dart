@@ -215,16 +215,10 @@ class _NavigationScreenState extends State<NavigationScreen>
     count = temp;
     Provider.of<ProviderS>(context, listen: false).noteCount = temp;
 
-    print(
-        ',,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,');
     Provider.of<ProviderS>(context, listen: false).userData = data;
     var id = data[0]['user_id'].toString();
     var deposit = await CustomApi().getMyDeposit(context);
 
-    print('1111111111111111111111111111111111111111111111111');
-    log(Provider.of<ProviderS>(context, listen: false).userData.toString());
-    print(
-        '11111ddddddddddddddddddddddddddddddddddddddd11111111111111111111111111111111111111111111');
     Provider.of<ProviderS>(context, listen: false).deposit = deposit;
     var branchId = data[0]['branch_id'].toString();
     if (branchId.length == 1) {
@@ -246,11 +240,6 @@ class _NavigationScreenState extends State<NavigationScreen>
     Provider.of<ProviderS>(context, listen: false).bId = branchId;
     var ytc = await CustomApi().getYoutubeDetails(context);
     setState(() {
-      
-      print(ytc);
-      log(ytc.toString());
-      print(
-          '111111111111111111ssssssssssssssssss111111111111111111111111111111111111111');
       youTube = ytc;
       isLoading = false;
     });
@@ -594,7 +583,6 @@ class _NavigationScreenState extends State<NavigationScreen>
                                                 }
 
                                                 x = x + 1;
-                                                print(x);
 
                                                 if (x == 1) {
                                                   setState(() {
@@ -731,8 +719,6 @@ class _NavigationScreenState extends State<NavigationScreen>
             });
             CustomApi().userLocation(id.toString(),
                 position!.latitude.toString(), position!.longitude.toString());
-
-            print(position);
           });
 
           Provider.of<ProviderS>(context, listen: false).location = false;

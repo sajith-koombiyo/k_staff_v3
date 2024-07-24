@@ -40,7 +40,7 @@ class _ShuttleState extends State<Shuttle> {
 
   getData() async {
     List res = await CustomApi().shuttelBinList(context, '1', '', '', '');
-    print(res);
+  
     setState(() {
       allBinList = res;
     });

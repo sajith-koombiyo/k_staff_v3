@@ -10,9 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
 Future<void> handleBckgroundMessage(RemoteMessage message) async {
-  print("title: ${message.notification?.title}");
-  print("body: ${message.notification?.body}");
-  print("payload: ${message.notification?.android?.imageUrl}");
+
 }
 
 Future<void> img() async {}
@@ -66,9 +64,9 @@ class notify {
   // }
 
   Future<void> initNotifications() async {
-    print('sssssssssssssssssssssssssssssssssssssssssssssssss');
+   
     await firebaseMessaging.requestPermission();
-    print('sssssssssssssssssssssssssssssssssssssssssssssssss');
+   
     final fCMTocken = await firebaseMessaging.getToken();
     log(fCMTocken.toString());
     // initLocalNotificatons();
@@ -76,10 +74,9 @@ class notify {
 
     FirebaseMessaging.onMessage.listen((message) async {
       final notification = message.notification;
-      print(message.data);
+  
       // print(channel);
-      print('fffffffffffffffffffffffffffffffffffffffffffff');
-      print(message.notification?.android?.imageUrl);
+   
 
       var url = message.notification?.android?.imageUrl;
       // String imgurl = await url.toString();
@@ -131,7 +128,7 @@ class Utils {
     final file = File(filepath);
     await file.writeAsBytes(responce.bodyBytes);
 
-    print(filepath);
+
     return filepath;
   }
 }

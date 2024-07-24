@@ -428,9 +428,9 @@ class _AccountState extends State<Account> {
     });
     final bytes = File(image!.path).readAsBytesSync();
     String base64Image = base64Encode(bytes);
-    print("imgbytes : $base64Image");
+  
     var res = await CustomApi().profileImage(context, base64Image);
-    print(res);
+
     var data = await CustomApi().getProfile();
     Provider.of<ProviderS>(context, listen: false).userData = data;
     notification().info(context, 'Image Upload Successfully');
@@ -443,6 +443,6 @@ class _AccountState extends State<Account> {
   fromCamera() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.camera);
     var res = await imageUpload(image!);
-    print(res);
+  
   }
 }

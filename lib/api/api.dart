@@ -36,7 +36,6 @@ class CustomApi {
 
 // splash screen api  this api checking user first time login and after login detail ,if user
   checkFirstSeen(BuildContext context) async {
-    print('dddddddddxxxxx');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var status = await Permission.location.request();
     Provider.of<ProviderS>(context, listen: false).permission = status;
@@ -53,7 +52,7 @@ class CustomApi {
         } else {
           Provider.of<ProviderS>(context, listen: false).isServerDown = false;
         }
-        print(responce);
+
         if (responce == "3.0") {
           late String installDate;
           final DateTime date = await AppInstallDate().installDate;
@@ -64,12 +63,10 @@ class CustomApi {
           var name = await prefs.getString('uName');
           String userName = name.toString();
 
-          print(userName);
-          print(key);
           if (key != 'null' && userName != 'null') {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             final String? userKey = await prefs.getString('userkey');
-            print(userKey);
+
             late String installDate;
             final DateTime date = await AppInstallDate().installDate;
             installDate = date.toString();
@@ -83,9 +80,6 @@ class CustomApi {
                 Uri.parse(urll),
                 body: {'imei': key, 'app_date': installDate});
             var responce = jsonDecode(res.body);
-
-            print(
-                '$responce dddddddddddddddddddddddaaaaaaaaaaaaaaaaaaaaaaaaa $key ddddddddddddddddd    $installDate');
 
             if (responce['userkey'] == userKey) {
               Navigator.pushReplacement(
@@ -160,21 +154,17 @@ class CustomApi {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
-      print('11111111111111111111');
       var urll = '${ApiUrl}Loginn/users';
 
       var response =
           await https.post(Uri.parse(urll), body: {'username': username});
-      print(response.body);
-      print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-      print(response.statusCode);
+
       if (response.statusCode != 500) {
         Map<String, dynamic> map = jsonDecode(response.body);
         if (map['status'] == 200) {
           String userkey = map['userkey'].toString();
           int accessesKey = int.parse(map['access_group'].toString());
-          print(userkey);
-          print(response.body);
+
           SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setString('userkey', userkey);
           await prefs.setInt('accessesKey', accessesKey);
@@ -205,8 +195,6 @@ class CustomApi {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
-      print(userKey);
-      print(otpnumber);
       final apiUrl = '${ApiUrl}/Verifyotp/users';
       // Headers
       Map<String, String> headers = {
@@ -217,14 +205,11 @@ class CustomApi {
         'otp': '$otpnumber',
       });
 
-      print(res.body);
-      print(res.body);
-
       Map<String, dynamic> map = jsonDecode(res.body);
 
       if (map['status'] == 202) {
         Map<String, dynamic> userData = map['userdata'];
-        print(userData['username']);
+
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String username = userData['username'].toString();
         String pickupDevice = userData['pickup_device'].toString();
@@ -242,9 +227,6 @@ class CustomApi {
                 length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
         var randomKey = await getRandomString(50);
         var temp = await DateTime.now().toString();
-        print(randomKey + temp);
-        print('1111111111111111111111111111111');
-        print(installDate);
         await prefs.setString('rKey', randomKey + temp);
         await prefs.setString('uName', username);
         final apiUrl = '${ApiUrl}/Saveid/users';
@@ -252,8 +234,6 @@ class CustomApi {
           "imei": randomKey + temp,
           "app_date": "$installDate",
         });
-
-        print(randomKey + temp);
         String staffName = userData['staff_name'];
         Navigator.pushReplacement(
             context,
@@ -282,7 +262,6 @@ class CustomApi {
       Map<String, String> headers = {
         'userkey': '$userId',
       };
-      print(userId);
       // Make POST request
       var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {});
       List map = jsonDecode(res.body);
@@ -295,8 +274,6 @@ class CustomApi {
       }
 
       var ncount = noti_count;
-
-      print(ncount);
       return ncount;
     }
   }
@@ -316,13 +293,10 @@ class CustomApi {
       // Make POST request
       var resp =
           await https.post(headers: headers, Uri.parse(apiUrl), body: {});
-      print(resp.body);
-
-      print('notification list');
       var data = jsonDecode(resp.body);
       if (data["status"] == 403) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
-        print('notifsssssssication list');
+     
         return [];
       } else if (data["status"] == 200) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
@@ -348,8 +322,6 @@ class CustomApi {
       // Make POST request
       var resp =
           await https.post(headers: headers, Uri.parse(apiUrl), body: {});
-      print(resp.body);
-      print('Readnotifi');
     } else {
       notification().warning(context, 'No Internet');
     }
@@ -371,10 +343,9 @@ class CustomApi {
           await https.post(headers: headers, Uri.parse(apiUrl), body: {});
 
       var map = jsonDecode(resp.body);
-      print(map);
+
       if (map["status"] == 403) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
-        print('notifsssssssication list');
         return [];
       } else if (map["status"] == 200) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
@@ -386,7 +357,6 @@ class CustomApi {
 // oder screen data calling
 
   getmyorders(String sWaybill, String userID, BuildContext context) async {
-    print('sssssssssssssssssssssssssssssssssssssssssss');
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
@@ -395,10 +365,7 @@ class CustomApi {
       Map<String, String> headers = {
         'userkey': '$id',
       };
-
-      print(id);
       if (sWaybill == '') {
-        print(userID);
         final apiUrl = '${ApiUrl}/Pendings/users';
         // Headers
 
@@ -406,7 +373,6 @@ class CustomApi {
         var resp =
             await https.post(headers: headers, Uri.parse(apiUrl), body: {});
         var data = jsonDecode(resp.body);
-        print(resp.body);
         // print(data);
 
         if (data['status'] == 403) {
@@ -429,13 +395,9 @@ class CustomApi {
             body: {'status': '5,7', 'search': sWaybill});
 
         var data = jsonDecode(resp.body);
-        print(resp.body);
-        // print(data);
-        print('qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq');
         if (data['status'] == 403) {
           return [];
         } else if (data['status'] == 200) {
-          print('11111111111111111111111qqqqqqqqqqqqqqqqq1111111');
           return data['order'];
         }
       }
@@ -460,7 +422,6 @@ class CustomApi {
         // Make POST request
         var resp =
             await https.post(headers: headers, Uri.parse(apiUrl), body: {});
-        print(resp.body);
         var data = jsonDecode(resp.body);
         if (data['status'] == 200) {
           Provider.of<ProviderS>(context, listen: false).isanotherUserLog =
@@ -505,10 +466,6 @@ class CustomApi {
     };
     // Make POST request
     var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {});
-    print(res.body);
-    print(
-        'kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
-    print('notification count');
     List map = jsonDecode(res.body);
 
     return map;
@@ -614,8 +571,6 @@ class CustomApi {
             headers: headers,
             Uri.parse(apiUrl),
             body: {'owner': id, 'waybill_id': wayBillId, 'status': '17'});
-        print('2222222222222222222222222222222222222222');
-        print(res.body);
         var data = jsonDecode(res.body);
 //         - 200 OK: Order Delivered Successfully
 // - 400 Bad Request: Error Occurred
@@ -710,12 +665,7 @@ class CustomApi {
           notification().info(context, 'Please Select the Update Type');
         }
       } else if (statusType == 4) {
-        print(statusType);
-        print(wayBillId);
-        print(dropdownValue2);
-
         if (dropdownValue2 != '') {
-          print('wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww');
           final apiUrl = '${ApiUrl}/Allorders/remark';
           var responses =
               await https.post(headers: headers, Uri.parse(apiUrl), body: {
@@ -724,12 +674,8 @@ class CustomApi {
             "internal": "",
             "branch_id": Provider.of<ProviderS>(context, listen: false).bId,
           });
-          print(wayBillId);
-          print(responses.body);
-          print('ssssssssssssss');
           var data = jsonDecode(responses.body);
 
-          print(data);
           if (data['status'] == 200) {
             notification().info(context, 'Remark successfully Updated');
             Navigator.pop(context);
@@ -793,7 +739,6 @@ class CustomApi {
           headers: headers,
           Uri.parse(apiUrl),
           body: {'phone': phone, 'pick_id': pickId});
-      print(response.body);
       var res = jsonDecode(response.body);
       if (res['status'] == 200) {
         notification().info(context, 'SMS Sent To Client..');
@@ -821,8 +766,6 @@ class CustomApi {
 
       var response =
           await https.post(headers: headers, Uri.parse(apiUrl), body: {});
-      print(response.body);
-      print('${id}xxxxxxxxxxxxxxxxxxxxxxxxxxxx');
       return jsonDecode(response.body);
     } else {
       notification().warning(context, 'No Internet');
@@ -833,8 +776,6 @@ class CustomApi {
 
   pickupComplete(BuildContext context, String pickId, String qty, String phone,
       String lat, String long, String pickup_items) async {
-    print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
-
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
@@ -853,9 +794,7 @@ class CustomApi {
         'longt': long,
         'pickup_items': pickup_items
       });
-      print('=======================================================');
-      print(resp.body);
-      print('=======================================================');
+
       // testingddddddddddddddddddddd   ddddddddddddddddddddddddddddddddddddd
       var res = jsonDecode(resp.body);
       if (res['status'] == 200) {
@@ -876,8 +815,6 @@ class CustomApi {
       'userkey': '$id',
     };
     var resp = await https.post(headers: headers, Uri.parse(apiUrl), body: {});
-    print(id);
-    print(resp.body);
     var data = jsonDecode(resp.body);
 
     if (data['status'] == 403) {
@@ -898,9 +835,9 @@ class CustomApi {
       'userkey': '$id',
     };
     var resp = await https.post(headers: headers, Uri.parse(apiUrl), body: {});
-    print(resp);
+
     var data = jsonDecode(resp.body);
-    print(resp.body);
+
     if (data['status'] == 403) {
       Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
       return [];
@@ -924,9 +861,7 @@ class CustomApi {
       };
       // Make POST request
       var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {});
-      print(res.body);
 
-      print('deposit');
       return List<Map<String, dynamic>>.from(jsonDecode(res.body));
     } else {
       notification().warning(context, 'No Internet');
@@ -936,13 +871,12 @@ class CustomApi {
   //re sheduled screen
 
   getReScheduleData(String sWaybill, BuildContext context, String date) async {
-    print(date);
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('userkey');
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
-      print('sssssssssssssssssssssssssss');
       final apiUrl = '${ApiUrl}/Myrechedued/users';
       // Headers
       Map<String, String> headers = {
@@ -953,7 +887,6 @@ class CustomApi {
         'nextdate': date,
       });
       var data = jsonDecode(res.body);
-      print(res.body);
       if (data['status'] == 403) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
         return [];
@@ -1044,9 +977,6 @@ class CustomApi {
       var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {});
 
       var yId = jsonDecode(res.body);
-      print('wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww');
-      print(yId);
-      print('wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwaaaaaaaaaaaaaaaaaaaaaaaaaawwwwwww');
       //   _ids;
       if (yId["status"] == 200) {
         return yId['app_videos'];
@@ -1066,18 +996,12 @@ class CustomApi {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
-      print(
-          'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd');
-      print(id);
-      print(
-          'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd');
       Map<String, String> headers = {
         'userkey': '$id',
       };
       var url = '${ApiUrl}/Userpickuprequests/users';
       var res = await https.post(headers: headers, Uri.parse(url), body: {});
-      print(res.body);
-      print('ssssssssssssss');
+
       var list = jsonDecode(res.body);
       if (list['status'] == 200) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
@@ -1100,7 +1024,7 @@ class CustomApi {
         connectivityResult == ConnectivityResult.wifi) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       final String? id = await prefs.getString('userkey');
-      print(id);
+
       Map<String, String> headers = {
         'userkey': '$id',
       };
@@ -1108,7 +1032,7 @@ class CustomApi {
       var res = await https.post(headers: headers, Uri.parse(url), body: {});
       var list = jsonDecode(res.body);
       // Headers
-      print(list);
+
       if (list['status'] == 200) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
 
@@ -1152,7 +1076,6 @@ class CustomApi {
       // var list;
       var data = jsonDecode(list.body);
       if (data['status'] == 200) {
-        print(data);
         notification().info(context, 'Rider assigned successfully.');
         Navigator.pop(context);
       }
@@ -1190,7 +1113,6 @@ class CustomApi {
     String vehicle_no,
     String vehicle_amount,
   ) async {
-    print('ccccccccccccccccccccc');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('userkey');
     var connectivityResult = await (Connectivity().checkConnectivity());
@@ -1313,7 +1235,6 @@ class CustomApi {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
-      print(id);
       final apiUrl = '${ApiUrl}/Pending_dd/users';
       // Headers
       Map<String, String> headers = {'userkey': '$id', 'dispatch_to': bId};
@@ -1323,7 +1244,6 @@ class CustomApi {
 
       if (data['status'] == 200) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
-        print(data);
         return data['users'];
       }
       if (data['status'] == 403) {
@@ -1344,8 +1264,6 @@ class CustomApi {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
-      print(id);
-      print('ssssssssssssssssssss');
       final apiUrl = '${ApiUrl}Pending_dd/confirm';
       // Headers
       Map<String, String> headers = {
@@ -1355,12 +1273,11 @@ class CustomApi {
       var res = await https.post(
           headers: headers, Uri.parse(apiUrl), body: {"order_id": oderId});
       var data = jsonDecode(res.body);
-      print(data);
 
       if (data['status'] == 200) {
         notification().info(context, 'Pending DD successfully Confirmed');
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
-        print(data);
+
         return data['branches'];
       }
       if (data['status'] == 403) {
@@ -1385,7 +1302,6 @@ class CustomApi {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
-      print(id);
       final apiUrl = '${ApiUrl}/Manageusers/users';
       // Headers
       Map<String, String> headers = {
@@ -1398,7 +1314,7 @@ class CustomApi {
 
       if (data['status'] == 200) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
-        print('ssssssssssssssssssssssssssssssssssssssssssssssssssss');
+
         return data['my_users'];
       }
       if (data['status'] == 403) {
@@ -1418,7 +1334,6 @@ class CustomApi {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
-      print(id);
       final apiUrl = '${ApiUrl}/Contacts/users';
       // Headers
       Map<String, String> headers = {
@@ -1430,11 +1345,10 @@ class CustomApi {
           Uri.parse(apiUrl),
           body: {"search": bId, "limit": last, "start": start});
       var data = jsonDecode(res.body);
-      print(data);
 
       if (data['status'] == 200) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
-        print('ssssssssssssssssssssssssssssssssssssssssssssssssssss');
+
         return data['contacts'];
       }
       if (data['status'] == 403) {
@@ -1454,7 +1368,6 @@ class CustomApi {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
-      print(id);
       final apiUrl = '${ApiUrl}/Branchvisit/users';
       // Headers
       Map<String, String> headers = {
@@ -1466,8 +1379,6 @@ class CustomApi {
           Uri.parse(apiUrl),
           body: {"branch_id": bId, "lati": lat, "longt": long, "image": img});
       var data = jsonDecode(res.body);
-      print(data.toString());
-      print('wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww');
 
       if (data['status'] == 200) {
         notification().info(context, 'Data Saved Successfully');
@@ -1500,7 +1411,6 @@ class CustomApi {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
-      print(id);
       final apiUrl = '${ApiUrl}/Branchvisit/history';
       // Headers
       Map<String, String> headers = {
@@ -1537,7 +1447,6 @@ class CustomApi {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
-      print(id);
       final apiUrl = '${ApiUrl}/Branchvisit/exit';
       // Headers
       Map<String, String> headers = {
@@ -1551,7 +1460,6 @@ class CustomApi {
         "longt": longt
       });
       var data = jsonDecode(res.body);
-      print(data);
 
       if (data['status'] == 200) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
@@ -1580,7 +1488,6 @@ class CustomApi {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
-      print(id);
       final apiUrl = '${ApiUrl}/Mybranches/users';
       // Headers
       Map<String, String> headers = {
@@ -1592,7 +1499,7 @@ class CustomApi {
 
       if (data['status'] == 200) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
-        print(data);
+
         return data['branches'];
       }
       if (data['status'] == 403) {
@@ -1627,7 +1534,6 @@ class CustomApi {
           Uri.parse(apiUrl),
           body: {"start": "1234", "start_img": "$img"});
 
-      print(resp.body);
       return jsonDecode(resp.body);
     } else {
       notification().warning(context, 'No Internet');
@@ -1675,7 +1581,7 @@ class CustomApi {
           await https.post(headers: headers, Uri.parse(apiUrl), body: {});
 
       var res = jsonDecode(resp.body);
-      print(res);
+
       if (res['status'] == 404) {
         return 1;
       }
@@ -1714,9 +1620,7 @@ class CustomApi {
         "status": status
 //  in bins =3, return bins =4"
       });
-      print('fffffffffffffffffffffffffffffffffffff');
-      print(resp.body);
-      print('fffffffffffffffffffffffffffffffffffff');
+
       var data = jsonDecode(resp.body);
       if (data['status'] == 200) {
         return data['bins'];
@@ -1747,9 +1651,7 @@ class CustomApi {
         "status": status
 //  in bins =3, return bins =4"
       });
-      print('fffffffffffffffffffffffffffffffffffff');
-      print(resp.body);
-      print('fffffffffffffffffffffffffffffffffffff');
+
       var data = jsonDecode(resp.body);
       if (data['status'] == 200) {
         return data['bins'];
@@ -1816,8 +1718,7 @@ class CustomApi {
       };
       var resp =
           await https.post(headers: headers, Uri.parse(apiUrl), body: {});
-      print(resp.body);
-      print(';hhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
+
       var data = jsonDecode(resp.body);
       if (data['status'] == 200) {
         return data['branches'];
@@ -1843,7 +1744,7 @@ class CustomApi {
         connectivityResult == ConnectivityResult.wifi) {
       final apiUrl = '${ApiUrl}/Timeline/users';
       // Headers
-      print(id);
+
       Map<String, String> headers = {
         'userkey': '$id',
       };
@@ -1851,7 +1752,7 @@ class CustomApi {
           headers: headers, Uri.parse(apiUrl), body: {"waybill_id": waybill});
 
       var data = jsonDecode(resp.body);
-      print(data);
+
       if (data['status'] == 200) {
         return data['data'];
       } else if (data['status'] == 204) {
@@ -1874,7 +1775,6 @@ class CustomApi {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
-      print(id);
       final apiUrl = '${ApiUrl}Profile/update';
       // Headers
       Map<String, String> headers = {
@@ -1884,8 +1784,6 @@ class CustomApi {
       var res = await https
           .post(headers: headers, Uri.parse(apiUrl), body: {"image": img});
       var data = jsonDecode(res.body);
-      print(data.toString());
-      print('wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww');
 
       if (data['status'] == 200) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
@@ -1914,23 +1812,18 @@ class CustomApi {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
-      print(id);
       final apiUrl = '${ApiUrl}Updateexchange/users';
       // Headers
       Map<String, String> headers = {
         'userkey': '$id',
       };
       // Make POST request
-      print(img);
-      print(exWaybill);
-      print('ffffffffffffffffffff');
+
       var res = await https.post(
           headers: headers,
           Uri.parse(apiUrl),
           body: {"image": img, "ex_waybill": exWaybill});
       var data = jsonDecode(res.body);
-      print(data.toString());
-      print('wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww');
 
       if (data['status'] == 200) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;

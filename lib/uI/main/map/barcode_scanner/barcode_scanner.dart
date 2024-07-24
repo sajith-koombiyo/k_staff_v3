@@ -170,7 +170,7 @@ class _BarcodeScanDeliveryItemState extends State<BarcodeScanDeliveryItem> {
     await controller.scannedDataStream.listen((scanData) {
       setState(() {
         result = scanData;
-        print(result!.format);
+      
         data = [result!.code];
         if (barcodeList.contains(result!.code)) {
           notification().warning(
@@ -193,7 +193,7 @@ class _BarcodeScanDeliveryItemState extends State<BarcodeScanDeliveryItem> {
         barcodeList.add(value);
       });
     } else {
-      print('Value $value already exists in the list.');
+   
     }
   }
 

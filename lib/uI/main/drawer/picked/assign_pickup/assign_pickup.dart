@@ -53,15 +53,12 @@ class _AssignPickupState extends State<AssignPickup> {
     });
     var dataList = await CustomApi().assignPickupList(context);
     var dataList2 = await CustomApi().assignRiderList(context);
-    print(
-        'ssssssssssssssssssssssssssssssssssssccccccccccccccccccccccccccccccccccc');
-    print(dataList2);
+
     setState(() {
       assignList = dataList;
       tempList = dataList;
       riderList = dataList2;
-      // print(assignList);
-      print(dataList2);
+ 
       isLoading = false;
     });
   }
@@ -289,10 +286,7 @@ class _AssignPickupState extends State<AssignPickup> {
                     setstate(() {
                       isLoading = true;
                     });
-                    print(riderId);
-                    print(vehicleNo);
-                    print(riderPhone);
-                    print(pickId);
+                 
                     var res = await CustomApi().assignToRider(
                         context, riderId, vehicleNo, riderPhone, pickId);
                     data();
@@ -424,7 +418,7 @@ class _AssignPickupState extends State<AssignPickup> {
                                           onChanged: (value) {
                                             setstate(() {
                                               selectval = value.toString();
-                                              print(selectval);
+                                            
                                               _runFilter(value.toString());
                                               //set state will update UI and State of your App
                                               //change selectval to new value

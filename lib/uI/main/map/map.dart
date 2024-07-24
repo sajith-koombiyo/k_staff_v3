@@ -78,8 +78,7 @@ class _MapScreenState extends State<MapScreen> {
     status1Count = 0;
     var temp = await CustomApi().getmypickups(context);
     var temp2 = await CustomApi().getMyPDeliveryMap(context);
-    print(temp);
-    log(temp2.toString());
+  
     if (!mounted) return;
     setState(() {
       pickupLocation = temp;
@@ -464,7 +463,7 @@ class _MapScreenState extends State<MapScreen> {
 
     if (!mounted) return;
     await Printing.layoutPdf(onLayout: (PdfPageFormat format) async {
-      print(format);
+     
       return PDFView().makePdf(context, data);
     });
     setState(() {
@@ -479,7 +478,7 @@ class _MapScreenState extends State<MapScreen> {
 
     if (permission == LocationPermission.deniedForever) {
       await openAppSettings().then((value) => getLocation());
-      print('sssssssssssssssssssssssssssssssssssss');
+   
       // _checkLocationPermission();
       permission = await Geolocator.requestPermission();
     }
@@ -720,14 +719,13 @@ class _MapScreenState extends State<MapScreen> {
                                                   'lat',
                                                   'lon',
                                                   'pick');
-                                              print(
-                                                  '444444444444eeeeeeeeeee4444444');
+                                             
                                               _marker.clear();
                                               await userLocation();
                                               // _marker.remove(value)
                                               await CustomApi().sendSms(
                                                   phone, pickId, context);
-                                              print('4444444444444444444');
+                                            
                                               setState(() {
                                                 Provider.of<ProviderS>(context,
                                                         listen: false)
@@ -827,7 +825,7 @@ class _MapScreenState extends State<MapScreen> {
         quantity.text = "";
       } else {
         barcodeScanData.add(_scanBarcode.toString());
-        print(barcodeScanData);
+    
         quantity.text = " Quantity ${barcodeScanData.length.toString()}";
       }
     });

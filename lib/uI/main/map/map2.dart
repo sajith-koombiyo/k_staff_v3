@@ -78,14 +78,10 @@ class _Map2State extends State<Map2> {
     status0Count = 0;
     status1Count = 0;
 
-    print('111122222222222222222222222222222222222222222222222');
+ 
     var temp = await CustomApi().getmypickups(context);
     var temp2 = await CustomApi().getMyPDeliveryMap(context);
-    log('sssssssssssssssssssaaaaaaaaaaaaaasss');
-    log(temp.toString());
-    log('sssssssssssssssssssfffffffsss');
-    log(temp2.toString());
-    log('ssssssssssssssssssssdddddddddddddddss');
+   
     if (mounted) {
       setState(() {
         pickupLocation = temp;
@@ -121,8 +117,7 @@ class _Map2State extends State<Map2> {
           height: 80,
           child: InkWell(
               onTap: () {
-                print(
-                    'vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvdddddvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
+          
                 if (mounted) {
                   setState(() {
                     Provider.of<ProviderS>(context, listen: false)
@@ -724,10 +719,9 @@ class _Map2State extends State<Map2> {
                                                         ? quantity.text
                                                         : pValue.scanQnt.text);
                                                 if (qnt < 5000) {
-                                                  print(
-                                                      'qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq');
+                                              
                                                   if (qnt != 0) {
-                                                    print('fffffffffffffff');
+                                                  
                                                     setState(() {
                                                       isLoading = true;
                                                     });
@@ -863,7 +857,7 @@ class _Map2State extends State<Map2> {
 
     if (permission == LocationPermission.deniedForever) {
       await openAppSettings().then((value) => getLocation());
-      print('sssssssssssssssssssssssssssssssssssss');
+  
       _checkLocationPermission();
       permission = await Geolocator.requestPermission();
     }
@@ -903,7 +897,7 @@ class _Map2State extends State<Map2> {
         quantity.text = "";
       } else {
         barcodeScanData.add(_scanBarcode.toString());
-        print(barcodeScanData);
+
         quantity.text = " Quantity ${barcodeScanData.length.toString()}";
       }
     });

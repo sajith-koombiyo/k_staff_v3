@@ -43,12 +43,11 @@ class _BranchVisitHistoryState extends State<BranchVisitHistory> {
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
 
     var res = await CustomApi().branchVisitHistroy(context);
-    print(res);
+
     setState(() {
       branchVisit = res;
       today = formattedDate;
-      print(today);
-      print(branchVisit);
+   
       isLoading = false;
     });
   }
@@ -205,7 +204,7 @@ class _BranchVisitHistoryState extends State<BranchVisitHistory> {
       // print(res);
 
       //  Latitude: 37.4219983, Longitude: -122.084
-      print(position);
+   
       position;
     });
   }

@@ -74,7 +74,7 @@ dependencies:
   flutter_map: 
   flutter_map_marker_popup:
   flutter_map_location_marker:
-  flutter_barcode_listener: ^0.1.4
+ 
   # syncfusion_flutter_maps: ^26.1.40
 
   # zego_uikit_prebuilt_call: ^4.9.0

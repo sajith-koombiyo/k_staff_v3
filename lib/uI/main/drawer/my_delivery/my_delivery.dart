@@ -70,7 +70,7 @@ class _MyDeliveryState extends State<MyDelivery> {
 
   @override
   void initState() {
-    print('sssssssssssssssss');
+
     getData(true);
     dropDownData();
     // TODO: implement initState
@@ -94,11 +94,7 @@ class _MyDeliveryState extends State<MyDelivery> {
     var temp =
         await CustomApi().getmyorders(search.text, id.toString(), context);
 
-    print(temp);
-
-    print(
-        '5555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555');
-    setState(() {
+ setState(() {
       dataList = temp;
 
       isLoading = false;
@@ -112,9 +108,7 @@ class _MyDeliveryState extends State<MyDelivery> {
     var data = await CustomApi().oderDetailAndTimeLine(context, waybill
         // '80808082'
         );
-    print('22222222222222222222');
-    print(data);
-    print('22222222222222222222');
+
     setState(() {
       isLoading = false;
     });
@@ -122,10 +116,10 @@ class _MyDeliveryState extends State<MyDelivery> {
 
   dropDownData() async {
     List res = await CustomApi().dropdownDataMyDelivery(context);
-    print(res);
+
     setState(() {
       List.generate(res.length, (index) {
-        print(res[index]['reason']);
+      
         if (res[index]['type'] == '3') {
           pdliveryList.add({
             "reason_id": "${res[index]['reason_id']}",
@@ -147,10 +141,7 @@ class _MyDeliveryState extends State<MyDelivery> {
       });
     });
 
-    print('222222222222222222222');
-    print(pdliveryList);
-    print(rescheduleList);
-    print(remarkList);
+
   }
 
   @override
@@ -263,7 +254,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                                               BorderRadius.circular(20),
                                           splashColor: blue,
                                           onTap: () {
-                                            print('sssssssssssssssssssssss');
+                                         
                                             bool updateBTN = false;
                                             setState(() {
                                               newImage = '';
@@ -289,16 +280,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                                                         .toString()
                                                     : '');
 
-                                            print(
-                                                dataList[index]['waybill_id']);
-                                            print(dataList[index]['cod_final']);
-                                            print(dataList[index]['oid']);
-                                            print(
-                                                dataList[index]['order_type']);
-                                            print(dataList[index]
-                                                ['ex_bag_waybill']);
-                                            print(dataList[index]
-                                                ['prev_waybill']);
+                                      
                                           },
                                           child: Card(
                                             margin: EdgeInsets.only(left: 0),
@@ -832,7 +814,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                     ),
                     InkWell(
                       onTap: () {
-                        print(pdliveryList);
+                     
                         setstate(() {
                           x = 2;
                           updateBTN = false;
@@ -867,7 +849,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                     ),
                     InkWell(
                       onTap: () {
-                        print(rescheduleList);
+                       
                         setstate(() {
                           x = 3;
                           updateBTN = false;
@@ -902,7 +884,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                     ),
                     InkWell(
                       onTap: () {
-                        print(remarkList);
+                     
                         setstate(() {
                           x = 4;
                           updateBTN = false;
@@ -1282,7 +1264,6 @@ class _MyDeliveryState extends State<MyDelivery> {
                                       var res = await CustomApi().immageUpload(
                                           context, image, waybill);
 
-                                      print(res);
                                       if (res != 1) {
                                         setstate(() {
                                           newImage = '';

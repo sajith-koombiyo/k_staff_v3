@@ -121,7 +121,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     var acId = await prefs.getInt(
       'accessesKey',
     );
-    print(id);
+
     setState(() {
       pickupDevice = pickupD.toString();
       if (acId != null) {
@@ -140,12 +140,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     double td = double.parse(temp[0]['total_delivery'].toString());
     double success = double.parse(((td / to) * 100).toStringAsFixed(1));
 
-    print(to);
-    print(td);
-    print(success);
+   
     successRate = success.toStringAsFixed(2).toString();
-    print(successRate);
-    print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+  
     var codDelivery = dataList[0]['cod_delivery'];
 
     if (successRate == "NaN" || successRate == "Infinity") {

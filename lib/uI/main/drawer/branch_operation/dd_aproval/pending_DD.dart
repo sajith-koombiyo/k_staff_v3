@@ -64,7 +64,7 @@ class _DDApprovalState extends State<DDApproval> {
     });
     var dataList = await CustomApi().ddApprovalScreen(context, data);
 
-    print(dataList.toString());
+
     setState(() {
       pendingDDList = dataList;
       isLoading = false;
