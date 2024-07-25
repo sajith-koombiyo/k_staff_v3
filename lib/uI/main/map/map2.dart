@@ -411,8 +411,11 @@ class _Map2State extends State<Map2> {
                         padding: const EdgeInsets.only(bottom: 15),
                         child: FloatingActionButton.small(
                             heroTag: '1',
-                            backgroundColor: white.withOpacity(0.5),
-                            child: Icon(Icons.location_searching_rounded),
+                            backgroundColor: white.withOpacity(0.6),
+                            child: Icon(
+                              Icons.location_searching_rounded,
+                              color: const Color.fromARGB(255, 136, 9, 0),
+                            ),
                             onPressed: () {
                               Geolocator.getCurrentPosition(
                                       desiredAccuracy: LocationAccuracy.high)
@@ -431,7 +434,7 @@ class _Map2State extends State<Map2> {
                         padding: const EdgeInsets.only(bottom: 100),
                         child: FloatingActionButton.small(
                             heroTag: '2',
-                            backgroundColor: white.withOpacity(0.5),
+                            backgroundColor: white.withOpacity(0.6),
                             child: Icon(
                               Icons.refresh,
                               color: Color.fromARGB(255, 2, 135, 244),
