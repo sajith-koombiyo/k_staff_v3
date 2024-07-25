@@ -18,7 +18,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
-import 'package:signature/signature.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class BranchListGoogleMap extends StatefulWidget {

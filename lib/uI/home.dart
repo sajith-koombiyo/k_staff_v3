@@ -140,9 +140,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     double td = double.parse(temp[0]['total_delivery'].toString());
     double success = double.parse(((td / to) * 100).toStringAsFixed(1));
 
-   
     successRate = success.toStringAsFixed(2).toString();
-  
+
     var codDelivery = dataList[0]['cod_delivery'];
 
     if (successRate == "NaN" || successRate == "Infinity") {
@@ -311,12 +310,29 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                         // alignment: Alignment.centerLeft,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8),
-                          child: Text(
-                            "Pickup Quantity ${dataList[0]['total_item_qty']}",
-                            style: TextStyle(
-                                fontSize: 12.sp,
-                                color: Color.fromARGB(255, 47, 45, 47),
-                                fontWeight: FontWeight.normal),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "Pickup Quantity - ",
+                                style: TextStyle(
+                                    fontSize: 12.sp,
+                                    color: Color.fromARGB(255, 47, 45, 47),
+                                    fontWeight: FontWeight.normal),
+                              ),
+                              Text(
+                                dataList[0]['total_item_qty']
+                                            .toString()
+                                            .length >
+                                        1
+                                    ? "${dataList[0]['total_item_qty']}"
+                                    : "0${dataList[0]['total_item_qty']}",
+                                style: TextStyle(
+                                    fontSize: 12.sp,
+                                    color: Color.fromARGB(255, 165, 5, 209),
+                                    fontWeight: FontWeight.w400),
+                              ),
+                            ],
                           ),
                         ),
                       )
@@ -800,7 +816,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                   ),
                 ),
                 Padding(
-            
                   padding: const EdgeInsets.all(12.0),
                   child: SizedBox(
                       height: h,

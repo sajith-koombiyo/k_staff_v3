@@ -72,8 +72,8 @@ dependencies:
   font_awesome_flutter: ^10.7.0
   qr_code_scanner: ^1.0.1
   flutter_map: 
-  flutter_map_marker_popup:
   flutter_map_location_marker:
+  sqflite:
  
   # syncfusion_flutter_maps: ^26.1.40
 

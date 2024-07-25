@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/app_details/color.dart';
 import 'package:flutter_application_2/class/class.dart';
 import 'package:flutter_application_2/provider/provider.dart';
+import 'package:flutter_application_2/sql_db/db.dart';
 import 'package:flutter_application_2/uI/app_agreement/agreement.dart';
 import 'package:flutter_application_2/uI/login_and_signup/otp.dart';
 import 'package:image_picker/image_picker.dart';
@@ -24,7 +25,7 @@ import '../uI/main/navigation/navigation.dart';
 
 class CustomApi {
 //user location read
-
+  SqlDb sqlDb = SqlDb();
   userLocation(String userid, String lat, String long) async {
     Map<String, String> headers = {
       'userkey': '$userid',
@@ -296,7 +297,7 @@ class CustomApi {
       var data = jsonDecode(resp.body);
       if (data["status"] == 403) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
-     
+
         return [];
       } else if (data["status"] == 200) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
@@ -798,6 +799,8 @@ class CustomApi {
       // testingddddddddddddddddddddd   ddddddddddddddddddddddddddddddddddddd
       var res = jsonDecode(resp.body);
       if (res['status'] == 200) {
+        var res = await sqlDb
+            .deleteData('delete from scanData where pick_id = $pickId;');
         notification().info(context, 'Pickup Collected Successfully');
       }
       // notification().info(context, newString);
@@ -871,7 +874,6 @@ class CustomApi {
   //re sheduled screen
 
   getReScheduleData(String sWaybill, BuildContext context, String date) async {
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('userkey');
     var connectivityResult = await (Connectivity().checkConnectivity());
