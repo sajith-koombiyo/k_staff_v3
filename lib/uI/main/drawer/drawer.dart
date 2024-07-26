@@ -106,7 +106,7 @@ class _customDrawerState extends State<customDrawer> {
                         child: Column(
                           children: [
                             SizedBox(
-                              height: h / 1.1,
+                              height: h / 1.15,
                               child: SingleChildScrollView(
                                 child: Column(
                                   children: [
@@ -528,7 +528,14 @@ class _customDrawerState extends State<customDrawer> {
                             Spacer(),
                             //0764826420
 
-                            Text("Copyright 2024 by \nKoobiyo IT (pvt)Ltd",
+                            Text("Copyright 2024 by Koobiyo IT (pvt)Ltd",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: black1,
+                                  fontSize: 12.dp,
+                                  fontWeight: FontWeight.normal,
+                                )),
+                            Text("Version 3.00",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: black1,

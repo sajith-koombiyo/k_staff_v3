@@ -1418,7 +1418,8 @@ class CustomApi {
       // Make POST request
       var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {});
       var data = jsonDecode(res.body);
-
+      print(data);
+      print('ddddddddddddddddddddddddddddd');
       if (data['status'] == 200) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
 

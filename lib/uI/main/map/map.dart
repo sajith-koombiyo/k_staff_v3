@@ -56,6 +56,7 @@ class _MapScreenState extends State<MapScreen> {
   String pickId = '';
   String COD = '';
   String MarkerTempId = '';
+  String scanDataQnt = '';
   int status0Count = 0;
   int status1Count = 0;
   bool isLoading = false;
@@ -726,10 +727,15 @@ class _MapScreenState extends State<MapScreen> {
                                       //       }
                                       : () async {
                                           if (pValue.barcodeListGoogleMap
-                                              .isNotEmpty) {
+                                                  .isNotEmpty ||
+                                              pValue.scanQnt.text.isNotEmpty) {
                                             int qnt = int.parse(pValue
-                                                .barcodeListGoogleMap.length
-                                                .toString());
+                                                    .barcodeListGoogleMap
+                                                    .isEmpty
+                                                ? pValue.scanQnt.text
+                                                : pValue
+                                                    .barcodeListGoogleMap.length
+                                                    .toString());
                                             if (qnt < 5000) {
                                               if (qnt != 0) {
                                                 setState(() {
@@ -808,6 +814,9 @@ class _MapScreenState extends State<MapScreen> {
                         onTap: () {
                           setState(() {
                             _signController.clear();
+                            pValue.barcodeListGoogleMap = [];
+
+                            pValue.scanQnt.clear();
                             Provider.of<ProviderS>(context, listen: false)
                                 .isAppbarsheerOpen = false;
                           });

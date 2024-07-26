@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/api/api.dart';
 import 'package:flutter_application_2/app_details/color.dart';
@@ -28,7 +30,6 @@ class _BranchVisitHistoryState extends State<BranchVisitHistory> {
   bool isLoading = false;
   @override
   void initState() {
-    ;
     getDat();
     // TODO: implement initState
 
@@ -43,11 +44,11 @@ class _BranchVisitHistoryState extends State<BranchVisitHistory> {
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
 
     var res = await CustomApi().branchVisitHistroy(context);
-
+    log(res.toString());
     setState(() {
       branchVisit = res;
       today = formattedDate;
-   
+
       isLoading = false;
     });
   }
@@ -204,7 +205,7 @@ class _BranchVisitHistoryState extends State<BranchVisitHistory> {
       // print(res);
 
       //  Latitude: 37.4219983, Longitude: -122.084
-   
+
       position;
     });
   }

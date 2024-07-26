@@ -11,7 +11,6 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_application_2/class/class.dart';
 import 'package:flutter_application_2/class/location.dart';
 import 'package:flutter_application_2/provider/provider.dart';
-
 import 'package:flutter_application_2/uI/widget/diloag_button.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:geolocator/geolocator.dart';
@@ -25,7 +24,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 import '../../../api/api.dart';
 import '../../../app_details/color.dart';
-import '../../../app_details/const.dart';
 import '../../../app_details/size.dart';
 import '../../home.dart';
 import '../../login_and_signup/login.dart';
@@ -84,15 +82,6 @@ class _NavigationScreenState extends State<NavigationScreen>
   List iconList = [Icons.abc, Icons.abc, Icons.abc];
   String count = '';
   final Geolocator _geolocator = Geolocator();
-  static List<Widget> _pages = <Widget>[
-    Home(),
-    Map2(),
-    // MapScreen(),
-
-    MyDeposit(),
-    Account()
-    // MyWidget()
-  ];
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -196,14 +185,8 @@ class _NavigationScreenState extends State<NavigationScreen>
       'userkey',
     );
 
-    var userId = await prefs.get(
-      'userId',
-    );
-
-    String userAcoontId = userKey.toString();
     String userActive = res.toString();
 
-    List _ids = [];
     setState(() {
       pickupDevice = deviceType.toString();
       if (userActive == '1') {
@@ -449,7 +432,7 @@ class _NavigationScreenState extends State<NavigationScreen>
                         child: _selectedIndex == 0
                             ? Home()
                             : _selectedIndex == 1
-                                ? pickupDevice == "1"
+                                ? pickupDevice == "0"
                                     ? Map2()
                                     : MapScreen()
                                 : _selectedIndex == 2

@@ -60,7 +60,6 @@ class _LocationScreenState extends State<LocationScreen> {
       isLoading = true;
     });
     List brancheList = await CustomApi().userActiveBranches(context);
-    
 
     setState(() {
       userBranchList = brancheList;
@@ -413,7 +412,6 @@ class _LocationScreenState extends State<LocationScreen> {
                                 isLoading = true;
                               });
 
-                        
                               await CustomApi().branchVisit(
                                   context,
                                   visitBranchId,
@@ -468,7 +466,7 @@ class _LocationScreenState extends State<LocationScreen> {
     String base64Image = base64Encode(imageBytes);
     setState(() {
       image64 = base64Image;
-    
+
       Provider.of<ProviderS>(context, listen: false).bImage = base64Image;
     });
     Navigator.pop(context);

@@ -40,7 +40,7 @@ class _ShuttleState extends State<Shuttle> {
 
   getData() async {
     List res = await CustomApi().shuttelBinList(context, '1', '', '', '');
-  
+
     setState(() {
       allBinList = res;
     });
@@ -48,7 +48,6 @@ class _ShuttleState extends State<Shuttle> {
 
   @override
   Widget build(BuildContext context) {
-    var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     return DefaultTabController(
       length: 3,

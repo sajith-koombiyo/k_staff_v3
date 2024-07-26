@@ -75,6 +75,7 @@ dependencies:
   flutter_map_location_marker:
   sqflite:
   avoid_keyboard: ^0.3.0
+  flutter_ringtone_player: 
 
  
  

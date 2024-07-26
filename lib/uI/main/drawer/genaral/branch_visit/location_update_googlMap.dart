@@ -60,7 +60,7 @@ class _LocationUpdateGoogleMapState extends State<LocationUpdateGoogleMap> {
       isLoading = true;
     });
     List brancheList = await CustomApi().userActiveBranches(context);
-  
+
     setState(() {
       userBranchList = brancheList;
 
@@ -363,8 +363,6 @@ class _LocationUpdateGoogleMapState extends State<LocationUpdateGoogleMap> {
                                 isLoading = true;
                               });
 
-                        
-                     
                               await CustomApi().branchVisit(
                                   context,
                                   visitBranchId,

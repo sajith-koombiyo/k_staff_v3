@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_application_2/app_details/color.dart';
 import 'package:flutter_application_2/class/class.dart';
 import 'package:flutter_application_2/provider/provider.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -146,27 +148,43 @@ class _BarcodeScanDeliveryItemState extends State<BarcodeScanDeliveryItem> {
   void _onQRViewCreated(QRViewController controller) async {
     List data = [];
     this.controller = controller;
-    await controller.scannedDataStream.listen((scanData) {
-      Future.delayed(Duration(milliseconds: 200)).then((value) {
-        setState(() {
-          result = scanData;
+    await controller.scannedDataStream.listen((scanData) async {
+      setState(() {
+        result = scanData;
 
-          data = [result!.code];
-          if (barcodeList.contains(result!.code)) {
-            notification().warning(context,
-                'Scan item ${result!.code} already exists in the list.');
-          } else {
-            x = x - 1;
-            barcodeList.add(result!.code);
-            Provider.of<ProviderS>(context, listen: false).scanQnt.text =
-                barcodeList.length.toString();
-            Provider.of<ProviderS>(context, listen: false)
-                .barcodeListGoogleMap = barcodeList;
-          }
-
-          // Function to add a value to the list if it doesn't already exist
-        });
+        data = [result!.code];
       });
+      if (barcodeList.contains(result!.code)) {
+        FlutterRingtonePlayer().play(
+          android: AndroidSounds.notification,
+          ios: IosSounds.glass,
+          looping: true, // Android only - API >= 28
+          volume: 0.9, // Android only - API >= 28
+          asAlarm: false, // Android only - all APIs
+        );
+        log('aaaaaaaaaaaaaaaaaaaaaadddddddddddaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+        notification().warning(
+            context, 'Scan item ${result!.code} already exists in the list.');
+      } else {
+        log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+        FlutterRingtonePlayer().play(
+          android: AndroidSounds.notification,
+          ios: IosSounds.glass,
+          looping: true, // Android only - API >= 28
+          volume: 0.9, // Android only - API >= 28
+          asAlarm: false, // Android only - all APIs
+        );
+        setState(() {
+          x = x - 1;
+          barcodeList.add(result!.code);
+          Provider.of<ProviderS>(context, listen: false).scanQnt.text =
+              barcodeList.length.toString();
+          Provider.of<ProviderS>(context, listen: false).barcodeListGoogleMap =
+              barcodeList;
+        });
+      }
+
+      // Function to add a value to the list if it doesn't already exist
     });
   }
 
@@ -182,27 +200,5 @@ class _BarcodeScanDeliveryItemState extends State<BarcodeScanDeliveryItem> {
   void dispose() {
     controller?.dispose();
     super.dispose();
-  }
-
-  Future<void> scanBarcodeNormal() async {
-    String barcodeScanRes;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', 'Cancel', true, ScanMode.BARCODE);
-    } on PlatformException {
-      barcodeScanRes = 'Failed to get platform version.';
-    }
-    if (!mounted) return;
-
-    setState(() {
-      var _scanBarcode = barcodeScanRes;
-      if (_scanBarcode == "-1") {
-        // search.text = "";
-      } else {
-        // search.text = _scanBarcode.toString();
-        // getData(true);
-      }
-    });
   }
 }
