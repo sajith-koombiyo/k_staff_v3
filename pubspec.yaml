@@ -74,6 +74,9 @@ dependencies:
   flutter_map: 
   flutter_map_location_marker:
   sqflite:
+  avoid_keyboard: ^0.3.0
+
+ 
  
   # syncfusion_flutter_maps: ^26.1.40
 

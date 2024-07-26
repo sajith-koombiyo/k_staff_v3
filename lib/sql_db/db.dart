@@ -15,7 +15,7 @@ class SqlDb {
 
   intialDb() async {
     String databasepath = await getDatabasesPath();
-    String path = join(databasepath, 'f.db');
+    String path = join(databasepath, 'db.db');
     Database mydb = await openDatabase(path,
         onCreate: _onCreate, version: 4, onUpgrade: _onUpgrade);
     return mydb;
@@ -31,24 +31,6 @@ class SqlDb {
     "pick_id" INTEGER  NOT NULL PRIMARY KEY ,
       "scan_list" TEXT NOT NULL
     
-      
-    
-
-
-  )
- ''');
-
-    await db.execute('''
-  CREATE TABLE "gamelist" (
-    "id" INTEGER  NOT NULL PRIMARY KEY  ,
-      "thumbnail" TEXT NOT NULL,
-       "title" TEXT NOT NULL,
-      
-      "genre" TEXT NOT NULL,
-      "platform" TEXT NOT NULL,
-      "developer" TEXT NOT NULL,
-      "release_date" TEXT NOT NULL,
-      "short_description" TEXT NOT NULL
       
     
 

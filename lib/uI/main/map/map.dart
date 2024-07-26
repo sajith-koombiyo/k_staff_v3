@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'package:flutter_application_2/uI/main/map/barcode_scanner/barcode_scanner.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:pdf/pdf.dart';
@@ -58,6 +59,7 @@ class _MapScreenState extends State<MapScreen> {
   int status0Count = 0;
   int status1Count = 0;
   bool isLoading = false;
+  bool scanButtonHide = false;
   List<Marker> markerList = <Marker>[];
   Set<Marker> _marker = {};
   List barcodeScanData = [];
@@ -78,7 +80,7 @@ class _MapScreenState extends State<MapScreen> {
     status1Count = 0;
     var temp = await CustomApi().getmypickups(context);
     var temp2 = await CustomApi().getMyPDeliveryMap(context);
-  
+
     if (!mounted) return;
     setState(() {
       pickupLocation = temp;
@@ -463,7 +465,6 @@ class _MapScreenState extends State<MapScreen> {
 
     if (!mounted) return;
     await Printing.layoutPdf(onLayout: (PdfPageFormat format) async {
-     
       return PDFView().makePdf(context, data);
     });
     setState(() {
@@ -478,7 +479,7 @@ class _MapScreenState extends State<MapScreen> {
 
     if (permission == LocationPermission.deniedForever) {
       await openAppSettings().then((value) => getLocation());
-   
+
       // _checkLocationPermission();
       permission = await Geolocator.requestPermission();
     }
@@ -504,301 +505,329 @@ class _MapScreenState extends State<MapScreen> {
   appbarSheet() {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
-    return AnimationLimiter(
-      child: AnimationConfiguration.synchronized(
-        child: SlideAnimation(
-          verticalOffset: -300,
-          child: Card(
-            color: black.withOpacity(0.9),
-            elevation: 20,
-            child: SlideAnimation(
-              verticalOffset: 300,
-              child: Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(30),
-                        bottomRight: Radius.circular(30))),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).padding.top,
-                    ),
-                    isDelivery
-                        ? Stack(
-                            children: [
-                              SlideAnimation(
-                                horizontalOffset: -200,
-                                duration: Duration(milliseconds: 900),
-                                child: FadeInAnimation(
-                                  child: Detail(
-                                    onTap: () {},
-                                    icon: Icons.info,
-                                    color: Color.fromARGB(255, 138, 101, 7),
-                                    title2: pickId,
-                                    title: 'Waybill Id',
+    return Consumer<ProviderS>(
+      builder: (context, pValue, child) => AnimationLimiter(
+        child: AnimationConfiguration.synchronized(
+          child: SlideAnimation(
+            verticalOffset: -300,
+            child: Card(
+              color: black.withOpacity(0.9),
+              elevation: 20,
+              child: SlideAnimation(
+                verticalOffset: 300,
+                child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(30),
+                          bottomRight: Radius.circular(30))),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).padding.top,
+                      ),
+                      isDelivery
+                          ? Stack(
+                              children: [
+                                SlideAnimation(
+                                  horizontalOffset: -200,
+                                  duration: Duration(milliseconds: 900),
+                                  child: FadeInAnimation(
+                                    child: Detail(
+                                      onTap: () {},
+                                      icon: Icons.info,
+                                      color: Color.fromARGB(255, 138, 101, 7),
+                                      title2: pickId,
+                                      title: 'Waybill Id',
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Positioned(
-                                top: 0,
-                                bottom: 0,
-                                right: 8,
-                                child: IconButton(
-                                    onPressed: () {
-                                      Clipboard.setData(
-                                              ClipboardData(text: pickId))
-                                          .then((_) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
-                                                content: Text(
-                                                    "Waybill Id copied to clipboard")));
-                                      });
-                                    },
-                                    icon: Icon(
-                                      Icons.copy,
-                                      color: appliteBlue2,
-                                    )),
-                              )
-                            ],
-                          )
-                        : SizedBox(),
-                    SlideAnimation(
-                      horizontalOffset: 200,
-                      duration: Duration(milliseconds: 900),
-                      child: FadeInAnimation(
-                        child: Detail(
-                          onTap: () {},
-                          icon: Icons.person,
-                          color: Color.fromARGB(255, 11, 53, 124),
-                          title2: name,
-                          title: 'Name',
-                        ),
-                      ),
-                    ),
-                    SlideAnimation(
-                      horizontalOffset: -200,
-                      duration: Duration(milliseconds: 500),
-                      child: FadeInAnimation(
-                        child: Detail(
-                          onTap: () {},
-                          icon: Icons.home,
-                          color: Color.fromARGB(255, 20, 143, 29),
-                          title2: address,
-                          title: 'Address',
-                        ),
-                      ),
-                    ),
-                    isDelivery
-                        ? SlideAnimation(
-                            horizontalOffset: 200,
-                            duration: Duration(milliseconds: 900),
-                            child: FadeInAnimation(
-                              child: Detail(
-                                onTap: () {},
-                                icon: Icons.monetization_on,
-                                color: Color.fromARGB(255, 93, 2, 107),
-                                title2: COD,
-                                title: 'COD',
-                              ),
-                            ),
-                          )
-                        : SizedBox(),
-                    SlideAnimation(
-                      horizontalOffset: -200,
-                      duration: Duration(milliseconds: 700),
-                      child: FadeInAnimation(
-                        child: Detail(
-                          onTap: () async {
-                            final call = Uri.parse('tel:$phone');
-                            if (await canLaunchUrl(call)) {
-                              launchUrl(call);
-                            } else {
-                              throw 'Could not launch $call';
-                            }
-                          },
-                          icon: Icons.call,
-                          color: Color.fromARGB(255, 255, 20, 20),
-                          title2: phone,
-                          title: 'Phone',
-                        ),
-                      ),
-                    ),
-                    isDelivery == false && accept == '1'
-                        ? Card(
-                            child: TextField(
-                                // readOnly: true,
-                                onTap: () {
-                                  // Navigator.push(
-                                  //   context,
-                                  //   PageTransition(
-                                  //       type: PageTransitionType.leftToRight,
-                                  //       duration: Duration(milliseconds: 600),
-                                  //       child: BarcodeScanDeliveryItem(),
-                                  //       inheritTheme: true,
-                                  //       ctx: context),
-                                  // );
-                                },
-                                controller: quantity,
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration(
-                                    hintText: 'Scan your pickups',
-                                    contentPadding: EdgeInsets.all(8),
-                                    prefixIcon: Padding(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: Icon(
-                                        Icons.edit,
-                                        size: 47,
-                                      ),
-                                    ),
-                                    fillColor: white3,
-                                    filled: true,
-                                    suffixIcon: IconButton(
-                                        onPressed: () async {
-                                          scanBarcodeNormal();
-                                        },
-                                        icon:
-                                            Icon(Icons.qr_code_scanner_sharp)),
-                                    enabledBorder: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(11)),
-                                    focusedBorder: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(11)))),
-                          )
-                        : SizedBox(),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    isDelivery
-                        ? SizedBox()
-                        : SlideAnimation(
-                            verticalOffset: 200,
-                            duration: Duration(milliseconds: 900),
-                            child: DialogButton(
-                                text: accept == '0'
-                                    ? 'Accept'
-                                    // : sign == false
-                                    //     ? 'Signature'
-                                    : "Pickup",
-                                onTap: accept == '0'
-                                    ? () async {
-                                        setState(() {
-                                          isLoading = true;
+                                Positioned(
+                                  top: 0,
+                                  bottom: 0,
+                                  right: 8,
+                                  child: IconButton(
+                                      onPressed: () {
+                                        Clipboard.setData(
+                                                ClipboardData(text: pickId))
+                                            .then((_) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                                  content: Text(
+                                                      "Waybill Id copied to clipboard")));
                                         });
-                                        await CustomApi()
-                                            .sendSms(phone, pickId, context);
-                                        await userLocation();
-                                        setState(() {
-                                          Provider.of<ProviderS>(context,
-                                                  listen: false)
-                                              .isAppbarsheerOpen = false;
-
-                                          isLoading = false;
-                                        });
+                                      },
+                                      icon: Icon(
+                                        Icons.copy,
+                                        color: appliteBlue2,
+                                      )),
+                                )
+                              ],
+                            )
+                          : SizedBox(),
+                      SlideAnimation(
+                        horizontalOffset: 200,
+                        duration: Duration(milliseconds: 900),
+                        child: FadeInAnimation(
+                          child: Detail(
+                            onTap: () {},
+                            icon: Icons.person,
+                            color: Color.fromARGB(255, 11, 53, 124),
+                            title2: name,
+                            title: 'Name',
+                          ),
+                        ),
+                      ),
+                      SlideAnimation(
+                        horizontalOffset: -200,
+                        duration: Duration(milliseconds: 500),
+                        child: FadeInAnimation(
+                          child: Detail(
+                            onTap: () {},
+                            icon: Icons.home,
+                            color: Color.fromARGB(255, 20, 143, 29),
+                            title2: address,
+                            title: 'Address',
+                          ),
+                        ),
+                      ),
+                      isDelivery
+                          ? SlideAnimation(
+                              horizontalOffset: 200,
+                              duration: Duration(milliseconds: 900),
+                              child: FadeInAnimation(
+                                child: Detail(
+                                  onTap: () {},
+                                  icon: Icons.monetization_on,
+                                  color: Color.fromARGB(255, 93, 2, 107),
+                                  title2: COD,
+                                  title: 'COD',
+                                ),
+                              ),
+                            )
+                          : SizedBox(),
+                      SlideAnimation(
+                        horizontalOffset: -200,
+                        duration: Duration(milliseconds: 700),
+                        child: FadeInAnimation(
+                          child: Detail(
+                            onTap: () async {
+                              final call = Uri.parse('tel:$phone');
+                              if (await canLaunchUrl(call)) {
+                                launchUrl(call);
+                              } else {
+                                throw 'Could not launch $call';
+                              }
+                            },
+                            icon: Icons.call,
+                            color: Color.fromARGB(255, 255, 20, 20),
+                            title2: phone,
+                            title: 'Phone',
+                          ),
+                        ),
+                      ),
+                      isDelivery == false && accept == '1'
+                          ? Card(
+                              child: TextField(
+                                  readOnly:
+                                      pValue.barcodeListGoogleMap.isNotEmpty,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      print(pValue.barcodeListGoogleMap);
+                                      if (pValue
+                                          .barcodeListGoogleMap.isNotEmpty) {
+                                        scanButtonHide = true;
                                       }
-                                    // : sign == false
-                                    //     ? () {
-                                    //         print('ffffffffffffffffffffff');
-                                    //         siganature();
-                                    //       }
-                                    : () async {
-                                        if (quantity.text.isNotEmpty) {
-                                          int qnt = int.parse(quantity.text);
-                                          if (qnt < 5000) {
-                                            if (qnt != 0) {
-                                              setState(() {
-                                                isLoading = true;
-                                              });
+                                    });
+                                  },
+                                  controller: pValue.scanQnt,
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                      hintText: 'Scan your pickups',
+                                      contentPadding: EdgeInsets.all(8),
+                                      prefixIcon: Padding(
+                                        padding: const EdgeInsets.all(4.0),
+                                        child: Icon(
+                                          Icons.edit,
+                                          size: 47,
+                                        ),
+                                      ),
+                                      fillColor: white3,
+                                      filled: true,
+                                      suffixIcon: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          IconButton(
+                                              onPressed: () async {
+                                                pValue.scanQnt.clear();
+                                                pValue.barcodeListGoogleMap =
+                                                    [];
+                                                setState(() {
+                                                  scanButtonHide = false;
+                                                });
+                                              },
+                                              icon: Icon(Icons
+                                                  .replay_circle_filled_sharp)),
+                                          IconButton(
+                                              onPressed: () async {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          BarcodeScanDeliveryItem(),
+                                                    ));
+                                              },
+                                              icon: Icon(
+                                                  Icons.qr_code_scanner_sharp)),
+                                        ],
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(11)),
+                                      focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(11)))),
+                            )
+                          : SizedBox(),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      isDelivery
+                          ? SizedBox()
+                          : SlideAnimation(
+                              verticalOffset: 200,
+                              duration: Duration(milliseconds: 900),
+                              child: DialogButton(
+                                  text: accept == '0'
+                                      ? 'Accept'
+                                      // : sign == false
+                                      //     ? 'Signature'
+                                      : "Pickup",
+                                  onTap: accept == '0'
+                                      ? () async {
+                                          setState(() {
+                                            isLoading = true;
+                                          });
+                                          await CustomApi()
+                                              .sendSms(phone, pickId, context);
+                                          await userLocation();
+                                          setState(() {
+                                            Provider.of<ProviderS>(context,
+                                                    listen: false)
+                                                .isAppbarsheerOpen = false;
 
-                                              await CustomApi().pickupComplete(
-                                                  context,
-                                                  pickId,
-                                                  quantity.text,
-                                                  phone,
-                                                  'lat',
-                                                  'lon',
-                                                  'pick');
-                                             
-                                              _marker.clear();
-                                              await userLocation();
-                                              // _marker.remove(value)
-                                              await CustomApi().sendSms(
-                                                  phone, pickId, context);
-                                            
-                                              setState(() {
-                                                Provider.of<ProviderS>(context,
-                                                        listen: false)
-                                                    .isAppbarsheerOpen = false;
+                                            isLoading = false;
+                                          });
+                                        }
+                                      // : sign == false
+                                      //     ? () {
+                                      //         print('ffffffffffffffffffffff');
+                                      //         siganature();
+                                      //       }
+                                      : () async {
+                                          if (pValue.barcodeListGoogleMap
+                                              .isNotEmpty) {
+                                            int qnt = int.parse(pValue
+                                                .barcodeListGoogleMap.length
+                                                .toString());
+                                            if (qnt < 5000) {
+                                              if (qnt != 0) {
+                                                setState(() {
+                                                  isLoading = true;
+                                                });
 
-                                                isLoading = false;
-                                              });
+                                                await CustomApi()
+                                                    .pickupComplete(
+                                                        context,
+                                                        pickId,
+                                                        quantity.text,
+                                                        phone,
+                                                        'lat',
+                                                        'lon',
+                                                        'pick');
+
+                                                _marker.clear();
+                                                await userLocation();
+                                                // _marker.remove(value)
+                                                await CustomApi().sendSms(
+                                                    phone, pickId, context);
+
+                                                setState(() {
+                                                  Provider.of<ProviderS>(
+                                                              context,
+                                                              listen: false)
+                                                          .isAppbarsheerOpen =
+                                                      false;
+
+                                                  isLoading = false;
+                                                });
+                                              } else {
+                                                notification().info(context,
+                                                    'Invalid Quantity');
+                                              }
                                             } else {
                                               notification().info(
                                                   context, 'Invalid Quantity');
                                             }
                                           } else {
-                                            notification().info(
-                                                context, 'Invalid Quantity');
+                                            notification().info(context,
+                                                'Quantity is required');
                                           }
-                                        } else {
-                                          notification().info(
-                                              context, 'Quantity is required');
-                                        }
-                                      },
-                                buttonHeight: h / 14,
-                                width: w / 1.5,
-                                color: accept == '0'
-                                    ? appBlue
-                                    : Color.fromARGB(255, 186, 122, 12)),
-                          ),
-                    isDelivery
-                        ? SlideAnimation(
-                            verticalOffset: 200,
-                            duration: Duration(milliseconds: 900),
-                            child: Stack(
-                              children: [
-                                DialogButton(
-                                  buttonHeight: h / 15,
-                                  color: Colors.green,
-                                  onTap: () {
-                                    MapUtils.openMap(dLat, dLong);
-                                  },
-                                  text: 'Get Direction',
+                                        },
+                                  buttonHeight: h / 14,
                                   width: w / 1.5,
-                                ),
-                                Positioned(
-                                    child: Image.asset(
-                                        'assets/icons8-google-maps-old-48.png'))
-                              ],
-                            ))
-                        : SizedBox(),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        setState(() {
-                          _signController.clear();
-                          Provider.of<ProviderS>(context, listen: false)
-                              .isAppbarsheerOpen = false;
-                        });
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: Color.fromARGB(255, 204, 201, 201),
-                              borderRadius: BorderRadius.circular(5)),
-                          height: 5,
-                          width: 70,
+                                  color: accept == '0'
+                                      ? appBlue
+                                      : Color.fromARGB(255, 186, 122, 12)),
+                            ),
+                      isDelivery
+                          ? SlideAnimation(
+                              verticalOffset: 200,
+                              duration: Duration(milliseconds: 900),
+                              child: Stack(
+                                children: [
+                                  DialogButton(
+                                    buttonHeight: h / 15,
+                                    color: Colors.green,
+                                    onTap: () {
+                                      MapUtils.openMap(dLat, dLong);
+                                    },
+                                    text: 'Get Direction',
+                                    width: w / 1.5,
+                                  ),
+                                  Positioned(
+                                      child: Image.asset(
+                                          'assets/icons8-google-maps-old-48.png'))
+                                ],
+                              ))
+                          : SizedBox(),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            _signController.clear();
+                            Provider.of<ProviderS>(context, listen: false)
+                                .isAppbarsheerOpen = false;
+                          });
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Color.fromARGB(255, 204, 201, 201),
+                                borderRadius: BorderRadius.circular(5)),
+                            height: 5,
+                            width: 70,
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 12,
-                    ),
-                  ],
+                      SizedBox(
+                        height: 12,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -825,7 +854,7 @@ class _MapScreenState extends State<MapScreen> {
         quantity.text = "";
       } else {
         barcodeScanData.add(_scanBarcode.toString());
-    
+
         quantity.text = " Quantity ${barcodeScanData.length.toString()}";
       }
     });

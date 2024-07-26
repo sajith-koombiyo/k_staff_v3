@@ -79,6 +79,7 @@ class _NavigationScreenState extends State<NavigationScreen>
   String dpCode = '';
   List youTube = [];
   int backTime = 0;
+  String pickupDevice = '';
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   List iconList = [Icons.abc, Icons.abc, Icons.abc];
   String count = '';
@@ -185,7 +186,9 @@ class _NavigationScreenState extends State<NavigationScreen>
 
   notificationCount() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
+    var deviceType = await prefs.get(
+      'pickup_device',
+    );
     var res = await prefs.get(
       'userActive',
     );
@@ -202,6 +205,7 @@ class _NavigationScreenState extends State<NavigationScreen>
 
     List _ids = [];
     setState(() {
+      pickupDevice = deviceType.toString();
       if (userActive == '1') {
         page = true;
       } else {
@@ -442,7 +446,16 @@ class _NavigationScreenState extends State<NavigationScreen>
                     SizedBox(
                       height: MediaQuery.of(context).size.height,
                       child: Center(
-                        child: _pages.elementAt(_selectedIndex), //New
+                        child: _selectedIndex == 0
+                            ? Home()
+                            : _selectedIndex == 1
+                                ? pickupDevice == "0"
+                                    ? Map2()
+                                    : MapScreen()
+                                : _selectedIndex == 2
+                                    ? MyDeposit()
+                                    : Account(),
+                        //New
                       ),
                     ),
                     Padding(

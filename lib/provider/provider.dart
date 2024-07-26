@@ -39,6 +39,13 @@ class ProviderS with ChangeNotifier {
     notifyListeners();
   }
 
+  List _barcodeListGoogleMap = [];
+  List get barcodeListGoogleMap => _barcodeListGoogleMap;
+  set barcodeListGoogleMap(List i) {
+    _barcodeListGoogleMap = i;
+    notifyListeners();
+  }
+
   TextEditingController _scanQnt = TextEditingController();
   TextEditingController get scanQnt => _scanQnt;
   set scanQnt(TextEditingController i) {

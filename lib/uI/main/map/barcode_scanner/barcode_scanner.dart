@@ -11,8 +11,9 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 import '../../../widget/home_screen_widget/home_button.dart';
 
 class BarcodeScanDeliveryItem extends StatefulWidget {
-  const BarcodeScanDeliveryItem({super.key, required this.isDevice});
-  final String isDevice;
+  const BarcodeScanDeliveryItem({
+    super.key,
+  });
 
   @override
   State<BarcodeScanDeliveryItem> createState() =>
@@ -43,123 +44,101 @@ class _BarcodeScanDeliveryItemState extends State<BarcodeScanDeliveryItem> {
   Widget build(BuildContext context) {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: appliteBlue,
-        title: Text(
-          'Scan Orders',
-          style: TextStyle(
-            fontSize: 18.dp,
-            color: white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(
-              Icons.arrow_back_ios_new,
+    return Consumer<ProviderS>(
+      builder: (context, pValue, child) => Scaffold(
+        appBar: AppBar(
+          backgroundColor: appliteBlue,
+          title: Text(
+            'Scan Orders',
+            style: TextStyle(
+              fontSize: 18.dp,
               color: white,
-            )),
-      ),
-      backgroundColor: const Color.fromARGB(255, 6, 57, 99),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            flex: 2,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                // Card(
-                //   elevation: 40,
-                //   color: Color.fromARGB(255, 29, 41, 50),
-                //   child: Container(
-                //       alignment: Alignment.center,
-                //       // color: Color.fromARGB(255, 29, 41, 50),
-                //       height: h / 6.5,
-                //       width: w / 2.5,
-                //       child: Column(
-                //         mainAxisSize: MainAxisSize.min,
-                //         children: [
-                //           Text(
-                //             textAlign: TextAlign.center,
-                //             'Pending',
-                //             style: TextStyle(fontSize: 14, color: white),
-                //           ),
-                //           Text(
-                //             textAlign: TextAlign.center,
-                //             x.toString(),
-                //             style: TextStyle(fontSize: 50, color: white),
-                //           ),
-                //         ],
-                //       )),
-                // ),
-                Card(
-                  elevation: 40,
-                  color: Color.fromARGB(255, 29, 41, 50),
-                  child: Container(
-                      alignment: Alignment.center,
-                      height: h / 6.5,
-                      width: w / 2.5,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            textAlign: TextAlign.center,
-                            'Count',
-                            style: TextStyle(fontSize: 14, color: white),
-                          ),
-                          Text(
-                            barcodeList.length.toString(),
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 50,
-                              color: white,
-                            ),
-                          ),
-                        ],
-                      )),
-                ),
-              ],
+              fontWeight: FontWeight.bold,
             ),
           ),
-          Expanded(
-            flex: 2,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: QRView(
-                onPermissionSet: (p0, p1) {},
-                overlay: QrScannerOverlayShape(borderRadius: 15),
-                key: qrKey,
-                onQRViewCreated: _onQRViewCreated,
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Center(
-              child: (result != null)
-                  ? Text(
-                      '  Data: ${barcodeList}',
-                      style: TextStyle(color: white, fontSize: 22),
-                    )
-                  : Text(
-                      'Scan a code',
-                      style: TextStyle(color: white, fontSize: 22),
-                    ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: HomeButton(
-              onTap: () {
+          leading: IconButton(
+              onPressed: () {
                 Navigator.pop(context);
               },
-              text: 'Save',
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: white,
+              )),
+        ),
+        backgroundColor: const Color.fromARGB(255, 6, 57, 99),
+        body: Column(
+          children: <Widget>[
+            Expanded(
+              flex: 2,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Card(
+                    elevation: 40,
+                    color: Color.fromARGB(255, 29, 41, 50),
+                    child: Container(
+                        alignment: Alignment.center,
+                        height: h / 6.5,
+                        width: w / 2.5,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              textAlign: TextAlign.center,
+                              'Count',
+                              style: TextStyle(fontSize: 14, color: white),
+                            ),
+                            Text(
+                              barcodeList.length.toString(),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 50,
+                                color: white,
+                              ),
+                            ),
+                          ],
+                        )),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            Expanded(
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: QRView(
+                  onPermissionSet: (p0, p1) {},
+                  overlay: QrScannerOverlayShape(borderRadius: 15),
+                  key: qrKey,
+                  onQRViewCreated: _onQRViewCreated,
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Center(
+                child: (result != null)
+                    ? Text(
+                        '  Data: ${pValue.barcodeListGoogleMap}',
+                        style: TextStyle(color: white, fontSize: 22),
+                      )
+                    : Text(
+                        'Scan a code',
+                        style: TextStyle(color: white, fontSize: 22),
+                      ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: HomeButton(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                text: 'Save',
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -168,21 +147,25 @@ class _BarcodeScanDeliveryItemState extends State<BarcodeScanDeliveryItem> {
     List data = [];
     this.controller = controller;
     await controller.scannedDataStream.listen((scanData) {
-      setState(() {
-        result = scanData;
-      
-        data = [result!.code];
-        if (barcodeList.contains(result!.code)) {
-          notification().warning(
-              context, 'Scan item ${result!.code} already exists in the list.');
-        } else {
-          x = x - 1;
-          barcodeList.add(result!.code);
-          Provider.of<ProviderS>(context, listen: false).scanQnt.text =
-              barcodeList.length.toString();
-        }
+      Future.delayed(Duration(milliseconds: 200)).then((value) {
+        setState(() {
+          result = scanData;
 
-        // Function to add a value to the list if it doesn't already exist
+          data = [result!.code];
+          if (barcodeList.contains(result!.code)) {
+            notification().warning(context,
+                'Scan item ${result!.code} already exists in the list.');
+          } else {
+            x = x - 1;
+            barcodeList.add(result!.code);
+            Provider.of<ProviderS>(context, listen: false).scanQnt.text =
+                barcodeList.length.toString();
+            Provider.of<ProviderS>(context, listen: false)
+                .barcodeListGoogleMap = barcodeList;
+          }
+
+          // Function to add a value to the list if it doesn't already exist
+        });
       });
     });
   }
@@ -192,9 +175,7 @@ class _BarcodeScanDeliveryItemState extends State<BarcodeScanDeliveryItem> {
       setState(() {
         barcodeList.add(value);
       });
-    } else {
-   
-    }
+    } else {}
   }
 
   @override

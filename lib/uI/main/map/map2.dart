@@ -1,5 +1,5 @@
 import 'dart:developer';
-
+import 'package:avoid_keyboard/avoid_keyboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_application_2/api/api.dart';
@@ -7,22 +7,16 @@ import 'package:flutter_application_2/app_details/color.dart';
 import 'package:flutter_application_2/class/class.dart';
 import 'package:flutter_application_2/class/location.dart';
 import 'package:flutter_application_2/provider/provider.dart';
-import 'package:flutter_application_2/uI/main/map/barcode_scanner/barcode_scanner.dart';
 import 'package:flutter_application_2/uI/widget/diloag_button.dart';
 import 'package:flutter_application_2/uI/widget/map/details.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-// import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../../sql_db/db.dart';
 
 class Map2 extends StatefulWidget {
@@ -33,7 +27,6 @@ class Map2 extends StatefulWidget {
 }
 
 class _Map2State extends State<Map2> {
-  String? _barcode;
   late bool visible;
   Position? position;
   List pickupLocation = [];
@@ -266,191 +259,198 @@ class _Map2State extends State<Map2> {
         // :
 
         Consumer<ProviderS>(
-      builder: (context, provider, child) => Scaffold(
-        backgroundColor: Color.fromARGB(255, 229, 232, 238),
-        body: SingleChildScrollView(
-          child: SizedBox(
-            height: h,
-            child: Stack(
-              children: [
-                position == null
-                    ? Loader().loader(context)
-                    : FlutterMap(
-                        mapController: mapController,
-                        // mapController: mapController,
-                        options: MapOptions(
-                          initialCenter:
-                              LatLng(position!.latitude, position!.longitude),
-                          minZoom: 8,
-                          maxZoom: 40,
-                          zoom: 7.9,
-                          keepAlive: true,
-                          onMapReady: () {
-                            //
-                          },
-                          onPositionChanged: (position, hasGesture) {
-                            //
-                          },
+      builder: (context, provider, child) => AvoidKeyboard(
+        child: Scaffold(
+          backgroundColor: Color.fromARGB(255, 229, 232, 238),
+          body: SingleChildScrollView(
+            child: SizedBox(
+              height: h,
+              child: Stack(
+                children: [
+                  position == null
+                      ? Loader().loader(context)
+                      : FlutterMap(
+                          mapController: mapController,
+                          // mapController: mapController,
+                          options: MapOptions(
+                            initialCenter:
+                                LatLng(position!.latitude, position!.longitude),
+                            minZoom: 8,
+                            maxZoom: 40,
+                            zoom: 7.9,
+                            keepAlive: true,
+                            onMapReady: () {
+                              //
+                            },
+                            onPositionChanged: (position, hasGesture) {
+                              //
+                            },
+                          ),
+                          children: [
+                            TileLayer(
+                              urlTemplate:
+                                  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                              subdomains: ['a', 'b', 'c'],
+                            ),
+                            MarkerLayer(markers: _marker),
+                            MarkerLayer(markers: [
+                              Marker(
+                                  point: LatLng(
+                                      position!.latitude, position!.longitude),
+                                  child: Icon(
+                                    Icons.person_pin_circle_rounded,
+                                    size: 20,
+                                    color: Color.fromARGB(255, 240, 27, 4),
+                                  ))
+                            ]),
+                          ],
                         ),
-                        children: [
-                          TileLayer(
-                            urlTemplate:
-                                'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                            subdomains: ['a', 'b', 'c'],
-                          ),
-                          MarkerLayer(markers: _marker),
-                          MarkerLayer(markers: [
-                            Marker(
-                                point: LatLng(
-                                    position!.latitude, position!.longitude),
-                                child: Icon(
-                                  Icons.person_pin_circle_rounded,
-                                  size: 20,
-                                  color: Color.fromARGB(255, 240, 27, 4),
-                                ))
-                          ]),
-                        ],
-                      ),
-                Positioned(
-                  top: 100,
-                  left: 10,
-                  child: Card(
-                    shape: Border.all(color: Colors.transparent),
-                    elevation: 20,
-                    color: black.withOpacity(0.6),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SizedBox(
-                                  height: 15,
-                                  child: Image.asset(
-                                      'assets/location_pin_gradient_set-red.png')),
-                              SizedBox(
-                                width: 4,
-                              ),
-                              SizedBox(
-                                width: 55,
-                                child: Text(
-                                  'Pending',
+                  Positioned(
+                    top: 100,
+                    left: 10,
+                    child: Card(
+                      shape: Border.all(color: Colors.transparent),
+                      elevation: 20,
+                      color: black.withOpacity(0.6),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(
+                                    height: 15,
+                                    child: Image.asset(
+                                        'assets/location_pin_gradient_set-red.png')),
+                                SizedBox(
+                                  width: 4,
+                                ),
+                                SizedBox(
+                                  width: 55,
+                                  child: Text(
+                                    'Pending',
+                                    style:
+                                        TextStyle(color: white, fontSize: 12),
+                                  ),
+                                ),
+                                Text(
+                                  '${status0Count.toString()}',
                                   style: TextStyle(color: white, fontSize: 12),
                                 ),
-                              ),
-                              Text(
-                                '${status0Count.toString()}',
-                                style: TextStyle(color: white, fontSize: 12),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 4,
-                          ),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SizedBox(
-                                  height: 15,
-                                  child: Image.asset('assets/location_d.png')),
-                              SizedBox(
-                                width: 4,
-                              ),
-                              SizedBox(
-                                width: 55,
-                                child: Text(
-                                  'Accept',
+                              ],
+                            ),
+                            SizedBox(
+                              height: 4,
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(
+                                    height: 15,
+                                    child:
+                                        Image.asset('assets/location_d.png')),
+                                SizedBox(
+                                  width: 4,
+                                ),
+                                SizedBox(
+                                  width: 55,
+                                  child: Text(
+                                    'Accept',
+                                    style:
+                                        TextStyle(color: white, fontSize: 12),
+                                  ),
+                                ),
+                                Text(
+                                  '${status1Count.toString()}',
                                   style: TextStyle(color: white, fontSize: 12),
                                 ),
-                              ),
-                              Text(
-                                '${status1Count.toString()}',
-                                style: TextStyle(color: white, fontSize: 12),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 4,
-                          ),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SizedBox(
-                                  height: 15,
-                                  child: Image.asset('assets/delivey2.png')),
-                              SizedBox(
-                                width: 4,
-                              ),
-                              SizedBox(
-                                width: 55,
-                                child: Text(
-                                  'Delivery',
+                              ],
+                            ),
+                            SizedBox(
+                              height: 4,
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(
+                                    height: 15,
+                                    child: Image.asset('assets/delivey2.png')),
+                                SizedBox(
+                                  width: 4,
+                                ),
+                                SizedBox(
+                                  width: 55,
+                                  child: Text(
+                                    'Delivery',
+                                    style:
+                                        TextStyle(color: white, fontSize: 12),
+                                  ),
+                                ),
+                                Text(
+                                  '${deliveryLocation.length}',
                                   style: TextStyle(color: white, fontSize: 12),
                                 ),
-                              ),
-                              Text(
-                                '${deliveryLocation.length}',
-                                style: TextStyle(color: white, fontSize: 12),
-                              ),
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Positioned(
-                  bottom: 100,
-                  right: 12,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 15),
-                        child: FloatingActionButton.small(
-                            heroTag: '1',
-                            backgroundColor: white.withOpacity(0.6),
-                            child: Icon(
-                              Icons.location_searching_rounded,
-                              color: const Color.fromARGB(255, 136, 9, 0),
-                            ),
-                            onPressed: () {
-                              Geolocator.getCurrentPosition(
-                                      desiredAccuracy: LocationAccuracy.high)
-                                  .then((pickedCurrentLocation) {
-                                setState(() {
-                                  position = pickedCurrentLocation;
+                  Positioned(
+                    bottom: 100,
+                    right: 12,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 15),
+                          child: FloatingActionButton.small(
+                              heroTag: '1',
+                              backgroundColor: white.withOpacity(0.6),
+                              child: Icon(
+                                Icons.location_searching_rounded,
+                                color: const Color.fromARGB(255, 136, 9, 0),
+                              ),
+                              onPressed: () {
+                                Geolocator.getCurrentPosition(
+                                        desiredAccuracy: LocationAccuracy.high)
+                                    .then((pickedCurrentLocation) {
+                                  setState(() {
+                                    position = pickedCurrentLocation;
+                                  });
+                                  mapController.move(
+                                      LatLng(position!.latitude,
+                                          position!.longitude),
+                                      2);
                                 });
-                                mapController.move(
-                                    LatLng(position!.latitude,
-                                        position!.longitude),
-                                    2);
-                              });
-                            }),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 100),
-                        child: FloatingActionButton.small(
-                            heroTag: '2',
-                            backgroundColor: white.withOpacity(0.6),
-                            child: Icon(
-                              Icons.refresh,
-                              color: Color.fromARGB(255, 2, 135, 244),
-                            ),
-                            onPressed: () {
-                              userLoaction();
-                            }),
-                      ),
-                    ],
+                              }),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 100),
+                          child: FloatingActionButton.small(
+                              heroTag: '2',
+                              backgroundColor: white.withOpacity(0.6),
+                              child: Icon(
+                                Icons.refresh,
+                                color: Color.fromARGB(255, 2, 135, 244),
+                              ),
+                              onPressed: () {
+                                userLoaction();
+                              }),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Provider.of<ProviderS>(context, listen: false).isAppbarsheerOpen
-                    ? appbarSheet()
-                    : SizedBox(),
-                isLoading ? Loader().loader(context) : SizedBox()
-              ],
+                  Provider.of<ProviderS>(context, listen: false)
+                          .isAppbarsheerOpen
+                      ? appbarSheet()
+                      : SizedBox(),
+                  isLoading ? Loader().loader(context) : SizedBox()
+                ],
+              ),
             ),
           ),
         ),
@@ -556,98 +556,58 @@ class _Map2State extends State<Map2> {
                     title: 'Phone',
                   ),
                   isDelivery == false && accept == '1'
-                      ? pickupDevice == '1'
-                          ? Stack(
-                              children: [
-                                Card(
-                                  child: TextFormField(
-                                      focusNode: _focusNode,
-                                      textInputAction: TextInputAction.search,
-                                      autofocus: true,
-                                      showCursor: true,
-                                      // readOnly: true,
-                                      onChanged: (value) async {
-                                        if (await barcodeScanData
-                                            .contains(value)) {
-                                          setState(() {
-                                            SacanQuantity.clear();
-                                          });
-                                          notification().warning(context,
-                                              'Scan item $value already exists in the list.');
-                                        } else {
-                                          if (SacanQuantity.text.isNotEmpty) {
-                                            setState(() {
-                                              notification().info(context,
-                                                  'Scan item $value successfully saved');
-                                              barcodeScanData.add(value);
-                                              quantity.text = barcodeScanData
-                                                  .length
-                                                  .toString();
-                                              SacanQuantity.clear();
-
-                                              log(barcodeScanData.toString());
-                                            });
-
-                                            if (sacanList.any((element) =>
-                                                element["pick_id"].toString() ==
-                                                pickId.toString())) {
-                                              print(
-                                                  'sssssssssssssssssssssssssssssssss111111111111111111111111111111111111111111');
-                                              var res = await sqlDb.updateData(
-                                                  "UPDATE scanData  SET scan_list = '${barcodeScanData.toString()}' WHERE pick_id = '$pickId';");
-                                              sacanData();
-                                            } else {
-                                              var res = await sqlDb.insertData(
-                                                  'INSERT INTO scanData ("pick_id","scan_list") VALUES("$pickId","${barcodeScanData.toString()}")');
-                                              log(res.toString());
-                                              sacanData();
-                                            }
-                                          }
-                                        }
-                                      },
-                                      onTap: () {},
-                                      controller: SacanQuantity,
-                                      keyboardType: TextInputType.number,
-                                      decoration: InputDecoration(
-                                          hintText: 'Scan your pickups',
-                                          contentPadding: EdgeInsets.all(8),
-                                          prefixIcon: Padding(
-                                            padding: const EdgeInsets.all(4.0),
-                                            child: Icon(
-                                              Icons.edit,
-                                              size: 47,
-                                            ),
-                                          ),
-                                          fillColor: white3,
-                                          filled: true,
-                                          suffixIcon: IconButton(
-                                              onPressed: () async {
-                                                scanBarcodeNormal();
-                                              },
-                                              icon: Icon(
-                                                  Icons.qr_code_scanner_sharp)),
-                                          enabledBorder: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(11)),
-                                          focusedBorder: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(11)))),
-                                ),
-                                Detail2(
-                                  icon: Icons.qr_code_scanner,
-                                  color: Color.fromARGB(255, 3, 93, 111),
-                                  title2: barcodeScanData.isEmpty
-                                      ? "Scan your item"
-                                      : barcodeScanData.toString(),
-                                  title:
-                                      "Scan quantity [ ${barcodeScanData.isEmpty ? "0" : barcodeScanData.length.toString()} ]",
-                                ),
-                              ],
-                            )
-                          : Card(
-                              child: TextField(
-                                  controller: pValue.scanQnt,
+                      ? Stack(
+                          children: [
+                            Card(
+                              child: TextFormField(
                                   keyboardType: TextInputType.number,
+                                  focusNode: _focusNode,
+                                  // textInputAction: TextInputAction.none,
+                                  autofocus: true,
+                                  showCursor: true,
+                                  // readOnly: true,
+
+                                  onChanged: (value) async {
+                                    if (await barcodeScanData.contains(value)) {
+                                      setState(() {
+                                        SacanQuantity.clear();
+                                      });
+                                      notification().warning(context,
+                                          'Scan item $value already exists in the list.');
+                                    } else {
+                                      if (SacanQuantity.text.isNotEmpty &&
+                                          SacanQuantity.text.length > 3) {
+                                        setState(() {
+                                          notification().info(context,
+                                              'Scan item $value successfully saved');
+                                          barcodeScanData.add(value);
+                                          quantity.text =
+                                              barcodeScanData.length.toString();
+                                          SacanQuantity.clear();
+
+                                          log(barcodeScanData.toString());
+                                        });
+
+                                        if (sacanList.any((element) =>
+                                            element["pick_id"].toString() ==
+                                            pickId.toString())) {
+                                          print(
+                                              'sssssssssssssssssssssssssssssssss111111111111111111111111111111111111111111');
+                                          var res = await sqlDb.updateData(
+                                              "UPDATE scanData  SET scan_list = '${barcodeScanData.toString()}' WHERE pick_id = '$pickId';");
+                                          sacanData();
+                                        } else {
+                                          var res = await sqlDb.insertData(
+                                              'INSERT INTO scanData ("pick_id","scan_list") VALUES("$pickId","${barcodeScanData.toString()}")');
+                                          log(res.toString());
+                                          sacanData();
+                                        }
+                                      }
+                                    }
+                                  },
+                                  onTap: () {},
+                                  controller: SacanQuantity,
+                                  // keyboardType: TextInputType.number,
                                   decoration: InputDecoration(
                                       hintText: 'Scan your pickups',
                                       contentPadding: EdgeInsets.all(8),
@@ -662,14 +622,7 @@ class _Map2State extends State<Map2> {
                                       filled: true,
                                       suffixIcon: IconButton(
                                           onPressed: () async {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      BarcodeScanDeliveryItem(
-                                                    isDevice: pickupDevice,
-                                                  ),
-                                                ));
+                                            scanBarcodeNormal();
                                           },
                                           icon: Icon(
                                               Icons.qr_code_scanner_sharp)),
@@ -679,7 +632,18 @@ class _Map2State extends State<Map2> {
                                       focusedBorder: OutlineInputBorder(
                                           borderRadius:
                                               BorderRadius.circular(11)))),
-                            )
+                            ),
+                            Detail2(
+                              icon: Icons.qr_code_scanner,
+                              color: Color.fromARGB(255, 3, 93, 111),
+                              title2: barcodeScanData.isEmpty
+                                  ? "Scan your item"
+                                  : barcodeScanData.toString(),
+                              title:
+                                  "Scan quantity [ ${barcodeScanData.isEmpty ? "0" : barcodeScanData.length.toString()} ]",
+                            ),
+                          ],
+                        )
                       : SizedBox(),
                   SizedBox(
                     height: 10,
