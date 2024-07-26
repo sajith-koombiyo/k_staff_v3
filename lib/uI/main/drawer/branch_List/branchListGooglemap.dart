@@ -1,24 +1,15 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:flutter_application_2/class/class.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_application_2/api/api.dart';
-import 'package:flutter_application_2/app_details/color.dart';
-import 'package:flutter_application_2/class/location.dart';
 import 'package:flutter_application_2/provider/provider.dart';
-import 'package:flutter_application_2/uI/main/map/sign.dart';
-import 'package:flutter_application_2/uI/widget/diloag_button.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
+
 
 class BranchListGoogleMap extends StatefulWidget {
   const BranchListGoogleMap({super.key});

@@ -73,7 +73,7 @@ class _customDrawerState extends State<customDrawer> {
     var id = await prefs.getInt(
       'accessesKey',
     );
-   
+
     setState(() {
       pickupDevice = res.toString();
       if (id != null) {
@@ -231,7 +231,6 @@ class _customDrawerState extends State<customDrawer> {
                                         ? drawwerList('Branch Operations',
                                             Icons.accessibility_outlined, () {
                                             setState(() {
-                                            
                                               if (drawOpen == 2 && drawTab) {
                                                 drawTab = false;
                                               } else {
@@ -367,30 +366,34 @@ class _customDrawerState extends State<customDrawer> {
                                               });
                                             }, key, '6')
                                           : SizedBox(),
-                                      tileButton('Branch Visit', () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  pickupDevice == '1'
-                                                      ? LocationScreen()
-                                                      : LocationUpdateGoogleMap()),
-                                        );
-                                        setState(() {
-                                          key = '7';
-                                        });
-                                      }, key, '7'),
-                                      tileButton('Branch Deposit', () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  BranchDeposit()),
-                                        );
-                                        setState(() {
-                                          key = '8';
-                                        });
-                                      }, key, '8'),
+                                      DrawerClz().branchVisit(accessGroupId)
+                                          ? tileButton('Branch Visit', () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        pickupDevice == '1'
+                                                            ? LocationScreen()
+                                                            : LocationUpdateGoogleMap()),
+                                              );
+                                              setState(() {
+                                                key = '7';
+                                              });
+                                            }, key, '7')
+                                          : SizedBox(),
+                                      DrawerClz().branchDeposit(accessGroupId)
+                                          ? tileButton('Branch Deposit', () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        BranchDeposit()),
+                                              );
+                                              setState(() {
+                                                key = '8';
+                                              });
+                                            }, key, '8')
+                                          : SizedBox()
                                     ]),
 
                                     DrawerClz().attendance(accessGroupId)

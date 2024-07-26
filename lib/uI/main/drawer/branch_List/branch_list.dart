@@ -1,19 +1,14 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:flutter_application_2/app_details/color.dart';
 import 'package:flutter_application_2/class/class.dart';
 import 'package:flutter_map/flutter_map.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_application_2/api/api.dart';
-
 import 'package:flutter_application_2/provider/provider.dart';
-
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
 
 class BranchList extends StatefulWidget {
@@ -94,8 +89,7 @@ class _BranchListState extends State<BranchList> {
               position == null
                   ? Loader().loader(context)
                   : FlutterMap(
-                      // mapController: mapController,
-                      // mapController: mapController,
+                     
                       options: MapOptions(
                         enableScrollWheel: false,
                         keepAlive: false,
@@ -114,12 +108,12 @@ class _BranchListState extends State<BranchList> {
                         MarkerLayer(markers: _marker),
                       ],
                     ),
+              isLoading ? Loader().loader(context) : SizedBox(),
               Container(
                 color: white.withOpacity(0.1),
                 height: h,
                 width: w,
               ),
-              isLoading ? Loader().loader(context) : SizedBox()
             ],
           ),
         ),

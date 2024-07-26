@@ -54,9 +54,9 @@ class _MainButtonState extends State<MainButton> {
       mouseCursor: MouseCursor.defer,
       child: AnimatedOpacity(
         opacity: tap ? 0.2 : 1,
-        duration: Duration(milliseconds: 60),
+        duration: const Duration(milliseconds: 60),
         child: Container(
-          padding: EdgeInsets.all(4),
+          padding: const EdgeInsets.all(4),
           alignment: Alignment.center,
           height: widget.buttonHeight,
           width: widget.width,

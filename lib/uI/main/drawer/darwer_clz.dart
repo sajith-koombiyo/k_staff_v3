@@ -206,4 +206,24 @@ class DrawerClz {
       return false;
     }
   }
+
+  branchDeposit(int accessId) {
+    List data = [1, 2];
+
+    if (data.contains(accessId) == true) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  branchVisit(int accessId) {
+    List data = [1, 2];
+
+    if (data.contains(accessId) == true) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

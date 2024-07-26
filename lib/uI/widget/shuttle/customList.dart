@@ -17,14 +17,14 @@ class CustomList extends StatelessWidget {
     return SizedBox(
       height: h,
       child: ListView.separated(
-        padding: EdgeInsets.all(15),
+        padding: const EdgeInsets.all(15),
         itemCount: list.length,
         separatorBuilder: (BuildContext context, int index) => const Divider(),
         itemBuilder: (context, index) {
           return Card(
             elevation: 20,
             child: Container(
-              padding: EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12),
               child: SizedBox(
                 width: w,
                 child: Row(
@@ -67,7 +67,7 @@ class CustomList extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Spacer(),
+                    const Spacer(),
                     Card(
                       elevation: 20,
                       child: IconButton(

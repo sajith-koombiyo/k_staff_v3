@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 // import 'package:flutter_application_2/app_Detail2s/color.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
@@ -123,7 +125,7 @@ class Detail3 extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               width: 10,
             ),
             Expanded(

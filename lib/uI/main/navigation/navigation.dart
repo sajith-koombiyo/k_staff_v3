@@ -449,7 +449,7 @@ class _NavigationScreenState extends State<NavigationScreen>
                         child: _selectedIndex == 0
                             ? Home()
                             : _selectedIndex == 1
-                                ? pickupDevice == "0"
+                                ? pickupDevice == "1"
                                     ? Map2()
                                     : MapScreen()
                                 : _selectedIndex == 2
