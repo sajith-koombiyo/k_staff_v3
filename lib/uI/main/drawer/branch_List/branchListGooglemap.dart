@@ -5,14 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_application_2/api/api.dart';
 import 'package:flutter_application_2/provider/provider.dart';
+import 'package:flutter_share/flutter_share.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../app_details/color.dart';
 
 class BranchListGoogleMap extends StatefulWidget {
-  const BranchListGoogleMap({super.key});
+  const BranchListGoogleMap({super.key, required this.isDower});
+  final int isDower;
 
   @override
   State<BranchListGoogleMap> createState() => _BranchListGoogleMapState();
@@ -27,8 +31,9 @@ class _BranchListGoogleMapState extends State<BranchListGoogleMap> {
   List BranchListGoogleMap = [];
 
   bool isDelivery = false;
-  String lat = '';
-  String lon = '';
+  double lat = 0.0;
+  double lon = 0.0;
+  String bName = '';
 
   String branchName = '';
   String MarkerTempId = '';
@@ -50,17 +55,25 @@ class _BranchListGoogleMapState extends State<BranchListGoogleMap> {
     );
 
     List.generate(BranchListGoogleMap.length, (index) {
-      double lat = double.parse(BranchListGoogleMap[index]['lati']);
-      double long = double.parse(BranchListGoogleMap[index]['longt']);
-
+      lat = double.parse(BranchListGoogleMap[index]['lati']);
+      lon = double.parse(BranchListGoogleMap[index]['longt']);
+      bName = BranchListGoogleMap[index]['branch_name'];
       Set<Marker> _markertemp = {
         Marker(
+            onTap: () {
+              setState(() {
+                lat = double.parse(BranchListGoogleMap[index]['lati']);
+                lon = double.parse(BranchListGoogleMap[index]['longt']);
+                bName = BranchListGoogleMap[index]['branch_name'];
+              });
+            },
             icon: BitmapDescriptor.defaultMarkerWithHue(0.4),
             // icon: markerBitMap2,
-            infoWindow:
-                InfoWindow(title: BranchListGoogleMap[index]['branch_name']),
+            infoWindow: InfoWindow(
+              title: BranchListGoogleMap[index]['branch_name'],
+            ),
             markerId: MarkerId(BranchListGoogleMap[index]['branch_id']),
-            position: LatLng(lat, long))
+            position: LatLng(lat, lon))
       };
       _marker.addAll(_markertemp);
     });
@@ -92,34 +105,79 @@ class _BranchListGoogleMapState extends State<BranchListGoogleMap> {
     var w = MediaQuery.of(context).size.width;
     return Consumer<ProviderS>(
       builder: (context, provider, child) => Scaffold(
-        backgroundColor: Color.fromARGB(255, 229, 232, 238),
-        body: SingleChildScrollView(
-          child: SizedBox(
-            height: h,
-            child: Stack(
-              children: [
-                position == null
-                    ? Loader().loader(context)
-                    : GoogleMap(
-                        zoomControlsEnabled: false,
-                        padding: EdgeInsets.only(top: h / 2, bottom: 10),
-                        myLocationEnabled: true,
-                        initialCameraPosition: CameraPosition(
-                          target: LatLng(7.8731, 80.7718),
-                          zoom: 7.4746,
+        backgroundColor: backgroundColor2,
+        appBar: widget.isDower == 1
+            ? AppBar(
+                backgroundColor: appliteBlue,
+                title: Text(
+                  'Branch List',
+                  style: TextStyle(
+                    fontSize: 18.dp,
+                    color: white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                leading: IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: Icon(
+                      Icons.arrow_back_ios_new,
+                      color: white,
+                    )),
+              )
+            : null,
+        body: SizedBox(
+          height: h,
+          child: Stack(
+            children: [
+              position == null
+                  ? Loader().loader(context)
+                  : Stack(
+                      children: [
+                        GoogleMap(
+                          zoomControlsEnabled: widget.isDower == 1,
+                          padding: EdgeInsets.only(top: h / 2, bottom: 10),
+                          initialCameraPosition: CameraPosition(
+                            target: LatLng(7.8731, 80.7718),
+                            zoom: 7.5,
+                          ),
+                          markers: _marker,
+                          onMapCreated: (GoogleMapController _controller) {},
                         ),
-                        markers: _marker,
-                        //  {
-                        //   Marker(
-                        //       markerId: MarkerId('5'),
-                        //       position: LatLng(6.9271, 79.8612))
-                        // },
-                    
-                        onMapCreated: (GoogleMapController _controller) {},
-                      ),
-                isLoading ? Loader().loader(context) : SizedBox()
-              ],
-            ),
+                        widget.isDower == 1
+                            ? lat != 0.0
+                                ? Positioned(
+                                    right: 12,
+                                    top: 12,
+                                    child: InkWell(
+                                      onTap: () async {
+                                        await FlutterShare.share(
+                                            title: bName,
+                                            text:
+                                                'share $bName branch location',
+                                            linkUrl:
+                                                'https://www.google.com/maps/search/?api=1&query=${lat},${lon}',
+                                            chooserTitle: bName);
+                                      },
+                                      child: Card(
+                                        margin: EdgeInsets.all(4),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Icon(
+                                            Icons.share,
+                                            color: Color.fromARGB(
+                                                255, 207, 17, 39),
+                                          ),
+                                        ),
+                                      ),
+                                    ))
+                                : SizedBox()
+                            : SizedBox()
+                      ],
+                    ),
+              isLoading ? Loader().loader(context) : SizedBox()
+            ],
           ),
         ),
       ),

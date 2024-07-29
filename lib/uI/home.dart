@@ -817,16 +817,26 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(12.0),
-                  child: SizedBox(
-                      height: h,
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.circular(15),
-                          child:
-                              // pickupDevice == '1'
-                              //     ?
-                              BranchList()
-                          // : BranchListGoogleMap()
-                          )),
+                  child: Stack(
+                    children: [
+                      SizedBox(
+                          height: h,
+                          child: ClipRRect(
+                              borderRadius: BorderRadius.circular(15),
+                              child: pickupDevice == '0'
+                                  ? BranchList(
+                                      isDower: 0,
+                                    )
+                                  : BranchListGoogleMap(
+                                      isDower: 0,
+                                    ))),
+                      Container(
+                        height: h,
+                        width: w,
+                        color: white.withOpacity(0.1),
+                      )
+                    ],
+                  ),
                 ),
 
                 SizedBox(

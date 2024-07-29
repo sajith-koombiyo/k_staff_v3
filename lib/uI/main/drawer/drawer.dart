@@ -14,6 +14,7 @@ import '../../../provider/provider.dart';
 import '../../widget/drower/drower_button.dart';
 import 'about/about.dart';
 import 'attendance/attendance.dart';
+import 'branch_List/branchListGooglemap.dart';
 import 'branch_operation/cod_0_approval.dart';
 import 'branch_operation/dd_aproval/pending_DD.dart';
 import 'contact_us/contact_us.dart';
@@ -513,7 +514,13 @@ class _customDrawerState extends State<customDrawer> {
                                     CustomDrawerButton(
                                       icon: Icons.add_business,
                                       onTap: () {
-                                        navigation(BranchList());
+                                        navigation(pickupDevice == "0"
+                                            ? BranchList(
+                                                isDower: 1,
+                                              )
+                                            : BranchListGoogleMap(
+                                                isDower: 1,
+                                              ));
                                       },
                                       text: 'Branch List',
                                     ),

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter_application_2/app_details/color.dart';
 import 'package:flutter_application_2/class/class.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -6,13 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_application_2/api/api.dart';
 import 'package:flutter_application_2/provider/provider.dart';
+import 'package:flutter_share/flutter_share.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class BranchList extends StatefulWidget {
-  const BranchList({super.key});
+  const BranchList({super.key, required this.isDower});
+  final int isDower;
 
   @override
   State<BranchList> createState() => _BranchListState();
@@ -24,13 +28,15 @@ class _BranchListState extends State<BranchList> {
   List branchList = [];
   MapController mapController = MapController();
   bool isDelivery = false;
-  String lat = '';
-  String lon = '';
+  double lat = 0.0;
+  double lon = 0.0;
   List<Marker> _marker = [];
   String branchName = '';
   String MarkerTempId = '';
   bool isLoading = false;
   List<Marker> markerList = <Marker>[];
+  int lIndex = 0;
+  String bName = '';
 
   userLocation() async {
     var temp = await CustomApi().branchList(context);
@@ -41,16 +47,33 @@ class _BranchListState extends State<BranchList> {
     });
 
     List.generate(branchList.length, (index) {
-      double lat = double.parse(branchList[index]['lati']);
-      double long = double.parse(branchList[index]['longt']);
-
+      lat = double.parse(branchList[index]['lati']);
+      lon = double.parse(branchList[index]['longt']);
+      lIndex = index;
       final _markertemp = <Marker>[
         Marker(
+          height: 50,
+          width: 50,
           // key: Key(pickupLocation[index]['pickr_id']),
-          point: LatLng(lat, long),
+          point: LatLng(lat, lon),
 
           child: InkWell(
-              onTap: () {}, child: Image.asset('assets/location_d.png')),
+              onTap: () {
+                print(
+                    'sssssssssssssssssssssssssssssssssssssssssssssssssssssssss');
+                setState(() {
+                  setState(() {
+                    lat = double.parse(branchList[index]['lati']);
+                    lon = double.parse(branchList[index]['longt']);
+                    bName = branchList[index]['branch_name'];
+                  });
+                });
+              },
+              child: Image.asset(
+                'assets/location_d.png',
+                height: 50,
+                width: 50,
+              )),
         )
       ];
 
@@ -81,6 +104,27 @@ class _BranchListState extends State<BranchList> {
     var w = MediaQuery.of(context).size.width;
     return Consumer<ProviderS>(
       builder: (context, provider, child) => Scaffold(
+        appBar: widget.isDower == 1
+            ? AppBar(
+                backgroundColor: appliteBlue,
+                title: Text(
+                  'Branch List',
+                  style: TextStyle(
+                    fontSize: 18.dp,
+                    color: white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                leading: IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: Icon(
+                      Icons.arrow_back_ios_new,
+                      color: white,
+                    )),
+              )
+            : null,
         backgroundColor: Color.fromARGB(255, 229, 232, 238),
         body: SizedBox(
           height: h,
@@ -89,14 +133,13 @@ class _BranchListState extends State<BranchList> {
               position == null
                   ? Loader().loader(context)
                   : FlutterMap(
-                     
                       options: MapOptions(
                         enableScrollWheel: false,
                         keepAlive: false,
                         applyPointerTranslucencyToLayers: false,
                         initialCenter: LatLng(7.8731, 80.7718),
                         minZoom: 6,
-                        maxZoom: 7,
+                        maxZoom: 40,
                         zoom: 7.5,
                       ),
                       children: [
@@ -108,12 +151,45 @@ class _BranchListState extends State<BranchList> {
                         MarkerLayer(markers: _marker),
                       ],
                     ),
+              widget.isDower == 1
+                  ? lat != 0.0
+                      ? Positioned(
+                          right: 12,
+                          top: 12,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Card(
+                                  child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                child: Text(bName),
+                              )),
+                              InkWell(
+                                onTap: () async {
+                                  await FlutterShare.share(
+                                      title: bName,
+                                      text: 'share $bName branch location',
+                                      linkUrl:
+                                          'https://www.google.com/maps/search/?api=1&query=${lat},${lon}',
+                                      chooserTitle: bName);
+                                },
+                                child: Card(
+                                  margin: EdgeInsets.all(4),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Icon(
+                                      Icons.share,
+                                      color: Color.fromARGB(255, 207, 17, 39),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ))
+                      : SizedBox()
+                  : SizedBox(),
               isLoading ? Loader().loader(context) : SizedBox(),
-              Container(
-                color: white.withOpacity(0.1),
-                height: h,
-                width: w,
-              ),
             ],
           ),
         ),

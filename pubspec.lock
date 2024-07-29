@@ -9,14 +9,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.25"
-  after_layout:
-    dependency: transitive
-    description:
-      name: after_layout
-      sha256: "95a1cb2ca1464f44f14769329fbf15987d20ab6c88f8fc5d359bd362be625f29"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.0"
   animated_icon:
     dependency: "direct main"
     description:
@@ -57,14 +49,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.11.0"
-  avoid_keyboard:
-    dependency: "direct main"
-    description:
-      name: avoid_keyboard
-      sha256: "459dca2b9a0e4fd0715f82215d8f74aba21d403ed529a61cbb9bbe6c068b87fb"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.3.0"
   awesome_notifications:
     dependency: "direct main"
     description:
@@ -824,6 +808,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.8.1"
+  keyboard_hider:
+    dependency: "direct main"
+    description:
+      name: keyboard_hider
+      sha256: "5ba5a34af2c2d2fc65abfa06ebd9b800de88fa8fd7476b8fc9f5597f11af4d9a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   latlong2:
     dependency: "direct main"
     description:
