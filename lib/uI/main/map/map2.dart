@@ -16,6 +16,7 @@ import 'package:keyboard_hider/keyboard_hider.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:scannabletextformfield/scannabletextformfield.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../sql_db/db.dart';
@@ -222,6 +223,7 @@ class _Map2State extends State<Map2> {
     // userLoaction();
     // TODO: implement initState
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
     });
@@ -462,7 +464,7 @@ class _Map2State extends State<Map2> {
     pickupDevice = '1';
     // pickupDevice == '0'
     //     ? SystemChannels.textInput.invokeMethod('TextInput.hide')
-    //     : SystemChannels.textInput.invokeMethod('TextInput.hide');
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
     return Consumer<ProviderS>(
       builder: (context, pValue, child) => KeyboardHider(
         mode: HideMode.hideTextInput,

@@ -1168,6 +1168,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
+  scannabletextformfield:
+    dependency: "direct main"
+    description:
+      name: scannabletextformfield
+      sha256: "82f99c64facc950ad93a0553f88187323ac71d85945fe2d4c4665cb8b9851ae0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -1240,6 +1248,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.5.0"
+  simple_barcode_scanner:
+    dependency: transitive
+    description:
+      name: simple_barcode_scanner
+      sha256: "46392b647d80d4c4ab29a49dcca6104832cffb7a82e3476a37a528c1f0986122"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.10"
   simple_ripple_animation:
     dependency: "direct main"
     description:
@@ -1514,6 +1530,14 @@ packages:
     description:
       name: web
       sha256: afe077240a270dcfd2aafe77602b4113645af95d0ad31128cc02bce5ac5d5152
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.0"
+  webview_windows:
+    dependency: transitive
+    description:
+      name: webview_windows
+      sha256: "7572089e5d6fe09e790093c499fcb6d76a552250187dbcb89790987b1fb723db"
       url: "https://pub.dev"
     source: hosted
     version: "0.3.0"

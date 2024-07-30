@@ -75,7 +75,9 @@ dependencies:
   flutter_map_location_marker:
   sqflite:
   keyboard_hider: 
-  flutter_ringtone_player: 
+  flutter_ringtone_player:
+  scannabletextformfield: ^0.1.0
+
 
  
  
