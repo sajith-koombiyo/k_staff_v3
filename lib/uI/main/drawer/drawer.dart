@@ -514,7 +514,7 @@ class _customDrawerState extends State<customDrawer> {
                                     CustomDrawerButton(
                                       icon: Icons.add_business,
                                       onTap: () {
-                                        navigation(pickupDevice == "0"
+                                        navigation(pickupDevice == "1"
                                             ? BranchList(
                                                 isDower: 1,
                                               )

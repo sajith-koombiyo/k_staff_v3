@@ -208,7 +208,12 @@ class DrawerClz {
   }
 
   branchDeposit(int accessId) {
-    List data = [1, 2];
+    List data = [
+      1,
+      2,
+      3,
+      9,
+    ];
 
     if (data.contains(accessId) == true) {
       return true;

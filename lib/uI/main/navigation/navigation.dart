@@ -14,6 +14,7 @@ import 'package:flutter_application_2/provider/provider.dart';
 import 'package:flutter_application_2/uI/widget/diloag_button.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:keyboard_hider/keyboard_hider.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -255,433 +256,441 @@ class _NavigationScreenState extends State<NavigationScreen>
               .then((value) => backTime = 0);
         },
         child: Consumer<ProviderS>(
-          builder: (context, provider, child) => Scaffold(
-              appBar: AppBar(
-                title: Text(
-                  _selectedIndex == 2 ? 'My Deposit' : '',
-                  style: TextStyle(
-                    fontSize: 18.dp,
-                    color: white,
-                    fontWeight: FontWeight.bold,
+          builder: (context, provider, child) => KeyboardHider(
+            mode: HideMode.unfocus,
+            child: Scaffold(
+                appBar: AppBar(
+                  title: Text(
+                    _selectedIndex == 2 ? 'My Deposit' : '',
+                    style: TextStyle(
+                      fontSize: 18.dp,
+                      color: white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                centerTitle: true,
-                backgroundColor: Colors.transparent,
-                automaticallyImplyLeading: false,
-                leadingWidth: 44,
-                systemOverlayStyle: SystemUiOverlayStyle(
-                    statusBarIconBrightness:
-                        _selectedIndex == 1 || _selectedIndex == 3
-                            ? Brightness.dark
-                            : Brightness.light,
-                    statusBarColor: Colors.transparent),
-                leading: Padding(
-                  padding: const EdgeInsets.all(2.0),
-                  child: CircleAvatar(
-                    backgroundColor: black.withOpacity(0.4),
-                    child: IconButton(
-                        color: Color.fromARGB(255, 18, 16, 154),
-                        onPressed: () {
-                          _scaffoldKey.currentState!.openDrawer();
-                        },
-                        icon: Icon(
-                          Icons.menu,
-                          color: white,
-                        )),
-                  ),
-                ),
-                actions: [
-                  _selectedIndex == 1 && provider.isAppbarsheerOpen
-                      ? IconButton(
-                          onPressed: () async {
-                            MapUtils.openMap(
-                                provider.mapDLat, provider.mapDLong);
-                          },
-                          icon: SizedBox(
-                            height: 40,
-                            child: Image.asset(
-                                'assets/icons8-google-maps-old-48.png'),
-                          ))
-                      : SizedBox(),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
+                  centerTitle: true,
+                  backgroundColor: Colors.transparent,
+                  automaticallyImplyLeading: false,
+                  leadingWidth: 44,
+                  systemOverlayStyle: SystemUiOverlayStyle(
+                      statusBarIconBrightness:
+                          _selectedIndex == 1 || _selectedIndex == 3
+                              ? Brightness.dark
+                              : Brightness.light,
+                      statusBarColor: Colors.transparent),
+                  leading: Padding(
+                    padding: const EdgeInsets.all(2.0),
                     child: CircleAvatar(
                       backgroundColor: black.withOpacity(0.4),
                       child: IconButton(
-                          color: white,
+                          color: Color.fromARGB(255, 18, 16, 154),
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              PageTransition(
-                                  type: PageTransitionType.leftToRight,
-                                  duration: Duration(milliseconds: 600),
-                                  child:
-                                      NotificationScreen(userId: widget.userId),
-                                  inheritTheme: true,
-                                  ctx: context),
-                            );
+                            _scaffoldKey.currentState!.openDrawer();
                           },
-                          icon: provider.noteCount == '0'
-                              ? Icon(Icons.notification_important)
-                              : badges.Badge(
-                                  badgeContent: Text(
-                                    provider.noteCount,
-                                    style: TextStyle(fontSize: 9, color: white),
-                                  ),
-                                  child: Icon(Icons.notification_important),
-                                )),
+                          icon: Icon(
+                            Icons.menu,
+                            color: white,
+                          )),
                     ),
                   ),
-                  _selectedIndex == 1 && provider.isAppbarsheerOpen
-                      ? PopupMenuButton<int>(
-                          iconColor: white,
-                          itemBuilder: (context) => [
-                            // popupmenu item 1
-                            PopupMenuItem(
-                              onTap: () {
-                                cancelButton();
-                              },
-                              value: 1,
-                              // row has two child icon and text.
-                              child: Row(
-                                children: [
-                                  Icon(Icons.star),
-                                  SizedBox(
-                                    // sized box with width 10
-                                    width: 10,
-                                  ),
-                                  Text("Cancel pickup")
-                                ],
-                              ),
-                            ),
-                            // popupmenu item 2
-                            PopupMenuItem(
-                              value: 2,
-                              // row has two child icon and text
-                              child: Row(
-                                children: [
-                                  Icon(Icons.chrome_reader_mode),
-                                  SizedBox(
-                                    // sized box with width 10
-                                    width: 10,
-                                  ),
-                                  Text("About")
-                                ],
-                              ),
-                            ),
-                          ],
-                          offset: Offset(0, 70),
-                          color: Colors.grey,
-                          elevation: 2,
-                        )
-                      : SizedBox(),
-                ],
-              ),
-              extendBodyBehindAppBar: true,
-              key: _scaffoldKey,
-              drawer: customDrawer(skey: _scaffoldKey, ytc: youTube),
-              extendBody: true,
-              bottomNavigationBar: page
-                  ? CurvedNavigationBar(
-                      buttonBackgroundColor: Color.fromARGB(255, 192, 240, 247),
-                      backgroundColor: appliteBlue,
-                      color: const Color.fromARGB(255, 211, 235, 255),
-                      items: [
-                        CurvedNavigationBarItem(
-                          child: Icon(Icons.home_outlined),
-                          label: 'Home',
-                        ),
-                        CurvedNavigationBarItem(
-                          child: Icon(Icons.pin_drop_outlined),
-                          label: 'Map',
-                        ),
-                        CurvedNavigationBarItem(
-                          child: Icon(Icons.newspaper),
-                          label: 'My Deposit',
-                        ),
-                        CurvedNavigationBarItem(
-                          child: Icon(Icons.perm_identity),
-                          label: 'Acount',
-                        ),
-                      ],
-                      onTap: (index) {
-                        _onItemTapped(index);
-
-                        // Handle button tap
-                      },
-                    )
-                  : SizedBox(),
-              body: SizedBox(
-                // height: MediaQuery.of(context).size.height,
-                child: Stack(
-                  children: [
-                    Image.asset(
-                      'assets/qa.PNG',
-                      width: AppSize().width(context),
-                      height: AppSize().height(context),
-                      fit: BoxFit.cover,
-                    ),
-                    Container(
-                      width: AppSize().width(context),
-                      height: AppSize().height(context),
-                      color: black.withOpacity(0.9),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height,
-                      child: Center(
-                        child: _selectedIndex == 0
-                            ? Home()
-                            : _selectedIndex == 1
-                                ? pickupDevice == "0"
-                                    ? Map2()
-                                    : MapScreen()
-                                : _selectedIndex == 2
-                                    ? MyDeposit()
-                                    : Account(),
-                        //New
-                      ),
-                    ),
+                  actions: [
+                    _selectedIndex == 1 && provider.isAppbarsheerOpen
+                        ? IconButton(
+                            onPressed: () async {
+                              MapUtils.openMap(
+                                  provider.mapDLat, provider.mapDLong);
+                            },
+                            icon: SizedBox(
+                              height: 40,
+                              child: Image.asset(
+                                  'assets/icons8-google-maps-old-48.png'),
+                            ))
+                        : SizedBox(),
                     Padding(
-                      padding: EdgeInsets.only(
-                          top: MediaQuery.of(context).padding.top + 4,
-                          left: 8,
-                          right: 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [],
+                      padding: const EdgeInsets.all(8.0),
+                      child: CircleAvatar(
+                        backgroundColor: black.withOpacity(0.4),
+                        child: IconButton(
+                            color: white,
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                PageTransition(
+                                    type: PageTransitionType.leftToRight,
+                                    duration: Duration(milliseconds: 600),
+                                    child: NotificationScreen(
+                                        userId: widget.userId),
+                                    inheritTheme: true,
+                                    ctx: context),
+                              );
+                            },
+                            icon: provider.noteCount == '0'
+                                ? Icon(Icons.notification_important)
+                                : badges.Badge(
+                                    badgeContent: Text(
+                                      provider.noteCount,
+                                      style:
+                                          TextStyle(fontSize: 9, color: white),
+                                    ),
+                                    child: Icon(Icons.notification_important),
+                                  )),
                       ),
                     ),
-                    page
-                        ? SizedBox()
-                        : Positioned(
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            child: CurvedNavigationBar(
-                              buttonBackgroundColor:
-                                  Color.fromARGB(255, 192, 240, 247),
-                              backgroundColor: appliteBlue,
-                              color: const Color.fromARGB(255, 211, 235, 255),
-                              items: [
-                                CurvedNavigationBarItem(
-                                  child: Icon(Icons.home_outlined),
-                                  label: 'Home',
+                    _selectedIndex == 1 && provider.isAppbarsheerOpen
+                        ? PopupMenuButton<int>(
+                            iconColor: white,
+                            itemBuilder: (context) => [
+                              // popupmenu item 1
+                              PopupMenuItem(
+                                onTap: () {
+                                  cancelButton();
+                                },
+                                value: 1,
+                                // row has two child icon and text.
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.star),
+                                    SizedBox(
+                                      // sized box with width 10
+                                      width: 10,
+                                    ),
+                                    Text("Cancel pickup")
+                                  ],
                                 ),
-                                CurvedNavigationBarItem(
-                                  child: Icon(Icons.pin_drop_outlined),
-                                  label: 'Map',
+                              ),
+                              // popupmenu item 2
+                              PopupMenuItem(
+                                value: 2,
+                                // row has two child icon and text
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.chrome_reader_mode),
+                                    SizedBox(
+                                      // sized box with width 10
+                                      width: 10,
+                                    ),
+                                    Text("About")
+                                  ],
                                 ),
-                                CurvedNavigationBarItem(
-                                  child: Icon(Icons.newspaper),
-                                  label: 'My Deposit',
-                                ),
-                                CurvedNavigationBarItem(
-                                  child: Icon(Icons.perm_identity),
-                                  label: 'Acount',
-                                ),
-                              ],
-                              onTap: (index) {
-                                _onItemTapped(index);
-
-                                // Handle button tap
-                              },
-                            ),
+                              ),
+                            ],
+                            offset: Offset(0, 70),
+                            color: Colors.grey,
+                            elevation: 2,
+                          )
+                        : SizedBox(),
+                  ],
+                ),
+                extendBodyBehindAppBar: true,
+                key: _scaffoldKey,
+                drawer: customDrawer(skey: _scaffoldKey, ytc: youTube),
+                extendBody: true,
+                bottomNavigationBar: page
+                    ? CurvedNavigationBar(
+                        buttonBackgroundColor:
+                            Color.fromARGB(255, 192, 240, 247),
+                        backgroundColor: appliteBlue,
+                        color: const Color.fromARGB(255, 211, 235, 255),
+                        items: [
+                          CurvedNavigationBarItem(
+                            child: Icon(Icons.home_outlined),
+                            label: 'Home',
                           ),
-                    page
-                        ? Container()
-                        : Positioned(
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            child: CircularRevealAnimation(
-                              centerAlignment: x == 0
-                                  ? Alignment(-0.4, 0.9)
-                                  : x == 1
-                                      ? Alignment(-0.2, 0.9)
-                                      : x == 2
-                                          ? Alignment(0.20, 0.9)
-                                          : Alignment(0.80, 0.9),
-                              animation: animation,
-                              child: GestureDetector(
-                                onTap: () {},
-                                child: Container(
-                                  width: w,
-                                  height: h,
-                                  alignment: Alignment.bottomLeft,
-                                  color: Colors.black.withOpacity(0.75),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 25, bottom: 100),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color:
-                                            Color.fromARGB(255, 113, 130, 147)
-                                                .withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      padding: EdgeInsets.all(10),
-                                      width: w / 1.1,
-                                      child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "Tips",
-                                              style: TextStyle(
-                                                  fontSize: 17.sp,
-                                                  color: white,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            SizedBox(
-                                              height: h / 65,
-                                            ),
-                                            Text(
-                                              x == 0
-                                                  ? "Home screen for the dashboard view\nand account summary ."
-                                                  : x == 1
-                                                      ? "Map screen - Showing all the rider pickups \nand deliveries "
-                                                      : x == 2
-                                                          ? "My Deposit Screen - bank deposit history of the rider."
-                                                          : "Account Screen, your personnel profile details",
-                                              style: TextStyle(
-                                                  fontSize: 11.sp,
-                                                  color: white,
-                                                  fontWeight:
-                                                      FontWeight.normal),
-                                            ),
-                                            SizedBox(
-                                              height: h / 85,
-                                            ),
-                                            InkWell(
-                                              onTap: () async {
-                                                if (animationController
-                                                            .status ==
-                                                        AnimationStatus
-                                                            .forward ||
-                                                    animationController
-                                                            .status ==
-                                                        AnimationStatus
-                                                            .completed) {
-                                                  animationController
-                                                      .reverse()
-                                                      .then((value) =>
-                                                          animationController
-                                                              .forward());
-                                                } else {
-                                                  animationController
-                                                      .forward()
-                                                      .then((value) =>
-                                                          animationController
-                                                              .reverse());
-                                                }
+                          CurvedNavigationBarItem(
+                            child: Icon(Icons.pin_drop_outlined),
+                            label: 'Map',
+                          ),
+                          CurvedNavigationBarItem(
+                            child: Icon(Icons.newspaper),
+                            label: 'My Deposit',
+                          ),
+                          CurvedNavigationBarItem(
+                            child: Icon(Icons.perm_identity),
+                            label: 'Acount',
+                          ),
+                        ],
+                        onTap: (index) {
+                          _onItemTapped(index);
 
-                                                x = x + 1;
+                          // Handle button tap
+                        },
+                      )
+                    : SizedBox(),
+                body: SizedBox(
+                  // height: MediaQuery.of(context).size.height,
+                  child: Stack(
+                    children: [
+                      Image.asset(
+                        'assets/qa.PNG',
+                        width: AppSize().width(context),
+                        height: AppSize().height(context),
+                        fit: BoxFit.cover,
+                      ),
+                      Container(
+                        width: AppSize().width(context),
+                        height: AppSize().height(context),
+                        color: black.withOpacity(0.9),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height,
+                        child: Center(
+                          child: _selectedIndex == 0
+                              ? Home()
+                              : _selectedIndex == 1
+                                  ? pickupDevice == "0"
+                                      ? Map2()
+                                      : MapScreen()
+                                  : _selectedIndex == 2
+                                      ? MyDeposit()
+                                      : Account(),
+                          //New
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            top: MediaQuery.of(context).padding.top + 4,
+                            left: 8,
+                            right: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [],
+                        ),
+                      ),
+                      page
+                          ? SizedBox()
+                          : Positioned(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              child: CurvedNavigationBar(
+                                buttonBackgroundColor:
+                                    Color.fromARGB(255, 192, 240, 247),
+                                backgroundColor: appliteBlue,
+                                color: const Color.fromARGB(255, 211, 235, 255),
+                                items: [
+                                  CurvedNavigationBarItem(
+                                    child: Icon(Icons.home_outlined),
+                                    label: 'Home',
+                                  ),
+                                  CurvedNavigationBarItem(
+                                    child: Icon(Icons.pin_drop_outlined),
+                                    label: 'Map',
+                                  ),
+                                  CurvedNavigationBarItem(
+                                    child: Icon(Icons.newspaper),
+                                    label: 'My Deposit',
+                                  ),
+                                  CurvedNavigationBarItem(
+                                    child: Icon(Icons.perm_identity),
+                                    label: 'Acount',
+                                  ),
+                                ],
+                                onTap: (index) {
+                                  _onItemTapped(index);
 
-                                                if (x == 1) {
-                                                  setState(() {
-                                                    button2 = true;
-                                                    button1 = false;
-                                                    button3 = false;
-                                                  });
-                                                }
-                                                if (x == 2) {
-                                                  setState(() {
-                                                    button2 = false;
-                                                    button3 = true;
-                                                    button1 = false;
-                                                  });
-                                                }
-                                                if (x == 3) {
-                                                  setState(() {
-                                                    button2 = false;
-                                                    button3 = false;
-                                                    button4 = true;
-                                                  });
-                                                }
-                                                if (x == 4) {
-                                                  SharedPreferences prefs =
-                                                      await SharedPreferences
-                                                          .getInstance();
-
-                                                  await prefs.setInt(
-                                                      'userActive', 1);
-                                                  _controller.dispose();
-                                                  setState(() {
-                                                    button4 = false;
-                                                    page = true;
-                                                  });
-                                                }
-                                              },
-                                              child: Container(
-                                                alignment: Alignment.center,
-                                                child: Text(
-                                                  "UNDERSTAND",
-                                                  style: TextStyle(
-                                                      fontSize: 13.sp,
-                                                      color: black,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                height: h / 15,
-                                                width: w / 2.3,
-                                                decoration: BoxDecoration(
-                                                    color: Colors.green,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            15)),
+                                  // Handle button tap
+                                },
+                              ),
+                            ),
+                      page
+                          ? Container()
+                          : Positioned(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              child: CircularRevealAnimation(
+                                centerAlignment: x == 0
+                                    ? Alignment(-0.4, 0.9)
+                                    : x == 1
+                                        ? Alignment(-0.2, 0.9)
+                                        : x == 2
+                                            ? Alignment(0.20, 0.9)
+                                            : Alignment(0.80, 0.9),
+                                animation: animation,
+                                child: GestureDetector(
+                                  onTap: () {},
+                                  child: Container(
+                                    width: w,
+                                    height: h,
+                                    alignment: Alignment.bottomLeft,
+                                    color: Colors.black.withOpacity(0.75),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 25, bottom: 100),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color:
+                                              Color.fromARGB(255, 113, 130, 147)
+                                                  .withOpacity(0.1),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        padding: EdgeInsets.all(10),
+                                        width: w / 1.1,
+                                        child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Tips",
+                                                style: TextStyle(
+                                                    fontSize: 17.sp,
+                                                    color: white,
+                                                    fontWeight:
+                                                        FontWeight.bold),
                                               ),
-                                            ),
-                                          ]),
+                                              SizedBox(
+                                                height: h / 65,
+                                              ),
+                                              Text(
+                                                x == 0
+                                                    ? "Home screen for the dashboard view\nand account summary ."
+                                                    : x == 1
+                                                        ? "Map screen - Showing all the rider pickups \nand deliveries "
+                                                        : x == 2
+                                                            ? "My Deposit Screen - bank deposit history of the rider."
+                                                            : "Account Screen, your personnel profile details",
+                                                style: TextStyle(
+                                                    fontSize: 11.sp,
+                                                    color: white,
+                                                    fontWeight:
+                                                        FontWeight.normal),
+                                              ),
+                                              SizedBox(
+                                                height: h / 85,
+                                              ),
+                                              InkWell(
+                                                onTap: () async {
+                                                  if (animationController
+                                                              .status ==
+                                                          AnimationStatus
+                                                              .forward ||
+                                                      animationController
+                                                              .status ==
+                                                          AnimationStatus
+                                                              .completed) {
+                                                    animationController
+                                                        .reverse()
+                                                        .then((value) =>
+                                                            animationController
+                                                                .forward());
+                                                  } else {
+                                                    animationController
+                                                        .forward()
+                                                        .then((value) =>
+                                                            animationController
+                                                                .reverse());
+                                                  }
+
+                                                  x = x + 1;
+
+                                                  if (x == 1) {
+                                                    setState(() {
+                                                      button2 = true;
+                                                      button1 = false;
+                                                      button3 = false;
+                                                    });
+                                                  }
+                                                  if (x == 2) {
+                                                    setState(() {
+                                                      button2 = false;
+                                                      button3 = true;
+                                                      button1 = false;
+                                                    });
+                                                  }
+                                                  if (x == 3) {
+                                                    setState(() {
+                                                      button2 = false;
+                                                      button3 = false;
+                                                      button4 = true;
+                                                    });
+                                                  }
+                                                  if (x == 4) {
+                                                    SharedPreferences prefs =
+                                                        await SharedPreferences
+                                                            .getInstance();
+
+                                                    await prefs.setInt(
+                                                        'userActive', 1);
+                                                    _controller.dispose();
+                                                    setState(() {
+                                                      button4 = false;
+                                                      page = true;
+                                                    });
+                                                  }
+                                                },
+                                                child: Container(
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    "UNDERSTAND",
+                                                    style: TextStyle(
+                                                        fontSize: 13.sp,
+                                                        color: black,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  height: h / 15,
+                                                  width: w / 2.3,
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.green,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              15)),
+                                                ),
+                                              ),
+                                            ]),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                    page
-                        ? Container()
-                        : Positioned(
-                            bottom: 0,
-                            left: -20,
-                            right: -30,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                TipButton(
-                                  button: button1,
-                                  icon: Icons.home_outlined,
-                                ),
-                                TipButton(
-                                  button: button2,
-                                  icon: Icons.pin_drop_outlined,
-                                  //     ));
-                                ),
-                                TipButton(
-                                  button: button3,
-                                  icon: Icons.newspaper,
-                                ),
-                                TipButton(
-                                  button: button4,
-                                  icon: Icons.perm_identity,
-                                ),
-                              ],
+                      page
+                          ? Container()
+                          : Positioned(
+                              bottom: 0,
+                              left: -20,
+                              right: -30,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  TipButton(
+                                    button: button1,
+                                    icon: Icons.home_outlined,
+                                  ),
+                                  TipButton(
+                                    button: button2,
+                                    icon: Icons.pin_drop_outlined,
+                                    //     ));
+                                  ),
+                                  TipButton(
+                                    button: button3,
+                                    icon: Icons.newspaper,
+                                  ),
+                                  TipButton(
+                                    button: button4,
+                                    icon: Icons.perm_identity,
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                    isLoading
-                        ? Positioned(
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            top: 0,
-                            child: Loader().loader(context))
-                        : SizedBox(),
-                    provider.isanotherUserLog ? UserLoginCheck() : SizedBox()
-                  ],
-                ),
-              )),
+                      isLoading
+                          ? Positioned(
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              top: 0,
+                              child: Loader().loader(context))
+                          : SizedBox(),
+                      provider.isanotherUserLog ? UserLoginCheck() : SizedBox()
+                    ],
+                  ),
+                )),
+          ),
         ),
       ),
     );

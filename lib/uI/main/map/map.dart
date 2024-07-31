@@ -127,7 +127,8 @@ class _MapScreenState extends State<MapScreen> {
               setState(() {
                 Provider.of<ProviderS>(context, listen: false)
                     .isAppbarsheerOpen = true;
-
+                Provider.of<ProviderS>(context, listen: false).mapDLat = lat;
+                Provider.of<ProviderS>(context, listen: false).mapDLong = long;
                 isDelivery = false;
                 name = pickupLocation[index]['cust_name'];
                 address = pickupLocation[index]['address'];

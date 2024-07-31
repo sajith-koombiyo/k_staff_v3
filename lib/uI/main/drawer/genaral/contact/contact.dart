@@ -52,7 +52,10 @@ class _ContactState extends State<Contact> {
       _page += 20;
   
       var res = await CustomApi()
-          .koombiyoContact(context, '', _page.toString(), '20');
+
+      // tring limit, String offset,
+      // String branch, String status, String fromDate, String toDate
+          .koombiyoContact(context, '50', _page.toString(), '20');
    
       List data = res;
       if (data.isNotEmpty) {

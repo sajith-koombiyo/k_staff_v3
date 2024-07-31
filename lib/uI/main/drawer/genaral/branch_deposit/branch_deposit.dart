@@ -1,13 +1,23 @@
+import 'dart:developer';
 import 'dart:io';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/api/api.dart';
+import 'package:flutter_application_2/provider/provider.dart';
 import 'package:flutter_application_2/uI/widget/diloag_button.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../../app_details/color.dart';
+import '../../../../../class/class.dart';
+import '../../../../widget/custom_textField.dart';
+import '../../../../widget/drower/send_button.dart';
+import '../../../../widget/nothig_found.dart';
+import '../../../navigation/navigation.dart';
 
 class BranchDeposit extends StatefulWidget {
   const BranchDeposit({super.key});
@@ -18,6 +28,7 @@ class BranchDeposit extends StatefulWidget {
 
 class _BranchDepositState extends State<BranchDeposit> {
   TextEditingController dateController = TextEditingController();
+  TextEditingController remarkController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
   DateTime selectedDate = DateTime.now();
   String? selectval;
@@ -25,361 +36,582 @@ class _BranchDepositState extends State<BranchDeposit> {
   String visitBranchId = '';
   String newImage = '';
   List<File> imagesList = [];
+  late ScrollController mycontroller = ScrollController();
+  List dataList = [];
+  List dataListTemp = [];
+  bool isLoading = false;
+  bool _isFirstLoadRunning = false;
+  bool _hasNextPage = true;
+  bool _isLoadMoreRuning = false;
+  int _page = 0;
   int x = 0;
+  int _current = 0;
+  final CarouselController _controller = CarouselController();
+  void initState() {
+    getData();
+    // TODO: implement initState
+    super.initState();
+    mycontroller.addListener(() {
+      if (mycontroller.position.maxScrollExtent ==
+          mycontroller.position.pixels) {
+        log('hhhhhhhh');
+        _loadeMore();
+      }
+    });
+  }
+
+  void _loadeMore() async {
+    if (_hasNextPage == true &&
+        isLoading == false &&
+        _isLoadMoreRuning == false) {
+      setState(() {
+        _isLoadMoreRuning = true;
+      });
+      _page += 20;
+
+      var res = await CustomApi()
+          .branchDeposit(context, _page.toString(), '30', '', '', '', '');
+
+      List data = res;
+      if (data.isNotEmpty) {
+        setState(() {
+          dataList.addAll(data);
+          dataListTemp.addAll(res);
+        });
+      } else {
+        setState(() {
+          _hasNextPage = false;
+        });
+      }
+      setState(() {
+        _isLoadMoreRuning = false;
+      });
+    }
+  }
+
+  getData() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    // tring limit, String offset,
+    // String branch, String status, String fromDate, String toDate
+    var res = await CustomApi()
+        .branchDeposit(context, '2', _page.toString(), '', '', '', '');
+    log(res.toString());
+
+    setState(() {
+      isLoading = false;
+      dataList = res;
+      dataListTemp = res;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: appliteBlue,
-        // bottom: PreferredSize(
-        //     preferredSize: Size(w, 70),
-        //     child: Padding(
-        //       padding: const EdgeInsets.only(bottom: 12),
-        //       child: serchBarr(context),
-        //     )),
-        title: Text(
-          'Branch Deposit',
-          style: TextStyle(
-            fontSize: 18.dp,
-            color: white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(
-              Icons.arrow_back_ios_new,
+    return Consumer<ProviderS>(
+      builder: (context, provider, child) => Scaffold(
+        appBar: AppBar(
+          backgroundColor: appliteBlue,
+          // bottom: PreferredSize(
+          //     preferredSize: Size(w, 70),
+          //     child: Padding(
+          //       padding: const EdgeInsets.only(bottom: 12),
+          //       child: serchBarr(context),
+          //     )),
+          title: Text(
+            'Branch Deposit',
+            style: TextStyle(
+              fontSize: 18.dp,
               color: white,
-            )),
-      ),
-      backgroundColor: white,
-      body: SingleChildScrollView(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          SizedBox(
-            height: h,
-            child: ListView.builder(
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Card(
-                    elevation: 20,
-                    borderOnForeground: true,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: white,
+              )),
+        ),
+        backgroundColor: white,
+        body: Stack(
+          children: [
+            dataList.isEmpty && isLoading == false
+                ? SizedBox(
+                    height: h,
+                    width: w,
                     child: Column(
                       children: [
-                        Container(
-                          decoration: BoxDecoration(
-                              color: Color.fromARGB(255, 144, 174, 179),
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(10),
-                                  topRight: Radius.circular(10))),
-                          padding: EdgeInsets.all(8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        Center(child: NoData()),
+                      ],
+                    ))
+                : ListView.builder(
+                    itemCount: dataList.length,
+                    controller: mycontroller,
+                    itemBuilder: (context, index) {
+                      String sts = dataList[index]['status'];
+                      double deposit = double.parse(dataList[index]['diposit']);
+                      double baseCod =
+                          double.parse(dataList[index]['base_cod']);
+                      double expenses =
+                          double.parse(dataList[index]['expences']);
+                      double toBeDepo = deposit - expenses;
+                      double veriance = (baseCod - expenses) - deposit;
+//
+                      double cashRece =
+                          double.parse(dataList[index]['cash_rece']);
+                      double fromUpdates =
+                          double.parse(dataList[index]['from_updates']);
+                      double bankDp = double.parse(dataList[index]['bank_dp']);
+                      double supVeriance =
+                          ((cashRece + fromUpdates) - bankDp + expenses);
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Card(
+                          elevation: 20,
+                          borderOnForeground: true,
+                          child: Column(
                             children: [
-                              Card(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(7)),
-                                color: Colors.amber,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  child: Text(
-                                    'Status',
-                                    style: TextStyle(
-                                      fontSize: 14.dp,
-                                      color: black,
-                                      fontWeight: FontWeight.normal,
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: Color.fromARGB(255, 166, 196, 219),
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(10),
+                                        topRight: Radius.circular(10))),
+                                padding: EdgeInsets.all(8),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Card(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(7)),
+                                      color: sts == 'P'
+                                          ? Color.fromARGB(255, 178, 163, 27)
+                                          : sts == 'A'
+                                              ? Color.fromARGB(255, 7, 178, 33)
+                                              : sts == 'R'
+                                                  ? Color.fromARGB(
+                                                      255, 129, 20, 55)
+                                                  : sts == 'C'
+                                                      ? Color.fromARGB(
+                                                          255, 50, 151, 174)
+                                                      : Colors.amber,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 4),
+                                        child: Text(
+                                          sts == 'P'
+                                              ? "Pending"
+                                              : sts == 'A'
+                                                  ? "Approved"
+                                                  : sts == 'R'
+                                                      ? "Rejected"
+                                                      : sts == 'C'
+                                                          ? "Created"
+                                                          : '',
+                                          style: TextStyle(
+                                            fontSize: 14.dp,
+                                            color: white,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                            onPressed: () {
+                                              imageView();
+                                            },
+                                            icon: Icon(
+                                              Icons.photo,
+                                              color: Color.fromARGB(
+                                                  255, 65, 68, 67),
+                                            )),
+                                        IconButton(
+                                            onPressed: () {
+                                              addData();
+                                            },
+                                            icon: Icon(
+                                              Icons.add,
+                                              color:
+                                                  Color.fromARGB(255, 9, 3, 97),
+                                            )),
+                                        IconButton(
+                                            onPressed: () {
+                                              addRemark();
+                                            },
+                                            icon: Icon(
+                                              Icons.mode_edit_outlined,
+                                              color:
+                                                  Color.fromARGB(255, 9, 3, 97),
+                                            )),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
-                              Row(
-                                children: [
-                                  IconButton(
-                                      onPressed: () {},
-                                      icon: Icon(
-                                        Icons.photo,
-                                        color: Color.fromARGB(255, 65, 68, 67),
-                                      )),
-                                  IconButton(
-                                      onPressed: () {
-                                        addData();
-                                      },
-                                      icon: Icon(
-                                        Icons.add,
-                                        color: Color.fromARGB(255, 9, 3, 97),
-                                      )),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(10),
-                                  bottomRight: Radius.circular(10)),
-                              border: Border.all(color: bacground)),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    width: w / 2.3,
-                                    child: Text(
-                                      'Date',
-                                      style: TextStyle(
-                                        fontSize: 14.dp,
-                                        color: black,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    width: w / 2.3,
-                                    child: Column(
+                              Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.only(
+                                        bottomLeft: Radius.circular(10),
+                                        bottomRight: Radius.circular(10)),
+                                    border: Border.all(color: bacground)),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
                                       children: [
-                                        Text(
-                                          '2024/04/05',
-                                          style: TextStyle(
-                                            fontSize: 12.dp,
-                                            color: black2,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Divider(),
-                              Row(
-                                children: [
-                                  Container(
-                                    width: w / 2.3,
-                                    child: Text(
-                                      'COD Amount',
-                                      style: TextStyle(
-                                        fontSize: 14.dp,
-                                        color: black,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    width: w / 2.3,
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          '1000',
-                                          style: TextStyle(
-                                            fontSize: 14.dp,
-                                            color: black2,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Divider(
-                                          color: Colors.black26,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Container(
-                                    width: w / 2.3,
-                                    child: Text(
-                                      'Deposit Amount',
-                                      style: TextStyle(
-                                        fontSize: 14.dp,
-                                        color: black,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    width: w / 2.3,
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          '100',
-                                          style: TextStyle(
-                                            fontSize: 14.dp,
-                                            color: black2,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Divider(
-                                          color: Colors.black26,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Container(
-                                    width: w / 2.3,
-                                    child: Text(
-                                      'Expenses',
-                                      style: TextStyle(
-                                        fontSize: 14.dp,
-                                        color: black,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    width: w / 2.3,
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          '1000',
-                                          style: TextStyle(
-                                            fontSize: 14.dp,
-                                            color: black2,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Divider(
-                                          color: Colors.black26,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Container(
-                                    width: w / 2.3,
-                                    child: Text(
-                                      'Commission',
-                                      style: TextStyle(
-                                        fontSize: 14.dp,
-                                        color: black,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    width: w / 2.3,
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          '1000',
-                                          style: TextStyle(
-                                            fontSize: 14.dp,
-                                            color: black2,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Divider(
-                                          color: Colors.black26,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Container(
-                                    width: w / 2.3,
-                                    child: Text(
-                                      'Variance',
-                                      style: TextStyle(
-                                        fontSize: 14.dp,
-                                        color: black,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    width: w / 2.3,
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          '100',
-                                          style: TextStyle(
-                                            fontSize: 14.dp,
-                                            color: black2,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Divider(
-                                          height: 8,
-                                          color: black,
-                                        ),
-                                        Divider(
-                                          height: 0,
-                                          color: black,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Divider(),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Container(
-                                    child: Text(
-                                      'Remark',
-                                      style: TextStyle(
-                                        fontSize: 14.dp,
-                                        color: black,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        border: Border.all()),
-                                    width: w / 1.5,
-                                    child: Column(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 4),
+                                        Container(
+                                          width: w / 2.3,
                                           child: Text(
-                                            'snjsnjdns dsdjnsdjwd dnwjndw wdbwd w bwdjwbdbw wd wd ww wbdwd',
+                                            'Date',
                                             style: TextStyle(
                                               fontSize: 14.dp,
-                                              color: black2,
-                                              fontWeight: FontWeight.normal,
+                                              color: black,
+                                              fontWeight: FontWeight.bold,
                                             ),
                                           ),
                                         ),
+                                        Container(
+                                          width: w / 2.3,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: [
+                                              Text(
+                                                dataList[index]['gen_date'],
+                                                style: TextStyle(
+                                                  fontSize: 12.dp,
+                                                  color: black2,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                       ],
                                     ),
-                                  ),
-                                ],
+                                    Row(
+                                      children: [
+                                        Container(
+                                          width: w / 2.3,
+                                          child: Text(
+                                            'Branch',
+                                            style: TextStyle(
+                                              fontSize: 14.dp,
+                                              color: black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          width: w / 2.3,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: [
+                                              Text(
+                                                dataList[index]['dname'],
+                                                style: TextStyle(
+                                                  fontSize: 12.dp,
+                                                  color: black2,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Divider(),
+                                    qntRow(
+                                      'COD From Updates',
+                                      dataList[index]['cod'],
+                                    ),
+                                    qntRow(
+                                      'Domestic Cash',
+                                      '0',
+                                    ),
+                                    qntRow('Commission',
+                                        dataList[index]['rider_charge']),
+                                    qntRow('Branch Expenses',
+                                        dataList[index]['expences']),
+                                    qntRow(
+                                        'To Be Deposited', toBeDepo.toString()),
+                                    qntRow(
+                                      'Deposited Amount',
+                                      dataList[index]['diposit'],
+                                    ),
+                                    qntRow('Variance', veriance.toString()),
+                                    qntRow('Sup. Variance',
+                                        supVeriance.toString()),
+                                    qntRow('Cash From Riders',
+                                        dataList[index]['cod']),
+                                    qntRow('Today Deposited',
+                                        dataList[index]['bankdeposit']),
+                                    Divider(),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          child: Text(
+                                            'Remark',
+                                            style: TextStyle(
+                                              fontSize: 14.dp,
+                                              color: black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              border: Border.all()),
+                                          width: w / 1.5,
+                                          child: Column(
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 4),
+                                                child: Text(
+                                                  dataList[index]['remarks'],
+                                                  style: TextStyle(
+                                                    fontSize: 14.dp,
+                                                    color: black2,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
                         ),
-                      ],
+                      );
+                    },
+                  ),
+            if (_isLoadMoreRuning)
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(child: CircularProgressIndicator()),
+              ),
+            isLoading
+                ? Center(
+                    child: Loader().loader(context),
+                  )
+                : SizedBox(),
+            provider.isanotherUserLog ? UserLoginCheck() : SizedBox()
+          ],
+        ),
+      ),
+    );
+  }
+
+  addRemark() {
+    var h = MediaQuery.of(context).size.height;
+    var w = MediaQuery.of(context).size.width;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+          insetPadding: EdgeInsets.all(12),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                  alignment: Alignment.centerRight,
+                  child: IconButton(
+                      onPressed: () {
+                        remarkController.clear();
+                        Navigator.pop(context);
+                      },
+                      icon: Icon(Icons.close))),
+              Text(
+                'Add your remark',
+                style: TextStyle(
+                  fontSize: 18.dp,
+                  color: black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Divider(),
+              SizedBox(
+                height: 20,
+              ),
+              CustomTextField3(
+                controller: remarkController,
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              DialogButton(
+                text: 'Save',
+                onTap: () {},
+                buttonHeight: h / 17,
+                width: w,
+                color: Color.fromARGB(255, 18, 201, 233),
+              )
+            ],
+          )),
+    );
+  }
+
+  imageView() {
+    var h = MediaQuery.of(context).size.height;
+    var w = MediaQuery.of(context).size.width;
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(builder: (context, Setstate) {
+        return AlertDialog(
+          insetPadding: EdgeInsets.all(12),
+          content: SizedBox(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                      alignment: Alignment.centerRight,
+                      child: IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: Icon(Icons.close))),
+                  Text(
+                    'Images',
+                    style: TextStyle(
+                      fontSize: 18.dp,
+                      color: black,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                );
-              },
+                  Divider(),
+                  Stack(
+                    children: [
+                      Container(
+                        height: h / 2.5,
+                        child: CarouselSlider(
+                          options: CarouselOptions(
+                            onPageChanged: (index, reason) {
+                              Setstate(() {
+                                _current = index;
+                              });
+                            },
+                            autoPlay: true,
+                            aspectRatio: 2.0,
+                            enlargeCenterPage: true,
+                            enlargeStrategy: CenterPageEnlargeStrategy.height,
+                          ),
+                          items: imgList
+                              .map((item) => ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Container(
+                                      child: Center(
+                                          child: Image.network(
+                                        item,
+                                        fit: BoxFit.fitHeight,
+                                        height: h / 2.5,
+                                      )),
+                                    ),
+                                  ))
+                              .toList(),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: imgList.asMap().entries.map((entry) {
+                      return GestureDetector(
+                        onTap: () => _controller.animateToPage(entry.key),
+                        child: Container(
+                          width: 12.0,
+                          height: 12.0,
+                          margin: EdgeInsets.symmetric(
+                              vertical: 8.0, horizontal: 4.0),
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: (Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.white
+                                      : Colors.black)
+                                  .withOpacity(
+                                      _current == entry.key ? 0.9 : 0.4)),
+                        ),
+                      );
+                    }).toList(),
+                  )
+                ]),
+          ),
+        );
+      }),
+    );
+  }
+
+  final List<String> imgList = [
+    'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80',
+    'https://images.unsplash.com/photo-1522205408450-add114ad53fe?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=368f45b0888aeb0b7b08e3a1084d3ede&auto=format&fit=crop&w=1950&q=80',
+    'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=94a1e718d89ca60a6337a6008341ca50&auto=format&fit=crop&w=1950&q=80',
+    'https://images.unsplash.com/photo-1523205771623-e0faa4d2813d?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=89719a0d55dd05e2deae4120227e6efc&auto=format&fit=crop&w=1953&q=80',
+    'https://images.unsplash.com/photo-1508704019882-f9cf40e475b4?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=8c6e5e3aba713b17aa1fe71ab4f0ae5b&auto=format&fit=crop&w=1352&q=80',
+    'https://images.unsplash.com/photo-1519985176271-adb1088fa94c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=a0c8d632e977f94e5d312d9893258f59&auto=format&fit=crop&w=1355&q=80'
+  ];
+
+  Widget qntRow(String title, String price) {
+    var h = MediaQuery.of(context).size.height;
+    var w = MediaQuery.of(context).size.width;
+    return Row(
+      children: [
+        Container(
+          width: w / 2.3,
+          child: Text(
+            title,
+            style: TextStyle(
+              fontSize: 14.dp,
+              color: black,
+              fontWeight: FontWeight.bold,
             ),
-          )
-        ]),
-      ),
+          ),
+        ),
+        Container(
+          width: w / 2.3,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                price,
+                style: TextStyle(
+                  fontSize: 14.dp,
+                  color: black2,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Divider(
+                height: 8,
+                color: black3,
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
