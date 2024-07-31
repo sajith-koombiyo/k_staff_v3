@@ -173,7 +173,7 @@ class _BranchDepositState extends State<BranchDeposit> {
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Card(
-                          elevation: 20,
+                          elevation: 30,
                           borderOnForeground: true,
                           child: Column(
                             children: [
@@ -189,11 +189,16 @@ class _BranchDepositState extends State<BranchDeposit> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Card(
+                                      elevation: 20,
                                       shape: RoundedRectangleBorder(
+                                          side: BorderSide(
+                                              color:
+                                                  Color.fromARGB(255, 9, 3, 97)
+                                                      .withOpacity(0.2)),
                                           borderRadius:
                                               BorderRadius.circular(7)),
                                       color: sts == 'P'
-                                          ? Color.fromARGB(255, 178, 163, 27)
+                                          ? Color.fromARGB(255, 185, 170, 32)
                                           : sts == 'A'
                                               ? Color.fromARGB(255, 7, 178, 33)
                                               : sts == 'R'
@@ -201,8 +206,9 @@ class _BranchDepositState extends State<BranchDeposit> {
                                                       255, 129, 20, 55)
                                                   : sts == 'C'
                                                       ? Color.fromARGB(
-                                                          255, 50, 151, 174)
-                                                      : Colors.amber,
+                                                          255, 8, 91, 164)
+                                                      : Color.fromARGB(
+                                                          255, 179, 217, 53),
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 10, vertical: 4),
@@ -230,14 +236,13 @@ class _BranchDepositState extends State<BranchDeposit> {
                                             onPressed: () {
                                               imageView();
                                             },
-                                            icon: Icon(
-                                              Icons.photo,
-                                              color: Color.fromARGB(
-                                                  255, 65, 68, 67),
-                                            )),
+                                            icon: Icon(Icons.photo,
+                                                color: Color.fromARGB(
+                                                    255, 9, 3, 97))),
                                         IconButton(
                                             onPressed: () {
-                                              addData();
+                                              addData(
+                                                  dataList[index]['gen_date']);
                                             },
                                             icon: Icon(
                                               Icons.add,
@@ -456,8 +461,11 @@ class _BranchDepositState extends State<BranchDeposit> {
               SizedBox(
                 height: 20,
               ),
-              CustomTextField3(
-                controller: remarkController,
+              SizedBox(
+                width: w,
+                child: CustomTextField3(
+                  controller: remarkController,
+                ),
               ),
               SizedBox(
                 height: 20,
@@ -466,8 +474,8 @@ class _BranchDepositState extends State<BranchDeposit> {
                 text: 'Save',
                 onTap: () {},
                 buttonHeight: h / 17,
-                width: w,
-                color: Color.fromARGB(255, 18, 201, 233),
+                width: w / 1.5,
+                color: Colors.blue,
               )
             ],
           )),
@@ -615,7 +623,7 @@ class _BranchDepositState extends State<BranchDeposit> {
     );
   }
 
-  addData() {
+  addData(String date) {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     showDialog(
@@ -650,7 +658,7 @@ class _BranchDepositState extends State<BranchDeposit> {
                             icon: Icon(Icons.close))),
                     Container(
                       alignment: Alignment.center,
-                      child: Text('Update  your oder detail',
+                      child: Text('Update Slip detail',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
@@ -670,7 +678,22 @@ class _BranchDepositState extends State<BranchDeposit> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    serchBarr(context),
+                    Container(
+                      padding: EdgeInsets.only(left: 12),
+                      height: h / 17,
+                      width: w,
+                      child: Row(children: [
+                        Icon(Icons.calendar_month),
+                        SizedBox(
+                          width: 12,
+                        ),
+                        Text(date)
+                      ]),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.black12)),
+                    ),
+                    // serchBarr(context),
                     Text(
                       'Agent',
                       style: TextStyle(
