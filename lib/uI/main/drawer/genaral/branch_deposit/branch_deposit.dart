@@ -18,6 +18,7 @@ import '../../../../widget/custom_textField.dart';
 import '../../../../widget/nothig_found.dart';
 import '../../../navigation/navigation.dart';
 import '../../darwer_clz.dart';
+import 'remark_histry.dart';
 
 class BranchDeposit extends StatefulWidget {
   const BranchDeposit({super.key});
@@ -341,6 +342,20 @@ class _BranchDepositState extends State<BranchDeposit> {
                                                       255, 9, 3, 97),
                                                 ))
                                             : SizedBox(),
+                                        IconButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        StudentChats(),
+                                                  ));
+                                            },
+                                            icon: Icon(
+                                              Icons.disabled_visible_sharp,
+                                              color:
+                                                  Color.fromARGB(255, 9, 3, 97),
+                                            ))
                                       ],
                                     ),
                                   ],
