@@ -11,6 +11,7 @@ import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../../app_details/color.dart';
 import '../../../../../class/class.dart';
@@ -18,6 +19,7 @@ import '../../../../widget/custom_textField.dart';
 import '../../../../widget/drower/send_button.dart';
 import '../../../../widget/nothig_found.dart';
 import '../../../navigation/navigation.dart';
+import '../../darwer_clz.dart';
 
 class BranchDeposit extends StatefulWidget {
   const BranchDeposit({super.key});
@@ -27,6 +29,7 @@ class BranchDeposit extends StatefulWidget {
 }
 
 class _BranchDepositState extends State<BranchDeposit> {
+  int accessGroupId = 1;
   TextEditingController dateController = TextEditingController();
   TextEditingController remarkController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
@@ -48,7 +51,8 @@ class _BranchDepositState extends State<BranchDeposit> {
   int _current = 0;
   final CarouselController _controller = CarouselController();
   void initState() {
-    getData();
+    getUserBranch();
+    getData('');
     // TODO: implement initState
     super.initState();
     mycontroller.addListener(() {
@@ -89,17 +93,34 @@ class _BranchDepositState extends State<BranchDeposit> {
     }
   }
 
-  getData() async {
+  getUserBranch() async {
     setState(() {
       isLoading = true;
     });
+    List brancheList = await CustomApi().userActiveBranches(context);
 
-    // tring limit, String offset,
-    // String branch, String status, String fromDate, String toDate
+    setState(() {
+      userBranchList = brancheList;
+
+      isLoading = false;
+    });
+  }
+
+  getData(String branch) async {
+    setState(() {
+      isLoading = true;
+    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var id = await prefs.getInt(
+      'accessesKey',
+    );
+    setState(() {
+      if (id != null) {
+        accessGroupId = id!;
+      }
+    });
     var res = await CustomApi()
-        .branchDeposit(context, '2', _page.toString(), '', '', '', '');
-    log(res.toString());
-
+        .branchDeposit(context, '30', _page.toString(), branch, '', '', '');
     setState(() {
       isLoading = false;
       dataList = res;
@@ -115,12 +136,62 @@ class _BranchDepositState extends State<BranchDeposit> {
       builder: (context, provider, child) => Scaffold(
         appBar: AppBar(
           backgroundColor: appliteBlue,
-          // bottom: PreferredSize(
-          //     preferredSize: Size(w, 70),
-          //     child: Padding(
-          //       padding: const EdgeInsets.only(bottom: 12),
-          //       child: serchBarr(context),
-          //     )),
+          bottom: PreferredSize(
+            preferredSize: Size(w, h / 12),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Card(
+                child: Container(
+                  height: h / 17,
+                  padding: EdgeInsets.symmetric(horizontal: 15),
+                  alignment: Alignment.centerRight,
+                  width: w,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5.0),
+                    border: Border.all(
+                        color: black3, style: BorderStyle.solid, width: 0.80),
+                  ),
+                  child: DropdownButton(
+                    isExpanded: true,
+                    alignment: AlignmentDirectional.centerEnd,
+                    hint: Container(
+                      //and here
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Select branch",
+                        style: TextStyle(color: black1),
+                        textAlign: TextAlign.end,
+                      ),
+                    ),
+                    value:
+                        selectval, //implement initial value or selected value
+                    onChanged: (value) {
+                      setState(() {
+                        // _runFilter(value.toString());
+                        //set state will update UI and State of your App
+                        selectval =
+                            value.toString(); //change selectval to new value
+                      });
+                    },
+                    items: userBranchList.map((itemone) {
+                      return DropdownMenuItem(
+                          onTap: () {
+                            setState(() {
+                              visitBranchId = itemone['did'];
+                            });
+                            getData(itemone['did']);
+                          },
+                          value: itemone['dname'],
+                          child: Text(
+                            itemone['dname'],
+                            style: TextStyle(color: black2),
+                          ));
+                    }).toList(),
+                  ),
+                ),
+              ),
+            ),
+          ),
           title: Text(
             'Branch Deposit',
             style: TextStyle(
@@ -239,25 +310,29 @@ class _BranchDepositState extends State<BranchDeposit> {
                                             icon: Icon(Icons.photo,
                                                 color: Color.fromARGB(
                                                     255, 9, 3, 97))),
-                                        IconButton(
-                                            onPressed: () {
-                                              addData(
-                                                  dataList[index]['gen_date']);
-                                            },
-                                            icon: Icon(
-                                              Icons.add,
-                                              color:
-                                                  Color.fromARGB(255, 9, 3, 97),
-                                            )),
-                                        IconButton(
-                                            onPressed: () {
-                                              addRemark();
-                                            },
-                                            icon: Icon(
-                                              Icons.mode_edit_outlined,
-                                              color:
-                                                  Color.fromARGB(255, 9, 3, 97),
-                                            )),
+                                        DrawerClz().attendance(accessGroupId)
+                                            ? IconButton(
+                                                onPressed: () {
+                                                  addData(dataList[index]
+                                                      ['gen_date']);
+                                                },
+                                                icon: Icon(
+                                                  Icons.add,
+                                                  color: Color.fromARGB(
+                                                      255, 9, 3, 97),
+                                                ))
+                                            : SizedBox(),
+                                        DrawerClz().attendance(accessGroupId)
+                                            ? IconButton(
+                                                onPressed: () {
+                                                  addRemark();
+                                                },
+                                                icon: Icon(
+                                                  Icons.mode_edit_outlined,
+                                                  color: Color.fromARGB(
+                                                      255, 9, 3, 97),
+                                                ))
+                                            : SizedBox(),
                                       ],
                                     ),
                                   ],
@@ -370,7 +445,7 @@ class _BranchDepositState extends State<BranchDeposit> {
                                       children: [
                                         Container(
                                           child: Text(
-                                            'Remark',
+                                            'HO Remark',
                                             style: TextStyle(
                                               fontSize: 14.dp,
                                               color: black,
@@ -383,7 +458,7 @@ class _BranchDepositState extends State<BranchDeposit> {
                                               borderRadius:
                                                   BorderRadius.circular(5),
                                               border: Border.all()),
-                                          width: w / 1.5,
+                                          width: w / 2,
                                           child: Column(
                                             children: [
                                               Padding(
@@ -392,6 +467,48 @@ class _BranchDepositState extends State<BranchDeposit> {
                                                         horizontal: 4),
                                                 child: Text(
                                                   dataList[index]['remarks'],
+                                                  style: TextStyle(
+                                                    fontSize: 14.dp,
+                                                    color: black2,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Divider(),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          child: Text(
+                                            'Branch Remark',
+                                            style: TextStyle(
+                                              fontSize: 14.dp,
+                                              color: black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              border: Border.all()),
+                                          width: w / 2,
+                                          child: Column(
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 4),
+                                                child: Text(
+                                                  'ssssssssc scfffffffffffffffffss scfsj  scfjbbsjcfbjsbcfjs sjcbsjcbjs',
                                                   style: TextStyle(
                                                     fontSize: 14.dp,
                                                     color: black2,

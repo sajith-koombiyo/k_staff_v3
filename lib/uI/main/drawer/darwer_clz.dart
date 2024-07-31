@@ -222,6 +222,19 @@ class DrawerClz {
     }
   }
 
+  branchDepositaddData(int accessId) {
+    List data = [
+      2,
+      3,
+    ];
+
+    if (data.contains(accessId) == true) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   branchVisit(int accessId) {
     List data = [1, 2, 3, 9, 17];
 
