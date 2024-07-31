@@ -12,11 +12,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../../../app_details/color.dart';
 import '../../../../../class/class.dart';
 import '../../../../widget/custom_textField.dart';
-import '../../../../widget/drower/send_button.dart';
 import '../../../../widget/nothig_found.dart';
 import '../../../navigation/navigation.dart';
 import '../../darwer_clz.dart';
@@ -35,7 +33,9 @@ class _BranchDepositState extends State<BranchDeposit> {
   final ImagePicker _picker = ImagePicker();
   DateTime selectedDate = DateTime.now();
   String? selectval;
-  List userBranchList = [];
+  List userBranchList = [
+    {'dname': 'All', 'did': '10000'}
+  ];
   String visitBranchId = '';
   String newImage = '';
   List<File> imagesList = [];
@@ -98,9 +98,9 @@ class _BranchDepositState extends State<BranchDeposit> {
       isLoading = true;
     });
     List brancheList = await CustomApi().userActiveBranches(context);
-
+    log(brancheList.toString());
     setState(() {
-      userBranchList = brancheList;
+      userBranchList.addAll(brancheList);
 
       isLoading = false;
     });
@@ -179,7 +179,15 @@ class _BranchDepositState extends State<BranchDeposit> {
                             setState(() {
                               visitBranchId = itemone['did'];
                             });
-                            getData(itemone['did']);
+
+                            log(itemone.toString());
+                            if (visitBranchId == '10000') {
+                              print('fffffffffffffffffffff');
+                              getData('');
+                            } else {
+                              print('ffffffffdddddddddddddddfffffffffffff');
+                              getData(itemone['did']);
+                            }
                           },
                           value: itemone['dname'],
                           child: Text(
@@ -443,39 +451,42 @@ class _BranchDepositState extends State<BranchDeposit> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Container(
-                                          child: Text(
-                                            'HO Remark',
-                                            style: TextStyle(
-                                              fontSize: 14.dp,
-                                              color: black,
-                                              fontWeight: FontWeight.bold,
+                                        Flexible(
+                                          child: Container(
+                                            child: Text(
+                                              'HO Remark ',
+                                              style: TextStyle(
+                                                fontSize: 14.dp,
+                                                color: black,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                              border: Border.all()),
-                                          width: w / 2,
-                                          child: Column(
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 4),
-                                                child: Text(
-                                                  dataList[index]['remarks'],
-                                                  style: TextStyle(
-                                                    fontSize: 14.dp,
-                                                    color: black2,
-                                                    fontWeight:
-                                                        FontWeight.normal,
+                                        Flexible(
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                                border: Border.all()),
+                                            width: w / 1.5,
+                                            child: Column(
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(horizontal: 4),
+                                                  child: Text(
+                                                    dataList[index]['remarks'],
+                                                    style: TextStyle(
+                                                      fontSize: 14.dp,
+                                                      color: black2,
+                                                      fontWeight:
+                                                          FontWeight.normal,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -485,39 +496,42 @@ class _BranchDepositState extends State<BranchDeposit> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Container(
-                                          child: Text(
-                                            'Branch Remark',
-                                            style: TextStyle(
-                                              fontSize: 14.dp,
-                                              color: black,
-                                              fontWeight: FontWeight.bold,
+                                        Flexible(
+                                          child: Container(
+                                            child: Text(
+                                              'Branch Remark',
+                                              style: TextStyle(
+                                                fontSize: 14.dp,
+                                                color: black,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                              border: Border.all()),
-                                          width: w / 2,
-                                          child: Column(
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 4),
-                                                child: Text(
-                                                  'ssssssssc scfffffffffffffffffss scfsj  scfjbbsjcfbjsbcfjs sjcbsjcbjs',
-                                                  style: TextStyle(
-                                                    fontSize: 14.dp,
-                                                    color: black2,
-                                                    fontWeight:
-                                                        FontWeight.normal,
+                                        Flexible(
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                                border: Border.all()),
+                                            width: w / 1.5,
+                                            child: Column(
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(horizontal: 4),
+                                                  child: Text(
+                                                    'ssssssssc scfffffffffffffffffss scfsj  scfjbbsjcfbjsbcfjs sjcbsjcbjs',
+                                                    style: TextStyle(
+                                                      fontSize: 14.dp,
+                                                      color: black2,
+                                                      fontWeight:
+                                                          FontWeight.normal,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ],
