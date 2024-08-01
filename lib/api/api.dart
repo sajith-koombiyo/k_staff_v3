@@ -1852,13 +1852,14 @@ class CustomApi {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
+      print(id);
       final apiUrl = '${ApiUrl}Riderdeposit/users';
       // Headers
       Map<String, String> headers = {
         'userkey': '$id',
       };
       // Make POST request
-
+      print(apiUrl);
       var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {
         "limit": limit,
         "offset": offset,
@@ -1867,6 +1868,7 @@ class CustomApi {
         "fromDate": fromDate,
         "toDate": toDate
       });
+      print(res.statusCode);
       var data = jsonDecode(res.body);
 
       print(data);
@@ -1875,6 +1877,124 @@ class CustomApi {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
 
         return data['deposits']['branch_deposit'];
+      }
+
+      if (data['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+        return 0;
+      }
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
+
+  newDepositRemark(
+      BuildContext context, String dpst_id, String type, String remark) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      print(id);
+      final apiUrl = '${ApiUrl}Newdepositremark/users';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      // Make POST request
+      print(apiUrl);
+      var res = await https.post(
+          headers: headers,
+          Uri.parse(apiUrl),
+          body: {"dpst_id": dpst_id, "type": type, "remark": remark});
+      print(res.statusCode);
+      var data = jsonDecode(res.body);
+
+      print(data);
+
+      if (data['status'] == 200) {
+        notification().info(context, 'Remark update successfully');
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+
+        return 1;
+      }
+
+      if (data['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+        return 0;
+      }
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
+
+  depositAgentslip(BuildContext context, String dpst_id, String rider_id,
+      String branh_id, String dslip_image) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      print(id);
+      final apiUrl = '${ApiUrl}Deposit_agentslip/users';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      // Make POST request
+      print(apiUrl);
+      var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {
+        "dpst_id": dpst_id,
+        "rider_id": rider_id,
+        "branh_id": branh_id,
+        "dslip_image": dslip_image
+      });
+      print(res.statusCode);
+      var data = jsonDecode(res.body);
+
+      print(data);
+
+      if (data['status'] == 200) {
+        notification().info(context, 'Slip detail successfully');
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+
+        return 1;
+      }
+
+      if (data['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+        return 0;
+      }
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
+
+  depositremarkHistry(BuildContext context, String dpst_id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      print(id);
+      final apiUrl = '${ApiUrl}Depositremarks/users';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      // Make POST request
+      print(apiUrl);
+      var res = await https.post(
+          headers: headers, Uri.parse(apiUrl), body: {"dpst_id": dpst_id});
+      print(res.statusCode);
+      var data = jsonDecode(res.body);
+
+      print(data);
+
+      if (data['status'] == 200) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+
+        return data['remarks'];
       }
 
       if (data['status'] == 403) {

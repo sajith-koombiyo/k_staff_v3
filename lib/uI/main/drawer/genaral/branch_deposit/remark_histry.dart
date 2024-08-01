@@ -1,13 +1,16 @@
+import 'dart:developer';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/api/api.dart';
 import 'package:flutter_application_2/app_details/color.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
+import '../../../../../class/class.dart';
+
 class StudentChats extends StatefulWidget {
-  const StudentChats({
-    super.key,
-  });
+  const StudentChats({super.key, required this.dpId});
+  final String dpId;
 
   @override
   State<StudentChats> createState() => _StudentChatsState();
@@ -17,7 +20,7 @@ class _StudentChatsState extends State<StudentChats> {
   bool isLoading = false;
   TextEditingController msg = TextEditingController();
 
-  List studentChatList = [];
+  List remarkList = [];
   ScrollController scroll = ScrollController();
   bool noData = false;
   bool validUser = false;
@@ -26,8 +29,21 @@ class _StudentChatsState extends State<StudentChats> {
 
   @override
   void initState() {
+    data();
     // TODO: implement initState
     super.initState();
+  }
+
+  data() async {
+    setState(() {
+      isLoading = true;
+    });
+    var res = await CustomApi().depositremarkHistry(context, widget.dpId);
+    setState(() {
+      remarkList = res;
+      isLoading = false;
+    });
+    log(res.toString());
   }
 
   @override
@@ -66,71 +82,66 @@ class _StudentChatsState extends State<StudentChats> {
               child: ListView.builder(
                 controller: scroll,
                 // padding: const EdgeInsets.only(bottom: 50, top: 70),
-                itemCount: 20,
+                itemCount: remarkList.length,
                 itemBuilder: (context, index) {
-                  return index == 1
-                      ? Stack(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  right: w / 5, top: 10, left: 8, bottom: 8),
-                              child: Card(
-                                elevation: 20,
-                                color: const Color.fromARGB(255, 98, 132, 160),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(30),
-                                        bottomRight: Radius.circular(30),
-                                        topRight: Radius.circular(30))),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Container(
-                                        alignment: Alignment.centerLeft,
-                                        child: Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 8),
-                                          child: Text(
-                                            'Ho',
-                                            style: TextStyle(
-                                                fontSize: 11,
-                                                color: white,
-                                                fontWeight: FontWeight.normal),
-                                          ),
-                                        )),
-                                    Container(
-                                        alignment: Alignment.centerLeft,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(
-                                            'ffffffffffffffffffff',
-                                            style: TextStyle(
-                                                fontSize: 11,
-                                                color: white,
-                                                fontWeight: FontWeight.normal),
-                                          ),
-                                        )),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 8, right: 12, bottom: 12),
-                                      child: Container(
-                                          alignment: Alignment.bottomRight,
-                                          child: Text(
-                                            '2023-05-10:10.25 AM',
-                                            style: TextStyle(
-                                                fontSize: 10,
-                                                color: white,
-                                                fontWeight: FontWeight.normal),
-                                          )),
-                                    ),
-                                  ],
+                  return remarkList[index]['type'] == '1'
+                      ? Padding(
+                          padding: EdgeInsets.only(
+                              right: w / 5, top: 10, left: 8, bottom: 8),
+                          child: Card(
+                            elevation: 20,
+                            color: const Color.fromARGB(255, 98, 132, 160),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(30),
+                                    bottomRight: Radius.circular(30),
+                                    topRight: Radius.circular(30))),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height: 10,
                                 ),
-                              ),
+                                Container(
+                                    alignment: Alignment.centerLeft,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 8),
+                                      child: Text(
+                                        'Head office',
+                                        style: TextStyle(
+                                            fontSize: 11,
+                                            color: white,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    )),
+                                Container(
+                                    alignment: Alignment.centerLeft,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        remarkList[index]['dire_remark'],
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: white,
+                                            fontWeight: FontWeight.normal),
+                                      ),
+                                    )),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 8, right: 12, bottom: 12),
+                                  child: Container(
+                                      alignment: Alignment.bottomRight,
+                                      child: Text(
+                                        remarkList[index]['datetime'],
+                                        style: TextStyle(
+                                            fontSize: 10,
+                                            color: white,
+                                            fontWeight: FontWeight.normal),
+                                      )),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         )
                       : Padding(
                           padding: EdgeInsets.only(
@@ -154,11 +165,13 @@ class _StudentChatsState extends State<StudentChats> {
                                       SizedBox(
                                         height: 20,
                                       ),
+
+                                      
                                       Container(
-                                          alignment: Alignment.centerRight,
+                                          alignment: Alignment.centerLeft,
                                           child: Padding(
                                             padding:
-                                                const EdgeInsets.only(right: 8),
+                                                const EdgeInsets.only(left: 8),
                                             child: Text(
                                               'Branch remark',
                                               style: TextStyle(
@@ -168,13 +181,13 @@ class _StudentChatsState extends State<StudentChats> {
                                             ),
                                           )),
                                       Container(
-                                          alignment: Alignment.centerRight,
+                                          alignment: Alignment.centerLeft,
                                           child: Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: Text(
-                                              'f   VBn bVunZKz VZ BvUNKZkzbzvn  bsyFSILAXXKbkHVU  ABYIGIAX ASCTS7Y8EUBX',
+                                              remarkList[index]['dire_remark'],
                                               style: TextStyle(
-                                                  fontSize: 11,
+                                                  fontSize: 12,
                                                   color: white2,
                                                   fontWeight:
                                                       FontWeight.normal),
@@ -186,7 +199,7 @@ class _StudentChatsState extends State<StudentChats> {
                                         child: Container(
                                             alignment: Alignment.bottomRight,
                                             child: Text(
-                                              '2023-05-10:10.25 AM',
+                                              remarkList[index]['datetime'],
                                               style: TextStyle(
                                                   fontSize: 10.sp,
                                                   color: white3,
@@ -205,21 +218,10 @@ class _StudentChatsState extends State<StudentChats> {
               ),
             ),
             isLoading
-                ? Positioned(
-                    top: 80,
-                    right: 0,
-                    left: 0,
-                    child: Container(
-                        alignment: Alignment.topCenter,
-                        child: CircleAvatar(
-                          radius: 18,
-                          backgroundColor:
-                              const Color.fromARGB(255, 68, 70, 70),
-                          child: LoadingAnimationWidget.discreteCircle(
-                              color: Colors.white, size: 17),
-                        )),
+                ? Center(
+                    child: Loader().loader(context),
                   )
-                : Container()
+                : SizedBox(),
           ]),
         ),
       ),
