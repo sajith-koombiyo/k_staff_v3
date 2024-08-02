@@ -15,7 +15,7 @@ import '../../widget/drower/drower_button.dart';
 import 'about/about.dart';
 import 'attendance/attendance.dart';
 import 'branch_List/branchListGooglemap.dart';
-import 'branch_operation/cod_0_approval.dart';
+import 'branch_operation/delivery_approval.dart';
 import 'branch_operation/dd_aproval/pending_DD.dart';
 import 'contact_us/contact_us.dart';
 import 'darwer_clz.dart';
@@ -259,8 +259,7 @@ class _customDrawerState extends State<customDrawer> {
                                                 : SizedBox(),
                                             DrawerClz().codZero(accessGroupId)
                                                 ? tileButton(
-                                                    'COD 0 (zero) Approval',
-                                                    () {
+                                                    'Delivery Approval', () {
                                                     setState(() {
                                                       key = '2';
                                                     });

@@ -88,6 +88,13 @@ class ProviderS with ChangeNotifier {
     notifyListeners();
   }
 
+  bool _dataLoad = false;
+  bool get dataLoad => _dataLoad;
+  set dataLoad(bool i) {
+    _dataLoad = i;
+    notifyListeners();
+  }
+
   bool _isServerDown = false;
   bool get isServerDown => _isServerDown;
 
@@ -131,6 +138,13 @@ class ProviderS with ChangeNotifier {
     notifyListeners();
   }
 
+  String? _rider;
+  String get rider => _rider!;
+  set rider(String i) {
+    _rider = i;
+    notifyListeners();
+  }
+
   List _userData = [];
   List get userData => _userData;
   set userData(List i) {
@@ -138,10 +152,24 @@ class ProviderS with ChangeNotifier {
     notifyListeners();
   }
 
+  List _dImages64 = [];
+  List get dImages64 => _dImages64;
+  set dImages64(List i) {
+    _dImages64 = i;
+    notifyListeners();
+  }
+
   List _homData = [];
   List get homData => _homData;
   set homData(List i) {
     _homData = i;
+    notifyListeners();
+  }
+
+  List _dRiderList = [];
+  List get dRiderList => _dRiderList;
+  set dRiderList(List i) {
+    _dRiderList = i;
     notifyListeners();
   }
 

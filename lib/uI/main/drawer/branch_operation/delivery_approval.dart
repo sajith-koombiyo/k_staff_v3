@@ -1,8 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/api/api.dart';
 import 'package:flutter_application_2/app_details/color.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:quickalert/quickalert.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 
 class CODZeroApproval extends StatefulWidget {
   const CODZeroApproval({super.key});
@@ -32,11 +34,17 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
   List<Map<String, dynamic>> depositListTemp = [];
   @override
   void initState() {
+    data();
     setState(() {
       depositListTemp = depositList;
     });
     // TODO: implement initState
     super.initState();
+  }
+
+  data() async {
+    var res = await CustomApi().deliveryApprovals(context, '28');
+    log(res.toString());
   }
 
   @override
@@ -79,8 +87,6 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
                           selectval, //implement initial value or selected value
                       onChanged: (value) {
                         setState(() {
-                       
-
                           //set state will update UI and State of your App
                           selectval =
                               value.toString(); //change selectval to new value
@@ -100,7 +106,7 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
               ),
             )),
         title: Text(
-          'COD (0) Zero Approval',
+          'Delivery Approval',
           style: TextStyle(
             fontSize: 18.dp,
             color: white,

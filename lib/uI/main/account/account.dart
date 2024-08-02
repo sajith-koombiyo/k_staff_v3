@@ -27,6 +27,7 @@ class Account extends StatefulWidget {
 class _AccountState extends State<Account> {
   final ImagePicker _picker = ImagePicker();
   bool imageLoading = false;
+  
   @override
   void initState() {
     // TODO: implement initState
@@ -428,7 +429,7 @@ class _AccountState extends State<Account> {
     });
     final bytes = File(image!.path).readAsBytesSync();
     String base64Image = base64Encode(bytes);
-  
+
     var res = await CustomApi().profileImage(context, base64Image);
 
     var data = await CustomApi().getProfile();
@@ -443,6 +444,5 @@ class _AccountState extends State<Account> {
   fromCamera() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.camera);
     var res = await imageUpload(image!);
-  
   }
 }

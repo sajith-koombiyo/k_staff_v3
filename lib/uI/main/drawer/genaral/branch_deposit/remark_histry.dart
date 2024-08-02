@@ -165,13 +165,11 @@ class _StudentChatsState extends State<StudentChats> {
                                       SizedBox(
                                         height: 20,
                                       ),
-
-                                      
                                       Container(
-                                          alignment: Alignment.centerLeft,
+                                          alignment: Alignment.centerRight,
                                           child: Padding(
                                             padding:
-                                                const EdgeInsets.only(left: 8),
+                                                const EdgeInsets.only(right: 8),
                                             child: Text(
                                               'Branch remark',
                                               style: TextStyle(
