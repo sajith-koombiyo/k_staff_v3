@@ -557,6 +557,7 @@ class CustomApi {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
+      print('${statusType.toString()} ddddddddddddddddddddddddddddddd');
       Map<String, String> headers = {
         'userkey': '$id',
       };
@@ -570,6 +571,8 @@ class CustomApi {
             Uri.parse(apiUrl),
             body: {'owner': id, 'waybill_id': wayBillId, 'status': '17'});
         var data = jsonDecode(res.body);
+
+        print(data);
 //         - 200 OK: Order Delivered Successfully
 // - 400 Bad Request: Error Occurred
 // - 406 Not Acceptable: Please Upload the POD
@@ -598,7 +601,9 @@ class CustomApi {
       } else if (statusType == 2) {
         if (dropdownValue != '') {
           if (cod != '') {
-            final apiUrl = '${ApiUrl}/Pdelivery/users';
+            print('dbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb');
+            final apiUrl = '${ApiUrl}Pdelivery/users';
+            print(apiUrl);
             var responses =
                 await https.post(headers: headers, Uri.parse(apiUrl), body: {
               'owner': id,
@@ -609,6 +614,7 @@ class CustomApi {
             });
 
             var data = jsonDecode(responses.body);
+            print(data);
             if (data['status'] == 200) {
               notification().info(context, 'Order Update Successfully');
               Navigator.pop(context);

@@ -823,7 +823,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                           height: h,
                           child: ClipRRect(
                               borderRadius: BorderRadius.circular(15),
-                              child: pickupDevice == '0'
+                              child: pickupDevice == '1'
                                   ? BranchList(
                                       isDower: 0,
                                     )

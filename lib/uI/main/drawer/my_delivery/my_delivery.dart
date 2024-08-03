@@ -70,7 +70,6 @@ class _MyDeliveryState extends State<MyDelivery> {
 
   @override
   void initState() {
-
     getData(true);
     dropDownData();
     // TODO: implement initState
@@ -93,8 +92,9 @@ class _MyDeliveryState extends State<MyDelivery> {
 
     var temp =
         await CustomApi().getmyorders(search.text, id.toString(), context);
+    print(temp);
 
- setState(() {
+    setState(() {
       dataList = temp;
 
       isLoading = false;
@@ -119,7 +119,6 @@ class _MyDeliveryState extends State<MyDelivery> {
 
     setState(() {
       List.generate(res.length, (index) {
-      
         if (res[index]['type'] == '3') {
           pdliveryList.add({
             "reason_id": "${res[index]['reason_id']}",
@@ -140,8 +139,6 @@ class _MyDeliveryState extends State<MyDelivery> {
         }
       });
     });
-
-
   }
 
   @override
@@ -254,7 +251,6 @@ class _MyDeliveryState extends State<MyDelivery> {
                                               BorderRadius.circular(20),
                                           splashColor: blue,
                                           onTap: () {
-                                         
                                             bool updateBTN = false;
                                             setState(() {
                                               newImage = '';
@@ -271,16 +267,16 @@ class _MyDeliveryState extends State<MyDelivery> {
                                                 dataList[index]['order_type'] ==
                                                         '1'
                                                     ? dataList[index]
-                                                        ['ex_bag_waybill']
-                                                    : "".toString(),
-                                                dataList[index]['order_type'] ==
+                                                            ['ex_bag_waybill']
+                                                        .toString()
+                                                    : "",
+                                                dataList[index]['order_type']
+                                                            .toString() ==
                                                         '1'
                                                     ? dataList[index]
                                                             ['prev_waybill']
                                                         .toString()
                                                     : '');
-
-                                      
                                           },
                                           child: Card(
                                             margin: EdgeInsets.only(left: 0),
@@ -650,23 +646,40 @@ class _MyDeliveryState extends State<MyDelivery> {
                             updateBTN = false;
                           });
                         } else {
-                          if (oderType == '1' && x == 1 || x == 2) {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Exchange(
-                                    exchangeBagWaybill: exchangeWayBill,
-                                    pWaybill: pWaybill,
-                                    backDataLoad: backDataLoad,
-                                    statusTyp: x,
-                                    waybill: waybill,
-                                    dropdownvalueItem: dropdownvalueItem,
-                                    dropdownvalueItem2: dropdownvalueItem2,
-                                    codController: codController.text,
-                                    date: provider.fomatedDate,
-                                    oderId: oId,
-                                  ),
-                                ));
+                          if (oderType == '1') {
+                            if (x == 3 || x == 2) {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Exchange(
+                                      exchangeBagWaybill: exchangeWayBill,
+                                      pWaybill: pWaybill,
+                                      backDataLoad: backDataLoad,
+                                      statusTyp: x,
+                                      waybill: waybill,
+                                      dropdownvalueItem: dropdownvalueItem,
+                                      dropdownvalueItem2: dropdownvalueItem2,
+                                      codController: codController.text,
+                                      date: provider.fomatedDate,
+                                      oderId: oId,
+                                    ),
+                                  ));
+                            } else {
+                              var res = await CustomApi().oderData(
+                                  x,
+                                  waybill,
+                                  context,
+                                  dropdownvalueItem.toString(),
+                                  dropdownvalueItem2.toString(),
+                                  codController.text,
+                                  provider.fomatedDate,
+                                  oId);
+
+                              if (res == 200) {
+                                getData(false);
+                                codController.clear();
+                              }
+                            }
                           } else {
                             var res = await CustomApi().oderData(
                                 x,
@@ -814,7 +827,6 @@ class _MyDeliveryState extends State<MyDelivery> {
                     ),
                     InkWell(
                       onTap: () {
-                     
                         setstate(() {
                           x = 2;
                           updateBTN = false;
@@ -849,7 +861,6 @@ class _MyDeliveryState extends State<MyDelivery> {
                     ),
                     InkWell(
                       onTap: () {
-                       
                         setstate(() {
                           x = 3;
                           updateBTN = false;
@@ -884,7 +895,6 @@ class _MyDeliveryState extends State<MyDelivery> {
                     ),
                     InkWell(
                       onTap: () {
-                     
                         setstate(() {
                           x = 4;
                           updateBTN = false;
@@ -1266,7 +1276,7 @@ class _MyDeliveryState extends State<MyDelivery> {
 
                                       if (res != 1) {
                                         setstate(() {
-                                          newImage = '';
+                                          // newImage = '';
                                           provider.progress = 0;
                                         });
                                       }
