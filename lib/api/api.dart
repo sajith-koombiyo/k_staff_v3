@@ -2078,6 +2078,45 @@ class CustomApi {
     }
   }
 
+  pickupCansel(BuildContext context, String pick_id, String rider_remark,
+      String longt, String lati, String img) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      final apiUrl = '${ApiUrl}Pickup_cancel/users';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      // Make POST request
+
+      var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {
+        "pick_id": pick_id,
+        "rider_remark": rider_remark,
+        "longt": longt,
+        "lati": lati,
+        "img": img,
+      });
+      var data = jsonDecode(res.body);
+      print(data);
+      if (data['status'] == 200) {
+        Provider.of<ProviderS>(context, listen: false).pickupCansel = true;
+        notification().info(context, 'Pickup cansel successfully updated.');
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+
+        return 1;
+      }
+
+      if (data['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+      }
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
+
 // delivery approvell screen data loading
   deliveryApprovals(BuildContext context, String rider_id) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -2099,6 +2138,40 @@ class CustomApi {
       if (data['status'] == 200) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
         return data['delivery_approvals'];
+      }
+
+      if (data['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+        return 0;
+      }
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
+
+  deliveryApprovalsRiderList(
+    BuildContext context,
+  ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      final apiUrl = '${ApiUrl}Branchriders/users';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      // Make POST request
+
+      var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {
+        "branch_id": Provider.of<ProviderS>(context, listen: false).bId
+      });
+      var data = jsonDecode(res.body);
+      print(data);
+      if (data['status'] == 200) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+        return data['branch_riders'];
       }
 
       if (data['status'] == 403) {

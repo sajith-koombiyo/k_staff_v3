@@ -131,6 +131,13 @@ class ProviderS with ChangeNotifier {
     notifyListeners();
   }
 
+  String _pickId = '';
+  String get pickId => _pickId;
+  set pickId(String i) {
+    _pickId = i;
+    notifyListeners();
+  }
+
   String _dpCode = '';
   String get dpCode => _dpCode;
   set dpCode(String i) {
@@ -185,6 +192,30 @@ class ProviderS with ChangeNotifier {
 
   set isAppbarsheerOpen(bool time) {
     _isAppbarsheerOpen = time;
+    notifyListeners();
+  }
+
+  bool _pickupCansel = false;
+  bool get pickupCansel => _pickupCansel;
+
+  set pickupCansel(bool time) {
+    _pickupCansel = time;
+    notifyListeners();
+  }
+
+  VoidCallback ? _count ;
+
+  VoidCallback get count => _count!;
+
+  void increment( VoidCallback onTap) {
+  onTap(){}
+    notifyListeners(); // Notify listeners about the change
+  }
+   bool _readOnly = false;
+  bool get readOnly => _readOnly;
+
+  set readOnly(bool time) {
+    _readOnly = time;
     notifyListeners();
   }
 

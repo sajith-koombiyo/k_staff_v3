@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:developer';
-
+import 'dart:io';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_application_2/api/api.dart';
@@ -11,12 +13,13 @@ import 'package:flutter_application_2/uI/widget/diloag_button.dart';
 import 'package:flutter_application_2/uI/widget/map/details.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:keyboard_hider/keyboard_hider.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:scannabletextformfield/scannabletextformfield.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../sql_db/db.dart';
@@ -35,8 +38,12 @@ class _Map2State extends State<Map2> {
   List deliveryLocation = [];
   int status0Count = 0;
   int status1Count = 0;
+  bool isPickupRequest = false;
   MapController mapController = MapController();
+  String base64Image = '';
 
+  final ImagePicker _picker = ImagePicker();
+  TextEditingController remarkController = TextEditingController();
   TextEditingController quantity = TextEditingController();
   TextEditingController SacanQuantity = TextEditingController();
   final FocusNode _focusNode = FocusNode();
@@ -63,6 +70,7 @@ class _Map2State extends State<Map2> {
   bool sign = false;
   String pickupDevice = '';
   SqlDb sqlDb = SqlDb();
+  String newImage = '';
   sacanData() async {
     List res = await sqlDb.readData('Select * from scanData');
     if (res.isNotEmpty) {
@@ -160,6 +168,8 @@ class _Map2State extends State<Map2> {
                     address = pickupLocation[index]['address'];
                     phone = pickupLocation[index]['phone'];
                     pickId = pickupLocation[index]['pickr_id'];
+                    Provider.of<ProviderS>(context, listen: false).pickId =
+                        pickId;
                     accept = pickupLocation[index]['accept'];
                     // MapUtils.openMap(list[index]['lat'], list[index]['lon']);
                   });
@@ -222,7 +232,7 @@ class _Map2State extends State<Map2> {
 
   @override
   void initState() {
-    getLocation();
+    getLocation(false);
     // userLoaction();
     // TODO: implement initState
     super.initState();
@@ -274,8 +284,7 @@ class _Map2State extends State<Map2> {
                           mapController: mapController,
                           // mapController: mapController,
                           options: MapOptions(
-                            initialCenter:
-                                LatLng(position!.latitude, position!.longitude),
+                            initialCenter: LatLng(7.8731, 80.7718),
                             minZoom: 8,
                             maxZoom: 40,
                             zoom: 7.9,
@@ -462,7 +471,7 @@ class _Map2State extends State<Map2> {
   appbarSheet() {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
-
+    _focusNode.requestFocus();
     log(pickupDevice);
     pickupDevice = '1';
     // pickupDevice == '0'
@@ -570,8 +579,7 @@ class _Map2State extends State<Map2> {
                                       // textInputAction: TextInputAction.none,
                                       autofocus: true,
                                       showCursor: true,
-                                      // readOnly: true,
-
+                                      // readOnly: pValue.readOnly,
                                       onChanged: (value) async {
                                         if (await barcodeScanData
                                             .contains(value)) {
@@ -656,100 +664,122 @@ class _Map2State extends State<Map2> {
                     SizedBox(
                       height: 10,
                     ),
-                    isDelivery
-                        ? SizedBox()
-                        : DialogButton(
-                            text: accept == '0'
-                                ? 'Accept'
-                                // : sign == false
-                                //     ? 'Signature'
-                                : "Pickup",
-                            onTap: accept == '0'
-                                ? () async {
-                                    setState(() {
-                                      isLoading = true;
-                                    });
-                                    await CustomApi()
-                                        .sendSms(phone, pickId, context);
-                                    await userLoaction();
-                                    setState(() {
-                                      Provider.of<ProviderS>(context,
-                                              listen: false)
-                                          .isAppbarsheerOpen = false;
+                    Row(
+                      mainAxisAlignment: accept != '0'
+                          ? MainAxisAlignment.spaceAround
+                          : MainAxisAlignment.center,
+                      children: [
+                        isDelivery
+                            ? SizedBox()
+                            : DialogButton(
+                                text: accept == '0'
+                                    ? 'Accept'
+                                    // : sign == false
+                                    //     ? 'Signature'
+                                    : "Pickup",
+                                onTap: accept == '0'
+                                    ? () async {
+                                        setState(() {
+                                          isLoading = true;
+                                        });
+                                        await CustomApi()
+                                            .sendSms(phone, pickId, context);
+                                        await userLoaction();
+                                        setState(() {
+                                          Provider.of<ProviderS>(context,
+                                                  listen: false)
+                                              .isAppbarsheerOpen = false;
 
-                                      isLoading = false;
-                                    });
-                                  }
-                                // : sign == false
-                                //     ? () {
-                                //         print('ffffffffffffffffffffff');
-                                //         siganature();
-                                //       }
-                                : () async {
-                                    if (quantity.text.isNotEmpty ||
-                                        pValue.scanQnt.text.isNotEmpty ||
-                                        barcodeScanData.isNotEmpty) {
-                                      log('sssssssssssssssssssssssss');
-                                      int qnt = int.parse(pickupDevice == '1'
-                                          ? barcodeScanData.length.toString()
-                                          : pValue.scanQnt.text);
-                                      if (qnt < 5000) {
-                                        if (qnt != 0) {
-                                          setState(() {
-                                            isLoading = true;
-                                          });
-                                          Position? position;
-                                          LocationPermission permission;
-                                          permission = await Geolocator
-                                              .requestPermission();
-                                          position = await Geolocator
-                                              .getCurrentPosition(
-                                                  desiredAccuracy:
-                                                      LocationAccuracy.high);
-                                          log(position.toString());
-                                          var res =
-                                              await CustomApi().pickupComplete(
-                                            context,
-                                            pickId,
-                                            pickupDevice == '0'
-                                                ? pValue.scanQnt.text
-                                                : quantity.text,
-                                            phone,
-                                            position!.latitude.toString(),
-                                            position!.longitude.toString(),
-                                            barcodeScanData.toString(),
-                                          );
-                                          setState(() {
-                                            _marker.clear();
-                                          });
+                                          isLoading = false;
+                                        });
+                                      }
+                                    // : sign == false
+                                    //     ? () {
+                                    //         print('ffffffffffffffffffffff');
+                                    //         siganature();
+                                    //       }
+                                    : () async {
+                                        if (quantity.text.isNotEmpty ||
+                                            pValue.scanQnt.text.isNotEmpty ||
+                                            barcodeScanData.isNotEmpty) {
+                                          log('sssssssssssssssssssssssss');
+                                          int qnt = int.parse(
+                                              pickupDevice == '1'
+                                                  ? barcodeScanData.length
+                                                      .toString()
+                                                  : pValue.scanQnt.text);
+                                          if (qnt < 5000) {
+                                            if (qnt != 0) {
+                                              setState(() {
+                                                isLoading = true;
+                                              });
+                                              Position? position;
+                                              LocationPermission permission;
+                                              permission = await Geolocator
+                                                  .requestPermission();
+                                              position = await Geolocator
+                                                  .getCurrentPosition(
+                                                      desiredAccuracy:
+                                                          LocationAccuracy
+                                                              .high);
+                                              log(position.toString());
+                                              var res = await CustomApi()
+                                                  .pickupComplete(
+                                                context,
+                                                pickId,
+                                                pickupDevice == '0'
+                                                    ? pValue.scanQnt.text
+                                                    : quantity.text,
+                                                phone,
+                                                position!.latitude.toString(),
+                                                position!.longitude.toString(),
+                                                barcodeScanData.toString(),
+                                              );
+                                              setState(() {
+                                                _marker.clear();
+                                              });
 
-                                          await userLoaction();
+                                              await userLoaction();
 
-                                          setState(() {
-                                            Provider.of<ProviderS>(context,
-                                                    listen: false)
-                                                .isAppbarsheerOpen = false;
+                                              setState(() {
+                                                Provider.of<ProviderS>(context,
+                                                        listen: false)
+                                                    .isAppbarsheerOpen = false;
 
-                                            isLoading = false;
-                                          });
+                                                isLoading = false;
+                                              });
+                                            } else {
+                                              notification().info(
+                                                  context, 'Invalid Quantity');
+                                            }
+                                          } else {
+                                            notification().info(
+                                                context, 'Invalid Quantity');
+                                          }
                                         } else {
                                           notification().info(
-                                              context, 'Invalid Quantity');
+                                              context, 'Quantity is required');
                                         }
-                                      } else {
-                                        notification()
-                                            .info(context, 'Invalid Quantity');
-                                      }
-                                    } else {
-                                      notification().info(
-                                          context, 'Quantity is required');
-                                    }
-                                  },
-                            buttonHeight: h / 14,
-                            width: w / 1.5,
-                            color: accept == '0'
-                                ? appBlue
-                                : Color.fromARGB(255, 186, 122, 12)),
+                                      },
+                                buttonHeight: h / 14,
+                                width: accept != '0' ? w / 2.3 : w / 1.5,
+                                color: accept == '0'
+                                    ? appBlue
+                                    : Color.fromARGB(255, 186, 122, 12)),
+                        accept != '0'
+                            ? DialogButton(
+                                text: 'Cancel Pickup',
+                                onTap: () {
+                                  pickupCancel();
+                                },
+                                buttonHeight: h / 14,
+                                width: w / 2.3,
+                                color: accept == '0'
+                                    ? appBlue
+                                    : Color.fromARGB(255, 13, 116, 18))
+                            : SizedBox()
+                      ],
+                    ),
                     isDelivery
                         ? Stack(
                             children: [
@@ -806,36 +836,245 @@ class _Map2State extends State<Map2> {
     );
   }
 
-  barcodeDataCount() {
-    setState(() {});
+  pickupCancel() {
+    Provider.of<ProviderS>(context, listen: false).isAppbarsheerOpen = false;
+    SystemChannels.textInput.invokeMethod('TextInput.show');
+    var h = MediaQuery.of(context).size.height;
+    var w = MediaQuery.of(context).size.width;
+    FocusScope.of(context).requestFocus(_focusNode);
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) => StatefulBuilder(builder: (context, setstate) {
+        return AlertDialog(
+          insetPadding: EdgeInsets.all(12),
+          content: Stack(
+            children: [
+              AbsorbPointer(
+                absorbing: isPickupRequest,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        alignment: Alignment.centerRight,
+                        child: IconButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            icon: Icon(Icons.close)),
+                      ),
+                      Text(
+                        'Cancel pickup',
+                        style: TextStyle(
+                            fontSize: 18.dp,
+                            color: black,
+                            fontWeight: FontWeight.normal),
+                      ),
+                      Divider(),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      InkWell(
+                        onTap: () async {
+                          final pickedFile = await _picker.pickImage(
+                              source: ImageSource.camera);
+                          if (pickedFile != null) {
+                            setstate(() {
+                              newImage = pickedFile.path;
+                              final bytes =
+                                  File(pickedFile!.path).readAsBytesSync();
+                              base64Image = base64Encode(bytes);
+                            });
+                          }
+                        },
+                        child: Center(
+                          child: DottedBorder(
+                            color: Colors.black38,
+                            borderType: BorderType.RRect,
+                            radius: Radius.circular(12),
+                            padding: EdgeInsets.all(6),
+                            child: ClipRRect(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(12)),
+                              child: Container(
+                                alignment: Alignment.center,
+                                height: h / 7,
+                                width: w / 2,
+                                child: newImage != ''
+                                    ? Image.file(
+                                        height: h / 7,
+                                        width: w / 2,
+                                        File(
+                                          newImage,
+                                        ),
+                                        fit: BoxFit.fill,
+                                      )
+                                    : Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.cloud_upload_outlined,
+                                            size: 40,
+                                            color: const Color.fromARGB(
+                                                96, 77, 76, 76),
+                                          ),
+                                          Text(
+                                              'Please upload \nyour image \n -Click here-',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.black38,
+                                                fontSize: 11.dp,
+                                              )),
+                                          x == 2
+                                              ? Container(
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    'image required',
+                                                    style: TextStyle(
+                                                        color: Colors.red),
+                                                  ),
+                                                )
+                                              : SizedBox()
+                                        ],
+                                      ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 12,
+                      ),
+                      TextFormField(
+                        autofocus: true,
+                        showCursor: true,
+                        controller: remarkController,
+                        style: TextStyle(color: black, fontSize: 13.sp),
+                        validator: (value) {},
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.edit),
+                          // contentPadding:
+                          //     EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                              borderSide: BorderSide(
+                                color: Colors.black12,
+                                // color: pink.withOpacity(0.1),
+                              )),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.black12,
+                              // color: pink.withOpacity(0.1),
+                            ),
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          hintText: 'add your remark',
+                          filled: true,
+                          hintStyle: TextStyle(fontSize: 13.dp),
+                          fillColor: white.withOpacity(0.3),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      DialogButton(
+                        onTap: () async {
+                          if (newImage != '') {
+                            if (remarkController.text.isNotEmpty) {
+                              setstate(() {
+                                isPickupRequest = true;
+                              });
+                              await getLocation(true);
+                              setstate(() {
+                                isPickupRequest = false;
+                              });
+                            } else {
+                              notification()
+                                  .warning(context, 'remark is required');
+                            }
+                          } else {
+                            notification()
+                                .warning(context, 'image is required');
+                          }
+                        },
+                        buttonHeight: h / 17,
+                        width: w / 1.5,
+                        color: Colors.blue,
+                        text: 'SAVE',
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              isPickupRequest
+                  ? Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      top: 0,
+                      child: Loader().loader(context))
+                  : SizedBox()
+            ],
+          ),
+        );
+      }),
+    );
   }
 
-  void getLocation() async {
+  getLocation(bool isCanselPickup) async {
     LocationPermission permission;
     permission = await Geolocator.requestPermission();
 
     if (permission == LocationPermission.deniedForever) {
-      await openAppSettings().then((value) => getLocation());
+      await openAppSettings().then((value) => getLocation(isCanselPickup));
 
-      _checkLocationPermission();
+      _checkLocationPermission(isCanselPickup);
       permission = await Geolocator.requestPermission();
     }
     position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     if (!mounted) return;
-    Future.delayed(const Duration(milliseconds: 200), () async {
-      setState(() {
-        position;
-        log(position.toString());
-      });
-      userLoaction();
+
+    setState(() {
+      position;
+      log(position.toString());
     });
+
+    if (isCanselPickup) {
+      setState(() {
+        isPickupRequest = true;
+      });
+      var res = await CustomApi().pickupCansel(
+          context,
+          Provider.of<ProviderS>(context, listen: false).pickId,
+          remarkController.text,
+          position!.latitude.toString(),
+          position!.longitude.toString(),
+          base64Image);
+      if (res == 1) {
+        newImage = '';
+        Navigator.pop(context);
+        remarkController.clear();
+      }
+
+      setState(() {
+        isPickupRequest = false;
+      });
+    }
+    userLoaction();
   }
 
-  Future<void> _checkLocationPermission() async {
+  Future<void> _checkLocationPermission(bool isCanselPickup) async {
     PermissionStatus permissionStatus = await Permission.location.status;
     if (permissionStatus == PermissionStatus.denied) {
-      await openAppSettings().then((value) => getLocation());
+      await openAppSettings().then((value) => getLocation(isCanselPickup));
     } else if (permissionStatus == PermissionStatus.granted) {}
   }
 

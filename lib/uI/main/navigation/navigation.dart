@@ -14,6 +14,7 @@ import 'package:flutter_application_2/provider/provider.dart';
 import 'package:flutter_application_2/uI/widget/diloag_button.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:keyboard_hider/keyboard_hider.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -21,8 +22,6 @@ import 'package:provider/provider.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
-// import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 import '../../../api/api.dart';
 import '../../../app_details/color.dart';
 import '../../../app_details/size.dart';
@@ -53,6 +52,7 @@ Position? position;
 
 class _NavigationScreenState extends State<NavigationScreen>
     with TickerProviderStateMixin {
+  Position? _currentPosition;
   late AnimationController _controller;
   late Animation<double> _animation;
   late AnimationController animationController;
@@ -65,6 +65,7 @@ class _NavigationScreenState extends State<NavigationScreen>
   bool button4 = false;
   bool button1 = true;
   bool page = false;
+  bool isPickupRequest = false;
   int x = 0;
   int _selectedIndex = 0;
   bool iconSize1 = false;
@@ -76,12 +77,17 @@ class _NavigationScreenState extends State<NavigationScreen>
   String bId = '';
   String uId = '';
   String dpCode = '';
+  String newImage = '';
   List youTube = [];
   int backTime = 0;
+  String base64Image = '';
   String pickupDevice = '';
+  final ImagePicker _picker = ImagePicker();
+  TextEditingController remarkController = TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   List iconList = [Icons.abc, Icons.abc, Icons.abc];
   String count = '';
+  final FocusNode _focusNode = FocusNode();
   final Geolocator _geolocator = Geolocator();
   void _onItemTapped(int index) {
     setState(() {
@@ -336,49 +342,6 @@ class _NavigationScreenState extends State<NavigationScreen>
                                   )),
                       ),
                     ),
-                    _selectedIndex == 1 && provider.isAppbarsheerOpen
-                        ? PopupMenuButton<int>(
-                            iconColor: white,
-                            itemBuilder: (context) => [
-                              // popupmenu item 1
-                              PopupMenuItem(
-                                onTap: () {
-                                  cancelButton();
-                                },
-                                value: 1,
-                                // row has two child icon and text.
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.star),
-                                    SizedBox(
-                                      // sized box with width 10
-                                      width: 10,
-                                    ),
-                                    Text("Cancel pickup")
-                                  ],
-                                ),
-                              ),
-                              // popupmenu item 2
-                              PopupMenuItem(
-                                value: 2,
-                                // row has two child icon and text
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.chrome_reader_mode),
-                                    SizedBox(
-                                      // sized box with width 10
-                                      width: 10,
-                                    ),
-                                    Text("About")
-                                  ],
-                                ),
-                              ),
-                            ],
-                            offset: Offset(0, 70),
-                            color: Colors.grey,
-                            elevation: 2,
-                          )
-                        : SizedBox(),
                   ],
                 ),
                 extendBodyBehindAppBar: true,
@@ -738,220 +701,50 @@ class _NavigationScreenState extends State<NavigationScreen>
     });
   }
 
-  cancelButton() {
-    var h = MediaQuery.of(context).size.height;
-    var w = MediaQuery.of(context).size.width;
+  Future<void> _getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
 
-    QuickAlert.show(
-      context: context,
-      type: QuickAlertType.custom,
-      barrierDismissible: true,
-      confirmBtnText: '       Save       ',
-      widget: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const Text(
-            'Pickup Cancellation',
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-          ),
-          Divider(),
-          SizedBox(
-            height: 12,
-          ),
-          Card(
-            child: Container(
-              height: h / 17,
-              padding: EdgeInsets.all(8),
-              alignment: Alignment.centerRight,
-              // width: 400,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5.0),
-                border: Border.all(
-                    color: black3, style: BorderStyle.solid, width: 0.80),
-              ),
-              child: DropdownButton(
-                isExpanded: true,
-                alignment: AlignmentDirectional.centerEnd,
-                hint: Container(
-                  alignment: Alignment.centerLeft,
-                  //and here
-                  child: Text(
-                    "Select reason",
-                    style: TextStyle(color: black1),
-                    textAlign: TextAlign.end,
-                  ),
-                ),
-                value: selectval, //implement initial value or selected value
-                onChanged: (value) {
-                  setState(() {
-                    //set state will update UI and State of your App
-                    selectval =
-                        value.toString(); //change selectval to new value
-                  });
-                },
-                items: listitems.map((itemone) {
-                  return DropdownMenuItem(
-                      value: itemone,
-                      child: Text(
-                        itemone,
-                        style: TextStyle(color: black2),
-                      ));
-                }).toList(),
-              ),
-            ),
-          ),
-        ],
-      ),
-      onConfirmBtnTap: () async {
-        if (1 < 5) {
-          await QuickAlert.show(
-            context: context,
-            type: QuickAlertType.error,
-            text: 'Please input something',
-          );
-          return;
-        }
-        Navigator.pop(context);
-        await Future.delayed(const Duration(milliseconds: 1000));
-        await QuickAlert.show(
-          context: context,
-          type: QuickAlertType.success,
-          text: "Phone number '' has been saved!.",
-        );
-      },
+    // Check if location services are enabled
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled, handle this scenario
+      return;
+    }
+
+    // Check location permissions
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission != LocationPermission.whileInUse &&
+          permission != LocationPermission.always) {
+        // Permissions are denied, handle this scenario
+        return;
+      }
+    }
+
+    // Get the current position
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
     );
 
-//  title: 'Custom',
-//  text: 'Custom Widget Alert',
-//  leadingImage: 'assets/custom.gif',
-  }
-// audio call all function are working
-  // void onUserLogin() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   var userId = await prefs.get(
-  //     'user_id',
-  //   );
+    setState(() {
+      _currentPosition = position;
+      log(_currentPosition.toString());
+    });
 
-  //   ZegoUIKitPrebuiltCallInvitationService().init(
-  //     uiConfig: ZegoCallInvitationUIConfig(),
-  //     invitationEvents: ZegoUIKitPrebuiltCallInvitationEvents(
-  //       onOutgoingCallCancelButtonPressed: () {
-  //         print(
-  //             'xxxxxqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxaaaa');
-  //       },
-  //       onError: (p0) {
-  //         print(p0);
-  //         print(
-  //             'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxaaaa');
-  //       },
-  //       onOutgoingCallDeclined: (callID, callee, customData) {
-  //         Navigator.pop(context);
-  //         print(customData);
-  //         print(callID);
-  //         print(callee);
-  //         print(
-  //             'xxxxxxxxxxxxxxxxxsssssssssssxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxaaaa');
-  //       },
-
-  //       onInvitationUserStateChanged: (value) {
-  //         print("$value xxxxxxxxxxxxxxxxxxxxxxxxxaaaaaaaaaaaaaaaa");
-  //         if (value[0].state ==
-  //             ZegoSignalingPluginInvitationUserState.rejected) {
-  //           notification().warning(context, 'rejected');
-  //           Navigator.pop(context);
-  //         }
-  //         if (value[0].state ==
-  //             ZegoSignalingPluginInvitationUserState.cancelled) {
-  //           notification().warning(context, 'cancelled');
-  //           Navigator.pop(context);
-  //         }
-  //         if (value[0].state ==
-  //             ZegoSignalingPluginInvitationUserState.offline) {
-  //           notification().warning(context, 'offline');
-  //         }
-  //         if (value[0].state ==
-  //             ZegoSignalingPluginInvitationUserState.timeout) {
-  //           notification().warning(context, 'timeout');
-  //         }
-  //         if (value[0].state == ZegoSignalingPluginInvitationUserState.quited) {
-  //           notification().warning(context, 'quited');
-  //         }
-  //         print(
-  //             'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxaaaa');
-  //       },
-  //       onOutgoingCallTimeout: (callID, callees, isVideoCall) {
-  //         Navigator.pop(context);
-  //       },
-  //       onIncomingCallCanceled: (callID, caller, customData) {
-  //         print(
-  //             '--------------------------------------------------------------------------------');
-
-  //         if (callID != userId) {}
-  //       },
-  //       onIncomingCallDeclineButtonPressed: () {
-  //         print(
-  //             '------ssssssssssssss--------------------------------------------------------------------------');
-  //       },
-
-  //       // onOutgoingCallDeclined: (callID, callee, customData) async {
-  //       //   // ZegoUIKitPrebuiltCallInvitationService().cancel(callees: [callee]);
-  //       //   // await notification().info(context, 'call canceled');
-  //       //   // await ZegoCallEndEvent(
-  //       //   //     callID: callID,
-  //       //   //     reason: ZegoCallEndReason.kickOut,
-  //       //   //     isFromMinimizing: true);
-  //       //   back2('Call Declined');
-  //       // },
-  //       onOutgoingCallRejectedCauseBusy: (callID, callee, customData) {
-  //         print(
-  //             '------------sssssssssssssss--------------------------------------------------------------------');
-  //       },
-  //     ),
-  //     events: ZegoUIKitPrebuiltCallEvents(room: ZegoCallRoomEvents(
-  //       onStateChanged: (p0) {
-  //         print(p0);
-  //         print('ddddddddddddddddddddddddddddddddddddddddddddd');
-  //       },
-  //     )),
-  //     notificationConfig: ZegoCallInvitationNotificationConfig(
-  //         androidNotificationConfig: ZegoCallAndroidNotificationConfig(
-  //             channelID: "ZegoUIKit",
-  //             channelName: "Call Notifications",
-  //             sound: "notification",
-  //             icon: "appicon",
-  //             showFullScreen: true)),
-  //     appID: appId /*input your AppID*/,
-  //     appSign: signId /*input your AppSign*/,
-  //     userID: userId.toString(),
-  //     userName: userId.toString(),
-  //     plugins: [ZegoUIKitSignalingPlugin()],
-  //     requireConfig: (ZegoCallInvitationData data) {
-  //       var config = (data.invitees.length > 1)
-  //           ? ZegoCallType.videoCall == data.type
-  //               ? ZegoUIKitPrebuiltCallConfig.groupVideoCall()
-  //               : ZegoUIKitPrebuiltCallConfig.groupVoiceCall()
-  //           : ZegoCallType.videoCall == data.type
-  //               ? ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall()
-  //               : ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall();
-
-  //       // Modify your custom configurations here.
-  //       config
-  //         ..turnOnCameraWhenJoining = false
-  //         ..turnOnMicrophoneWhenJoining = false
-  //         ..useSpeakerWhenJoining = true;
-  //       config.topMenuBar.isVisible = true;
-  //       ZegoUIKitPrebuiltCallInvitationService()
-  //         ..innerText.incomingCallPageAcceptButton = "Accept"
-  //         ..innerText.incomingCallPageDeclineButton = "Decline";
-
-  //       return config;
-  //     },
-  //   );
-  // }
-
-  back2(String text) async {
-    await notification().warning(context, text);
-    Navigator.pop(context, true);
+    var res = await CustomApi().pickupCansel(
+        context,
+        Provider.of<ProviderS>(context, listen: false).pickId,
+        remarkController.text,
+        _currentPosition!.latitude.toString(),
+        _currentPosition!.longitude.toString(),
+        base64Image);
+    if (res == 1) {
+      newImage = '';
+      Navigator.pop(context);
+      remarkController.clear();
+    }
   }
 }
 

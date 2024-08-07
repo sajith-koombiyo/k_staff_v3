@@ -1,18 +1,19 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter_application_2/uI/main/map/barcode_scanner/barcode_scanner.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_application_2/api/api.dart';
 import 'package:flutter_application_2/app_details/color.dart';
 import 'package:flutter_application_2/class/location.dart';
 import 'package:flutter_application_2/provider/provider.dart';
-
 import 'package:flutter_application_2/uI/widget/diloag_button.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:geolocator/geolocator.dart';
@@ -36,7 +37,12 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
+  bool isPickupRequest = false;
 
+  String base64Image = '';
+  final FocusNode _focusNode = FocusNode();
+  final ImagePicker _picker = ImagePicker();
+  TextEditingController remarkController = TextEditingController();
   BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
   TextEditingController quantity = TextEditingController();
   Position? position;
@@ -55,6 +61,7 @@ class _MapScreenState extends State<MapScreen> {
   String phone = '';
   String pickId = '';
   String COD = '';
+  String newImage = '';
   String MarkerTempId = '';
   String scanDataQnt = '';
   int status0Count = 0;
@@ -76,6 +83,7 @@ class _MapScreenState extends State<MapScreen> {
   userLocation() async {
     setState(() {
       isLoading = true;
+      _marker.clear();
     });
     status0Count = 0;
     status1Count = 0;
@@ -134,6 +142,7 @@ class _MapScreenState extends State<MapScreen> {
                 address = pickupLocation[index]['address'];
                 phone = pickupLocation[index]['phone'];
                 pickId = pickupLocation[index]['pickr_id'];
+                Provider.of<ProviderS>(context, listen: false).pickId = pickId;
                 accept = pickupLocation[index]['accept'];
                 // MapUtils.openMap(list[index]['lat'], list[index]['lon']);
               });
@@ -199,7 +208,7 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     userLocation();
-    getLocation();
+    getLocation(false);
     _signController.addListener(() {
       log('Value changed');
     });
@@ -333,6 +342,24 @@ class _MapScreenState extends State<MapScreen> {
                     ),
                   ),
                 ),
+
+                Positioned(
+                  top: 200,
+                  right: 10,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 100),
+                    child: FloatingActionButton.small(
+                        heroTag: '2',
+                        backgroundColor: white.withOpacity(0.6),
+                        child: Icon(
+                          Icons.refresh,
+                          color: Color.fromARGB(255, 2, 135, 244),
+                        ),
+                        onPressed: () {
+                          userLocation();
+                        }),
+                  ),
+                ),
                 Provider.of<ProviderS>(context, listen: false).isAppbarsheerOpen
                     ? appbarSheet()
                     : SizedBox(),
@@ -342,6 +369,198 @@ class _MapScreenState extends State<MapScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  pickupCancel() {
+    Provider.of<ProviderS>(context, listen: false).isAppbarsheerOpen = false;
+    SystemChannels.textInput.invokeMethod('TextInput.show');
+    var h = MediaQuery.of(context).size.height;
+    var w = MediaQuery.of(context).size.width;
+    FocusScope.of(context).requestFocus(_focusNode);
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) => StatefulBuilder(builder: (context, setstate) {
+        return AlertDialog(
+          insetPadding: EdgeInsets.all(12),
+          content: Stack(
+            children: [
+              AbsorbPointer(
+                absorbing: isPickupRequest,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        alignment: Alignment.centerRight,
+                        child: IconButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            icon: Icon(Icons.close)),
+                      ),
+                      Text(
+                        'Cancel pickup',
+                        style: TextStyle(
+                            fontSize: 18.dp,
+                            color: black,
+                            fontWeight: FontWeight.normal),
+                      ),
+                      Divider(),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      InkWell(
+                        onTap: () async {
+                          final pickedFile = await _picker.pickImage(
+                              source: ImageSource.camera);
+                          if (pickedFile != null) {
+                            setstate(() {
+                              newImage = pickedFile.path;
+                              final bytes =
+                                  File(pickedFile!.path).readAsBytesSync();
+                              base64Image = base64Encode(bytes);
+                            });
+                          }
+                        },
+                        child: Center(
+                          child: DottedBorder(
+                            color: Colors.black38,
+                            borderType: BorderType.RRect,
+                            radius: Radius.circular(12),
+                            padding: EdgeInsets.all(6),
+                            child: ClipRRect(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(12)),
+                              child: Container(
+                                alignment: Alignment.center,
+                                height: h / 7,
+                                width: w / 2,
+                                child: newImage != ''
+                                    ? Image.file(
+                                        height: h / 7,
+                                        width: w / 2,
+                                        File(
+                                          newImage,
+                                        ),
+                                        fit: BoxFit.fill,
+                                      )
+                                    : Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.cloud_upload_outlined,
+                                            size: 40,
+                                            color: const Color.fromARGB(
+                                                96, 77, 76, 76),
+                                          ),
+                                          Text(
+                                              'Please upload \nyour image \n -Click here-',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.black38,
+                                                fontSize: 11.dp,
+                                              )),
+                                          x == 2
+                                              ? Container(
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    'image required',
+                                                    style: TextStyle(
+                                                        color: Colors.red),
+                                                  ),
+                                                )
+                                              : SizedBox()
+                                        ],
+                                      ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 12,
+                      ),
+                      TextFormField(
+                        autofocus: true,
+                        showCursor: true,
+                        controller: remarkController,
+                        style: TextStyle(color: black, fontSize: 13.sp),
+                        validator: (value) {},
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.edit),
+                          // contentPadding:
+                          //     EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                              borderSide: BorderSide(
+                                color: Colors.black12,
+                                // color: pink.withOpacity(0.1),
+                              )),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.black12,
+                              // color: pink.withOpacity(0.1),
+                            ),
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          hintText: 'add your remark',
+                          filled: true,
+                          hintStyle: TextStyle(fontSize: 13.dp),
+                          fillColor: white.withOpacity(0.3),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      DialogButton(
+                        onTap: () async {
+                          if (newImage != '') {
+                            if (remarkController.text.isNotEmpty) {
+                              setstate(() {
+                                isPickupRequest = true;
+                              });
+                              await getLocation(true);
+                              setstate(() {
+                                isPickupRequest = false;
+                              });
+                            } else {
+                              notification()
+                                  .warning(context, 'remark is required');
+                            }
+                          } else {
+                            notification()
+                                .warning(context, 'image is required');
+                          }
+                        },
+                        buttonHeight: h / 17,
+                        width: w / 1.5,
+                        color: Colors.blue,
+                        text: 'SAVE',
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              isPickupRequest
+                  ? Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      top: 0,
+                      child: Loader().loader(context))
+                  : SizedBox()
+            ],
+          ),
+        );
+      }),
     );
   }
 
@@ -386,7 +605,6 @@ class _MapScreenState extends State<MapScreen> {
                   height: 300,
                   backgroundColor: Color.fromARGB(255, 9, 1, 51)!,
                 ),
-
                 Card(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -420,7 +638,6 @@ class _MapScreenState extends State<MapScreen> {
                     ],
                   ),
                 ),
-
                 Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: DialogButton(
@@ -432,13 +649,6 @@ class _MapScreenState extends State<MapScreen> {
                       width: w / 1.5,
                       color: Colors.green),
                 ),
-                // IconButton(
-                //   key: const Key('exportSVG'),
-                //   icon: const Icon(Icons.share),
-                //   color: Colors.blue,
-                //   onPressed: () => exportSVG(context),
-                //   tooltip: 'Export SVG',
-                // ),
               ],
             ),
           ),
@@ -475,12 +685,12 @@ class _MapScreenState extends State<MapScreen> {
     Navigator.pop(context);
   }
 
-  void getLocation() async {
+  getLocation(bool isCancelPickup) async {
     LocationPermission permission;
     permission = await Geolocator.requestPermission();
 
     if (permission == LocationPermission.deniedForever) {
-      await openAppSettings().then((value) => getLocation());
+      await openAppSettings().then((value) => getLocation(isCancelPickup));
 
       // _checkLocationPermission();
       permission = await Geolocator.requestPermission();
@@ -488,19 +698,39 @@ class _MapScreenState extends State<MapScreen> {
     position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     if (!mounted) return;
-    Future.delayed(const Duration(milliseconds: 200), () async {
-      setState(() {
-        position;
-        log(position.toString());
-      });
-      userLocation();
+
+    setState(() {
+      position;
+      log(position.toString());
     });
+    if (isCancelPickup) {
+      setState(() {
+        isPickupRequest = true;
+      });
+      var res = await CustomApi().pickupCansel(
+          context,
+          Provider.of<ProviderS>(context, listen: false).pickId,
+          remarkController.text,
+          position!.latitude.toString(),
+          position!.longitude.toString(),
+          base64Image);
+      if (res == 1) {
+        newImage = '';
+        remarkController.clear();
+        Navigator.pop(context);
+      }
+
+      setState(() {
+        isPickupRequest = false;
+      });
+    }
+    userLocation();
   }
 
-  Future<void> _checkLocationPermission() async {
+  Future<void> _checkLocationPermission(bool isCancelPickup) async {
     PermissionStatus permissionStatus = await Permission.location.status;
     if (permissionStatus == PermissionStatus.denied) {
-      await openAppSettings().then((value) => getLocation());
+      await openAppSettings().then((value) => getLocation(isCancelPickup));
     } else if (permissionStatus == PermissionStatus.granted) {}
   }
 
@@ -699,93 +929,115 @@ class _MapScreenState extends State<MapScreen> {
                           : SlideAnimation(
                               verticalOffset: 200,
                               duration: Duration(milliseconds: 900),
-                              child: DialogButton(
-                                  text: accept == '0'
-                                      ? 'Accept'
-                                      // : sign == false
-                                      //     ? 'Signature'
-                                      : "Pickup",
-                                  onTap: accept == '0'
-                                      ? () async {
-                                          setState(() {
-                                            isLoading = true;
-                                          });
-                                          await CustomApi()
-                                              .sendSms(phone, pickId, context);
-                                          await userLocation();
-                                          setState(() {
-                                            Provider.of<ProviderS>(context,
-                                                    listen: false)
-                                                .isAppbarsheerOpen = false;
+                              child: Row(
+                                mainAxisAlignment: accept != '0'
+                                    ? MainAxisAlignment.spaceAround
+                                    : MainAxisAlignment.center,
+                                children: [
+                                  DialogButton(
+                                      text: accept == '0'
+                                          ? 'Accept'
+                                          // : sign == false
+                                          //     ? 'Signature'
+                                          : "Pickup",
+                                      onTap: accept == '0'
+                                          ? () async {
+                                              setState(() {
+                                                isLoading = true;
+                                              });
+                                              await CustomApi().sendSms(
+                                                  phone, pickId, context);
+                                              await userLocation();
+                                              setState(() {
+                                                Provider.of<ProviderS>(context,
+                                                        listen: false)
+                                                    .isAppbarsheerOpen = false;
 
-                                            isLoading = false;
-                                          });
-                                        }
-                                      // : sign == false
-                                      //     ? () {
-                                      //         print('ffffffffffffffffffffff');
-                                      //         siganature();
-                                      //       }
-                                      : () async {
-                                          if (pValue.barcodeListGoogleMap
-                                                  .isNotEmpty ||
-                                              pValue.scanQnt.text.isNotEmpty) {
-                                            int qnt = int.parse(pValue
-                                                    .barcodeListGoogleMap
-                                                    .isEmpty
-                                                ? pValue.scanQnt.text
-                                                : pValue
-                                                    .barcodeListGoogleMap.length
-                                                    .toString());
-                                            if (qnt < 5000) {
-                                              if (qnt != 0) {
-                                                setState(() {
-                                                  isLoading = true;
-                                                });
+                                                isLoading = false;
+                                              });
+                                            }
+                                          // : sign == false
+                                          //     ? () {
+                                          //         print('ffffffffffffffffffffff');
+                                          //         siganature();
+                                          //       }
+                                          : () async {
+                                              if (pValue.barcodeListGoogleMap
+                                                      .isNotEmpty ||
+                                                  pValue.scanQnt.text
+                                                      .isNotEmpty) {
+                                                int qnt = int.parse(pValue
+                                                        .barcodeListGoogleMap
+                                                        .isEmpty
+                                                    ? pValue.scanQnt.text
+                                                    : pValue
+                                                        .barcodeListGoogleMap
+                                                        .length
+                                                        .toString());
+                                                if (qnt < 5000) {
+                                                  if (qnt != 0) {
+                                                    setState(() {
+                                                      isLoading = true;
+                                                    });
 
-                                                await CustomApi()
-                                                    .pickupComplete(
-                                                        context,
-                                                        pickId,
-                                                        quantity.text,
-                                                        phone,
-                                                        'lat',
-                                                        'lon',
-                                                        'pick');
+                                                    await CustomApi()
+                                                        .pickupComplete(
+                                                            context,
+                                                            pickId,
+                                                            quantity.text,
+                                                            phone,
+                                                            'lat',
+                                                            'lon',
+                                                            'pick');
 
-                                                _marker.clear();
-                                                await userLocation();
-                                                // _marker.remove(value)
-                                                await CustomApi().sendSms(
-                                                    phone, pickId, context);
+                                                    _marker.clear();
+                                                    await userLocation();
+                                                    // _marker.remove(value)
+                                                    await CustomApi().sendSms(
+                                                        phone, pickId, context);
 
-                                                setState(() {
-                                                  Provider.of<ProviderS>(
-                                                              context,
-                                                              listen: false)
-                                                          .isAppbarsheerOpen =
-                                                      false;
+                                                    setState(() {
+                                                      Provider.of<ProviderS>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .isAppbarsheerOpen =
+                                                          false;
 
-                                                  isLoading = false;
-                                                });
+                                                      isLoading = false;
+                                                    });
+                                                  } else {
+                                                    notification().info(context,
+                                                        'Invalid Quantity');
+                                                  }
+                                                } else {
+                                                  notification().info(context,
+                                                      'Invalid Quantity');
+                                                }
                                               } else {
                                                 notification().info(context,
-                                                    'Invalid Quantity');
+                                                    'Quantity is required');
                                               }
-                                            } else {
-                                              notification().info(
-                                                  context, 'Invalid Quantity');
-                                            }
-                                          } else {
-                                            notification().info(context,
-                                                'Quantity is required');
-                                          }
-                                        },
-                                  buttonHeight: h / 14,
-                                  width: w / 1.5,
-                                  color: accept == '0'
-                                      ? appBlue
-                                      : Color.fromARGB(255, 186, 122, 12)),
+                                            },
+                                      buttonHeight: h / 14,
+                                      width: accept != '0' ? w / 2.3 : w / 1.5,
+                                      color: accept == '0'
+                                          ? appBlue
+                                          : Color.fromARGB(255, 186, 122, 12)),
+                                  accept != '0'
+                                      ? DialogButton(
+                                          text: 'Cancel Pickup',
+                                          onTap: () {
+                                            pickupCancel();
+                                          },
+                                          buttonHeight: h / 14,
+                                          width: w / 2.3,
+                                          color: accept == '0'
+                                              ? appBlue
+                                              : Color.fromARGB(
+                                                  255, 13, 116, 18))
+                                      : SizedBox()
+                                ],
+                              ),
                             ),
                       isDelivery
                           ? SlideAnimation(
@@ -845,71 +1097,5 @@ class _MapScreenState extends State<MapScreen> {
         ),
       ),
     );
-  }
-
-  Future<void> scanBarcodeNormal() async {
-    String barcodeScanRes;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', 'Cancel', true, ScanMode.BARCODE);
-    } on PlatformException {
-      barcodeScanRes = 'Failed to get platform version.';
-    }
-    if (!mounted) return;
-
-    setState(() {
-      var _scanBarcode = barcodeScanRes;
-      if (_scanBarcode == "-1") {
-        quantity.text = "";
-      } else {
-        barcodeScanData.add(_scanBarcode.toString());
-
-        quantity.text = " Quantity ${barcodeScanData.length.toString()}";
-      }
-    });
-  }
-
-  Future<void> scanBarcodeNormal2() async {
-    // QrImageView(
-    //   data: 'This QR code will show the error state instead',
-    //   version: 1,
-    //   size: 320,
-    //   gapless: false,
-    //   errorStateBuilder: (cxt, err) {
-    //     return Container(
-    //       child: Center(
-    //         child: Text(
-    //           'Uh oh! Something went wrong...',
-    //           textAlign: TextAlign.center,
-    //         ),
-    //       ),
-    //     );
-    //   },
-    // );
-
-    String barcodeScanRes;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-        '#ff6666',
-        'Cancel',
-        true,
-        ScanMode.BARCODE,
-      );
-    } on PlatformException {
-      barcodeScanRes = 'Failed to get platform version.';
-    }
-    if (!mounted) return;
-
-    setState(() {
-      var _scanBarcode = barcodeScanRes;
-      if (_scanBarcode == "-1") {
-        // search.text = "";
-      } else {
-        // search.text = _scanBarcode.toString();
-        // getData(true);
-      }
-    });
   }
 }

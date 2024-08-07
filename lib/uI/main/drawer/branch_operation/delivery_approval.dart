@@ -3,8 +3,14 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/api/api.dart';
 import 'package:flutter_application_2/app_details/color.dart';
+import 'package:flutter_application_2/class/class.dart';
+import 'package:flutter_application_2/provider/provider.dart';
+import 'package:flutter_application_2/uI/widget/nothig_found.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
+
+import '../../navigation/navigation.dart';
 
 class CODZeroApproval extends StatefulWidget {
   const CODZeroApproval({super.key});
@@ -23,6 +29,7 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
     {'date': '2023/01/23'},
     {'date': '2023/01/24'}
   ];
+  List dataList = [];
   List listitems = [
     'All',
     'Gampaha',
@@ -30,11 +37,13 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
     'Colombo',
     'Nugegoda',
   ];
+  List branchRiders = [];
   String? selectval;
+  bool isLoading = false;
   List<Map<String, dynamic>> depositListTemp = [];
   @override
   void initState() {
-    data();
+    branchRider();
     setState(() {
       depositListTemp = depositList;
     });
@@ -42,298 +51,392 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
     super.initState();
   }
 
-  data() async {
-    var res = await CustomApi().deliveryApprovals(context, '28');
+  branchRider() async {
+    setState(() {
+      isLoading = true;
+    });
+    var res = await CustomApi().deliveryApprovalsRiderList(context);
     log(res.toString());
+    setState(() {
+      branchRiders = res;
+      isLoading = false;
+    });
+  }
+
+  data(String id) async {
+    setState(() {
+      isLoading = true;
+    });
+    var res = await CustomApi().deliveryApprovals(context, id);
+    log(res.toString());
+    setState(() {
+      dataList = res;
+      isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        backgroundColor: appliteBlue,
-        bottom: PreferredSize(
-            preferredSize: Size(w, 70),
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 12),
+    return Consumer<ProviderS>(
+      builder: (context, provider, child) => Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+          backgroundColor: appliteBlue,
+          bottom: PreferredSize(
+              preferredSize: Size(w, 70),
               child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Card(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    alignment: Alignment.centerRight,
-                    width: w,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5.0),
-                      border: Border.all(
-                          color: black3, style: BorderStyle.solid, width: 0.80),
-                    ),
-                    child: DropdownButton(
-                      underline: SizedBox(),
-                      isExpanded: true,
-                      alignment: AlignmentDirectional.centerEnd,
-                      hint: Container(
-                        //and here
-                        child: Text(
-                          "Select Rider                                                         ",
-                          style: TextStyle(color: black1),
-                          textAlign: TextAlign.start,
-                        ),
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Card(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      alignment: Alignment.centerRight,
+                      width: w,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5.0),
+                        border: Border.all(
+                            color: black3,
+                            style: BorderStyle.solid,
+                            width: 0.80),
                       ),
-                      value:
-                          selectval, //implement initial value or selected value
-                      onChanged: (value) {
-                        setState(() {
-                          //set state will update UI and State of your App
-                          selectval =
-                              value.toString(); //change selectval to new value
-                        });
-                      },
-                      items: listitems.map((itemone) {
-                        return DropdownMenuItem(
-                            value: itemone,
-                            child: Text(
-                              itemone,
-                              style: TextStyle(color: black2),
-                            ));
-                      }).toList(),
+                      child: DropdownButton(
+                        underline: SizedBox(),
+                        isExpanded: true,
+                        alignment: AlignmentDirectional.centerEnd,
+                        hint: Container(
+                          //and here
+                          child: Text(
+                            "Select Rider                                                         ",
+                            style: TextStyle(color: black1),
+                            textAlign: TextAlign.start,
+                          ),
+                        ),
+                        value:
+                            selectval, //implement initial value or selected value
+                        onChanged: (value) {
+                          setState(() {
+                            //set state will update UI and State of your App
+                            selectval = value.toString();
+                            data(selectval
+                                .toString()); //change selectval to new value
+                          });
+                        },
+                        items: branchRiders.map((itemone) {
+                          return DropdownMenuItem(
+                              value: itemone['user_id'],
+                              child: Text(
+                                itemone['staff_name'],
+                                style: TextStyle(color: black2),
+                              ));
+                        }).toList(),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            )),
-        title: Text(
-          'Delivery Approval',
-          style: TextStyle(
-            fontSize: 18.dp,
-            color: white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(
-              Icons.arrow_back_ios_new,
+              )),
+          title: Text(
+            'Delivery Approval',
+            style: TextStyle(
+              fontSize: 18.dp,
               color: white,
-            )),
-      ),
-      backgroundColor: white,
-      body: ListView.builder(
-        shrinkWrap: true,
-        itemCount: depositList.length,
-        itemBuilder: (context, index) => Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: InkWell(
-            onTap: () {
-              codApproval();
-            },
-            child: Card(
-              // color: Color.fromARGB(255, 217, 238, 255),
-              elevation: 20,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: w / 3,
-                          child: Row(
-                            children: [
-                              Text(
-                                "ID",
-                                style: TextStyle(
-                                  fontSize: 17.dp,
-                                  color: black,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Text(
-                          "- 0711672439",
-                          style: TextStyle(
-                            fontSize: 17.dp,
-                            color: black,
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: w / 3,
-                          child: Row(
-                            children: [
-                              Text(
-                                "Receiver name",
-                                style: TextStyle(
-                                  fontSize: 12.dp,
-                                  color: black,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Text(
-                          "- Darshana",
-                          style: TextStyle(
-                            fontSize: 12.dp,
-                            color: black,
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          width: w / 3,
-                          child: Text(
-                            "Address",
-                            style: TextStyle(
-                              fontSize: 12.dp,
-                              color: black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: w / 2,
-                          child: Text(
-                            "- 106/ 5 ihalagame Kirindiwela ",
-                            style: TextStyle(
-                              fontSize: 12.dp,
-                              color: black,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: w / 3,
-                          child: Text(
-                            "Receiver phone",
-                            style: TextStyle(
-                              fontSize: 12.dp,
-                              color: black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          "- 0711672439",
-                          style: TextStyle(
-                            fontSize: 12.dp,
-                            color: black,
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: w / 3,
-                          child: Text(
-                            "From Branch",
-                            style: TextStyle(
-                              fontSize: 12.dp,
-                              color: black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          "- Kurunegala",
-                          style: TextStyle(
-                            fontSize: 12.dp,
-                            color: black,
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: w / 3,
-                          child: Text(
-                            "To branch",
-                            style: TextStyle(
-                              fontSize: 12.dp,
-                              color: black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          "- 0711672439",
-                          style: TextStyle(
-                            fontSize: 12.dp,
-                            color: black,
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          child: Text(
-                            "Remark",
-                            style: TextStyle(
-                              fontSize: 12.dp,
-                              color: black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        Flexible(
-                          child: Text(
-                            "- 0711672439 sjnjna ajb ajba jabj a ajbd",
-                            style: TextStyle(
-                              fontSize: 12.dp,
-                              color: black,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Card(
-                      margin: EdgeInsets.zero,
-                      elevation: 20,
-                      child: Divider(
-                        color: Color.fromARGB(255, 138, 163, 192),
-                        thickness: 10,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 0,
-                    ),
-                  ],
-                ),
-              ),
+              fontWeight: FontWeight.bold,
             ),
           ),
+          leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: white,
+              )),
+        ),
+        backgroundColor: white,
+        body: Stack(
+          children: [
+            dataList.isEmpty && isLoading == false
+                ? SizedBox(
+                    height: h,
+                    width: w,
+                    child: Column(
+                      children: [
+                        Center(child: NoData()),
+                      ],
+                    ))
+                : ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: dataList.length,
+                    itemBuilder: (context, index) => Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: InkWell(
+                        onTap: () {
+                          codApproval();
+                        },
+                        child: Card(
+                          // color: Color.fromARGB(255, 217, 238, 255),
+                          elevation: 20,
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      width: w / 3,
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            "ID",
+                                            style: TextStyle(
+                                              fontSize: 17.dp,
+                                              color: black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Text(
+                                      "- ${dataList[index]['waybill_id']}",
+                                      style: TextStyle(
+                                        fontSize: 17.dp,
+                                        color: black,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      width: w / 3,
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            "Receiver name",
+                                            style: TextStyle(
+                                              fontSize: 12.dp,
+                                              color: black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Text(
+                                      "- ${dataList[index]['name']}",
+                                      style: TextStyle(
+                                        fontSize: 12.dp,
+                                        color: black,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      width: w / 3,
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            "Customer name",
+                                            style: TextStyle(
+                                              fontSize: 12.dp,
+                                              color: black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Text(
+                                      "- ${dataList[index]['cust_name']}",
+                                      style: TextStyle(
+                                        fontSize: 12.dp,
+                                        color: black,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      width: w / 3,
+                                      child: Text(
+                                        "Address",
+                                        style: TextStyle(
+                                          fontSize: 12.dp,
+                                          color: black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: w / 2,
+                                      child: Text(
+                                        "- ${dataList[index]['address']}",
+                                        style: TextStyle(
+                                          fontSize: 12.dp,
+                                          color: black,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      width: w / 3,
+                                      child: Text(
+                                        "To branch",
+                                        style: TextStyle(
+                                          fontSize: 12.dp,
+                                          color: black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    Card(
+                                      color: Colors.amberAccent,
+                                      elevation: 20,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          "${dataList[index]['status']}",
+                                          style: TextStyle(
+                                            fontSize: 12.dp,
+                                            color: black,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      width: w / 3,
+                                      child: Text(
+                                        "Receiver phone",
+                                        style: TextStyle(
+                                          fontSize: 12.dp,
+                                          color: black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      "- ${dataList[index]['phone']}",
+                                      style: TextStyle(
+                                        fontSize: 12.dp,
+                                        color: black,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      width: w / 3,
+                                      child: Text(
+                                        "From Branch",
+                                        style: TextStyle(
+                                          fontSize: 12.dp,
+                                          color: black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      "- Kurunegala",
+                                      style: TextStyle(
+                                        fontSize: 12.dp,
+                                        color: black,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      width: w / 3,
+                                      child: Text(
+                                        "To branch",
+                                        style: TextStyle(
+                                          fontSize: 12.dp,
+                                          color: black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      "- 0711672439",
+                                      style: TextStyle(
+                                        fontSize: 12.dp,
+                                        color: black,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      width: w / 3,
+                                      child: Text(
+                                        "Remark",
+                                        style: TextStyle(
+                                          fontSize: 12.dp,
+                                          color: black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    Flexible(
+                                      child: Text(
+                                        "- ${dataList[index]['cutomer_remarks']}",
+                                        style: TextStyle(
+                                          fontSize: 12.dp,
+                                          color: black,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Card(
+                                  margin: EdgeInsets.zero,
+                                  elevation: 20,
+                                  child: Divider(
+                                    color: Color.fromARGB(255, 138, 163, 192),
+                                    thickness: 10,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 0,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+            isLoading ? Loader().loader(context) : SizedBox(),
+            provider.isanotherUserLog ? UserLoginCheck() : SizedBox()
+          ],
         ),
       ),
     );
