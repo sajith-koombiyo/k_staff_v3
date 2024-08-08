@@ -5,7 +5,9 @@ import 'package:flutter_application_2/api/api.dart';
 import 'package:flutter_application_2/app_details/color.dart';
 import 'package:flutter_application_2/class/class.dart';
 import 'package:flutter_application_2/provider/provider.dart';
+import 'package:flutter_application_2/uI/widget/custom_textField.dart';
 import 'package:flutter_application_2/uI/widget/nothig_found.dart';
+import 'package:flutter_application_2/uI/widget/textField.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
@@ -21,6 +23,7 @@ class CODZeroApproval extends StatefulWidget {
 
 class _CODZeroApprovalState extends State<CODZeroApproval> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  int x = 0;
   List<Map<String, dynamic>> depositList = [
     {'date': '2023/01/23'},
     {'date': '2023/11/23'},
@@ -44,6 +47,7 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
   @override
   void initState() {
     branchRider();
+    data('3');
     setState(() {
       depositListTemp = depositList;
     });
@@ -176,7 +180,7 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
                           codApproval();
                         },
                         child: Card(
-                          // color: Color.fromARGB(255, 217, 238, 255),
+                          color: Color.fromARGB(255, 179, 196, 210),
                           elevation: 20,
                           child: Padding(
                             padding: const EdgeInsets.all(12.0),
@@ -291,12 +295,15 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
                                     ),
                                   ],
                                 ),
+                                SizedBox(
+                                  height: 10,
+                                ),
                                 Row(
                                   children: [
                                     SizedBox(
                                       width: w / 3,
                                       child: Text(
-                                        "To branch",
+                                        "Status",
                                         style: TextStyle(
                                           fontSize: 12.dp,
                                           color: black,
@@ -321,6 +328,9 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
                                     ),
                                   ],
                                 ),
+                                SizedBox(
+                                  height: 10,
+                                ),
                                 Row(
                                   children: [
                                     SizedBox(
@@ -338,7 +348,7 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
                                       "- ${dataList[index]['phone']}",
                                       style: TextStyle(
                                         fontSize: 12.dp,
-                                        color: black,
+                                        color: Color.fromARGB(255, 46, 19, 196),
                                         fontWeight: FontWeight.normal,
                                       ),
                                     ),
@@ -416,12 +426,15 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
                                     ),
                                   ],
                                 ),
+                                SizedBox(
+                                  height: 10,
+                                ),
                                 Card(
                                   margin: EdgeInsets.zero,
-                                  elevation: 20,
+                                  elevation: 10,
                                   child: Divider(
-                                    color: Color.fromARGB(255, 138, 163, 192),
-                                    thickness: 10,
+                                    color: Color.fromARGB(255, 127, 156, 190),
+                                    thickness: 15,
                                   ),
                                 ),
                                 SizedBox(
@@ -447,14 +460,83 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
       context: context,
       type: QuickAlertType.custom,
       barrierDismissible: true,
-      confirmBtnText: 'Confirm',
-      customAsset: 'assets/3.PNG',
-      widget: Container(
-          alignment: Alignment.center,
-          child: Text(
-            'Confirm your order',
-            style: TextStyle(fontSize: 18),
-          )),
+      confirmBtnText: 'SAVE',
+      // width: double.infinity,
+      widget: StatefulBuilder(builder: (context, setState) {
+        return Column(
+          children: [
+            InkWell(
+              onTap: () {
+                setState(() {
+                  x = 1;
+                });
+              },
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Oder Confirm',
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.w600),
+                          )),
+                      Icon(
+                        x == 1 ? Icons.check_circle : Icons.circle_outlined,
+                        color: x == 1
+                            ? Colors.green
+                            : const Color.fromARGB(255, 136, 161, 203),
+                        size: 27,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Divider(),
+            InkWell(
+              onTap: () {
+                setState(() {
+                  x = 2;
+                });
+              },
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Partially Delivery',
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.w600),
+                          )),
+                      Icon(
+                        x == 2 ? Icons.check_circle : Icons.circle_outlined,
+                        color: x == 2
+                            ? Colors.green
+                            : const Color.fromARGB(255, 136, 161, 203),
+                        size: 27,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Divider(),
+            x == 2
+                ? CustomTextField3(
+                    controller: TextEditingController(),
+                  )
+                : SizedBox()
+          ],
+        );
+      }),
       showCancelBtn: true,
       onConfirmBtnTap: () async {
         await Future.delayed(const Duration(milliseconds: 1000));
