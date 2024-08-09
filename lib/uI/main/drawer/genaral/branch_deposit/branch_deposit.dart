@@ -54,11 +54,12 @@ class _BranchDepositState extends State<BranchDeposit> {
   bool _isLoadMoreRuning = false;
   int _page = 0;
   int x = 0;
+  String branchListID = '';
   int _current = 0;
   final CarouselController _controller = CarouselController();
   void initState() {
     getUserBranch();
-    getData('');
+    // getData('');
     // TODO: implement initState
     super.initState();
     mycontroller.addListener(() {
@@ -79,8 +80,8 @@ class _BranchDepositState extends State<BranchDeposit> {
       });
       _page += 20;
 
-      var res = await CustomApi()
-          .branchDeposit(context, _page.toString(), '30', '', '', '', '');
+      var res = await CustomApi().branchDeposit(
+          context, _page.toString(), '10', branchListID, '', '', '');
 
       List data = res;
       if (data.isNotEmpty) {
@@ -105,11 +106,12 @@ class _BranchDepositState extends State<BranchDeposit> {
     });
     List brancheList = await CustomApi().userActiveBranches(context);
     log(brancheList.toString());
+    getData('');
 
     setState(() {
       userBranchList.addAll(brancheList);
 
-      isLoading = false;
+      // isLoading = false;
     });
   }
 
@@ -123,16 +125,17 @@ class _BranchDepositState extends State<BranchDeposit> {
       'accessesKey',
     );
     print('dddddddddddddddddddddddddddaaaaaaaaaaaddd');
-    var res = await CustomApi()
-        .branchDeposit(context, '30', _page.toString(), '', '', '', '');
+    var res = await CustomApi().branchDeposit(
+        context, '10', _page.toString(), branchListID, '', '', '');
     setState(() {
       if (id != null) {
         accessGroupId = id!;
       }
       log(res.toString());
-      isLoading = false;
+
       dataList = res;
       dataListTemp = res;
+      isLoading = false;
     });
   }
 
@@ -186,6 +189,7 @@ class _BranchDepositState extends State<BranchDeposit> {
                           onTap: () {
                             setState(() {
                               visitBranchId = itemone['did'];
+                              branchListID = visitBranchId;
                             });
 
                             log(itemone.toString());
@@ -194,7 +198,7 @@ class _BranchDepositState extends State<BranchDeposit> {
                               getData('');
                             } else {
                               print('ffffffffdddddddddddddddfffffffffffff');
-                              getData(itemone['did']);
+                              getData(branchListID);
                             }
                           },
                           value: itemone['dname'],
