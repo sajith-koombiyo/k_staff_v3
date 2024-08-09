@@ -457,42 +457,44 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
 
   codApproval() {
     QuickAlert.show(
+      title: 'Oder Confirmation',
       context: context,
-      type: QuickAlertType.custom,
+      type: QuickAlertType.confirm,
       barrierDismissible: true,
       confirmBtnText: 'SAVE',
       // width: double.infinity,
       widget: StatefulBuilder(builder: (context, setState) {
         return Column(
           children: [
+            SizedBox(
+              height: 10,
+            ),
             InkWell(
               onTap: () {
                 setState(() {
                   x = 1;
                 });
               },
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Oder Confirm',
-                            style: TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.w600),
-                          )),
-                      Icon(
-                        x == 1 ? Icons.check_circle : Icons.circle_outlined,
-                        color: x == 1
-                            ? Colors.green
-                            : const Color.fromARGB(255, 136, 161, 203),
-                        size: 27,
-                      )
-                    ],
-                  ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Oder Confirm',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w600),
+                        )),
+                    Icon(
+                      x == 1 ? Icons.check_circle : Icons.circle_outlined,
+                      color: x == 1
+                          ? Colors.green
+                          : const Color.fromARGB(255, 136, 161, 203),
+                      size: 27,
+                    )
+                  ],
                 ),
               ),
             ),
@@ -503,28 +505,26 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
                   x = 2;
                 });
               },
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Partially Delivery',
-                            style: TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.w600),
-                          )),
-                      Icon(
-                        x == 2 ? Icons.check_circle : Icons.circle_outlined,
-                        color: x == 2
-                            ? Colors.green
-                            : const Color.fromARGB(255, 136, 161, 203),
-                        size: 27,
-                      )
-                    ],
-                  ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Partially Delivery',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w600),
+                        )),
+                    Icon(
+                      x == 2 ? Icons.check_circle : Icons.circle_outlined,
+                      color: x == 2
+                          ? Colors.green
+                          : const Color.fromARGB(255, 136, 161, 203),
+                      size: 27,
+                    )
+                  ],
                 ),
               ),
             ),
