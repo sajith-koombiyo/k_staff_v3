@@ -194,10 +194,8 @@ class _BranchDepositState extends State<BranchDeposit> {
 
                             log(itemone.toString());
                             if (visitBranchId == '10000') {
-                              print('fffffffffffffffffffff');
                               getData('');
                             } else {
-                              print('ffffffffdddddddddddddddfffffffffffff');
                               getData(branchListID);
                             }
                           },
