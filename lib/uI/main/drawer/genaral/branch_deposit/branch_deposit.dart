@@ -346,6 +346,7 @@ class _BranchDepositState extends State<BranchDeposit> {
                                                       dataList[index]
                                                           ['dpst_id']);
                                                   await riderListLoad(
+                                                      dataList[index]['did'],
                                                       dataList[index]
                                                               ['gen_date']
                                                           .toString());
@@ -736,7 +737,7 @@ class _BranchDepositState extends State<BranchDeposit> {
                                         .dataLoad ==
                                     false
                             ? Container(
-                                height: h / 3,
+                                height: h / 1.5,
                                 width: w,
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -755,7 +756,7 @@ class _BranchDepositState extends State<BranchDeposit> {
                                 ),
                               )
                             : Container(
-                                height: h / 2.5,
+                                height: h / 1.5,
                                 child: CarouselSlider(
                                   options: CarouselOptions(
                                     onPageChanged: (index, reason) {
@@ -766,7 +767,7 @@ class _BranchDepositState extends State<BranchDeposit> {
                                     enableInfiniteScroll: false,
                                     animateToClosest: false,
                                     autoPlay: true,
-                                    aspectRatio: 2.0,
+                                    aspectRatio: 1.0,
                                     enlargeCenterPage: true,
                                     enlargeStrategy:
                                         CenterPageEnlargeStrategy.height,
@@ -776,12 +777,12 @@ class _BranchDepositState extends State<BranchDeposit> {
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             child: Container(
-                                              height: h / 2,
+                                              height: h / 1.5,
                                               width: w,
                                               child: Image.memory(
                                                   base64Decode(
                                                       item['dslip_image']),
-                                                  fit: BoxFit.cover),
+                                                  fit: BoxFit.fitHeight),
                                             ),
                                           ))
                                       .toList(),
@@ -814,7 +815,7 @@ class _BranchDepositState extends State<BranchDeposit> {
                 ),
                 pValue.dataLoad
                     ? SizedBox(
-                        height: h / 2,
+                        height: h / 1.5,
                         child: Center(
                           child: Loader().loader(context),
                         ),
@@ -877,9 +878,9 @@ class _BranchDepositState extends State<BranchDeposit> {
     );
   }
 
-  riderListLoad(String date) async {
-    print(date);
-    var res = await CustomApi().depositRiderList(context, date);
+  riderListLoad(String branchId, String date) async {
+    log(date.toString());
+    var res = await CustomApi().depositRiderList(context, branchId, date);
 
     Provider.of<ProviderS>(context, listen: false).dRiderList = res;
   }

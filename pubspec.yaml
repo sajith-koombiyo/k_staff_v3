@@ -4,7 +4,7 @@ description: "koombiyo staff app."
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.0+30
+version: 1.0.0+31
 
 
 environment:
@@ -78,6 +78,7 @@ dependencies:
   flutter_ringtone_player:
   scannabletextformfield: ^0.1.0
   carousel_slider:
+  flutter_chat_bubble:
 
 
  

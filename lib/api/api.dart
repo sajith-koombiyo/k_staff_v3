@@ -78,6 +78,7 @@ class CustomApi {
                 Uri.parse(urll),
                 body: {'imei': key, 'app_date': installDate});
             var responce = jsonDecode(res.body);
+            print(responce.toString());
 
             if (responce['userkey'] == userKey) {
               Navigator.pushReplacement(
@@ -2012,7 +2013,7 @@ class CustomApi {
     }
   }
 
-  depositRiderList(BuildContext context, String date) async {
+  depositRiderList(BuildContext context, String branchId, String date) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('userkey');
     var connectivityResult = await (Connectivity().checkConnectivity());
@@ -2028,7 +2029,7 @@ class CustomApi {
       var res = await https.post(
           headers: headers,
           Uri.parse(apiUrl),
-          body: {"branch_id": '', "date": date});
+          body: {"branch_id": branchId, "date": date});
 
       var data = jsonDecode(res.body);
 

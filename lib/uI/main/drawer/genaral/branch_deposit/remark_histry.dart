@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/api/api.dart';
 import 'package:flutter_application_2/app_details/color.dart';
+import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
@@ -70,7 +71,7 @@ class _StudentChatsState extends State<StudentChats> {
               color: white,
             )),
       ),
-      backgroundColor: backgroundColor2,
+      backgroundColor: Color.fromARGB(255, 154, 154, 145),
       extendBodyBehindAppBar: true,
       body: SingleChildScrollView(
         controller: scroll,
@@ -85,132 +86,122 @@ class _StudentChatsState extends State<StudentChats> {
                 itemCount: remarkList.length,
                 itemBuilder: (context, index) {
                   return remarkList[index]['type'] == '1'
-                      ? Padding(
-                          padding: EdgeInsets.only(
-                              right: w / 5, top: 10, left: 8, bottom: 8),
-                          child: Card(
-                            elevation: 20,
-                            color: const Color.fromARGB(255, 98, 132, 160),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(30),
-                                    bottomRight: Radius.circular(30),
-                                    topRight: Radius.circular(30))),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  height: 10,
+                      ? Column(
+                          children: [
+                            ChatBubble(
+                              clipper: ChatBubbleClipper1(
+                                  type: BubbleType.sendBubble),
+                              alignment: Alignment.topRight,
+                              margin: EdgeInsets.only(top: 20),
+                              backGroundColor: Colors.blue,
+                              child: Container(
+                                constraints: BoxConstraints(
+                                  maxWidth:
+                                      MediaQuery.of(context).size.width * 0.7,
                                 ),
-                                Container(
-                                    alignment: Alignment.centerLeft,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(left: 8),
-                                      child: Text(
-                                        'Head office',
-                                        style: TextStyle(
-                                            fontSize: 11,
-                                            color: white,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    )),
-                                Container(
-                                    alignment: Alignment.centerLeft,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        remarkList[index]['dire_remark'],
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            color: white,
-                                            fontWeight: FontWeight.normal),
-                                      ),
-                                    )),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 8, right: 12, bottom: 12),
-                                  child: Container(
-                                      alignment: Alignment.bottomRight,
-                                      child: Text(
-                                        remarkList[index]['datetime'],
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            color: white,
-                                            fontWeight: FontWeight.normal),
-                                      )),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          'Head office',
+                                          style: TextStyle(
+                                              fontSize: 11,
+                                              color: white,
+                                              fontWeight: FontWeight.bold),
+                                        )),
+                                    Text(
+                                      remarkList[index]['dire_remark'],
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
+                            Container(
+                                padding: EdgeInsets.only(right: 8, top: 4),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      remarkList[index]['datetime'],
+                                      style: TextStyle(
+                                          fontSize: 10.sp,
+                                          color:
+                                              Color.fromARGB(255, 84, 81, 81),
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                    SizedBox(
+                                      width: 8,
+                                    ),
+                                    Icon(
+                                      Icons.done_all_rounded,
+                                      size: 15,
+                                      color: Color.fromARGB(255, 71, 100, 148),
+                                    ),
+                                  ],
+                                ))
+                          ],
                         )
-                      : Padding(
-                          padding: EdgeInsets.only(
-                              right: 8, top: 10, left: w / 10, bottom: 8),
-                          child: Stack(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Card(
-                                  elevation: 50,
-                                  color: Color.fromARGB(255, 6, 51, 88),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.only(
-                                          bottomLeft: Radius.circular(30),
-                                          bottomRight: Radius.circular(30),
-                                          topLeft: Radius.circular(30))),
+                      : Column(
+                          children: [
+                            ChatBubble(
+                                clipper: ChatBubbleClipper1(
+                                    type: BubbleType.receiverBubble),
+                                backGroundColor:
+                                    Color.fromARGB(255, 200, 200, 209),
+                                margin: EdgeInsets.only(top: 20),
+                                child: Container(
+                                  constraints: BoxConstraints(
+                                    maxWidth:
+                                        MediaQuery.of(context).size.width * 0.7,
+                                  ),
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
                                     children: [
-                                      SizedBox(
-                                        height: 20,
-                                      ),
                                       Container(
                                           alignment: Alignment.centerRight,
-                                          child: Padding(
-                                            padding:
-                                                const EdgeInsets.only(right: 8),
-                                            child: Text(
-                                              'Branch remark',
-                                              style: TextStyle(
-                                                  fontSize: 11,
-                                                  color: white,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
+                                          child: Text(
+                                            'Branch remark',
+                                            style: TextStyle(
+                                                fontSize: 11,
+                                                color: black2,
+                                                fontWeight: FontWeight.bold),
                                           )),
-                                      Container(
-                                          alignment: Alignment.centerLeft,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              remarkList[index]['dire_remark'],
-                                              style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: white2,
-                                                  fontWeight:
-                                                      FontWeight.normal),
-                                            ),
-                                          )),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 8, right: 8, bottom: 12),
-                                        child: Container(
-                                            alignment: Alignment.bottomRight,
-                                            child: Text(
-                                              remarkList[index]['datetime'],
-                                              style: TextStyle(
-                                                  fontSize: 10.sp,
-                                                  color: white3,
-                                                  fontWeight:
-                                                      FontWeight.normal),
-                                            )),
+                                      Text(
+                                        remarkList[index]['dire_remark'],
+                                        style: TextStyle(color: Colors.black),
                                       ),
                                     ],
                                   ),
-                                ),
-                              ),
-                            ],
-                          ),
+                                )),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 8, left: 8, bottom: 12),
+                              child: Container(
+                                  alignment: Alignment.bottomLeft,
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        remarkList[index]['datetime'],
+                                        style: TextStyle(
+                                            fontSize: 10.sp,
+                                            color:
+                                                Color.fromARGB(255, 84, 81, 81),
+                                            fontWeight: FontWeight.normal),
+                                      ),
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      Icon(
+                                        Icons.done_all_rounded,
+                                        size: 15,
+                                        color:
+                                            Color.fromARGB(255, 71, 100, 148),
+                                      ),
+                                    ],
+                                  )),
+                            )
+                          ],
                         );
                 },
               ),
