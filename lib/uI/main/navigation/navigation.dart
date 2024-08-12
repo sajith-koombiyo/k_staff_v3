@@ -234,7 +234,7 @@ class _NavigationScreenState extends State<NavigationScreen>
     Provider.of<ProviderS>(context, listen: false).bId = branchId;
     var ytc = await CustomApi().getYoutubeDetails(context);
     setState(() {
-      youTube = ytc;
+      // youTube = ytc;
       isLoading = false;
     });
   }

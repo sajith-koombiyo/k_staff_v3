@@ -191,8 +191,6 @@ class _BranchDepositState extends State<BranchDeposit> {
                               visitBranchId = itemone['did'];
                               branchListID = visitBranchId;
                             });
-
-                            log(itemone.toString());
                             if (visitBranchId == '10000') {
                               getData('');
                             } else {

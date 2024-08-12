@@ -186,19 +186,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     return Scaffold(
-      // floatingActionButton: Padding(
-      //   padding: const EdgeInsets.only(bottom: 100),
-      //   child: FloatingActionButton(
-      //     onPressed: () {
-      //       Navigator.push(
-      //           context,
-      //           MaterialPageRoute(
-      //               builder: (context) => VoiceCall(
-      //                     id: userId,
-      //                   )));
-      //     },
-      //   ),
-      // ),
+     
       backgroundColor: Colors.white,
       body: RefreshIndicator(
         onRefresh: () {
@@ -264,10 +252,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                                 .oderAllDetail(accessGroupId)
                                             ? MyDelivery(isFromHome: true)
                                             : OderAllDetails(),
-                                        // MyDelivery(isFromHome: true),
-                                        // child: VoiceCall(
-                                        //   usrId: userId.toString(),
-                                        // )
+                                   
                                       ),
                                     );
 

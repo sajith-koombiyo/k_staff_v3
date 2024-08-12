@@ -22,31 +22,31 @@ class _TipButtonState extends State<TipButton>
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     return GestureDetector(
-      onTapDown: (_) {
-        setState(() {
-          tap = true;
-        });
-      },
-      onSecondaryTapDown: (_) {
-        setState(() {
-          tap = true;
-        });
-      },
-      onSecondaryTapUp: (_) {
-        setState(() {
-          tap = false;
-        });
-      },
-      onTapUp: (_) {
-        setState(() {
-          tap = false;
-        });
-      },
-      onTapCancel: () {
-        setState(() {
-          tap = false;
-        });
-      },
+      // onTapDown: (_) {
+      //   setState(() {
+      //     tap = true;
+      //   });
+      // },
+      // onSecondaryTapDown: (_) {
+      //   setState(() {
+      //     tap = true;
+      //   });
+      // },
+      // onSecondaryTapUp: (_) {
+      //   setState(() {
+      //     tap = false;
+      //   });
+      // },
+      // onTapUp: (_) {
+      //   setState(() {
+      //     tap = false;
+      //   });
+      // },
+      // onTapCancel: () {
+      //   setState(() {
+      //     tap = false;
+      //   });
+      // },
       child: widget.button
           ? Stack(
               children: [
