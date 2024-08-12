@@ -39,8 +39,15 @@ Re-enter new password:
 Warning:
 The JKS keystore uses a proprietary format. It is recommended to migrate to PKCS12 which is an industry standard format using "keytool -importkeystore -srckeystore F:\flutterr\koobiyo_rider\android\app\upload-keystore.jks -destkeystore F:\flutterr\koobiyo_rider\android\app\upload-keystore.jks -deststoretype pkcs12".
 <!-- flutter build apk --split-per-abi -->
-
-
+https://fcm.googleapis.com/v1/projects/myproject-b5ae1/messages:send HTTP/1.1
+//{
+   "message":{
+      "token":"APA91bGHXQBB...9QgnYOEURwm0I3lmyqzk2TXQ",
+      "data":{
+        "hello": "This is a Firebase Cloud Messaging device group message!"
+      }
+   }
+}
 A few resources to get you started if this is your first Flutter project:
 
 - [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
