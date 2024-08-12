@@ -35,7 +35,7 @@ Enter key password for <upload>
         (RETURN if same as keystore password):
 Re-enter new password:
 [Storing F:\flutterr\koobiyo_rider\android\app\upload-keystore.jks]
-
+darshaNA
 Warning:
 The JKS keystore uses a proprietary format. It is recommended to migrate to PKCS12 which is an industry standard format using "keytool -importkeystore -srckeystore F:\flutterr\koobiyo_rider\android\app\upload-keystore.jks -destkeystore F:\flutterr\koobiyo_rider\android\app\upload-keystore.jks -deststoretype pkcs12".
 <!-- flutter build apk --split-per-abi -->
