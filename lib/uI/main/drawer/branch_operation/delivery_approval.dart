@@ -231,12 +231,14 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
                                         ],
                                       ),
                                     ),
-                                    Text(
-                                      "- ${dataList[index]['name']}",
-                                      style: TextStyle(
-                                        fontSize: 12.dp,
-                                        color: black,
-                                        fontWeight: FontWeight.normal,
+                                    Flexible(
+                                      child: Text(
+                                        "- ${dataList[index]['name']}",
+                                        style: TextStyle(
+                                          fontSize: 12.dp,
+                                          color: black,
+                                          fontWeight: FontWeight.normal,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -258,12 +260,14 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
                                         ],
                                       ),
                                     ),
-                                    Text(
-                                      "- ${dataList[index]['cust_name']}",
-                                      style: TextStyle(
-                                        fontSize: 12.dp,
-                                        color: black,
-                                        fontWeight: FontWeight.normal,
+                                    Flexible(
+                                      child: Text(
+                                        "- ${dataList[index]['cust_name']}",
+                                        style: TextStyle(
+                                          fontSize: 12.dp,
+                                          color: black,
+                                          fontWeight: FontWeight.normal,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -282,14 +286,16 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
-                                      width: w / 2,
-                                      child: Text(
-                                        "- ${dataList[index]['address']}",
-                                        style: TextStyle(
-                                          fontSize: 12.dp,
-                                          color: black,
-                                          fontWeight: FontWeight.normal,
+                                    Flexible(
+                                      child: SizedBox(
+                                        width: w / 2,
+                                        child: Text(
+                                          "- ${dataList[index]['address']}",
+                                          style: TextStyle(
+                                            fontSize: 12.dp,
+                                            color: black,
+                                            fontWeight: FontWeight.normal,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -311,17 +317,19 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
                                         ),
                                       ),
                                     ),
-                                    Card(
-                                      color: Colors.amberAccent,
-                                      elevation: 20,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          "${dataList[index]['status']}",
-                                          style: TextStyle(
-                                            fontSize: 12.dp,
-                                            color: black,
-                                            fontWeight: FontWeight.normal,
+                                    Flexible(
+                                      child: Card(
+                                        color: Colors.amberAccent,
+                                        elevation: 20,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            "${dataList[index]['status']}",
+                                            style: TextStyle(
+                                              fontSize: 12.dp,
+                                              color: black,
+                                              fontWeight: FontWeight.normal,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -344,12 +352,15 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
                                         ),
                                       ),
                                     ),
-                                    Text(
-                                      "- ${dataList[index]['phone']}",
-                                      style: TextStyle(
-                                        fontSize: 12.dp,
-                                        color: Color.fromARGB(255, 46, 19, 196),
-                                        fontWeight: FontWeight.normal,
+                                    Flexible(
+                                      child: Text(
+                                        "- ${dataList[index]['phone']}",
+                                        style: TextStyle(
+                                          fontSize: 12.dp,
+                                          color:
+                                              Color.fromARGB(255, 46, 19, 196),
+                                          fontWeight: FontWeight.normal,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -367,12 +378,14 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
                                         ),
                                       ),
                                     ),
-                                    Text(
-                                      "- Kurunegala",
-                                      style: TextStyle(
-                                        fontSize: 12.dp,
-                                        color: black,
-                                        fontWeight: FontWeight.normal,
+                                    Flexible(
+                                      child: Text(
+                                        "- Kurunegala",
+                                        style: TextStyle(
+                                          fontSize: 12.dp,
+                                          color: black,
+                                          fontWeight: FontWeight.normal,
+                                        ),
                                       ),
                                     ),
                                   ],
