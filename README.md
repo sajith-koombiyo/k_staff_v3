@@ -39,15 +39,13 @@ Re-enter new password:
 Warning:
 The JKS keystore uses a proprietary format. It is recommended to migrate to PKCS12 which is an industry standard format using "keytool -importkeystore -srckeystore F:\flutterr\koobiyo_rider\android\app\upload-keystore.jks -destkeystore F:\flutterr\koobiyo_rider\android\app\upload-keystore.jks -deststoretype pkcs12".
 <!-- flutter build apk --split-per-abi -->
-https://fcm.googleapis.com/v1/projects/myproject-b5ae1/messages:send HTTP/1.1
-//{
-   "message":{
-      "token":"APA91bGHXQBB...9QgnYOEURwm0I3lmyqzk2TXQ",
-      "data":{
-        "hello": "This is a Firebase Cloud Messaging device group message!"
-      }
-   }
-}
+https://fcm.googleapis.com/fcm/send
+
+AAAAXcwCn7Y:APA91bG4QhBaOrJZiCjV_bVnAXRd2NP4xhSrkuRS-11QKAg_xuY6RKxCXik8X_aSNT0Y59mEGjUh2fb47xm9KVpZckCJFDAM5_474nH4awgm2gkmVGh9pROd7aLI3immJ7vWqOjOng01
+//
+
+      {"to":"eQE3Hd_8TFWVm7YsMGz2zf:APA91bE6bldf8JHSkhLKLuAC3NlDfesu4KkXOJaGet1sKJzM17E9rJn3A72RKYWtLd5IBLD2nR8m_CvXf36H2uEBD0p0CkRbwT60Zdd3CydSAy2KJNYs4qreH35Y96TZhZkeGfp7wjV3","priority":"high","notification":{"title":"hhhhhhhhhhhhhhh","body":"hhhhhhhhhhhhhhh","sound": "default","image": "https://googleflutter.com/wp-content/uploads/2019/12/flutter_image_network.png"
+}}
 A few resources to get you started if this is your first Flutter project:
 
 - [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
