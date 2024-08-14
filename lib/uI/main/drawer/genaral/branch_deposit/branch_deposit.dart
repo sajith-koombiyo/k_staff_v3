@@ -104,6 +104,7 @@ class _BranchDepositState extends State<BranchDeposit> {
     setState(() {
       isLoading = true;
     });
+    Provider.of<ProviderS>(context, listen: false);
     List brancheList = await CustomApi().userActiveBranches(context);
     log(brancheList.toString());
     getData('');
@@ -917,7 +918,7 @@ class _BranchDepositState extends State<BranchDeposit> {
                               setstate(() {
                                 isLoading = true;
                               });
-
+                              log(base64Image.toString());
                               var res = await CustomApi().depositAgentslip(
                                   context,
                                   dId,

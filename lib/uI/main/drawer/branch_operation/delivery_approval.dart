@@ -1,11 +1,14 @@
+import 'dart:convert';
 import 'dart:developer';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/api/api.dart';
 import 'package:flutter_application_2/app_details/color.dart';
 import 'package:flutter_application_2/class/class.dart';
 import 'package:flutter_application_2/provider/provider.dart';
 import 'package:flutter_application_2/uI/widget/custom_textField.dart';
+import 'package:flutter_application_2/uI/widget/diloag_button.dart';
 import 'package:flutter_application_2/uI/widget/nothig_found.dart';
 import 'package:flutter_application_2/uI/widget/textField.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
@@ -23,7 +26,10 @@ class CODZeroApproval extends StatefulWidget {
 
 class _CODZeroApprovalState extends State<CODZeroApproval> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  TextEditingController remarkController = TextEditingController();
   int x = 0;
+  List pdliveryList = [];
+  String? dropdownvalue;
   List<Map<String, dynamic>> depositList = [
     {'date': '2023/01/23'},
     {'date': '2023/11/23'},
@@ -32,6 +38,8 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
     {'date': '2023/01/23'},
     {'date': '2023/01/24'}
   ];
+  String img =
+      '/9j/4QGvRXhpZgAATU0AKgAAAAgABwEQAAIAAAAUAAAAYgEAAAQAAAABAAAFoAEBAAQAAAABAAAHgAEyAAIAAAAUAAAAdgESAAMAAAABAAEAAIdpAAQAAAABAAAAkQEPAAIAAAAHAAAAigAAAABzZGtfZ3Bob25lNjRfeDg2XzY0ADIwMjQ6MDg6MDIgMTM6Mjk6NTEAR29vZ2xlAAAQgp0ABQAAAAEAAAFXgpoABQAAAAEAAAFfkpIAAgAAAAQyNzIAkpEAAgAAAAQyNzIAkpAAAgAAAAQyNzIAkgoABQAAAAEAAAFnkgkAAwAAAAEAAAAAiCcAAwAAAAEAZAAAkAQAAgAAABQAAAFvkAMAAgAAABQAAAGDoAMABAAAAAEAAAeApAMAAwAAAAEAAAAAoAIABAAAAAEAAAWgkgIABQAAAAEAAAGXkgEACgAAAAEAAAGfkAAABwAAAAQwMjIwAAAAAAAAAK0AAABkACKgxzuaygAAABEcAAAD6DIwMjQ6MDg6MDIgMTM6Mjk6NTEAMjAyNDowODowMiAxMzoyOTo1MQAAAACeAAAAZAAAIk8AAAPo/+AAEEpGSUYAAQEAAAEAAQAA/9sAQwACAQEBAQECAQEBAgICAgIEAwICAgIFBAQDBAYFBgYGBQYGBgcJCAYHCQcGBggLCAkKCgoKCgYICwwLCgwJCgoK/9sAQwECAgICAgIFAwMFCgcGBwoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoK/8AAEQgHgAWgAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVl';
   List dataList = [];
   List listitems = [
     'All',
@@ -41,12 +49,13 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
     'Nugegoda',
   ];
   List branchRiders = [];
-  String? selectval;
+  String? rider;
   bool isLoading = false;
   List<Map<String, dynamic>> depositListTemp = [];
   @override
   void initState() {
     branchRider();
+    dropDownData();
     data('3');
     setState(() {
       depositListTemp = depositList;
@@ -63,6 +72,25 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
     log(res.toString());
     setState(() {
       branchRiders = res;
+      isLoading = false;
+    });
+  }
+
+  dropDownData() async {
+    setState(() {
+      isLoading = true;
+    });
+    List res = await CustomApi().dropdownDataMyDelivery(context);
+
+    setState(() {
+      List.generate(res.length, (index) {
+        if (res[index]['type'] == '3') {
+          pdliveryList.add({
+            "reason_id": "${res[index]['reason_id']}",
+            "reason": "${res[index]['reason']}"
+          });
+        }
+      });
       isLoading = false;
     });
   }
@@ -119,12 +147,12 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
                           ),
                         ),
                         value:
-                            selectval, //implement initial value or selected value
+                            rider, //implement initial value or selected value
                         onChanged: (value) {
                           setState(() {
                             //set state will update UI and State of your App
-                            selectval = value.toString();
-                            data(selectval
+                            rider = value.toString();
+                            data(rider
                                 .toString()); //change selectval to new value
                           });
                         },
@@ -176,8 +204,11 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
                     itemBuilder: (context, index) => Padding(
                       padding: const EdgeInsets.all(4.0),
                       child: InkWell(
-                        onTap: () {
-                          codApproval();
+                        onTap: () async {
+                          Provider.of<ProviderS>(context, listen: false)
+                              .dImages64 = [];
+                          codApproval(dataList[index]['waybill_id']);
+                          await getImages(dataList[index]['waybill_id']);
                         },
                         child: Card(
                           color: Color.fromARGB(255, 179, 196, 210),
@@ -187,6 +218,42 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      width: w / 3,
+                                      child: Text(
+                                        "Status",
+                                        style: TextStyle(
+                                          fontSize: 12.dp,
+                                          color: black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    Flexible(
+                                      child: Card(
+                                        color:
+                                            Color.fromARGB(255, 198, 162, 203),
+                                        elevation: 2,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            "${dataList[index]['status']}",
+                                            style: TextStyle(
+                                              fontSize: 12.dp,
+                                              color: black,
+                                              fontWeight: FontWeight.normal,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                                 Row(
                                   children: [
                                     SizedBox(
@@ -221,7 +288,7 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
                                       child: Row(
                                         children: [
                                           Text(
-                                            "Receiver name",
+                                            "Customer name",
                                             style: TextStyle(
                                               fontSize: 12.dp,
                                               color: black,
@@ -233,7 +300,7 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
                                     ),
                                     Flexible(
                                       child: Text(
-                                        "- ${dataList[index]['name']}",
+                                        "- ${dataList[index]['cust_name']}",
                                         style: TextStyle(
                                           fontSize: 12.dp,
                                           color: black,
@@ -250,7 +317,7 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
                                       child: Row(
                                         children: [
                                           Text(
-                                            "Customer name",
+                                            "Receiver name",
                                             style: TextStyle(
                                               fontSize: 12.dp,
                                               color: black,
@@ -262,7 +329,7 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
                                     ),
                                     Flexible(
                                       child: Text(
-                                        "- ${dataList[index]['cust_name']}",
+                                        "- ${dataList[index]['name']}",
                                         style: TextStyle(
                                           fontSize: 12.dp,
                                           color: black,
@@ -295,41 +362,6 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
                                             fontSize: 12.dp,
                                             color: black,
                                             fontWeight: FontWeight.normal,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  children: [
-                                    SizedBox(
-                                      width: w / 3,
-                                      child: Text(
-                                        "Status",
-                                        style: TextStyle(
-                                          fontSize: 12.dp,
-                                          color: black,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                    Flexible(
-                                      child: Card(
-                                        color: Colors.amberAccent,
-                                        elevation: 20,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(
-                                            "${dataList[index]['status']}",
-                                            style: TextStyle(
-                                              fontSize: 12.dp,
-                                              color: black,
-                                              fontWeight: FontWeight.normal,
-                                            ),
                                           ),
                                         ),
                                       ),
@@ -468,137 +500,310 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
     );
   }
 
-  codApproval() {
-    QuickAlert.show(
-      title: 'Oder Confirmation',
+  getImages(String dId) async {
+    setState(() {});
+    Provider.of<ProviderS>(context, listen: false).dataLoad = true;
+    var res = await CustomApi().deliveryApprovalsImageList(context, dId);
+    remarkController.clear();
+    dropdownvalue = null;
+    Provider.of<ProviderS>(context, listen: false).dImages64 = res;
+    Provider.of<ProviderS>(context, listen: false).dataLoad = false;
+  }
+
+  codApproval(String wayBillId) {
+    Provider.of<ProviderS>(context, listen: false).dImages64 = [];
+    var h = MediaQuery.of(context).size.height;
+    var w = MediaQuery.of(context).size.width;
+
+    x = 0;
+    showDialog(
       context: context,
-      type: QuickAlertType.confirm,
-      barrierDismissible: true,
-      confirmBtnText: 'SAVE',
-      // width: double.infinity,
-      widget: StatefulBuilder(builder: (context, setState) {
-        return Column(
-          children: [
-            SizedBox(
-              height: 10,
-            ),
-            InkWell(
-              onTap: () {
-                setState(() {
-                  x = 1;
-                });
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Oder Confirm',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w600),
-                        )),
-                    Icon(
-                      x == 1 ? Icons.check_circle : Icons.circle_outlined,
-                      color: x == 1
-                          ? Colors.green
-                          : const Color.fromARGB(255, 136, 161, 203),
-                      size: 27,
-                    )
-                  ],
+      builder: (context) => AlertDialog(
+        insetPadding: EdgeInsets.all(12),
+        content: StatefulBuilder(builder: (context, setState) {
+          return Consumer<ProviderS>(
+            builder: (context, pValue, child) => Stack(
+              children: [
+                SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                          alignment: Alignment.center,
+                          child: const Text(
+                            'Rider Approval',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.w600),
+                          )),
+                      Divider(),
+                      Provider.of<ProviderS>(context, listen: false)
+                                  .dImages64
+                                  .isEmpty &&
+                              Provider.of<ProviderS>(context, listen: false)
+                                      .dataLoad ==
+                                  false
+                          ? Container(
+                              height: h / 2,
+                              width: w,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.image_not_supported_sharp,
+                                    size: 100,
+                                    color: const Color.fromARGB(96, 77, 76, 76),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text('empty image')
+                                ],
+                              ),
+                            )
+                          : Container(
+                              height: h / 2.5,
+                              child: CarouselSlider(
+                                options: CarouselOptions(
+                                  onPageChanged: (index, reason) {
+                                    setState(() {
+                                      // _current = index;
+                                    });
+                                  },
+                                  enableInfiniteScroll: false,
+                                  animateToClosest: false,
+                                  autoPlay: true,
+                                  aspectRatio: 1.0,
+                                  enlargeCenterPage: true,
+                                  enlargeStrategy:
+                                      CenterPageEnlargeStrategy.height,
+                                ),
+                                items: pValue.dImages64
+                                    .map((item) => ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          child: Container(
+                                            height: h / 2.5,
+                                            width: w,
+                                            child: Image.memory(
+                                                base64Decode(item['image']),
+                                                fit: BoxFit.fitHeight),
+                                          ),
+                                        ))
+                                    .toList(),
+                              ),
+                            ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            x = 1;
+                          });
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    'Oder Confirm',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600),
+                                  )),
+                              Icon(
+                                x == 1
+                                    ? Icons.check_circle
+                                    : Icons.circle_outlined,
+                                color: x == 1
+                                    ? Colors.green
+                                    : const Color.fromARGB(255, 136, 161, 203),
+                                size: 27,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      Divider(),
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            x = 2;
+                          });
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    'Partially Delivery',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600),
+                                  )),
+                              Icon(
+                                x == 2
+                                    ? Icons.check_circle
+                                    : Icons.circle_outlined,
+                                color: x == 2
+                                    ? Colors.green
+                                    : const Color.fromARGB(255, 136, 161, 203),
+                                size: 27,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      Divider(),
+                      x == 2
+                          ? Column(
+                              children: [
+                                DropdownButton(
+                                  itemHeight: 70,
+                                  underline: Divider(
+                                    color: white,
+                                    height: 0,
+                                  ),
+                                  isExpanded: true,
+                                  padding: EdgeInsets.only(right: 10),
+                                  alignment: AlignmentDirectional.centerEnd,
+                                  hint: Text(
+                                      'Select Reason                                                                   '),
+                                  value: dropdownvalue,
+                                  //implement initial value or selected value
+                                  onChanged: (value) {
+                                    setState(() {
+                                      //set state will update UI and State of your App
+                                      dropdownvalue = value.toString();
+                                      //change selectval to new value
+                                    });
+                                  },
+                                  items: pdliveryList.map((itemone) {
+                                    return DropdownMenuItem(
+                                        onTap: () {
+                                          setState(() {
+                                            // dropdownvalueItem =
+                                            //     itemone['reason']
+                                            //         .toString();
+                                          });
+                                        },
+                                        value: itemone['reason_id'],
+                                        child: Card(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              itemone['reason'].toString(),
+                                              style: TextStyle(color: black2),
+                                            ),
+                                          ),
+                                        ));
+                                  }).toList(),
+                                ),
+                                CustomTextField3(
+                                  controller: remarkController,
+                                ),
+                              ],
+                            )
+                          : SizedBox(),
+                      DialogButton(
+                          text: 'SAVE',
+                          onTap: () async {
+                            if (x != 0) {
+                              if (x == 1) {
+                                pValue.dataLoad = true;
+                                await CustomApi().deliveryApprovalsConfirm(
+                                    context, wayBillId, '', '', x);
+                                pValue.dataLoad = false;
+                              } else if (x == 2) {
+                                if (dropdownvalue != null) {
+                                  if (remarkController.text.isNotEmpty) {
+                                    pValue.dataLoad = true;
+                                    await CustomApi().deliveryApprovalsConfirm(
+                                        context,
+                                        wayBillId,
+                                        remarkController.text,
+                                        dropdownvalue.toString(),
+                                        x);
+                                    pValue.dataLoad = false;
+                                  } else {
+                                    notification().warning(
+                                        context, 'Please type your reason');
+                                  }
+                                } else {
+                                  notification().warning(
+                                      context, 'Please select the reason');
+                                }
+                              }
+                            } else {
+                              notification().warning(
+                                  context, 'Please select the Approval option');
+                            }
+                          },
+                          buttonHeight: h / 17,
+                          width: w,
+                          color: Colors.blue)
+                    ],
+                  ),
                 ),
-              ),
+                pValue.dataLoad
+                    ? SizedBox(
+                        height: h / 1.5,
+                        child: Center(
+                          child: Loader().loader(context),
+                        ),
+                      )
+                    : SizedBox(),
+              ],
             ),
-            Divider(),
-            InkWell(
-              onTap: () {
-                setState(() {
-                  x = 2;
-                });
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Partially Delivery',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w600),
-                        )),
-                    Icon(
-                      x == 2 ? Icons.check_circle : Icons.circle_outlined,
-                      color: x == 2
-                          ? Colors.green
-                          : const Color.fromARGB(255, 136, 161, 203),
-                      size: 27,
-                    )
-                  ],
-                ),
-              ),
-            ),
-            Divider(),
-            x == 2
-                ? CustomTextField3(
-                    controller: TextEditingController(),
-                  )
-                : SizedBox()
-          ],
-        );
-      }),
-      showCancelBtn: true,
-      onConfirmBtnTap: () async {
-        await Future.delayed(const Duration(milliseconds: 1000));
-        await QuickAlert.show(
-          context: context,
-          type: QuickAlertType.success,
-          text: "Order successfully confirmed !.",
-        );
-        Navigator.pop(context);
-      },
+          );
+        }),
+      ),
     );
   }
-}
 
-Widget serchBarr(BuildContext con) {
-  var h = MediaQuery.of(con).size.height;
-  var w = MediaQuery.of(con).size.width;
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 20),
-    child: SizedBox(
-      height: h / 15,
-      child: Row(
-        children: [
-          TextFormField(
-            onChanged: (value) {},
-            // controller: search,
-            style: TextStyle(color: black, fontSize: 13.sp),
-            validator: (value) {},
-            decoration: InputDecoration(
-              prefixIcon: Icon(Icons.search),
-              contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-              border: OutlineInputBorder(
-                borderSide: BorderSide(color: black3),
-                borderRadius: BorderRadius.circular(15.0),
+  Widget serchBarr(BuildContext con) {
+    var h = MediaQuery.of(con).size.height;
+    var w = MediaQuery.of(con).size.width;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: SizedBox(
+        height: h / 15,
+        child: Row(
+          children: [
+            TextFormField(
+              onChanged: (value) {},
+              // controller: search,
+              style: TextStyle(color: black, fontSize: 13.sp),
+              validator: (value) {},
+              decoration: InputDecoration(
+                prefixIcon: Icon(Icons.search),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(color: black3),
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                      // color: pink.withOpacity(0.1),
+                      ),
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                filled: true,
+                hintStyle: TextStyle(fontSize: 13.dp),
+                hintText: 'Search by date',
+                fillColor: white2,
               ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                    // color: pink.withOpacity(0.1),
-                    ),
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-              filled: true,
-              hintStyle: TextStyle(fontSize: 13.dp),
-              hintText: 'Search by date',
-              fillColor: white2,
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }

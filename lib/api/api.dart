@@ -2184,4 +2184,79 @@ class CustomApi {
       notification().warning(context, 'No Internet');
     }
   }
+
+  deliveryApprovalsConfirm(BuildContext context, String wayBillId, String pod,
+      String reason, int confirmType) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      print(wayBillId);
+      print(pod);
+      print(reason);
+      print(confirmType);
+      final apiUrl = '${ApiUrl}Deliveredconfirm/users';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      // Make POST request
+
+      var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {
+        "waybill_id": wayBillId,
+        "status": confirmType == 1 ? '17' : '8',
+        'pres ': confirmType == 1 ? '' : reason,
+        "pod": confirmType == 1 ? '' : pod,
+      });
+      var data = jsonDecode(res.body);
+      print('vvvvvvvvvv');
+      print(data);
+      print('sssssssssssssssssssss');
+      if (data['status'] == 200) {
+        notification().info(context, 'Delivery Confirm Successfully');
+        Navigator.pop(context);
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+      }
+
+      if (data['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+      }
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
+
+  deliveryApprovalsImageList(BuildContext context, String wayBillId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      final apiUrl = '${ApiUrl}Deliveryapprovals/images';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      // Make POST request
+
+      var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {
+        "waybill_id": wayBillId,
+      });
+      var data = jsonDecode(res.body);
+      print(data);
+      if (data['status'] == 200) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+        print(data['images']);
+        return data['images'];
+      }
+
+      if (data['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+        return 0;
+      }
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
 }

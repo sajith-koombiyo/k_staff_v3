@@ -110,9 +110,13 @@ class _StudentChatsState extends State<StudentChats> {
                                               color: white,
                                               fontWeight: FontWeight.bold),
                                         )),
-                                    Text(
-                                      remarkList[index]['dire_remark'],
-                                      style: TextStyle(color: Colors.white),
+                                    Container(
+                                      alignment: Alignment.centerRight,
+                                      child: Text(
+                                        remarkList[index]['dire_remark'],
+                                        textAlign: TextAlign.end,
+                                        style: TextStyle(color: Colors.white),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -147,10 +151,11 @@ class _StudentChatsState extends State<StudentChats> {
                           children: [
                             ChatBubble(
                                 clipper: ChatBubbleClipper1(
+                                    radius: 20,
                                     type: BubbleType.receiverBubble),
                                 backGroundColor:
                                     Color.fromARGB(255, 200, 200, 209),
-                                margin: EdgeInsets.only(top: 20),
+                                margin: EdgeInsets.only(top: 20, left: 10),
                                 child: Container(
                                   constraints: BoxConstraints(
                                     maxWidth:
@@ -159,17 +164,25 @@ class _StudentChatsState extends State<StudentChats> {
                                   child: Column(
                                     children: [
                                       Container(
-                                          alignment: Alignment.centerRight,
+                                        alignment: Alignment.centerRight,
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 8),
                                           child: Text(
-                                            'Branch remark',
+                                            remarkList[index]['staff_name'],
                                             style: TextStyle(
                                                 fontSize: 11,
                                                 color: black2,
                                                 fontWeight: FontWeight.bold),
-                                          )),
-                                      Text(
-                                        remarkList[index]['dire_remark'],
-                                        style: TextStyle(color: Colors.black),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          remarkList[index]['dire_remark'],
+                                          style: TextStyle(color: Colors.black),
+                                        ),
                                       ),
                                     ],
                                   ),
