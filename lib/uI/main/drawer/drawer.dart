@@ -541,7 +541,7 @@ class _customDrawerState extends State<customDrawer> {
                                   fontSize: 12.dp,
                                   fontWeight: FontWeight.normal,
                                 )),
-                            Text("Version 3.00",
+                            Text("Version 3.33",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: black1,
