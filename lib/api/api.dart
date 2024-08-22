@@ -1303,7 +1303,8 @@ class CustomApi {
   }
 // manage user data
 
-  manageUserScreen(BuildContext context, String bId) async {
+  manageUserScreen(
+      BuildContext context, String bId, String aGroup, String is_active) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('userkey');
     var connectivityResult = await (Connectivity().checkConnectivity());
@@ -1315,8 +1316,11 @@ class CustomApi {
         'userkey': '$id',
       };
       // Make POST request
-      var res = await https
-          .post(headers: headers, Uri.parse(apiUrl), body: {"branch_id": bId});
+      var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {
+        "branch_id": bId,
+        "access_group": aGroup,
+        "is_active": is_active
+      });
       var data = jsonDecode(res.body);
 
       if (data['status'] == 200) {
