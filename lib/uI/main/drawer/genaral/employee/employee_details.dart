@@ -217,7 +217,7 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
                                                             .start,
                                                     children: [
                                                       Text(
-                                                          'name:- ${empList[index]['full_name']}',
+                                                          'Name:- ${empList[index]['full_name']}',
                                                           style: TextStyle(
                                                             fontWeight:
                                                                 FontWeight.w600,
@@ -226,7 +226,7 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
                                                             fontSize: 12.dp,
                                                           )),
                                                       Text(
-                                                          'Employee number:- ${empList[index]['emp_epf_no']}',
+                                                          'Employee Number:- ${empList[index]['emp_epf_no']}',
                                                           style: TextStyle(
                                                             fontWeight:
                                                                 FontWeight.w600,
