@@ -10,6 +10,8 @@ import 'package:flutter_application_2/uI/main/navigation/navigation.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../widget/nothig_found.dart';
+
 class ManageUsers extends StatefulWidget {
   const ManageUsers({super.key});
 
@@ -18,13 +20,7 @@ class ManageUsers extends StatefulWidget {
 }
 
 class _ManageUsersState extends State<ManageUsers> {
-  List listitems = [
-    'All',
-    'Gampaha',
-    'Nittmbuwa',
-    'Colombo',
-    'Nugegoda',
-  ];
+
 // 2.Area Manager 3.Branch Supervisor  17.Rider 24.Multi Duty Clark
   List destinationList = [
     {"id": '0', 'dName': 'All'},
@@ -75,8 +71,9 @@ class _ManageUsersState extends State<ManageUsers> {
 
     setState(() {
       userBranchList.addAll(brancheList);
-
-      isLoading = false;
+      Future.delayed(Duration(microseconds: 200))
+          .then((value) => isLoading = false);
+      ;
     });
   }
 
@@ -302,332 +299,324 @@ class _ManageUsersState extends State<ManageUsers> {
                           canTapOnHeader: true),
                     ],
                   ),
-                  SingleChildScrollView(
-                    child: SizedBox(
-                      height: h,
-                      child: ListView.builder(
-                        padding: EdgeInsets.all(0),
-                        shrinkWrap: true,
-                        itemCount: userList.length,
-                        itemBuilder: (context, index) {
-                          print(userList[index]['is_koombiyo']);
-                          return Column(
+                  userList.isEmpty && isLoading == false
+                      ? SizedBox(
+                          height: h,
+                          width: w,
+                          child: Column(
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Material(
-                                  color: Colors.transparent,
-                                  child: InkWell(
-                                    borderRadius: BorderRadius.circular(20),
-                                    splashColor: blue,
-                                    onTap: () {
-                                      // itemDetails();
-                                    },
-                                    onLongPress: () {},
-                                    child: Card(
-                                      margin: EdgeInsets.only(left: 0),
-                                      color: appliteBlue,
-                                      child: Card(
-                                        elevation: 50,
-                                        margin: EdgeInsets.only(left: 3),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(12.0),
-                                          child: Column(
-                                            children: [
-                                              SizedBox(
-                                                width: w,
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
+                              Center(child: NoData()),
+                            ],
+                          ))
+                      : SingleChildScrollView(
+                          child: SizedBox(
+                            height: h,
+                            child: ListView.builder(
+                              padding: EdgeInsets.all(0),
+                              shrinkWrap: true,
+                              itemCount: userList.length,
+                              itemBuilder: (context, index) {
+                                print(userList[index]['is_koombiyo']);
+                                return Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Material(
+                                        color: Colors.transparent,
+                                        child: InkWell(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          splashColor: blue,
+                                          onTap: () {
+                                            // itemDetails();
+                                          },
+                                          onLongPress: () {},
+                                          child: Card(
+                                            margin: EdgeInsets.only(left: 0),
+                                            color: appliteBlue,
+                                            child: Card(
+                                              elevation: 50,
+                                              margin: EdgeInsets.only(left: 3),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(12.0),
+                                                child: Column(
                                                   children: [
-                                                    Card(
-                                                      elevation: 1,
-                                                      child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(4.0),
-                                                          child: Icon(
-                                                            Icons
-                                                                .person_add_alt_sharp,
-                                                            size: 40,
-                                                            color: Color(Random()
-                                                                    .nextInt(
-                                                                        0xffffffff))
-                                                                .withAlpha(
-                                                                    0xff),
-                                                          )),
-                                                    ),
                                                     SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    SizedBox(
-                                                      width: w / 1.6,
-                                                      child: Column(
+                                                      width: w,
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
                                                         crossAxisAlignment:
                                                             CrossAxisAlignment
-                                                                .start,
+                                                                .center,
                                                         children: [
-                                                          Text(
-                                                              userList[index]
-                                                                  ['emp_id'],
-                                                              style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color: black,
-                                                                fontSize: 14.dp,
-                                                              )),
-                                                          Text(
-                                                              'Name:- ${userList[index]['staff_name']}',
-                                                              style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                color: Colors
-                                                                    .black87,
-                                                                fontSize: 12.dp,
-                                                              )),
-                                                          Text(
-                                                              'Address:- ${userList[index]['address']}',
-                                                              style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                color: Colors
-                                                                    .black87,
-                                                                fontSize: 12.dp,
-                                                              )),
-                                                          Text(
-                                                              'Type:-  ${userList[index]['emp_type_name'] == null ? "-" : userList[index]['emp_type_name']}',
-                                                              style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                color: Colors
-                                                                    .black87,
-                                                                fontSize: 12.dp,
-                                                              )),
-                                                          Text(
-                                                              'Designation:- ${userList[index]['designation']}',
-                                                              style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                color: Colors
-                                                                    .black87,
-                                                                fontSize: 12.dp,
-                                                              )),
-                                                          Text(
-                                                              'Mobile personal:-${userList[index]['mobile_personal']}',
-                                                              style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .normal,
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                        221,
-                                                                        2,
-                                                                        63,
-                                                                        7),
-                                                                fontSize: 14.dp,
-                                                              )),
-                                                          Text(
-                                                              'Mobile office:-${userList[index]['mobile_office']}',
-                                                              style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .normal,
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                        221,
-                                                                        220,
-                                                                        44,
-                                                                        44),
-                                                                fontSize: 14.dp,
-                                                              )),
-                                                          Text(
-                                                              'Branch:-${userList[index]['dname']}',
-                                                              style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .normal,
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                        221,
-                                                                        44,
-                                                                        65,
-                                                                        220),
-                                                                fontSize: 14.dp,
-                                                              )),
-                                                          Row(
-                                                            children: [
-                                                              Text(
-                                                                  'Delivery Agent:-',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .normal,
-                                                                    color:
-                                                                        black,
-                                                                    fontSize:
-                                                                        14.dp,
-                                                                  )),
-                                                              SizedBox(
-                                                                width: 8,
-                                                              ),
-                                                              Card(
-                                                                color: userList[index]
-                                                                            [
-                                                                            'is_agent'] ==
-                                                                        '0'
-                                                                    ? Colors.red
-                                                                    : Color
-                                                                        .fromARGB(
-                                                                            255,
-                                                                            13,
-                                                                            224,
-                                                                            94),
-                                                                child: Padding(
-                                                                  padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                      horizontal:
-                                                                          8,
-                                                                      vertical:
-                                                                          4),
-                                                                  child: userList[index]
-                                                                              [
-                                                                              'is_agent'] ==
-                                                                          '0'
-                                                                      ? Text(
-                                                                          'Deactivate',
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.normal,
-                                                                            color: Color.fromARGB(
-                                                                                221,
-                                                                                250,
-                                                                                250,
-                                                                                254),
-                                                                            fontSize:
-                                                                                14.dp,
-                                                                          ))
-                                                                      : Text(
-                                                                          'Active',
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.normal,
-                                                                            color: Color.fromARGB(
-                                                                                221,
-                                                                                44,
-                                                                                65,
-                                                                                220),
-                                                                            fontSize:
-                                                                                14.dp,
-                                                                          )),
-                                                                ),
-                                                              ),
-                                                            ],
+                                                          Card(
+                                                            elevation: 1,
+                                                            child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(
+                                                                        4.0),
+                                                                child: Icon(
+                                                                  Icons
+                                                                      .person_add_alt_sharp,
+                                                                  size: 40,
+                                                                  color: Color(Random()
+                                                                          .nextInt(
+                                                                              0xffffffff))
+                                                                      .withAlpha(
+                                                                          0xff),
+                                                                )),
                                                           ),
-                                                          Row(
-                                                            children: [
-                                                              Text('System:-',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .normal,
-                                                                    color:
-                                                                        black,
-                                                                    fontSize:
-                                                                        14.dp,
-                                                                  )),
-                                                              SizedBox(
-                                                                width: 8,
-                                                              ),
-                                                              Card(
-                                                                color: userList[index]
-                                                                            [
-                                                                            'is_koombiyo'] ==
-                                                                        '0'
-                                                                    ? Colors.red
-                                                                    : Color
-                                                                        .fromARGB(
-                                                                            255,
-                                                                            254,
-                                                                            156,
-                                                                            51),
-                                                                child: Padding(
-                                                                  padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                      horizontal:
-                                                                          8,
-                                                                      vertical:
-                                                                          4),
-                                                                  child: userList[index]
-                                                                              [
-                                                                              'is_koombiyo'] ==
-                                                                          '0'
-                                                                      ? Text(
-                                                                          'Deactivate',
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.normal,
-                                                                            color: Color.fromARGB(
-                                                                                221,
-                                                                                250,
-                                                                                250,
-                                                                                254),
-                                                                            fontSize:
-                                                                                14.dp,
-                                                                          ))
-                                                                      : Text(
-                                                                          'Active',
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.normal,
-                                                                            color: Color.fromARGB(
-                                                                                221,
-                                                                                44,
-                                                                                65,
-                                                                                220),
-                                                                            fontSize:
-                                                                                14.dp,
-                                                                          )),
-                                                                ),
-                                                              ),
-                                                            ],
+                                                          SizedBox(
+                                                            width: 10,
                                                           ),
+                                                          SizedBox(
+                                                            width: w / 1.6,
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Text(
+                                                                    userList[
+                                                                            index]
+                                                                        [
+                                                                        'emp_id'],
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color:
+                                                                          black,
+                                                                      fontSize:
+                                                                          14.dp,
+                                                                    )),
+                                                                Text(
+                                                                    'Name:- ${userList[index]['staff_name']}',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                      color: Colors
+                                                                          .black87,
+                                                                      fontSize:
+                                                                          12.dp,
+                                                                    )),
+                                                                Text(
+                                                                    'Address:- ${userList[index]['address']}',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                      color: Colors
+                                                                          .black87,
+                                                                      fontSize:
+                                                                          12.dp,
+                                                                    )),
+                                                                Text(
+                                                                    'Type:-  ${userList[index]['emp_type_name'] == null ? "-" : userList[index]['emp_type_name']}',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                      color: Colors
+                                                                          .black87,
+                                                                      fontSize:
+                                                                          12.dp,
+                                                                    )),
+                                                                Text(
+                                                                    'Designation:- ${userList[index]['designation']}',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                      color: Colors
+                                                                          .black87,
+                                                                      fontSize:
+                                                                          12.dp,
+                                                                    )),
+                                                                Text(
+                                                                    'Mobile personal:-${userList[index]['mobile_personal']}',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .normal,
+                                                                      color: Color
+                                                                          .fromARGB(
+                                                                              221,
+                                                                              2,
+                                                                              63,
+                                                                              7),
+                                                                      fontSize:
+                                                                          14.dp,
+                                                                    )),
+                                                                Text(
+                                                                    'Mobile office:-${userList[index]['mobile_office']}',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .normal,
+                                                                      color: Color.fromARGB(
+                                                                          221,
+                                                                          220,
+                                                                          44,
+                                                                          44),
+                                                                      fontSize:
+                                                                          14.dp,
+                                                                    )),
+                                                                Text(
+                                                                    'Branch:-${userList[index]['dname']}',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .normal,
+                                                                      color: Color.fromARGB(
+                                                                          221,
+                                                                          44,
+                                                                          65,
+                                                                          220),
+                                                                      fontSize:
+                                                                          14.dp,
+                                                                    )),
+                                                                Row(
+                                                                  children: [
+                                                                    Text(
+                                                                        'Delivery Agent:-',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight.normal,
+                                                                          color:
+                                                                              black,
+                                                                          fontSize:
+                                                                              14.dp,
+                                                                        )),
+                                                                    SizedBox(
+                                                                      width: 8,
+                                                                    ),
+                                                                    Card(
+                                                                      color: userList[index]['is_agent'] ==
+                                                                              '0'
+                                                                          ? Colors
+                                                                              .red
+                                                                          : Color.fromARGB(
+                                                                              255,
+                                                                              13,
+                                                                              224,
+                                                                              94),
+                                                                      child:
+                                                                          Padding(
+                                                                        padding: const EdgeInsets
+                                                                            .symmetric(
+                                                                            horizontal:
+                                                                                8,
+                                                                            vertical:
+                                                                                4),
+                                                                        child: userList[index]['is_agent'] ==
+                                                                                '0'
+                                                                            ? Text('Deactivate',
+                                                                                style: TextStyle(
+                                                                                  fontWeight: FontWeight.normal,
+                                                                                  color: Color.fromARGB(221, 250, 250, 254),
+                                                                                  fontSize: 14.dp,
+                                                                                ))
+                                                                            : Text('Active',
+                                                                                style: TextStyle(
+                                                                                  fontWeight: FontWeight.normal,
+                                                                                  color: Color.fromARGB(221, 44, 65, 220),
+                                                                                  fontSize: 14.dp,
+                                                                                )),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                Row(
+                                                                  children: [
+                                                                    Text(
+                                                                        'System:-',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight.normal,
+                                                                          color:
+                                                                              black,
+                                                                          fontSize:
+                                                                              14.dp,
+                                                                        )),
+                                                                    SizedBox(
+                                                                      width: 8,
+                                                                    ),
+                                                                    Card(
+                                                                      color: userList[index]['is_koombiyo'] ==
+                                                                              '0'
+                                                                          ? Colors
+                                                                              .red
+                                                                          : Color.fromARGB(
+                                                                              255,
+                                                                              254,
+                                                                              156,
+                                                                              51),
+                                                                      child:
+                                                                          Padding(
+                                                                        padding: const EdgeInsets
+                                                                            .symmetric(
+                                                                            horizontal:
+                                                                                8,
+                                                                            vertical:
+                                                                                4),
+                                                                        child: userList[index]['is_koombiyo'] ==
+                                                                                '0'
+                                                                            ? Text('Deactivate',
+                                                                                style: TextStyle(
+                                                                                  fontWeight: FontWeight.normal,
+                                                                                  color: Color.fromARGB(221, 250, 250, 254),
+                                                                                  fontSize: 14.dp,
+                                                                                ))
+                                                                            : Text('Active',
+                                                                                style: TextStyle(
+                                                                                  fontWeight: FontWeight.normal,
+                                                                                  color: Color.fromARGB(221, 44, 65, 220),
+                                                                                  fontSize: 14.dp,
+                                                                                )),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: 10,
+                                                          ),
+                                                          Spacer(),
                                                         ],
                                                       ),
                                                     ),
-                                                    SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    Spacer(),
                                                   ],
                                                 ),
                                               ),
-                                            ],
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                    ),
-                  ),
+                                  ],
+                                );
+                              },
+                            ),
+                          ),
+                        ),
                 ],
               ),
             ),
