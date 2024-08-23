@@ -2,6 +2,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/class/class.dart';
 import 'package:flutter_application_2/uI/main/drawer/branch_List/branch_list.dart';
+import 'package:flutter_application_2/uI/main/drawer/genaral/Find_Branch/find_branch.dart';
+import 'package:flutter_application_2/uI/main/drawer/genaral/branch_route/branch_route.dart';
 import 'package:flutter_application_2/uI/main/drawer/my_oders/my_oders.dart';
 import 'package:flutter_application_2/uI/main/navigation/navigation.dart';
 import 'package:flutter_share/flutter_share.dart';
@@ -51,6 +53,7 @@ class _customDrawerState extends State<customDrawer> {
   int drawOpen = 0;
   String key = '';
   int temp = 0;
+  int x = 0;
   String pickupDevice = '';
   int accessGroupId = 1;
   List modeData = [];
@@ -393,7 +396,49 @@ class _customDrawerState extends State<customDrawer> {
                                                 key = '8';
                                               });
                                             }, key, '8')
-                                          : SizedBox()
+                                          : SizedBox(),
+                                      DrawerClz().branchDeposit(accessGroupId)
+                                          ? tileButton2('Demarcation', () {
+                                              setState(() {
+                                                if (x == 0) {
+                                                  x = 1;
+                                                } else {
+                                                  x = 0;
+                                                }
+                                              });
+                                            },
+                                              key,
+                                              '9',
+                                              x == 1
+                                                  ? [
+                                                      tileButton('Find Branch',
+                                                          () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  FindBranch()),
+                                                        );
+                                                        setState(() {
+                                                          key = '10';
+                                                        });
+                                                      }, key, '10'),
+                                                      tileButton('Branch Route',
+                                                          () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  BranchRoute()),
+                                                        );
+                                                        setState(() {
+                                                          key = '11';
+                                                        });
+                                                      }, key, '11')
+                                                    ]
+                                                  : [])
+                                          : SizedBox(),
+                                      Container(),
                                     ]),
 
                                     DrawerClz().attendance(accessGroupId)
@@ -667,6 +712,53 @@ class _customDrawerState extends State<customDrawer> {
                   )
                 ],
               ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  tileButton2(String text, VoidCallback onTap, String key, String selectIndex,
+      List<Widget> list) {
+    var h = MediaQuery.of(context).size.height;
+    var w = MediaQuery.of(context).size.width;
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(5),
+        onTap: onTap,
+        child: Card(
+          margin: EdgeInsets.all(0),
+          key: Key(key),
+          color: black.withOpacity(0.4),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+          child: Container(
+            width: w,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(text,
+                          style: TextStyle(
+                            color: white,
+                            fontSize: 12.sp,
+                          )),
+                      Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        color: white1,
+                        size: 20,
+                      )
+                    ],
+                  ),
+                ),
+                Column(
+                  children: list,
+                )
+              ],
             ),
           ),
         ),

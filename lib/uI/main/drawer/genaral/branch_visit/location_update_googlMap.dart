@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:dotted_border/dotted_border.dart';
@@ -45,12 +46,13 @@ class _LocationUpdateGoogleMapState extends State<LocationUpdateGoogleMap> {
   String? selectval;
   List userBranchList = [];
   List branchList = [];
+  List todayVisitBranchList = [];
 
   @override
   void initState() {
     getLocation();
-    userLocation();
-    getUserBranch();
+    // userLocation();
+    // getUserBranch();
     // TODO: implement initState
     super.initState();
   }
@@ -94,35 +96,43 @@ class _LocationUpdateGoogleMapState extends State<LocationUpdateGoogleMap> {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
     var temp = await CustomApi().branchVisitHistroy(context);
+    var temp2 = await CustomApi().branchVisitToday(context);
+    // log(temp2.toString());
     if (!mounted) return;
     setState(() {
       branchList = temp;
+      todayVisitBranchList = temp2;
+      log(todayVisitBranchList.toString());
     });
-    BitmapDescriptor markerBitMap2 = await BitmapDescriptor.fromAssetImage(
-      ImageConfiguration(size: Size(5, 5), devicePixelRatio: 10),
-      "assets/location_d.png",
-    );
+    setState(() {
+      List.generate(todayVisitBranchList.length, (index) {
+        double lat = double.parse(todayVisitBranchList[index]['bv_lati']);
+        double long = double.parse(todayVisitBranchList[index]['bv_longt']);
 
-    List.generate(branchList.length, (index) {
-      double lat = double.parse(branchList[index]['bv_lati']);
-      double long = double.parse(branchList[index]['bv_longt']);
-      if (formattedDate == branchList[index]['bv_branch_name']) {
         Set<Marker> _markertemp = {
           Marker(
+              onTap: () {
+                info(
+                    todayVisitBranchList[index]['bv_image'].toString(),
+                    todayVisitBranchList[index]['staff_name'].toString(),
+                    todayVisitBranchList[index]['bv_branch_name'].toString(),
+                    todayVisitBranchList[index]['date'].toString());
+              },
               icon: BitmapDescriptor.defaultMarkerWithHue(0.4),
               // icon: markerBitMap2,
               infoWindow: InfoWindow(
-                  title: branchList[index]['bv_branch_name'],
-                  snippet: 'Visit Time'),
-              markerId: MarkerId(branchList[index]['bv_id']),
+                onTap: () {},
+                title: todayVisitBranchList[index]['bv_branch_name'],
+              ),
+              markerId: MarkerId(todayVisitBranchList[index]['bv_id']),
               position: LatLng(lat, long))
         };
 
         _marker.addAll(_markertemp);
-      }
-    });
-    setState(() {
+      });
+
       _marker;
+      log(_marker.toString());
     });
   }
 
@@ -131,6 +141,50 @@ class _LocationUpdateGoogleMapState extends State<LocationUpdateGoogleMap> {
     if (permissionStatus == PermissionStatus.denied) {
       await openAppSettings().then((value) => getLocation());
     } else if (permissionStatus == PermissionStatus.granted) {}
+  }
+
+  info(String img, String name, String branch, String date) {
+    var h = MediaQuery.of(context).size.height;
+    var w = MediaQuery.of(context).size.width;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+          insetPadding: EdgeInsets.all(12),
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: Icon(Icons.close)),
+              ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Container(
+                  width: w,
+                  child: Image.memory(base64Decode(img), fit: BoxFit.fitHeight),
+                ),
+              ),
+              Divider(),
+              Text(
+                name,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                branch,
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+              ),
+              Text(
+                date,
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+              ),
+            ],
+          )),
+    );
   }
 
   @override
@@ -317,9 +371,8 @@ class _LocationUpdateGoogleMapState extends State<LocationUpdateGoogleMap> {
                                           // on below line setting compass enabled.
                                           // zoomControlsEnabled: false,
                                           initialCameraPosition: CameraPosition(
-                                            target: LatLng(position!.latitude,
-                                                position!.longitude),
-                                            zoom: 11.4746,
+                                            target: LatLng(7.8731, 80.7718),
+                                            zoom: 8,
                                           ),
                                           onTap: (argument) {
                                             argument.latitude;
