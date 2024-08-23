@@ -281,6 +281,8 @@ class _AccountState extends State<Account> {
                           bottom: 40,
                           right: w / 3.5,
                           child: CircleAvatar(
+
+                            
                             backgroundColor: Colors.blue.withOpacity(0.5),
                             radius: 27,
                             child: IconButton(

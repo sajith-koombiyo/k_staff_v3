@@ -98,468 +98,450 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
         ),
         body: Stack(
           children: [
-            SingleChildScrollView(
-              child: Column(
-                children: [
-                  ExpansionPanelList(
-                    materialGapSize: 8,
-                    expansionCallback: (panelIndex, expanded) {
-                      active = !active;
-                      setState(() {});
-                    },
-                    children: [
-                      ExpansionPanel(
-                          backgroundColor: Color.fromARGB(255, 212, 209, 200),
-                          headerBuilder: (context, isExpanded) {
-                            return ListTile(
-                              title: Text(
-                                "Filter",
-                                style: TextStyle(fontSize: 16),
-                              ),
-                            );
-                          },
-                          body: PreferredSize(
-                            preferredSize: Size(w, h / 10),
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Flexible(
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8),
-                                        child: Card(
-                                          child: Container(
-                                            height: h / 17,
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 15),
-                                            alignment: Alignment.centerRight,
-                                            width: w,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5.0),
-                                              border: Border.all(
-                                                  color: black3,
-                                                  style: BorderStyle.solid,
-                                                  width: 0.80),
-                                            ),
-                                            child: DropdownButton(
-                                              isExpanded: true,
-                                              alignment: AlignmentDirectional
-                                                  .centerEnd,
-                                              hint: Container(
-                                                //and here
-                                                alignment: Alignment.centerLeft,
-                                                child: Text(
-                                                  "Location",
-                                                  style:
-                                                      TextStyle(color: black1),
-                                                  textAlign: TextAlign.end,
-                                                ),
-                                              ),
-                                              value:
-                                                  selectval, //implement initial value or selected value
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  // _runFilter(value.toString());
-                                                  //set state will update UI and State of your App
-                                                  selectval = value
-                                                      .toString(); //change selectval to new value
-                                                });
-                                              },
-                                              items:
-                                                  userBranchList.map((itemone) {
-                                                return DropdownMenuItem(
-                                                    onTap: () {
-                                                      getData(itemone['did']);
-                                                      print(itemone['did']);
-                                                      // branchId = itemone['did'];
-                                                      // getData(
-                                                      //     branchId,
-                                                      //     destinationId,
-                                                      //     isActive ? '1' : '0');
-                                                    },
-                                                    value: itemone['dname'],
-                                                    child: Text(
-                                                      itemone['dname'],
-                                                      style: TextStyle(
-                                                          color: black2),
-                                                    ));
-                                              }).toList(),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Flexible(
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8),
-                                        child: Card(
-                                          child: Container(
-                                            height: h / 17,
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 15),
-                                            alignment: Alignment.centerRight,
-                                            width: w,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5.0),
-                                              border: Border.all(
-                                                  color: black3,
-                                                  style: BorderStyle.solid,
-                                                  width: 0.80),
-                                            ),
-                                            child: DropdownButton(
-                                              isExpanded: true,
-                                              alignment: AlignmentDirectional
-                                                  .centerEnd,
-                                              hint: Container(
-                                                //and here
-                                                alignment: Alignment.centerLeft,
-                                                child: Text(
-                                                  "Designation",
-                                                  style:
-                                                      TextStyle(color: black1),
-                                                  textAlign: TextAlign.end,
-                                                ),
-                                              ),
-                                              value:
-                                                  selectDId, //implement initial value or selected value
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  // _runFilter(value.toString());
-                                                  //set state will update UI and State of your App
-                                                  selectDId = value
-                                                      .toString(); //change selectval to new value
-                                                });
-                                              },
-                                              items: destinationList
-                                                  .map((itemone) {
-                                                return DropdownMenuItem(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        destinationId =
-                                                            itemone['id'];
-                                                      });
-                                                      // getData(
-                                                      //     branchId,
-                                                      //     destinationId,
-                                                      //     isActive
-                                                      //         ? '1'
-                                                      //         : '0');
-                                                    },
-                                                    value: itemone['dName'],
-                                                    child: Text(
-                                                      itemone['dName'],
-                                                      style: TextStyle(
-                                                          color: black2),
-                                                    ));
-                                              }).toList(),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 8),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Delivery Agent',
-                                        style: TextStyle(
-                                            color: black, fontSize: 16),
-                                      ),
-                                      Switch.adaptive(
-                                        value: isActive,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            isActive = value;
-                                          });
-                                          // getData(branchId, destinationId,
-                                          //     isActive == true ? '1' : '0');
-                                        },
-                                      )
-                                    ],
-                                  ),
-                                )
-                              ],
+            Column(
+              children: [
+                ExpansionPanelList(
+                  materialGapSize: 8,
+                  expansionCallback: (panelIndex, expanded) {
+                    active = !active;
+                    setState(() {});
+                  },
+                  children: [
+                    ExpansionPanel(
+                        backgroundColor: Color.fromARGB(255, 212, 209, 200),
+                        headerBuilder: (context, isExpanded) {
+                          return ListTile(
+                            title: Text(
+                              "Filter",
+                              style: TextStyle(fontSize: 16),
                             ),
-                          ),
-                          isExpanded: active,
-                          canTapOnHeader: true),
-                    ],
-                  ),
-                  empList.isEmpty && isLoading == false
-                      ? Stack(children: [
-                          SizedBox(
-                              width: w,
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SizedBox(height: h / 2, child: NoData()),
-                                    Card(
-                                      child: Text('Please select your branch',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                            fontSize: 18.dp,
-                                          )),
+                          );
+                        },
+                        body: PreferredSize(
+                          preferredSize: Size(w, h),
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Flexible(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8),
+                                      child: Card(
+                                        child: Container(
+                                          height: h / 17,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 15),
+                                          alignment: Alignment.centerRight,
+                                          width: w,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(5.0),
+                                            border: Border.all(
+                                                color: black3,
+                                                style: BorderStyle.solid,
+                                                width: 0.80),
+                                          ),
+                                          child: DropdownButton(
+                                            isExpanded: true,
+                                            alignment:
+                                                AlignmentDirectional.centerEnd,
+                                            hint: Container(
+                                              //and here
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                "Location",
+                                                style: TextStyle(color: black1),
+                                                textAlign: TextAlign.end,
+                                              ),
+                                            ),
+                                            value:
+                                                selectval, //implement initial value or selected value
+                                            onChanged: (value) {
+                                              setState(() {
+                                                // _runFilter(value.toString());
+                                                //set state will update UI and State of your App
+                                                selectval = value
+                                                    .toString(); //change selectval to new value
+                                              });
+                                            },
+                                            items:
+                                                userBranchList.map((itemone) {
+                                              return DropdownMenuItem(
+                                                  onTap: () {
+                                                    getData(itemone['did']);
+                                                    print(itemone['did']);
+                                                    // branchId = itemone['did'];
+                                                    // getData(
+                                                    //     branchId,
+                                                    //     destinationId,
+                                                    //     isActive ? '1' : '0');
+                                                  },
+                                                  value: itemone['dname'],
+                                                  child: Text(
+                                                    itemone['dname'],
+                                                    style: TextStyle(
+                                                        color: black2),
+                                                  ));
+                                            }).toList(),
+                                          ),
+                                        ),
+                                      ),
                                     ),
+                                  ),
+                                  Flexible(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8),
+                                      child: Card(
+                                        child: Container(
+                                          height: h / 17,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 15),
+                                          alignment: Alignment.centerRight,
+                                          width: w,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(5.0),
+                                            border: Border.all(
+                                                color: black3,
+                                                style: BorderStyle.solid,
+                                                width: 0.80),
+                                          ),
+                                          child: DropdownButton(
+                                            isExpanded: true,
+                                            alignment:
+                                                AlignmentDirectional.centerEnd,
+                                            hint: Container(
+                                              //and here
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                "Designation",
+                                                style: TextStyle(color: black1),
+                                                textAlign: TextAlign.end,
+                                              ),
+                                            ),
+                                            value:
+                                                selectDId, //implement initial value or selected value
+                                            onChanged: (value) {
+                                              setState(() {
+                                                // _runFilter(value.toString());
+                                                //set state will update UI and State of your App
+                                                selectDId = value
+                                                    .toString(); //change selectval to new value
+                                              });
+                                            },
+                                            items:
+                                                destinationList.map((itemone) {
+                                              return DropdownMenuItem(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      destinationId =
+                                                          itemone['id'];
+                                                    });
+                                                    // getData(
+                                                    //     branchId,
+                                                    //     destinationId,
+                                                    //     isActive
+                                                    //         ? '1'
+                                                    //         : '0');
+                                                  },
+                                                  value: itemone['dName'],
+                                                  child: Text(
+                                                    itemone['dName'],
+                                                    style: TextStyle(
+                                                        color: black2),
+                                                  ));
+                                            }).toList(),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Active Status',
+                                      style:
+                                          TextStyle(color: black, fontSize: 16),
+                                    ),
+                                    Switch.adaptive(
+                                      value: isActive,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          isActive = value;
+                                        });
+                                        // getData(branchId, destinationId,
+                                        //     isActive == true ? '1' : '0');
+                                      },
+                                    )
                                   ],
                                 ),
-                              ))
-                        ])
-                      : SingleChildScrollView(
-                          child: SizedBox(
-                            height: h,
-                            child: ListView.builder(
-                              padding: EdgeInsets.all(0),
-                              shrinkWrap: true,
-                              itemCount: empList.length,
-                              itemBuilder: (context, index) {
-                                return Column(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Material(
-                                        color: Colors.transparent,
-                                        child: InkWell(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          splashColor: blue,
-                                          onTap: () {
-                                            // itemDetails();
-                                          },
-                                          onLongPress: () {},
-                                          child: Card(
-                                            margin: EdgeInsets.only(left: 0),
-                                            color: appliteBlue,
-                                            child: Card(
-                                              elevation: 50,
-                                              margin: EdgeInsets.only(left: 3),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(12.0),
-                                                child: Column(
-                                                  children: [
-                                                    SizedBox(
-                                                      width: w,
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          Card(
-                                                            elevation: 1,
-                                                            child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(
-                                                                        4.0),
-                                                                child: Icon(
-                                                                  Icons
-                                                                      .person_add_alt_sharp,
-                                                                  size: 40,
-                                                                  color: Color(Random()
-                                                                          .nextInt(
-                                                                              0xffffffff))
-                                                                      .withAlpha(
-                                                                          0xff),
+                              )
+                            ],
+                          ),
+                        ),
+                        isExpanded: active,
+                        canTapOnHeader: true),
+                  ],
+                ),
+                empList.isEmpty && isLoading == false
+                    ? Stack(children: [
+                        SizedBox(
+                            width: w,
+                            child: SingleChildScrollView(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(height: h / 2, child: NoData()),
+                                  Card(
+                                    child: Text('Please select your branch',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                          fontSize: 18.dp,
+                                        )),
+                                  ),
+                                ],
+                              ),
+                            ))
+                      ])
+                    : Flexible(
+                        child: ListView.builder(
+                          padding: EdgeInsets.all(0),
+                          shrinkWrap: true,
+                          itemCount: empList.length,
+                          itemBuilder: (context, index) {
+                            return Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      borderRadius: BorderRadius.circular(20),
+                                      splashColor: blue,
+                                      onTap: () {
+                                        // itemDetails();
+                                      },
+                                      onLongPress: () {},
+                                      child: Card(
+                                        margin: EdgeInsets.only(left: 0),
+                                        color: appliteBlue,
+                                        child: Card(
+                                          elevation: 50,
+                                          margin: EdgeInsets.only(left: 3),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(12.0),
+                                            child: Column(
+                                              children: [
+                                                SizedBox(
+                                                  width: w,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Card(
+                                                        elevation: 1,
+                                                        child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(4.0),
+                                                            child: Icon(
+                                                              Icons
+                                                                  .person_add_alt_sharp,
+                                                              size: 40,
+                                                              color: Color(Random()
+                                                                      .nextInt(
+                                                                          0xffffffff))
+                                                                  .withAlpha(
+                                                                      0xff),
+                                                            )),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 10,
+                                                      ),
+                                                      SizedBox(
+                                                        width: w / 1.6,
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                                'Name:- ${empList[index]['full_name']}',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  color: Colors
+                                                                      .black87,
+                                                                  fontSize:
+                                                                      12.dp,
                                                                 )),
-                                                          ),
-                                                          SizedBox(
-                                                            width: 10,
-                                                          ),
-                                                          SizedBox(
-                                                            width: w / 1.6,
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Text(
-                                                                    'Name:- ${empList[index]['full_name']}',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600,
-                                                                      color: Colors
-                                                                          .black87,
-                                                                      fontSize:
-                                                                          12.dp,
-                                                                    )),
-                                                                Text(
-                                                                    'Employee Number:- ${empList[index]['emp_epf_no']}',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600,
-                                                                      color: Colors
-                                                                          .black87,
-                                                                      fontSize:
-                                                                          12.dp,
-                                                                    )),
-                                                                Text(
-                                                                    'Address:- ${empList[index]['address']}',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600,
-                                                                      color: Colors
-                                                                          .black87,
-                                                                      fontSize:
-                                                                          12.dp,
-                                                                    )),
-                                                                Text(
-                                                                    'Type:- ${empList[index]['emp_type_name']}',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600,
-                                                                      color: Colors
-                                                                          .black87,
-                                                                      fontSize:
-                                                                          12.dp,
-                                                                    )),
-                                                                Text(
-                                                                    'Designation:- ${empList[index]['designation_name']}',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600,
-                                                                      color: Colors
-                                                                          .black87,
-                                                                      fontSize:
-                                                                          12.dp,
-                                                                    )),
-                                                                Text(
-                                                                    'Personal contact:- ${empList[index]['personal_contact']}',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .normal,
-                                                                      color: Color.fromARGB(
+                                                            Text(
+                                                                'Employee Number:- ${empList[index]['emp_epf_no']}',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  color: Colors
+                                                                      .black87,
+                                                                  fontSize:
+                                                                      12.dp,
+                                                                )),
+                                                            Text(
+                                                                'Address:- ${empList[index]['address']}',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  color: Colors
+                                                                      .black87,
+                                                                  fontSize:
+                                                                      12.dp,
+                                                                )),
+                                                            Text(
+                                                                'Type:- ${empList[index]['emp_type_name']}',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  color: Colors
+                                                                      .black87,
+                                                                  fontSize:
+                                                                      12.dp,
+                                                                )),
+                                                            Text(
+                                                                'Designation:- ${empList[index]['designation_name']}',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  color: Colors
+                                                                      .black87,
+                                                                  fontSize:
+                                                                      12.dp,
+                                                                )),
+                                                            Text(
+                                                                'Personal contact:- ${empList[index]['personal_contact']}',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal,
+                                                                  color: Color
+                                                                      .fromARGB(
                                                                           221,
                                                                           220,
                                                                           44,
                                                                           44),
-                                                                      fontSize:
-                                                                          14.dp,
-                                                                    )),
-                                                                Text(
-                                                                    'Office contact:- ${empList[index]['ofc_contact']}',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .normal,
-                                                                      color: Color.fromARGB(
+                                                                  fontSize:
+                                                                      14.dp,
+                                                                )),
+                                                            Text(
+                                                                'Office contact:- ${empList[index]['ofc_contact']}',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal,
+                                                                  color: Color
+                                                                      .fromARGB(
                                                                           221,
                                                                           11,
                                                                           155,
                                                                           76),
-                                                                      fontSize:
-                                                                          14.dp,
-                                                                    )),
-                                                                statusRow(
-                                                                    'Active',
-                                                                    empList[index]
-                                                                        [
-                                                                        'resign_status'],
-                                                                    empList[index]
-                                                                        [
-                                                                        'resigned_st_txt'],
-                                                                    Color
-                                                                        .fromARGB(
-                                                                            255,
-                                                                            5,
-                                                                            175,
-                                                                            56),
-                                                                    Color.fromARGB(
-                                                                        255,
-                                                                        244,
-                                                                        10,
-                                                                        57)),
-                                                                statusRow(
-                                                                    'Clearance',
-                                                                    empList[index]
-                                                                        [
-                                                                        'clearance_st'],
-                                                                    empList[index]
-                                                                        [
-                                                                        'clearence_st_txt'],
-                                                                    Color
-                                                                        .fromARGB(
-                                                                            255,
-                                                                            150,
-                                                                            167,
-                                                                            3),
-                                                                    Color.fromARGB(
-                                                                        255,
-                                                                        13,
-                                                                        149,
-                                                                        222)),
-                                                                statusRow(
-                                                                    'Agreement Sign',
-                                                                    empList[index]
-                                                                        [
-                                                                        'agreement_signed_st'],
-                                                                    empList[index]
-                                                                        [
-                                                                        'agreement_signed_txt'],
-                                                                    Color.fromARGB(
-                                                                        255,
-                                                                        13,
-                                                                        160,
-                                                                        173),
-                                                                    Color
-                                                                        .fromARGB(
-                                                                            255,
-                                                                            186,
-                                                                            60,
-                                                                            7)),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            width: 10,
-                                                          ),
-                                                          Spacer(),
-                                                        ],
+                                                                  fontSize:
+                                                                      14.dp,
+                                                                )),
+                                                            statusRow(
+                                                                'Active',
+                                                                empList[index][
+                                                                    'resign_status'],
+                                                                empList[index][
+                                                                    'resigned_st_txt'],
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    5,
+                                                                    175,
+                                                                    56),
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    244,
+                                                                    10,
+                                                                    57)),
+                                                            statusRow(
+                                                                'Clearance',
+                                                                empList[index][
+                                                                    'clearance_st'],
+                                                                empList[index][
+                                                                    'clearence_st_txt'],
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    150,
+                                                                    167,
+                                                                    3),
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    13,
+                                                                    149,
+                                                                    222)),
+                                                            statusRow(
+                                                                'Agreement Sign',
+                                                                empList[index][
+                                                                    'agreement_signed_st'],
+                                                                empList[index][
+                                                                    'agreement_signed_txt'],
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    13,
+                                                                    160,
+                                                                    173),
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    186,
+                                                                    60,
+                                                                    7)),
+                                                          ],
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ],
+                                                      SizedBox(
+                                                        width: 10,
+                                                      ),
+                                                      Spacer(),
+                                                    ],
+                                                  ),
                                                 ),
-                                              ),
+                                              ],
                                             ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ],
-                                );
-                              },
-                            ),
-                          ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
                         ),
-                ],
-              ),
+                      ),
+              ],
             ),
             isLoading ? Loader().loader(context) : SizedBox(),
             provider.isanotherUserLog ? UserLoginCheck() : SizedBox()
