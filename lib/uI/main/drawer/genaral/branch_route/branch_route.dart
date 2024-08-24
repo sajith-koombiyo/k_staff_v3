@@ -10,7 +10,9 @@ import '../../../../widget/nothig_found.dart';
 import '../../../navigation/navigation.dart';
 
 class BranchRoute extends StatefulWidget {
-  const BranchRoute({super.key});
+  const BranchRoute({
+    super.key,
+  });
 
   @override
   State<BranchRoute> createState() => _BranchRouteState();
@@ -34,7 +36,7 @@ class _BranchRouteState extends State<BranchRoute> {
   File? myImage;
   late ScrollController mycontroller = ScrollController();
   List dataList = [];
-  List dataListTemp = [];
+
   bool isLoading = false;
   String branchListID = '';
 
@@ -50,7 +52,7 @@ class _BranchRouteState extends State<BranchRoute> {
     });
     Provider.of<ProviderS>(context, listen: false);
     List brancheList = await CustomApi().userActiveBranches(context);
-    log(brancheList.toString());
+
     getData('');
 
     setState(() {
@@ -60,7 +62,13 @@ class _BranchRouteState extends State<BranchRoute> {
     });
   }
 
-  getData(String branch) async {}
+  getData(String branchId) async {
+    var res = await CustomApi().branchRoute(context, branchId);
+    log(res.toString());
+    setState(() {
+      dataList = res;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -161,7 +169,7 @@ class _BranchRouteState extends State<BranchRoute> {
                       ],
                     ))
                 : ListView.builder(
-                    itemCount: 5,
+                    itemCount: dataList.length,
                     controller: mycontroller,
                     itemBuilder: (context, index) {
                       return Padding(
@@ -179,7 +187,7 @@ class _BranchRouteState extends State<BranchRoute> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          'Route Name',
+                                          dataList[index]['br_name'],
                                           style: TextStyle(
                                               fontSize: 14,
                                               color: black,
@@ -206,12 +214,18 @@ class _BranchRouteState extends State<BranchRoute> {
                                           CrossAxisAlignment.center,
                                       children: [
                                         Card(
-                                          color: Colors.red,
+                                          color: dataList[index]['br_status'] ==
+                                                  '1'
+                                              ? Color.fromARGB(255, 24, 179, 50)
+                                              : Colors.red,
                                           child: Padding(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 10, vertical: 10),
                                             child: Text(
-                                              'Active',
+                                              dataList[index]['br_status'] ==
+                                                      '1'
+                                                  ? 'Active'
+                                                  : 'Pending',
                                               style: TextStyle(
                                                   fontSize: 14,
                                                   color: black,
@@ -224,7 +238,7 @@ class _BranchRouteState extends State<BranchRoute> {
                                           width: 12,
                                         ),
                                         Text(
-                                          '50KM',
+                                          '${dataList[index]['length']}KM',
                                           style: TextStyle(
                                               fontSize: 14,
                                               color: black,
@@ -238,11 +252,32 @@ class _BranchRouteState extends State<BranchRoute> {
                                     isOpen && selectedIndex == index
                                         ? Container(
                                             decoration: BoxDecoration(
-                                                color: Colors.black12,
+                                                color: Color.fromARGB(
+                                                    31, 51, 129, 162),
                                                 borderRadius:
                                                     BorderRadius.circular(10)),
-                                            height: h / 7,
                                             width: w,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'City List',
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        color: black),
+                                                  ),
+                                                  Text(
+                                                    '${dataList[index]['br_city_list']}',
+                                                    style:
+                                                        TextStyle(fontSize: 14),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
                                           )
                                         : SizedBox()
                                   ]),

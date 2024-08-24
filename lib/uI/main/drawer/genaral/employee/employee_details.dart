@@ -36,7 +36,7 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
   String userActive = '';
   List userList = [];
   bool isLoading = false;
-
+  bool filterActive = false;
   List userBranchList = [];
   List empList = [];
   getData(String id) async {
@@ -100,26 +100,41 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
           children: [
             Column(
               children: [
-                ExpansionPanelList(
-                  materialGapSize: 8,
-                  expansionCallback: (panelIndex, expanded) {
-                    active = !active;
-                    setState(() {});
-                  },
-                  children: [
-                    ExpansionPanel(
-                        backgroundColor: Color.fromARGB(255, 212, 209, 200),
-                        headerBuilder: (context, isExpanded) {
-                          return ListTile(
-                            title: Text(
+                Container(
+                  color: appliteBlue,
+                  child: Column(children: [
+                    Divider(),
+                    Container(
+                      height: h / 17,
+                      width: w,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
                               "Filter",
-                              style: TextStyle(fontSize: 16),
+                              style: TextStyle(color: white),
+                              textAlign: TextAlign.end,
                             ),
-                          );
-                        },
-                        body: PreferredSize(
-                          preferredSize: Size(w, h),
-                          child: Column(
+                            IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    filterActive = !filterActive;
+                                  });
+                                },
+                                icon: Icon(
+                                  filterActive
+                                      ? Icons.keyboard_arrow_down_outlined
+                                      : Icons.keyboard_arrow_up_outlined,
+                                  color: white,
+                                ))
+                          ],
+                        ),
+                      ),
+                    ),
+                    filterActive
+                        ? Column(
                             children: [
                               Row(
                                 children: [
@@ -270,7 +285,7 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
                                     Text(
                                       'Active Status',
                                       style:
-                                          TextStyle(color: black, fontSize: 16),
+                                          TextStyle(color: white, fontSize: 16),
                                     ),
                                     Switch.adaptive(
                                       value: isActive,
@@ -286,11 +301,9 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
                                 ),
                               )
                             ],
-                          ),
-                        ),
-                        isExpanded: active,
-                        canTapOnHeader: true),
-                  ],
+                          )
+                        : SizedBox()
+                  ]),
                 ),
                 empList.isEmpty && isLoading == false
                     ? Stack(children: [

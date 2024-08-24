@@ -32,6 +32,7 @@ class _ManageUsersState extends State<ManageUsers> {
   String? selectDId;
   String branchId = '';
   bool isActive = true;
+  bool filterActive = true;
   String destinationId = '';
   String userActive = '';
   List userList = [];
@@ -106,194 +107,211 @@ class _ManageUsersState extends State<ManageUsers> {
           children: [
             Column(
               children: [
-                ExpansionPanelList(
-                  materialGapSize: 8,
-                  expansionCallback: (panelIndex, expanded) {
-                    active = !active;
-                    setState(() {});
-                  },
-                  children: [
-                    ExpansionPanel(
-                        backgroundColor: Color.fromARGB(255, 212, 209, 200),
-                        headerBuilder: (context, isExpanded) {
-                          return ListTile(
-                            title: Text(
-                              "Filter",
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          );
-                        },
-                        body: PreferredSize(
-                          preferredSize: Size(w, h / 10),
-                          child: Column(
+                Container(
+                  color: appliteBlue,
+                  child: Column(
+                    children: [
+                      Divider(),
+                      Container(
+                        height: h / 17,
+                        width: w,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Row(
-                                children: [
-                                  Flexible(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8),
-                                      child: Card(
-                                        child: Container(
-                                          height: h / 17,
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 15),
-                                          alignment: Alignment.centerRight,
-                                          width: w,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(5.0),
-                                            border: Border.all(
-                                                color: black3,
-                                                style: BorderStyle.solid,
-                                                width: 0.80),
-                                          ),
-                                          child: DropdownButton(
-                                            isExpanded: true,
-                                            alignment:
-                                                AlignmentDirectional.centerEnd,
-                                            hint: Container(
-                                              //and here
-                                              alignment: Alignment.centerLeft,
-                                              child: Text(
-                                                "Location",
-                                                style: TextStyle(color: black1),
-                                                textAlign: TextAlign.end,
-                                              ),
-                                            ),
-                                            value:
-                                                selectval, //implement initial value or selected value
-                                            onChanged: (value) {
-                                              setState(() {
-                                                // _runFilter(value.toString());
-                                                //set state will update UI and State of your App
-                                                selectval = value
-                                                    .toString(); //change selectval to new value
-                                              });
-                                            },
-                                            items:
-                                                userBranchList.map((itemone) {
-                                              return DropdownMenuItem(
-                                                  onTap: () {
-                                                    print(itemone['did']);
-                                                    branchId = itemone['did'];
-                                                    getData(
-                                                        branchId,
-                                                        destinationId,
-                                                        isActive ? '1' : '0');
-                                                  },
-                                                  value: itemone['dname'],
-                                                  child: Text(
-                                                    itemone['dname'],
-                                                    style: TextStyle(
-                                                        color: black2),
-                                                  ));
-                                            }).toList(),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Flexible(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8),
-                                      child: Card(
-                                        child: Container(
-                                          height: h / 17,
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 15),
-                                          alignment: Alignment.centerRight,
-                                          width: w,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(5.0),
-                                            border: Border.all(
-                                                color: black3,
-                                                style: BorderStyle.solid,
-                                                width: 0.80),
-                                          ),
-                                          child: DropdownButton(
-                                            isExpanded: true,
-                                            alignment:
-                                                AlignmentDirectional.centerEnd,
-                                            hint: Container(
-                                              //and here
-                                              alignment: Alignment.centerLeft,
-                                              child: Text(
-                                                "Designation",
-                                                style: TextStyle(color: black1),
-                                                textAlign: TextAlign.end,
-                                              ),
-                                            ),
-                                            value:
-                                                selectDId, //implement initial value or selected value
-                                            onChanged: (value) {
-                                              setState(() {
-                                                // _runFilter(value.toString());
-                                                //set state will update UI and State of your App
-                                                selectDId = value
-                                                    .toString(); //change selectval to new value
-                                              });
-                                            },
-                                            items:
-                                                destinationList.map((itemone) {
-                                              return DropdownMenuItem(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      destinationId =
-                                                          itemone['id'];
-                                                    });
-                                                    getData(
-                                                        branchId,
-                                                        destinationId,
-                                                        isActive ? '1' : '0');
-                                                  },
-                                                  value: itemone['dName'],
-                                                  child: Text(
-                                                    itemone['dName'],
-                                                    style: TextStyle(
-                                                        color: black2),
-                                                  ));
-                                            }).toList(),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                              Text(
+                                "Filter",
+                                style: TextStyle(color: white),
+                                textAlign: TextAlign.end,
                               ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 8),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Active Status',
-                                      style:
-                                          TextStyle(color: black, fontSize: 16),
-                                    ),
-                                    Switch.adaptive(
-                                      value: isActive,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          isActive = value;
-                                        });
-                                        getData(branchId, destinationId,
-                                            isActive == true ? '1' : '0');
-                                      },
-                                    )
-                                  ],
-                                ),
-                              )
+                              IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      filterActive = !filterActive;
+                                    });
+                                  },
+                                  icon: Icon(
+                                    filterActive
+                                        ? Icons.keyboard_arrow_down_outlined
+                                        : Icons.keyboard_arrow_up_outlined,
+                                    color: white,
+                                  ))
                             ],
                           ),
                         ),
-                        isExpanded: active,
-                        canTapOnHeader: true),
-                  ],
+                      ),
+                      filterActive
+                          ? Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Flexible(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8),
+                                        child: Card(
+                                          child: Container(
+                                            height: h / 17,
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 15),
+                                            alignment: Alignment.centerRight,
+                                            width: w,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(5.0),
+                                              border: Border.all(
+                                                  color: black3,
+                                                  style: BorderStyle.solid,
+                                                  width: 0.80),
+                                            ),
+                                            child: DropdownButton(
+                                              isExpanded: true,
+                                              alignment: AlignmentDirectional
+                                                  .centerEnd,
+                                              hint: Container(
+                                                //and here
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                  "Location",
+                                                  style:
+                                                      TextStyle(color: black1),
+                                                  textAlign: TextAlign.end,
+                                                ),
+                                              ),
+                                              value:
+                                                  selectval, //implement initial value or selected value
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  // _runFilter(value.toString());
+                                                  //set state will update UI and State of your App
+                                                  selectval = value
+                                                      .toString(); //change selectval to new value
+                                                });
+                                              },
+                                              items:
+                                                  userBranchList.map((itemone) {
+                                                return DropdownMenuItem(
+                                                    onTap: () {
+                                                      print(itemone['did']);
+                                                      branchId = itemone['did'];
+                                                      getData(
+                                                          branchId,
+                                                          destinationId,
+                                                          isActive ? '1' : '0');
+                                                    },
+                                                    value: itemone['dname'],
+                                                    child: Text(
+                                                      itemone['dname'],
+                                                      style: TextStyle(
+                                                          color: black2),
+                                                    ));
+                                              }).toList(),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Flexible(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8),
+                                        child: Card(
+                                          child: Container(
+                                            height: h / 17,
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 15),
+                                            alignment: Alignment.centerRight,
+                                            width: w,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(5.0),
+                                              border: Border.all(
+                                                  color: black3,
+                                                  style: BorderStyle.solid,
+                                                  width: 0.80),
+                                            ),
+                                            child: DropdownButton(
+                                              isExpanded: true,
+                                              alignment: AlignmentDirectional
+                                                  .centerEnd,
+                                              hint: Container(
+                                                //and here
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                  "Designation",
+                                                  style:
+                                                      TextStyle(color: black1),
+                                                  textAlign: TextAlign.end,
+                                                ),
+                                              ),
+                                              value:
+                                                  selectDId, //implement initial value or selected value
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  // _runFilter(value.toString());
+                                                  //set state will update UI and State of your App
+                                                  selectDId = value
+                                                      .toString(); //change selectval to new value
+                                                });
+                                              },
+                                              items: destinationList
+                                                  .map((itemone) {
+                                                return DropdownMenuItem(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        destinationId =
+                                                            itemone['id'];
+                                                      });
+                                                      getData(
+                                                          branchId,
+                                                          destinationId,
+                                                          isActive ? '1' : '0');
+                                                    },
+                                                    value: itemone['dName'],
+                                                    child: Text(
+                                                      itemone['dName'],
+                                                      style: TextStyle(
+                                                          color: black2),
+                                                    ));
+                                              }).toList(),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 8),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Active Status',
+                                        style: TextStyle(
+                                            color: white, fontSize: 16),
+                                      ),
+                                      Switch.adaptive(
+                                        value: isActive,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            isActive = value;
+                                          });
+                                          getData(branchId, destinationId,
+                                              isActive == true ? '1' : '0');
+                                        },
+                                      )
+                                    ],
+                                  ),
+                                )
+                              ],
+                            )
+                          : SizedBox(),
+                    ],
+                  ),
                 ),
                 userList.isEmpty && isLoading == false
                     ? Column(

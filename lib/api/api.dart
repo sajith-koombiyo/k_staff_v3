@@ -45,6 +45,7 @@ class CustomApi {
         var urll = '${ApiUrl}/Version/users';
         var res = await https.post(Uri.parse(urll), body: {});
         var responce = jsonDecode(res.body);
+        print(responce);
         if (res.statusCode == 500) {
           Provider.of<ProviderS>(context, listen: false).isServerDown = true;
         } else {
@@ -2289,6 +2290,39 @@ class CustomApi {
       if (data['status'] == 403) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
         return 0;
+      }
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
+
+  branchRoute(BuildContext context, String branchId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      final apiUrl = '${ApiUrl}Demacation/branchroute';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      // Make POST request
+
+      var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {
+        "branch_id": branchId,
+      });
+      var data = jsonDecode(res.body);
+      print(data);
+      if (data['status'] == 200) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+        print(data['branchroute']);
+        return data['branchroute'];
+      }
+
+      if (data['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+        return [];
       }
     } else {
       notification().warning(context, 'No Internet');
