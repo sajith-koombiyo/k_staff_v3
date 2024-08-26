@@ -9,19 +9,21 @@ import '../../../../../app_details/color.dart';
 import '../../../../widget/nothig_found.dart';
 import '../../../navigation/navigation.dart';
 
-class FindBranch extends StatefulWidget {
-  const FindBranch({super.key});
+class FindDemarcation extends StatefulWidget {
+  const FindDemarcation({super.key});
 
   @override
-  State<FindBranch> createState() => _FindBranchState();
+  State<FindDemarcation> createState() => _FindDemarcationState();
 }
 
-class _FindBranchState extends State<FindBranch> {
+class _FindDemarcationState extends State<FindDemarcation> {
   int accessGroupId = 1;
   TextEditingController dateController = TextEditingController();
   TextEditingController remarkController = TextEditingController();
   DateTime selectedDate = DateTime.now();
   String? selectval;
+  String? selectDistrict;
+  String? selectCity;
   List<File> loadImages = [];
   List userBranchList = [
     {'dname': 'All', 'did': '10000'}
@@ -30,11 +32,11 @@ class _FindBranchState extends State<FindBranch> {
   String visitBranchId = '';
   String riderId = '';
   int selectedIndex = 0;
-  String newImage = '';
-  File? myImage;
+
   late ScrollController mycontroller = ScrollController();
   List dataList = [];
-  List dataListTemp = [];
+  List districtList = [];
+  List cityList = [];
   bool isLoading = false;
   String branchListID = '';
   bool isActive = true;
@@ -44,6 +46,7 @@ class _FindBranchState extends State<FindBranch> {
   var destinationId;
   void initState() {
     getUserBranch();
+    getDistrict();
 
     super.initState();
   }
@@ -54,11 +57,44 @@ class _FindBranchState extends State<FindBranch> {
     });
     Provider.of<ProviderS>(context, listen: false);
     List brancheList = await CustomApi().userActiveBranches(context);
-    log(brancheList.toString());
+
     getData('');
 
     setState(() {
       userBranchList.addAll(brancheList);
+
+      // isLoading = false;
+    });
+  }
+
+  getDistrict() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    var res = await CustomApi().demacationDistrict(context);
+    log(res.toString());
+    getData('');
+
+    setState(() {
+      districtList = res;
+
+      // isLoading = false;
+    });
+  }
+
+  getCity(String districtId) async {
+    log(districtId);
+    setState(() {
+      isLoading = true;
+    });
+
+    var res = await CustomApi().demacationCity(context, districtId);
+    log(res.toString());
+    getData('');
+
+    setState(() {
+      cityList = res;
 
       // isLoading = false;
     });
@@ -160,35 +196,28 @@ class _FindBranchState extends State<FindBranch> {
                                             //and here
                                             alignment: Alignment.centerLeft,
                                             child: Text(
-                                              "Location",
+                                              "District",
                                               style: TextStyle(color: black1),
                                               textAlign: TextAlign.end,
                                             ),
                                           ),
                                           value:
-                                              selectval, //implement initial value or selected value
+                                              selectDistrict, //implement initial value or selected value
                                           onChanged: (value) {
                                             setState(() {
-                                              // _runFilter(value.toString());
-                                              //set state will update UI and State of your App
-                                              selectval = value
+                                              selectDistrict = value
                                                   .toString(); //change selectval to new value
                                             });
                                           },
-                                          items: userBranchList.map((itemone) {
+                                          items: districtList.map((itemone) {
                                             return DropdownMenuItem(
                                                 onTap: () {
-                                                  getData(itemone['did']);
-                                                  print(itemone['did']);
-                                                  // branchId = itemone['did'];
-                                                  // getData(
-                                                  //     branchId,
-                                                  //     destinationId,
-                                                  //     isActive ? '1' : '0');
+                                                  getCity(itemone[
+                                                      'district_sl_id']);
                                                 },
-                                                value: itemone['dname'],
+                                                value: itemone['district_name'],
                                                 child: Text(
-                                                  itemone['dname'],
+                                                  itemone['district_name'],
                                                   style:
                                                       TextStyle(color: black2),
                                                 ));
@@ -225,22 +254,22 @@ class _FindBranchState extends State<FindBranch> {
                                             //and here
                                             alignment: Alignment.centerLeft,
                                             child: Text(
-                                              "Designation",
+                                              "City",
                                               style: TextStyle(color: black1),
                                               textAlign: TextAlign.end,
                                             ),
                                           ),
                                           value:
-                                              selectDId, //implement initial value or selected value
+                                              selectCity, //implement initial value or selected value
                                           onChanged: (value) {
                                             setState(() {
                                               // _runFilter(value.toString());
                                               //set state will update UI and State of your App
-                                              selectDId = value
+                                              selectCity = value
                                                   .toString(); //change selectval to new value
                                             });
                                           },
-                                          items: destinationList.map((itemone) {
+                                          items: cityList.map((itemone) {
                                             return DropdownMenuItem(
                                                 onTap: () {
                                                   setState(() {

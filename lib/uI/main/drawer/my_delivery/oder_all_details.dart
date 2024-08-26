@@ -65,12 +65,10 @@ class _OderAllDetailsState extends State<OderAllDetails> {
     var data = await CustomApi().oderDetailAndTimeLine(context, waybill
         // '80808082'
         );
-    
 
     setState(() {
       dataList = data;
       timeLine = dataList['timeline'];
-  
 
       oderData = dataList['order_data'];
       ger_owner = dataList['ger_owner'];

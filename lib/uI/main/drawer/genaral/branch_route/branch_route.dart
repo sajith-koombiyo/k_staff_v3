@@ -6,6 +6,7 @@ import 'package:flutter_application_2/provider/provider.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:provider/provider.dart';
 import '../../../../../app_details/color.dart';
+import '../../../../../class/class.dart';
 import '../../../../widget/nothig_found.dart';
 import '../../../navigation/navigation.dart';
 
@@ -31,7 +32,7 @@ class _BranchRouteState extends State<BranchRoute> {
   bool isOpen = false;
   String visitBranchId = '';
   String riderId = '';
-  int selectedIndex = 0;
+  int selectedIndex = 1000;
   String newImage = '';
   File? myImage;
   late ScrollController mycontroller = ScrollController();
@@ -63,10 +64,14 @@ class _BranchRouteState extends State<BranchRoute> {
   }
 
   getData(String branchId) async {
+    setState(() {
+      isLoading = true;
+    });
     var res = await CustomApi().branchRoute(context, branchId);
     log(res.toString());
     setState(() {
       dataList = res;
+      isLoading = false;
     });
   }
 
@@ -196,8 +201,13 @@ class _BranchRouteState extends State<BranchRoute> {
                                         IconButton(
                                             onPressed: () {
                                               setState(() {
-                                                selectedIndex = index;
-                                                isOpen = !isOpen;
+                                                if (selectedIndex != index) {
+                                                  isOpen = true;
+                                                  selectedIndex = index;
+                                                } else {
+                                                  selectedIndex = index;
+                                                  isOpen = !isOpen;
+                                                }
                                               });
                                             },
                                             icon: Icon(isOpen &&
@@ -271,7 +281,7 @@ class _BranchRouteState extends State<BranchRoute> {
                                                         color: black),
                                                   ),
                                                   Text(
-                                                    '${dataList[index]['br_city_list']}',
+                                                    '${dataList[index]['city_names']}',
                                                     style:
                                                         TextStyle(fontSize: 14),
                                                   ),
@@ -287,6 +297,11 @@ class _BranchRouteState extends State<BranchRoute> {
                       );
                     },
                   ),
+            isLoading
+                ? Center(
+                    child: Loader().loader(context),
+                  )
+                : SizedBox(),
             provider.isanotherUserLog ? UserLoginCheck() : SizedBox()
           ],
         ),

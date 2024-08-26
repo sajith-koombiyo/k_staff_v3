@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -49,6 +50,7 @@ class _MyDeliveryState extends State<MyDelivery> {
   String newImage = '';
   String formattedDate = '';
   List dataList = [];
+  bool isError = false;
   bool itemLoading = false;
   final ImagePicker _picker = ImagePicker();
   bool isLoading = false;
@@ -83,6 +85,8 @@ class _MyDeliveryState extends State<MyDelivery> {
   }
 
   getData(bool load) async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    print(connectivityResult);
     setState(() {
       isLoading = load;
     });
@@ -90,9 +94,15 @@ class _MyDeliveryState extends State<MyDelivery> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('user_id');
 
-    var temp =
-        await CustomApi().getmyorders(search.text, id.toString(), context);
+    var temp = await CustomApi()
+        .getmyorders(search.text.toString(), id.toString(), context);
     print(temp);
+    if (temp == 1) {
+      setState(() {
+        isError = true;
+      });
+    }
+    print('ddddddddddddddddd');
 
     setState(() {
       dataList = temp;
@@ -152,10 +162,24 @@ class _MyDeliveryState extends State<MyDelivery> {
             ? AppBar(
                 backgroundColor: appliteBlue,
                 bottom: PreferredSize(
-                    preferredSize: Size(w, 70),
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: serchBar(),
+                    preferredSize: Size(w, isError ? 90 : 70),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: serchBar(),
+                        ),
+                        isError
+                            ? Container(
+                                width: w,
+                                height: 30,
+                                color: Colors.redAccent,
+                                child: Text(
+                                  'Server is not responding',
+                                  style: TextStyle(color: white),
+                                ))
+                            : SizedBox()
+                      ],
                     )),
                 title: Text(
                   'My Delivery',

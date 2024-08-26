@@ -186,7 +186,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     return Scaffold(
-     
       backgroundColor: Colors.white,
       body: RefreshIndicator(
         onRefresh: () {
@@ -252,7 +251,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                                 .oderAllDetail(accessGroupId)
                                             ? MyDelivery(isFromHome: true)
                                             : OderAllDetails(),
-                                   
                                       ),
                                     );
 

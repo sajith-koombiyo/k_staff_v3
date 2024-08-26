@@ -34,6 +34,7 @@ class CustomApi {
 
 // splash screen api  this api checking user first time login and after login detail ,if user
   checkFirstSeen(BuildContext context) async {
+    Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var status = await Permission.location.request();
     Provider.of<ProviderS>(context, listen: false).permission = status;
@@ -365,15 +366,22 @@ class CustomApi {
       Map<String, String> headers = {
         'userkey': '$id',
       };
+
+      print(userID);
       if (sWaybill == '') {
-        final apiUrl = '${ApiUrl}/Pendings/users';
+        print('ssssssssssssssssssssssssssssssssss');
+        final apiUrl = '${ApiUrl}Pendings/users';
+        print(apiUrl);
         // Headers
 
         // Make POST request
         var resp =
             await https.post(headers: headers, Uri.parse(apiUrl), body: {});
+        if (resp.statusCode == 500) {
+          return 1;
+        }
         var data = jsonDecode(resp.body);
-        // print(data);
+        print(data);
 
         if (data['status'] == 403) {
           Provider.of<ProviderS>(context, listen: false).isanotherUserLog =
@@ -385,6 +393,7 @@ class CustomApi {
           return data['pendings'];
         }
       } else {
+        print('ssssssfffffffffffssssssssssssssssssssssssssss');
         final apiUrl = '${ApiUrl}/Singleorder/users';
         // Headers
 
@@ -1788,7 +1797,7 @@ class CustomApi {
         connectivityResult == ConnectivityResult.wifi) {
       final apiUrl = '${ApiUrl}/Timeline/users';
       // Headers
-
+      print('fffffffffffffffffffffffffffffffffffffff');
       Map<String, String> headers = {
         'userkey': '$id',
       };
@@ -2317,6 +2326,71 @@ class CustomApi {
       if (data['status'] == 200) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
         print(data['branchroute']);
+        return data['branchroute'];
+      }
+
+      if (data['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+        return [];
+      }
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
+
+  demacationDistrict(
+    BuildContext context,
+  ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      final apiUrl = '${ApiUrl}Demacation/district_sl';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      // Make POST request
+
+      var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {});
+      var data = jsonDecode(res.body);
+      print(data);
+      if (data['status'] == 200) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+
+        return data['branchroute'];
+      }
+
+      if (data['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+        return [];
+      }
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
+
+  demacationCity(BuildContext context, String dId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      final apiUrl = '${ApiUrl}Demacation/city';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      // Make POST request
+
+      var res = await https.post(
+          headers: headers, Uri.parse(apiUrl), body: {"district_id": dId});
+      var data = jsonDecode(res.body);
+      print(data);
+      if (data['status'] == 200) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+
         return data['branchroute'];
       }
 
