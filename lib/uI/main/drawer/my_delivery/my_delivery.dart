@@ -25,6 +25,7 @@ import 'dart:ui';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as https;
 
+import '../../../../sql_db/db.dart';
 import '../../navigation/navigation.dart';
 import 'exchange/exchange.dart';
 import 'voice_call.dart';
@@ -39,7 +40,7 @@ class MyDelivery extends StatefulWidget {
 
 class _MyDeliveryState extends State<MyDelivery> {
   String? _latestHardwareButtonEvent;
-
+  SqlDb sqlDb = SqlDb();
   StreamSubscription<String>? _buttonSubscription;
   ScrollController _controller = ScrollController();
   TextEditingController search = TextEditingController();
@@ -102,6 +103,43 @@ class _MyDeliveryState extends State<MyDelivery> {
         isError = true;
       });
     }
+    List<Map<String, dynamic>> data = [
+      {
+        'oid': 9,
+        'waybill_id': 90909091,
+        'cod_final': 0.00,
+        'order_type': 0,
+        'cust_name': 'Koombiyo Return Operation',
+        'name': 'Sajith Madhusanka',
+        'address': 'No 25 Epitamulla Road Kotte',
+        'phone': '0761414135',
+        'status': 'Rescheduled',
+        'cust_internal': '',
+        'prev_waybill': null,
+        'ex_bag_waybill': null
+      },
+      {
+        'oid': 10,
+        'waybill_id': 80808082,
+        'cod_final': 700.00,
+        'order_type': 0,
+        'cust_name': 'Koombiyo Return Operation',
+        'name': 'Grantha.lk',
+        'address': 'No.25 Epitamulla Rd Pita Kotte Hewelwela',
+        'phone': '760961206',
+        'status': 'Out for Delivery',
+        'cust_internal': '',
+        'prev_waybill': null,
+        'ex_bag_waybill': null
+      }
+    ];
+
+    for (var item in data) {
+      var res = await sqlDb.insertData(
+          'INSERT INTO scanData ("pick_id","scan_list") VALUES("${item[data]['oid']}","${item[data]['waybill_id']}","${item[data]['cod_final']}","${item[data]['order_type']}","${item[data]['cust_name']}","${item[data]['name']}","${item[data]['address']}","${item[data]['phone']}","${item[data]['status']}","${item[data]['cust_internal']}","${item[data]['prev_waybill']}","${item[data]['ex_bag_waybill']}")');
+      ;
+    }
+
     print('ddddddddddddddddd');
 
     setState(() {

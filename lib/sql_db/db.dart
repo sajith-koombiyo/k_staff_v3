@@ -15,9 +15,9 @@ class SqlDb {
 
   intialDb() async {
     String databasepath = await getDatabasesPath();
-    String path = join(databasepath, 'db.db');
+    String path = join(databasepath, 'dd.db');
     Database mydb = await openDatabase(path,
-        onCreate: _onCreate, version: 4, onUpgrade: _onUpgrade);
+        onCreate: _onCreate, version: 6, onUpgrade: _onUpgrade);
     return mydb;
   }
 
@@ -26,6 +26,29 @@ class SqlDb {
   }
 
   _onCreate(Database db, int version) async {
+    await db.execute('''
+  CREATE TABLE "delivery_oder" (
+    "oid" INTEGER  NOT NULL PRIMARY KEY ,
+      "waybill_id" TEXT NOT NULL,
+      "cod_final" TEXT NOT NULL,
+      "order_type" TEXT NOT NULL,
+      "cust_name" TEXT NOT NULL,
+       "name" TEXT NOT NULL,
+         "address" TEXT NOT NULL,
+          "phone" TEXT NOT NULL,
+           "status" TEXT NOT NULL,
+            "cust_internal" TEXT NOT NULL,
+            "prev_waybill" TEXT NOT NULL,
+              "ex_bag_waybill" TEXT NOT NULL
+
+    
+      
+    
+
+
+  )
+ ''');
+
     await db.execute('''
   CREATE TABLE "scanData" (
     "pick_id" INTEGER  NOT NULL PRIMARY KEY ,
