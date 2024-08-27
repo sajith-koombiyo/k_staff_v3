@@ -167,7 +167,7 @@ class DrawerClz {
   }
 
   employee(int accessId) {
-    List data = [1, 2, 3];
+    List data = [1];
 
     if (data.contains(accessId) == true) {
       return true;
