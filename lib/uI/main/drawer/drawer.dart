@@ -371,7 +371,7 @@ class _customDrawerState extends State<customDrawer> {
                                             }, key, '6')
                                           : SizedBox(),
                                       DrawerClz().branchVisit(accessGroupId)
-                                          ? tileButton('Branch Visit', () {
+                                          ? tileButton('Branch In Out', () {
                                               Navigator.push(
                                                 context,
                                                 MaterialPageRoute(

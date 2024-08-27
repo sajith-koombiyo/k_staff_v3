@@ -116,12 +116,12 @@ class _MyDeliveryState extends State<MyDelivery> {
       print('vvvvvvvvvvvvvvvvvvv');
 
       var res = await sqlDb.replaceData('delivery_oder', {
-        'oid': 10,
-        'waybill_id': 80808082,
+        'oid': 11,
+        'waybill_id': 8080811111111,
         'cod_final': 700.00,
         'order_type': 0,
         'cust_name': 'Koombiyo Return Operation',
-        'name': 'Grantha.lk',
+        'name': 'Grantha.lkdddddddddddddd',
         'address': 'No.25 Epitamulla Rd Pita Kotte Hewelwela',
         'phone': '760961206',
         'status': 'Out for Delivery',

@@ -51,8 +51,8 @@ class _LocationUpdateGoogleMapState extends State<LocationUpdateGoogleMap> {
   @override
   void initState() {
     getLocation();
-    // userLocation();
-    // getUserBranch();
+    userLocation();
+    getUserBranch();
     // TODO: implement initState
     super.initState();
   }
@@ -196,7 +196,7 @@ class _LocationUpdateGoogleMapState extends State<LocationUpdateGoogleMap> {
               appBar: AppBar(
                 backgroundColor: appliteBlue,
                 title: Text(
-                  'Branch Visit',
+                  'Branch In Out',
                   style: TextStyle(
                     fontSize: 18.dp,
                     color: white,
