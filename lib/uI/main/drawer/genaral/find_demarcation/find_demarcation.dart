@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/api/api.dart';
 import 'package:flutter_application_2/provider/provider.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import '../../../../../app_details/color.dart';
+import '../../../../../class/class.dart';
 import '../../../../widget/nothig_found.dart';
 import '../../../navigation/navigation.dart';
 
@@ -30,11 +32,12 @@ class _FindDemarcationState extends State<FindDemarcation> {
   ];
   bool isOpen = false;
   String visitBranchId = '';
-  String riderId = '';
+  String districtId = '';
+  String cityName = '';
   int selectedIndex = 0;
-
+  bool cityLoading = false;
   late ScrollController mycontroller = ScrollController();
-  List dataList = [];
+  List demarcationList = [];
   List districtList = [];
   List cityList = [];
   bool isLoading = false;
@@ -57,8 +60,7 @@ class _FindDemarcationState extends State<FindDemarcation> {
     });
     Provider.of<ProviderS>(context, listen: false);
     List brancheList = await CustomApi().userActiveBranches(context);
-
-    getData('');
+    log(brancheList.toString());
 
     setState(() {
       userBranchList.addAll(brancheList);
@@ -70,16 +72,16 @@ class _FindDemarcationState extends State<FindDemarcation> {
   getDistrict() async {
     setState(() {
       isLoading = true;
+      cityLoading = true;
     });
 
     var res = await CustomApi().demacationDistrict(context);
     log(res.toString());
-    getData('');
 
     setState(() {
       districtList = res;
-
-      // isLoading = false;
+      cityLoading = false;
+      isLoading = false;
     });
   }
 
@@ -91,7 +93,6 @@ class _FindDemarcationState extends State<FindDemarcation> {
 
     var res = await CustomApi().demacationCity(context, districtId);
     log(res.toString());
-    getData('');
 
     setState(() {
       cityList = res;
@@ -100,7 +101,18 @@ class _FindDemarcationState extends State<FindDemarcation> {
     });
   }
 
-  getData(String branch) async {}
+  demarcationData(String districtId, String cityName, String branchId) async {
+    setState(() {
+      isLoading = true;
+    });
+    var res =
+        await CustomApi().demacation(context, districtId, cityName, branchId);
+
+    setState(() {
+      demarcationList = res;
+      isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -128,353 +140,495 @@ class _FindDemarcationState extends State<FindDemarcation> {
               )),
         ),
         backgroundColor: white,
-        body: Column(
+        body: Stack(
           children: [
-            Container(
-              color: appliteBlue,
-              child: Column(
-                children: [
-                  Divider(),
-                  Container(
-                    height: h / 17,
-                    width: w,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Filter",
-                            style: TextStyle(color: white),
-                            textAlign: TextAlign.end,
-                          ),
-                          IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  isActive = !isActive;
-                                });
-                              },
-                              icon: Icon(
-                                isActive
-                                    ? Icons.keyboard_arrow_down_outlined
-                                    : Icons.keyboard_arrow_up_outlined,
-                                color: white,
-                              ))
-                        ],
-                      ),
-                    ),
-                  ),
-                  isActive
-                      ? Column(
-                          children: [
-                            Row(
-                              children: [
-                                Flexible(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8),
-                                    child: Card(
-                                      child: Container(
-                                        height: h / 17,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 15),
-                                        alignment: Alignment.centerRight,
-                                        width: w,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5.0),
-                                          border: Border.all(
-                                              color: black3,
-                                              style: BorderStyle.solid,
-                                              width: 0.80),
-                                        ),
-                                        child: DropdownButton(
-                                          isExpanded: true,
-                                          alignment:
-                                              AlignmentDirectional.centerEnd,
-                                          hint: Container(
-                                            //and here
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              "District",
-                                              style: TextStyle(color: black1),
-                                              textAlign: TextAlign.end,
-                                            ),
-                                          ),
-                                          value:
-                                              selectDistrict, //implement initial value or selected value
-                                          onChanged: (value) {
-                                            setState(() {
-                                              selectDistrict = value
-                                                  .toString(); //change selectval to new value
-                                            });
-                                          },
-                                          items: districtList.map((itemone) {
-                                            return DropdownMenuItem(
-                                                onTap: () {
-                                                  getCity(itemone[
-                                                      'district_sl_id']);
-                                                },
-                                                value: itemone['district_name'],
-                                                child: Text(
-                                                  itemone['district_name'],
-                                                  style:
-                                                      TextStyle(color: black2),
-                                                ));
-                                          }).toList(),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Flexible(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8),
-                                    child: Card(
-                                      child: Container(
-                                        height: h / 17,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 15),
-                                        alignment: Alignment.centerRight,
-                                        width: w,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5.0),
-                                          border: Border.all(
-                                              color: black3,
-                                              style: BorderStyle.solid,
-                                              width: 0.80),
-                                        ),
-                                        child: DropdownButton(
-                                          isExpanded: true,
-                                          alignment:
-                                              AlignmentDirectional.centerEnd,
-                                          hint: Container(
-                                            //and here
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              "City",
-                                              style: TextStyle(color: black1),
-                                              textAlign: TextAlign.end,
-                                            ),
-                                          ),
-                                          value:
-                                              selectCity, //implement initial value or selected value
-                                          onChanged: (value) {
-                                            setState(() {
-                                              // _runFilter(value.toString());
-                                              //set state will update UI and State of your App
-                                              selectCity = value
-                                                  .toString(); //change selectval to new value
-                                            });
-                                          },
-                                          items: cityList.map((itemone) {
-                                            return DropdownMenuItem(
-                                                onTap: () {
-                                                  setState(() {
-                                                    destinationId =
-                                                        itemone['id'];
-                                                  });
-                                                  // getData(
-                                                  //     branchId,
-                                                  //     destinationId,
-                                                  //     isActive
-                                                  //         ? '1'
-                                                  //         : '0');
-                                                },
-                                                value: itemone['dName'],
-                                                child: Text(
-                                                  itemone['dName'],
-                                                  style:
-                                                      TextStyle(color: black2),
-                                                ));
-                                          }).toList(),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8),
-                              child: Card(
-                                child: Container(
-                                  height: h / 17,
-                                  padding: EdgeInsets.symmetric(horizontal: 15),
-                                  alignment: Alignment.centerRight,
-                                  width: w,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5.0),
-                                    border: Border.all(
-                                        color: black3,
-                                        style: BorderStyle.solid,
-                                        width: 0.80),
-                                  ),
-                                  child: DropdownButton(
-                                    isExpanded: true,
-                                    alignment: AlignmentDirectional.centerEnd,
-                                    hint: Container(
-                                      //and here
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        "Location",
-                                        style: TextStyle(color: black1),
-                                        textAlign: TextAlign.end,
-                                      ),
-                                    ),
-                                    value:
-                                        selectval, //implement initial value or selected value
-                                    onChanged: (value) {
-                                      setState(() {
-                                        // _runFilter(value.toString());
-                                        //set state will update UI and State of your App
-                                        selectval = value
-                                            .toString(); //change selectval to new value
-                                      });
-                                    },
-                                    items: userBranchList.map((itemone) {
-                                      return DropdownMenuItem(
-                                          onTap: () {
-                                            getData(itemone['did']);
-                                            print(itemone['did']);
-                                            // branchId = itemone['did'];
-                                            // getData(
-                                            //     branchId,
-                                            //     destinationId,
-                                            //     isActive ? '1' : '0');
-                                          },
-                                          value: itemone['dname'],
-                                          child: Text(
-                                            itemone['dname'],
-                                            style: TextStyle(color: black2),
-                                          ));
-                                    }).toList(),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        )
-                      : SizedBox()
-                ],
-              ),
-            ),
-            Flexible(
-              child: Stack(
-                children: [
-                  dataList.isEmpty && isLoading == false
-                      ? SizedBox(
-                          height: h,
-                          width: w,
-                          child: Column(
+            Column(
+              children: [
+                Container(
+                  color: appliteBlue,
+                  child: Column(
+                    children: [
+                      Divider(),
+                      Container(
+                        height: h / 17,
+                        width: w,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Center(child: NoData()),
+                              Text(
+                                "Filter",
+                                style: TextStyle(color: white),
+                                textAlign: TextAlign.end,
+                              ),
+                              IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      isActive = !isActive;
+                                    });
+                                  },
+                                  icon: Icon(
+                                    isActive
+                                        ? Icons.keyboard_arrow_down_outlined
+                                        : Icons.keyboard_arrow_up_outlined,
+                                    color: white,
+                                  ))
                             ],
-                          ))
-                      : ListView.builder(
-                          itemCount: 5,
-                          controller: mycontroller,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Card(
-                                elevation: 20,
-                                child: Container(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                'Route Name',
-                                                style: TextStyle(
-                                                    fontSize: 14,
-                                                    color: black,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              IconButton(
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      selectedIndex = index;
-                                                      isOpen = !isOpen;
-                                                    });
-                                                  },
-                                                  icon: Icon(isOpen &&
-                                                          selectedIndex == index
-                                                      ? Icons
-                                                          .keyboard_arrow_down_sharp
-                                                      : Icons
-                                                          .keyboard_arrow_right_rounded))
-                                            ],
-                                          ),
-                                          Divider(),
-                                          Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Card(
-                                                color: Colors.red,
-                                                child: Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 10),
-                                                  child: Text(
-                                                    'Active',
-                                                    style: TextStyle(
-                                                        fontSize: 14,
-                                                        color: black,
-                                                        fontWeight:
-                                                            FontWeight.normal),
-                                                  ),
+                          ),
+                        ),
+                      ),
+                      isActive
+                          ? Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Flexible(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8),
+                                        child: Card(
+                                          child: Container(
+                                            height: h / 17,
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 15),
+                                            alignment: Alignment.centerRight,
+                                            width: w,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(5.0),
+                                              border: Border.all(
+                                                  color: black3,
+                                                  style: BorderStyle.solid,
+                                                  width: 0.80),
+                                            ),
+                                            child: DropdownButton(
+                                              isExpanded: true,
+                                              alignment: AlignmentDirectional
+                                                  .centerEnd,
+                                              hint: Container(
+                                                //and here
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                  "District",
+                                                  style:
+                                                      TextStyle(color: black1),
+                                                  textAlign: TextAlign.end,
                                                 ),
                                               ),
-                                              SizedBox(
-                                                width: 12,
-                                              ),
-                                              Text(
-                                                '50KM',
-                                                style: TextStyle(
-                                                    fontSize: 14,
-                                                    color: black,
-                                                    fontWeight:
-                                                        FontWeight.normal),
-                                              ),
-                                            ],
+                                              value:
+                                                  selectDistrict, //implement initial value or selected value
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  selectDistrict = value
+                                                      .toString(); //change selectval to new value
+                                                });
+                                              },
+                                              items:
+                                                  districtList.map((itemone) {
+                                                return DropdownMenuItem(
+                                                    onTap: () async {
+                                                      setState(() {
+                                                        selectval = null;
+                                                        selectCity = null;
+                                                        districtId = itemone[
+                                                            'district_sl_id'];
+                                                      });
+                                                      await getCity(itemone[
+                                                          'district_sl_id']);
+
+                                                      demarcationData(
+                                                          districtId, '', '');
+                                                    },
+                                                    value: itemone[
+                                                        'district_name'],
+                                                    child: Text(
+                                                      itemone['district_name'],
+                                                      style: TextStyle(
+                                                          color: black2),
+                                                    ));
+                                              }).toList(),
+                                            ),
                                           ),
-                                          SizedBox(
-                                            height: 8,
+                                        ),
+                                      ),
+                                    ),
+                                    Flexible(
+                                      child: Stack(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8),
+                                            child: Card(
+                                              child: Container(
+                                                height: h / 17,
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 15),
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                width: w,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          5.0),
+                                                  border: Border.all(
+                                                      color: black3,
+                                                      style: BorderStyle.solid,
+                                                      width: 0.80),
+                                                ),
+                                                child: DropdownButton(
+                                                  isExpanded: true,
+                                                  alignment:
+                                                      AlignmentDirectional
+                                                          .centerEnd,
+                                                  hint: Container(
+                                                    //and here
+                                                    alignment:
+                                                        Alignment.centerLeft,
+                                                    child: Text(
+                                                      "City",
+                                                      style: TextStyle(
+                                                          color: black1),
+                                                      textAlign: TextAlign.end,
+                                                    ),
+                                                  ),
+                                                  value:
+                                                      selectCity, //implement initial value or selected value
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      // _runFilter(value.toString());
+                                                      //set state will update UI and State of your App
+                                                      selectCity = value
+                                                          .toString(); //change selectval to new value
+                                                    });
+                                                  },
+                                                  items:
+                                                      cityList.map((itemone) {
+                                                    return DropdownMenuItem(
+                                                        onTap: () {
+                                                          setState(() {
+                                                            selectval = null;
+                                                            destinationId =
+                                                                itemone['cid'];
+                                                            cityName = itemone[
+                                                                'cname'];
+                                                          });
+                                                          demarcationData(
+                                                              districtId,
+                                                              cityName,
+                                                              '');
+                                                        },
+                                                        value: itemone['cname'],
+                                                        child: Text(
+                                                          itemone['cname'],
+                                                          style: TextStyle(
+                                                              color: black2),
+                                                        ));
+                                                  }).toList(),
+                                                ),
+                                              ),
+                                            ),
                                           ),
-                                          isOpen && selectedIndex == index
-                                              ? Container(
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.black12,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10)),
-                                                  height: h / 7,
-                                                  width: w,
-                                                )
+                                          cityLoading
+                                              ? Center(
+                                                  child: SizedBox(
+                                                  height: h / 16,
+                                                  child: LoadingAnimationWidget
+                                                      .prograssiveDots(
+                                                    color: Color.fromARGB(
+                                                        255, 198, 187, 186),
+                                                    size: 40,
+                                                  ),
+                                                ))
                                               : SizedBox()
-                                        ]),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 8),
+                                  child: Card(
+                                    child: Container(
+                                      height: h / 17,
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 15),
+                                      alignment: Alignment.centerRight,
+                                      width: w,
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(5.0),
+                                        border: Border.all(
+                                            color: black3,
+                                            style: BorderStyle.solid,
+                                            width: 0.80),
+                                      ),
+                                      child: DropdownButton(
+                                        isExpanded: true,
+                                        alignment:
+                                            AlignmentDirectional.centerEnd,
+                                        hint: Container(
+                                          //and here
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            "Location",
+                                            style: TextStyle(color: black1),
+                                            textAlign: TextAlign.end,
+                                          ),
+                                        ),
+                                        value:
+                                            selectval, //implement initial value or selected value
+                                        onChanged: (value) {
+                                          setState(() {
+                                            // _runFilter(value.toString());
+                                            //set state will update UI and State of your App
+                                            selectval = value
+                                                .toString(); //change selectval to new value
+                                          });
+                                        },
+                                        items: userBranchList.map((itemone) {
+                                          return DropdownMenuItem(
+                                              onTap: () async {
+                                                setState(() {
+                                                  selectDistrict = null;
+                                                  selectCity = null;
+                                                });
+                                                print(itemone['did']);
+                                                // branchId = itemone['did'];
+
+                                                await demarcationData(
+                                                    '', '', itemone['did']);
+                                              },
+                                              value: itemone['dname'],
+                                              child: Text(
+                                                itemone['dname'],
+                                                style: TextStyle(color: black2),
+                                              ));
+                                        }).toList(),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                  provider.isanotherUserLog ? UserLoginCheck() : SizedBox()
-                ],
-              ),
+                                SizedBox(
+                                  height: 5,
+                                )
+                              ],
+                            )
+                          : SizedBox()
+                    ],
+                  ),
+                ),
+                Flexible(
+                  child: Stack(
+                    children: [
+                      demarcationList.isEmpty && isLoading == false
+                          ? SizedBox(
+                              // height: h,
+                              width: w,
+                              child: Column(
+                                children: [
+                                  Center(child: NoData()),
+                                ],
+                              ))
+                          : ListView.builder(
+                              itemCount: demarcationList.length,
+                              controller: mycontroller,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Card(
+                                    color: Color.fromARGB(255, 209, 219, 228),
+                                    elevation: 20,
+                                    child: Container(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      SizedBox(
+                                                        width: w / 3,
+                                                        child: Text(
+                                                          'District',
+                                                          style: TextStyle(
+                                                              fontSize: 14,
+                                                              color: black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        demarcationList[index]
+                                                            ['dname'],
+                                                        style: TextStyle(
+                                                            fontSize: 14,
+                                                            color: black1,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .normal),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      SizedBox(
+                                                        width: w / 3,
+                                                        child: Text(
+                                                          'City',
+                                                          style: TextStyle(
+                                                              fontSize: 14,
+                                                              color: black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        demarcationList[index]
+                                                            ['cname'],
+                                                        style: TextStyle(
+                                                            fontSize: 14,
+                                                            color: black1,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .normal),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      SizedBox(
+                                                        width: w / 3,
+                                                        child: Text(
+                                                          'Branch',
+                                                          style: TextStyle(
+                                                              fontSize: 14,
+                                                              color: black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        demarcationList[index]
+                                                            ['bname'],
+                                                        style: TextStyle(
+                                                            fontSize: 14,
+                                                            color: black1,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .normal),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      SizedBox(
+                                                        width: w / 3,
+                                                        child: Text(
+                                                          'Updated By',
+                                                          style: TextStyle(
+                                                              fontSize: 14,
+                                                              color: black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        demarcationList[index]
+                                                            ['staff_name'],
+                                                        style: TextStyle(
+                                                            fontSize: 14,
+                                                            color: black1,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .normal),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      SizedBox(
+                                                        width: w / 3,
+                                                        child: Text(
+                                                          'Last Updated On',
+                                                          style: TextStyle(
+                                                              fontSize: 14,
+                                                              color: black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        demarcationList[index]
+                                                            ['update_date'],
+                                                        style: TextStyle(
+                                                            fontSize: 14,
+                                                            color: black1,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .normal),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                              Divider(),
+                                              SizedBox(
+                                                height: 8,
+                                              ),
+                                            ]),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                      isLoading ? Loader().loader(context) : SizedBox(),
+                      provider.isanotherUserLog ? UserLoginCheck() : SizedBox()
+                    ],
+                  ),
+                ),
+              ],
             ),
           ],
         ),

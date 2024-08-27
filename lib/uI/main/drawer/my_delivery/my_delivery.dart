@@ -73,39 +73,17 @@ class _MyDeliveryState extends State<MyDelivery> {
 
   @override
   void initState() {
-    getData(true);
-    dropDownData();
+    data();
+    // getData(true);
+    // dropDownData();
     // TODO: implement initState
     super.initState();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    _buttonSubscription?.cancel();
-  }
-
-  getData(bool load) async {
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    print(connectivityResult);
-    setState(() {
-      isLoading = load;
-    });
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? id = await prefs.getString('user_id');
-
-    var temp = await CustomApi()
-        .getmyorders(search.text.toString(), id.toString(), context);
-    print(temp);
-    if (temp == 1) {
-      setState(() {
-        isError = true;
-      });
-    }
-    List<Map<String, dynamic>> data = [
+  data() async {
+    List data = [
       {
-        'oid': 9,
+        'oid': 999,
         'waybill_id': 90909091,
         'cod_final': 0.00,
         'order_type': 0,
@@ -134,13 +112,57 @@ class _MyDeliveryState extends State<MyDelivery> {
       }
     ];
 
-    for (var item in data) {
-      var res = await sqlDb.insertData(
-          'INSERT INTO scanData ("pick_id","scan_list") VALUES("${item[data]['oid']}","${item[data]['waybill_id']}","${item[data]['cod_final']}","${item[data]['order_type']}","${item[data]['cust_name']}","${item[data]['name']}","${item[data]['address']}","${item[data]['phone']}","${item[data]['status']}","${item[data]['cust_internal']}","${item[data]['prev_waybill']}","${item[data]['ex_bag_waybill']}")');
-      ;
-    }
+    List.generate(data.length, (index) async {
+      print('vvvvvvvvvvvvvvvvvvv');
 
+      var res = await sqlDb.replaceData('delivery_oder', {
+        'oid': 10,
+        'waybill_id': 80808082,
+        'cod_final': 700.00,
+        'order_type': 0,
+        'cust_name': 'Koombiyo Return Operation',
+        'name': 'Grantha.lk',
+        'address': 'No.25 Epitamulla Rd Pita Kotte Hewelwela',
+        'phone': '760961206',
+        'status': 'Out for Delivery',
+        'cust_internal': '',
+        'prev_waybill': null,
+        'ex_bag_waybill': null
+      });
+      // var res = await sqlDb.insertData(
+      //     'REPLACE INTO delivery_oder ("oid","waybill_id","cod_final","order_type","cust_name","name","address","phone","status","cust_internal","prev_waybill","ex_bag_waybill") VALUES("${data[index]['oid']}","${data[index]['waybill_id']}","${data[index]['cod_final']}","${data[index]['order_type']}","${data[index]['cust_name']}","${data[index]['name']}","${data[index]['address']}","${data[index]['phone']}","${data[index]['status']}","${data[index]['cust_internal']}","${data[index]['prev_waybill']}","${data[index]['ex_bag_waybill']}")');
+      // print(res);
+      print('jjjjjjjjjjjjj');
+    });
+    var ress = await sqlDb.readData('select * from delivery_oder');
+    print(ress.toString());
     print('ddddddddddddddddd');
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _buttonSubscription?.cancel();
+  }
+
+  getData(bool load) async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+
+    setState(() {
+      isLoading = load;
+    });
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('user_id');
+
+    var temp = await CustomApi()
+        .getmyorders(search.text.toString(), id.toString(), context);
+
+    if (temp == 1) {
+      setState(() {
+        isError = true;
+      });
+    }
 
     setState(() {
       dataList = temp;

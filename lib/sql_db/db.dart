@@ -15,9 +15,9 @@ class SqlDb {
 
   intialDb() async {
     String databasepath = await getDatabasesPath();
-    String path = join(databasepath, 'dd.db');
+    String path = join(databasepath, 'de.db');
     Database mydb = await openDatabase(path,
-        onCreate: _onCreate, version: 6, onUpgrade: _onUpgrade);
+        onCreate: _onCreate, version: 7, onUpgrade: _onUpgrade);
     return mydb;
   }
 
@@ -37,9 +37,9 @@ class SqlDb {
          "address" TEXT NOT NULL,
           "phone" TEXT NOT NULL,
            "status" TEXT NOT NULL,
-            "cust_internal" TEXT NOT NULL,
-            "prev_waybill" TEXT NOT NULL,
-              "ex_bag_waybill" TEXT NOT NULL
+            "cust_internal" TEXT ,
+            "prev_waybill" TEXT ,
+              "ex_bag_waybill" TEXT 
 
     
       
@@ -66,6 +66,7 @@ class SqlDb {
 
   readData(String sql) async {
     Database? mydb = await db;
+
     List<Map> response = await mydb!.rawQuery(sql);
     return response;
   }
@@ -74,6 +75,17 @@ class SqlDb {
     Database? mydb = await db;
 
     int response = await mydb!.rawInsert(sql);
+    return response;
+  }
+
+  replaceData(String sql, Map<String, dynamic> row) async {
+    Database? mydb = await db;
+
+    int response = await mydb!.insert(
+      sql,
+      row,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
     return response;
   }
 
