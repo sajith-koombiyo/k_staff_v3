@@ -12,6 +12,7 @@ import 'package:flutter_application_2/sql_db/db.dart';
 import 'package:flutter_application_2/uI/app_agreement/agreement.dart';
 import 'package:flutter_application_2/uI/login_and_signup/otp.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -917,7 +918,10 @@ class CustomApi {
 
   // image upload my delivery screen
 
-  immageUpload(BuildContext context, XFile? image, String waybill) async {
+  immageUpload(BuildContext context, XFile? image, String waybill,
+      bool isOffline) async {
+    var logger = Logger();
+    logger.e(image!.path.toString());
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('userkey');
     var connectivityResult = await (Connectivity().checkConnectivity());
@@ -950,7 +954,11 @@ class CustomApi {
                   sent / total;
             },
           );
-          notification().info(context, 'Image uploaded successfully');
+          notification().info(
+              context,
+              isOffline
+                  ? 'offline Image uploaded successfully'
+                  : 'Image uploaded successfully');
           return responce;
         } catch (error) {
           notification().info(context, 'Error uploading image');

@@ -15,9 +15,9 @@ class SqlDb {
 
   intialDb() async {
     String databasepath = await getDatabasesPath();
-    String path = join(databasepath, 'de.db');
+    String path = join(databasepath, 'ad.db');
     Database mydb = await openDatabase(path,
-        onCreate: _onCreate, version: 7, onUpgrade: _onUpgrade);
+        onCreate: _onCreate, version: 17, onUpgrade: _onUpgrade);
     return mydb;
   }
 
@@ -28,7 +28,7 @@ class SqlDb {
   _onCreate(Database db, int version) async {
     await db.execute('''
   CREATE TABLE "delivery_oder" (
-    "oid" INTEGER  NOT NULL PRIMARY KEY ,
+    "oid" TEXT  NOT NULL PRIMARY KEY ,
       "waybill_id" TEXT NOT NULL,
       "cod_final" TEXT NOT NULL,
       "order_type" TEXT NOT NULL,
@@ -39,7 +39,9 @@ class SqlDb {
            "status" TEXT NOT NULL,
             "cust_internal" TEXT ,
             "prev_waybill" TEXT ,
-              "ex_bag_waybill" TEXT 
+              "ex_bag_waybill" TEXT ,
+                "type" TEXT
+               
 
     
       
@@ -53,6 +55,66 @@ class SqlDb {
   CREATE TABLE "scanData" (
     "pick_id" INTEGER  NOT NULL PRIMARY KEY ,
       "scan_list" TEXT NOT NULL
+    
+      
+    
+
+
+  )
+ ''');
+
+    await db.execute('''
+  CREATE TABLE "reason_list" (
+    "reason_id" INTEGER  NOT NULL PRIMARY KEY ,
+      "type" TEXT NOT NULL,
+      "reason" TEXT NOT NULL
+    
+      
+    
+
+
+  )
+ ''');
+
+    await db.execute('''
+  CREATE TABLE "pending" (
+    "oId" INTEGER  NOT NULL PRIMARY KEY ,
+    "wayBillId" INTEGER  NOT NULL ,
+    "statusType" INTEGER  NOT NULL ,
+      "dropdownValue" TEXT ,
+      "dropdownValue2" TEXT ,
+        "cod" TEXT ,
+          "rescheduleDate" TEXT
+        
+           
+    
+      
+    
+
+
+  )
+ ''');
+
+    await db.execute('''
+  CREATE TABLE "pending_image" (
+    "waybill" INTEGER  NOT NULL PRIMARY KEY ,
+    "image" TEXT  NOT NULL 
+      
+           
+    
+      
+    
+
+
+  )
+ ''');
+
+    await db.execute('''
+  CREATE TABLE "deliver_error" (
+    "oId" INTEGER  NOT NULL PRIMARY KEY ,
+    "msg" TEXT  NOT NULL 
+      
+           
     
       
     
@@ -87,6 +149,11 @@ class SqlDb {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
     return response;
+  }
+
+  Future<void> truncateTable(String table) async {
+    Database? mydb = await db;
+    await mydb!.delete(table); // This deletes all rows from the 'items' table
   }
 
   updateData(String sql) async {

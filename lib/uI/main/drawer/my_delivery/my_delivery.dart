@@ -7,16 +7,17 @@ import 'package:flutter/services.dart';
 import 'package:flutter_application_2/api/api.dart';
 import 'package:flutter_application_2/app_details/color.dart';
 import 'package:flutter_application_2/class/class.dart';
-import 'package:flutter_application_2/class/location.dart';
 import 'package:flutter_application_2/provider/provider.dart';
 import 'package:flutter_application_2/uI/widget/diloag_button.dart';
 import 'package:flutter_application_2/uI/widget/nothig_found.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-// import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:path/path.dart' as path;
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:logger/logger.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,11 +25,9 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as https;
-
 import '../../../../sql_db/db.dart';
 import '../../navigation/navigation.dart';
 import 'exchange/exchange.dart';
-import 'voice_call.dart';
 
 class MyDelivery extends StatefulWidget {
   const MyDelivery({super.key, required this.isFromHome});
@@ -39,18 +38,21 @@ class MyDelivery extends StatefulWidget {
 }
 
 class _MyDeliveryState extends State<MyDelivery> {
-  String? _latestHardwareButtonEvent;
+  var logger = Logger();
   SqlDb sqlDb = SqlDb();
   StreamSubscription<String>? _buttonSubscription;
-  ScrollController _controller = ScrollController();
   TextEditingController search = TextEditingController();
   TextEditingController waybill = TextEditingController();
   TextEditingController codController = TextEditingController();
   List product = [];
   List allProduct = [];
+  List localData = [];
+  List reasonList = [];
   String newImage = '';
+  String errMsg = '';
   String formattedDate = '';
   List dataList = [];
+  bool isOffline = true;
   bool isError = false;
   bool itemLoading = false;
   final ImagePicker _picker = ImagePicker();
@@ -63,86 +65,67 @@ class _MyDeliveryState extends State<MyDelivery> {
 
   String? dropdownvalue;
   String? dropdownvalue2;
+  String? remarkValue;
   String dropdownvalueItem = '';
   String dropdownvalueItem2 = '';
 
   DateTime selectedDate = DateTime.now();
   List pdliveryList = [];
   List rescheduleList = [];
+  List errorData = [];
   List remarkList = [];
-
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription _streamSubscription;
   @override
   void initState() {
-    data();
-    // getData(true);
-    // dropDownData();
+    // offlineDeliveryupdateApi();
+    firstData();
+    dropDownData();
     // TODO: implement initState
-    super.initState();
-  }
 
-  data() async {
-    List data = [
-      {
-        'oid': 999,
-        'waybill_id': 90909091,
-        'cod_final': 0.00,
-        'order_type': 0,
-        'cust_name': 'Koombiyo Return Operation',
-        'name': 'Sajith Madhusanka',
-        'address': 'No 25 Epitamulla Road Kotte',
-        'phone': '0761414135',
-        'status': 'Rescheduled',
-        'cust_internal': '',
-        'prev_waybill': null,
-        'ex_bag_waybill': null
-      },
-      {
-        'oid': 10,
-        'waybill_id': 80808082,
-        'cod_final': 700.00,
-        'order_type': 0,
-        'cust_name': 'Koombiyo Return Operation',
-        'name': 'Grantha.lk',
-        'address': 'No.25 Epitamulla Rd Pita Kotte Hewelwela',
-        'phone': '760961206',
-        'status': 'Out for Delivery',
-        'cust_internal': '',
-        'prev_waybill': null,
-        'ex_bag_waybill': null
+    _streamSubscription = _connectivity.onConnectivityChanged.listen((result) {
+      if (result != ConnectivityResult.none) {
+        print('dddddddddddddddddddddddddddddddddddddddddddd');
+        firstData();
+        setState(() {
+          isOffline = false;
+        });
+      } else {
+        firstData();
+        setState(() {
+          isOffline = true;
+        });
+        print('dddddddsssssssssssssssssddddddddddddddddddddddddddddddddddddd');
       }
-    ];
-
-    List.generate(data.length, (index) async {
-      print('vvvvvvvvvvvvvvvvvvv');
-
-      var res = await sqlDb.replaceData('delivery_oder', {
-        'oid': 11,
-        'waybill_id': 8080811111111,
-        'cod_final': 700.00,
-        'order_type': 0,
-        'cust_name': 'Koombiyo Return Operation',
-        'name': 'Grantha.lkdddddddddddddd',
-        'address': 'No.25 Epitamulla Rd Pita Kotte Hewelwela',
-        'phone': '760961206',
-        'status': 'Out for Delivery',
-        'cust_internal': '',
-        'prev_waybill': null,
-        'ex_bag_waybill': null
-      });
-      // var res = await sqlDb.insertData(
-      //     'REPLACE INTO delivery_oder ("oid","waybill_id","cod_final","order_type","cust_name","name","address","phone","status","cust_internal","prev_waybill","ex_bag_waybill") VALUES("${data[index]['oid']}","${data[index]['waybill_id']}","${data[index]['cod_final']}","${data[index]['order_type']}","${data[index]['cust_name']}","${data[index]['name']}","${data[index]['address']}","${data[index]['phone']}","${data[index]['status']}","${data[index]['cust_internal']}","${data[index]['prev_waybill']}","${data[index]['ex_bag_waybill']}")');
-      // print(res);
-      print('jjjjjjjjjjjjj');
     });
-    var ress = await sqlDb.readData('select * from delivery_oder');
-    print(ress.toString());
-    print('ddddddddddddddddd');
+    super.initState();
   }
 
   @override
   void dispose() {
+    _streamSubscription.cancel();
     super.dispose();
     _buttonSubscription?.cancel();
+  }
+
+  firstData() async {
+    List imageData = await sqlDb.readData('select * from pending_image');
+    errorData = await sqlDb.readData('select * from deliver_error');
+    logger.i(imageData.toString());
+    List pendinDiiveryData = await sqlDb.readData('select * from pending');
+    logger.d(pendinDiiveryData.toString());
+    if (imageData.isNotEmpty) {
+      offlineImageUpload();
+    }
+
+    if (pendinDiiveryData.isNotEmpty) {
+      print(
+          'sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss1111111111111111');
+      await offlineDeliveryupdateApi();
+    }
+
+    print('empty dataaaaaaaaaaaaaa');
+    getData(true);
   }
 
   getData(bool load) async {
@@ -154,21 +137,57 @@ class _MyDeliveryState extends State<MyDelivery> {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('user_id');
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      List temp = await CustomApi()
+          .getmyorders(search.text.toString(), id.toString(), context);
 
-    var temp = await CustomApi()
-        .getmyorders(search.text.toString(), id.toString(), context);
+      if (temp == 1) {
+        setState(() {
+          isError = true;
+        });
+      }
+      if (temp.isNotEmpty) {
+        print('ffffffffffffffffffffffffffffffffffffffffffffff');
+        var red = await sqlDb.truncateTable('delivery_oder');
+        List.generate(temp.length, (index) async {
+          var res = await sqlDb.replaceData('delivery_oder', {
+            'oid': temp[index]['oid'],
+            'waybill_id': temp[index]['waybill_id'],
+            'cod_final': temp[index]['cod_final'],
+            'order_type': temp[index]['order_type'],
+            'cust_name': temp[index]['cust_name'],
+            'name': temp[index]['name'],
+            'address': temp[index]['address'],
+            'phone': temp[index]['phone'],
+            'status': temp[index]['status'],
+            'cust_internal': temp[index]['cust_internal'],
+            'prev_waybill': temp[index]['prev_waybill'],
+            'ex_bag_waybill': temp[index]['ex_bag_waybill'],
+            'type': '0'
+          });
+        });
+      }
+      List data = await sqlDb.readData('select * from delivery_oder');
 
-    if (temp == 1) {
+      logger.e(data.toString());
       setState(() {
-        isError = true;
+        errorData;
+        dataList = data.where((item) => item['type'] == "0").toList();
+        isLoading = false;
+      });
+    } else {
+      print(
+          'aaaaaaaaaaaaaaaaaaaaaaaaaaaadddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddaa');
+      localData = await sqlDb.readData('select * from delivery_oder');
+      // logger.e(localData.toString());
+      setState(() {
+        errorData;
+        dataList = localData.where((item) => item['type'] == "0").toList();
+
+        isLoading = false;
       });
     }
-
-    setState(() {
-      dataList = temp;
-
-      isLoading = false;
-    });
   }
 
   oderDataSerch(String waybill) async {
@@ -185,30 +204,63 @@ class _MyDeliveryState extends State<MyDelivery> {
   }
 
   dropDownData() async {
-    List res = await CustomApi().dropdownDataMyDelivery(context);
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      reasonList = await CustomApi().dropdownDataMyDelivery(context);
 
-    setState(() {
-      List.generate(res.length, (index) {
-        if (res[index]['type'] == '3') {
-          pdliveryList.add({
-            "reason_id": "${res[index]['reason_id']}",
-            "reason": "${res[index]['reason']}"
+      if (reasonList.isNotEmpty) {
+        var red = await sqlDb.truncateTable('reason_list');
+        List.generate(reasonList.length, (index) async {
+          var res = await sqlDb.replaceData('reason_list', {
+            'reason_id': reasonList[index]['reason_id'],
+            'reason': reasonList[index]['reason'],
+            'type': reasonList[index]['type'],
           });
-        }
-        if (res[index]['type'] == '1') {
-          rescheduleList.add({
-            "reason_id": "${res[index]['reason_id']}",
-            "reason": "${res[index]['reason']}"
-          });
-        }
-        if (res[index]['type'] == '4') {
-          remarkList.add({
-            "reason_id": "${res[index]['reason_id']}",
-            "reason": "${res[index]['reason']}"
-          });
-        }
+        });
+
+        List data = await sqlDb.readData('select * from reason_list');
+
+        setState(() {
+          reasonList = data;
+        });
+      }
+    } else {
+      List data = await sqlDb.readData('select * from reason_list');
+      setState(() {
+        reasonList = data;
       });
-    });
+    }
+
+    if (reasonList.isNotEmpty) {
+      List res = reasonList;
+      setState(() {
+        List.generate(res.length, (index) {
+          if (res[index]['type'] == '3') {
+            pdliveryList.add({
+              "reason_id": "${res[index]['reason_id']}",
+              "reason": "${res[index]['reason']}"
+            });
+
+            logger.f(pdliveryList.toString());
+          }
+          if (res[index]['type'] == '1') {
+            rescheduleList.add({
+              "reason_id": "${res[index]['reason_id']}",
+              "reason": "${res[index]['reason']}"
+            });
+            logger.i(rescheduleList.toString());
+          }
+          if (res[index]['type'] == '4') {
+            remarkList.add({
+              "reason_id": "${res[index]['reason_id']}",
+              "reason": "${res[index]['reason']}"
+            });
+            logger.d(rescheduleList.toString());
+          }
+        });
+      });
+    }
   }
 
   @override
@@ -272,13 +324,31 @@ class _MyDeliveryState extends State<MyDelivery> {
                     widget.isFromHome
                         ? Stack(
                             children: [
-                              Container(
-                                child: Image.asset(
-                                  'assets/picked_50.png',
-                                  fit: BoxFit.cover,
-                                ),
-                                height: h / 3,
-                                width: w,
+                              Column(
+                                children: [
+                                  Container(
+                                    child: Image.asset(
+                                      'assets/picked_50.png',
+                                      fit: BoxFit.cover,
+                                    ),
+                                    height: h / 3,
+                                    width: w,
+                                  ),
+                                  isOffline
+                                      ? Container(
+                                          alignment: Alignment.center,
+                                          width: w,
+                                          height: 20,
+                                          color: Colors.redAccent,
+                                          child: Text('offline',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w400,
+                                                color: white,
+                                                fontSize: 11.dp,
+                                              )),
+                                        )
+                                      : SizedBox()
+                                ],
                               ),
                               Container(
                                 height: h / 3,
@@ -636,6 +706,42 @@ class _MyDeliveryState extends State<MyDelivery> {
                                                         ],
                                                       ),
                                                     ),
+                                                    SizedBox(
+                                                      height: 8,
+                                                    ),
+                                                    errorData.any((element) {
+                                                      print(element['oId']);
+                                                      print(dataList[index]
+                                                          ['oid']);
+
+                                                      errMsg = element['msg']
+                                                          .toString();
+                                                      return element['oId']
+                                                              .toString() ==
+                                                          dataList[index]['oid']
+                                                              .toString();
+                                                    })
+                                                        ? Container(
+                                                            height: 20,
+                                                            width: w,
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    198,
+                                                                    26,
+                                                                    150),
+                                                            child: Text(
+                                                              errMsg == "400"
+                                                                  ? "Bad Request: Error Occurred"
+                                                                  : errMsg ==
+                                                                          "400"
+                                                                      ? "Not Acceptable: Please Upload the POD"
+                                                                      : "Something went wrong",
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white),
+                                                            ))
+                                                        : SizedBox()
                                                   ],
                                                 ),
                                               ),
@@ -683,14 +789,88 @@ class _MyDeliveryState extends State<MyDelivery> {
     codController.clear();
   }
 
+  offlineDeliveryUpdate(
+      String oId,
+      String wayBillId,
+      String statusType,
+      String dropdownValue,
+      String dropdownValue2,
+      String cod,
+      String rescheduleDate) async {
+    var res = await sqlDb.replaceData('pending', {
+      'oId': oId,
+      'wayBillId': wayBillId,
+      'statusType': statusType,
+      'dropdownValue': dropdownValue,
+      'dropdownValue2': dropdownValue2,
+      'cod': cod,
+      'rescheduleDate': rescheduleDate
+    });
+
+    if (res == 1) {
+      notification().info(context,
+          'data saved  The data has successfully returned to the online system and will be updated.');
+    }
+    print(oId);
+    List data = await sqlDb.readData('select * from pending');
+//
+    // logger.e(data.toString());
+
+    var t = await sqlDb.updateData(
+        'UPDATE delivery_oder SET type = "$statusType" WHERE  oId ="$oId"');
+    List dataa = await sqlDb.readData('select * from delivery_oder');
+    Navigator.pop(context);
+    logger.d(dataa.toString());
+    getData(false);
+  }
+
+  offlineDeliveryupdateApi() async {
+    List data = await sqlDb.readData('select * from pending');
+    print(data);
+    if (data.isNotEmpty) {
+      print(
+          '//////////////////////////////////////////xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx///');
+      List.generate(data.length, (index) async {
+        int status = int.parse(data[index]['statusType'].toString());
+        // var res = await CustomApi().oderData(
+        //   status,
+        //   data[index]['wayBillId'].toString(),
+        //   context,
+        //   data[index]['dropdownValue'].toString(),
+        //   data[index]['dropdownValue2'].toString(),
+        //   data[index]['cod'].toString(),
+        //   data[index]['rescheduleDate'].toString(),
+        //   data[index]['oId'].toString(),
+        // );
+
+        if (1 == 10) {
+          var ress = await sqlDb.deleteData(
+              'delete from pending where oId = "${data[index]['oId'].toString()}"');
+        } else {
+          var ress = await sqlDb.replaceData('deliver_error', {
+            'oId': data[index]['oId'].toString(),
+            'msg': '400',
+          });
+
+          List datas = await sqlDb.readData('select * from deliver_error');
+
+          print(datas);
+          print(
+              '33333333333333333333333333333333333333333333333333333333333333333333333333');
+        }
+      });
+    }
+    getData(true);
+  }
+
   itemDetails(String waybill, bool updateBTN, String cod, String oId,
       String oderType, String exchangeWayBill, String pWaybill) {
     double codValue = double.parse(cod);
 
-    String? dropdownvalue;
-    String? dropdownvalue2;
-    String dropdownvalueItem = '';
-    String dropdownvalueItem2 = '';
+    dropdownvalue = null;
+    dropdownvalue2 = null;
+    remarkValue = null;
+
     Provider.of<ProviderS>(context, listen: false).progress = 0.0;
     Provider.of<ProviderS>(context, listen: false).fomatedDate =
         DateFormat.yMMMEd().format(DateTime.now());
@@ -742,42 +922,95 @@ class _MyDeliveryState extends State<MyDelivery> {
                                       statusTyp: x,
                                       waybill: waybill,
                                       dropdownvalueItem: dropdownvalueItem,
-                                      dropdownvalueItem2: dropdownvalueItem2,
+                                      dropdownvalueItem2: x == 4
+                                          ? remarkValue.toString()
+                                          : dropdownvalueItem2,
                                       codController: codController.text,
                                       date: provider.fomatedDate,
                                       oderId: oId,
                                     ),
                                   ));
                             } else {
-                              var res = await CustomApi().oderData(
-                                  x,
-                                  waybill,
-                                  context,
-                                  dropdownvalueItem.toString(),
-                                  dropdownvalueItem2.toString(),
-                                  codController.text,
-                                  provider.fomatedDate,
-                                  oId);
+                              if (isOffline) {
+                                print(
+                                    '=======================================================================');
+                                offlineDeliveryUpdate(
+                                    oId,
+                                    waybill,
+                                    x.toString(),
+                                    dropdownvalueItem,
+                                    x == 4
+                                        ? remarkValue.toString()
+                                        : dropdownvalueItem2.toString(),
+                                    codController.text,
+                                    provider.fomatedDate);
 
-                              if (res == 200) {
-                                getData(false);
                                 codController.clear();
+                              } else {
+                                var res = await CustomApi().oderData(
+                                    x,
+                                    waybill,
+                                    context,
+                                    dropdownvalueItem.toString(),
+                                    x == 4
+                                        ? remarkValue.toString()
+                                        : dropdownvalueItem2.toString(),
+                                    codController.text,
+                                    provider.fomatedDate,
+                                    oId);
+
+                                if (res == 200) {
+                                  getData(false);
+                                  codController.clear();
+                                }
                               }
                             }
                           } else {
-                            var res = await CustomApi().oderData(
-                                x,
-                                waybill,
-                                context,
-                                dropdownvalueItem.toString(),
-                                dropdownvalueItem2.toString(),
-                                codController.text,
-                                provider.fomatedDate,
-                                oId);
+                            print('fffffffffffffffffffffffffffffffffffffff');
 
-                            if (res == 200) {
-                              getData(false);
-                              codController.clear();
+                            print(dropdownvalueItem);
+                            print(remarkValue);
+                            print(dropdownvalueItem2);
+                            if (dropdownvalue != null ||
+                                remarkValue != null ||
+                                dropdownvalue2 != null ||
+                                x == 1) {
+                              if (isOffline) {
+                                print(
+                                    '00000000000000000000000000000000000000000000000000');
+                                offlineDeliveryUpdate(
+                                    oId,
+                                    waybill,
+                                    x.toString(),
+                                    dropdownvalueItem,
+                                    x == 4
+                                        ? remarkValue.toString()
+                                        : dropdownvalueItem2.toString(),
+                                    codController.text,
+                                    provider.fomatedDate);
+
+                                codController.clear();
+                              } else {
+                                var res = await CustomApi().oderData(
+                                    x,
+                                    waybill,
+                                    context,
+                                    dropdownvalueItem.toString(),
+                                    x == 4
+                                        ? remarkValue.toString()
+                                        : dropdownvalueItem2.toString(),
+                                    codController.text,
+                                    provider.fomatedDate,
+                                    oId);
+
+                                if (res == 200) {
+                                  getData(false);
+                                  codController.clear();
+                                }
+                              }
+                            } else {
+                              notification()
+                                  .warning(context, 'please select the reason');
                             }
                           }
                         }
@@ -838,6 +1071,9 @@ class _MyDeliveryState extends State<MyDelivery> {
                                   setstate(() {
                                     newImage = '';
                                     dropdownvalue = null;
+                                    dropdownvalueItem = '';
+                                    remarkValue = null;
+                                    dropdownvalueItem2 = '';
                                     codController.clear();
                                   });
                                   Navigator.pop(context);
@@ -1225,14 +1461,14 @@ class _MyDeliveryState extends State<MyDelivery> {
                                     alignment: AlignmentDirectional.centerStart,
                                     hint: Text('Select Reason'),
 
-                                    value: dropdownvalue2,
+                                    value: remarkValue,
 
                                     //implement initial value or selected value
                                     onChanged: (value) {
                                       setstate(() {
                                         //set state will update UI and State of your App
-                                        dropdownvalue2 = value.toString();
-                                        if (dropdownvalue2!.isNotEmpty) {
+                                        remarkValue = value.toString();
+                                        if (remarkValue!.isNotEmpty) {
                                           updateBTN = true;
                                         } //change selectval to new value
                                       });
@@ -1355,14 +1591,27 @@ class _MyDeliveryState extends State<MyDelivery> {
                                         newImage = image!.path;
                                       });
                                       imageProgress();
-                                      var res = await CustomApi().immageUpload(
-                                          context, image, waybill);
 
-                                      if (res != 1) {
-                                        setstate(() {
-                                          // newImage = '';
-                                          provider.progress = 0;
-                                        });
+                                      var connectivityResult =
+                                          await (Connectivity()
+                                              .checkConnectivity());
+                                      if (connectivityResult ==
+                                              ConnectivityResult.mobile ||
+                                          connectivityResult ==
+                                              ConnectivityResult.wifi) {
+                                        var res = await CustomApi()
+                                            .immageUpload(
+                                                context, image, waybill, false);
+
+                                        if (res != 1) {
+                                          setstate(() {
+                                            // newImage = '';
+                                            provider.progress = 0;
+                                          });
+                                        }
+                                      } else {
+                                        pickAndSaveImageToFolder(
+                                            image, waybill);
                                       }
                                       setstate(() {
                                         updateBTN = true;
@@ -1396,8 +1645,20 @@ class _MyDeliveryState extends State<MyDelivery> {
                                         newImage = image!.path;
                                       });
                                       imageProgress();
-                                      await CustomApi().immageUpload(
-                                          context, image, waybill);
+
+                                      var connectivityResult =
+                                          await (Connectivity()
+                                              .checkConnectivity());
+                                      if (connectivityResult ==
+                                              ConnectivityResult.mobile ||
+                                          connectivityResult ==
+                                              ConnectivityResult.wifi) {
+                                        await CustomApi().immageUpload(
+                                            context, image, waybill, false);
+                                      } else {
+                                        pickAndSaveImageToFolder(
+                                            image, waybill);
+                                      }
 
                                       setstate(() {
                                         updateBTN = true;
@@ -1445,6 +1706,68 @@ class _MyDeliveryState extends State<MyDelivery> {
         );
       }),
     );
+  }
+
+  pickAndSaveImageToFolder(XFile? pickedFile, String waybill) async {
+    if (pickedFile != null) {
+      File imageFile = File(pickedFile.path);
+      // Get the directory for the application's documents directory
+      final directory = await getApplicationDocumentsDirectory();
+      // Create a custom folder (if it doesn't already exist)
+      final customDir = Directory('${directory.path}/MyImages');
+      if (!(await customDir.exists())) {
+        await customDir.create(recursive: true);
+      }
+      // Construct the file path to save the image
+      final fileName = path.basename(pickedFile.path);
+      final savedImagePath = '${customDir.path}/$fileName';
+      // Save the image to the specified folder
+      await imageFile.copy(savedImagePath);
+      var res = await sqlDb.replaceData('pending_image', {
+        'waybill': waybill,
+        'image': savedImagePath,
+      });
+      List data = await sqlDb.readData('select * from pending_image');
+      notification().info(context,
+          'Image saved  The data has successfully returned to the online system and will be updated.');
+    }
+  }
+
+  offlineImageUpload() async {
+    List data = await sqlDb.readData('select * from pending_image');
+    logger.d(data);
+    if (data.isNotEmpty) {
+      List.generate(data.length, (index) async {
+        final customDir = Directory(data[index]['image']);
+        print(customDir.path);
+        var res = await CustomApi().immageUpload(context, XFile(customDir.path),
+            data[index]['waybill'].toString(), true);
+
+        if (res.toString() == '1') {
+          print('ddddddddddddddddddddddddddddddddddddddddddd');
+          deleteImage(customDir.path);
+          var ress = await sqlDb.deleteData(
+              'delete from pending_image where waybill = "${data[index]['waybill']}"');
+
+          print(ress);
+        } else {}
+      });
+    }
+  }
+
+  Future<void> deleteImage(String path) async {
+    final File file = File(path);
+
+    try {
+      if (await file.exists()) {
+        await file.delete();
+        print("File deleted successfully.");
+      } else {
+        print("File not found.");
+      }
+    } catch (e) {
+      print("Error occurred while deleting the file: $e");
+    }
   }
 
   imageProgress() {
@@ -1604,68 +1927,3 @@ class _MyDeliveryState extends State<MyDelivery> {
     });
   }
 }
-
-
-
-
-//  {
-//       'oid': '13911039',
-//       'waybill_id': '10000080',
-//       'cod_final': '1000.00',
-//       'cust_name': 'IT HOUSE',
-//       'name':
-//           'Dinesh Alahakoon, address: 603  Jayanthi Road  Gohagoda  Katugastota,',
-//       'phone': '712345678',
-//       'status': 'Out for Delivery, cust_internal:'
-//     },
-
-//     {
-//       'oid': '13911039',
-//       'waybill_id': '10000080',
-//       'cod_final': '1000.00',
-//       'cust_name': 'IT HOUSE',
-//       'name':
-//           'Dinesh Alahakoon, address: 603  Jayanthi Road  Gohagoda  Katugastota,',
-//       'phone': '712345678',
-//       'status': 'Out for Delivery, cust_internal:'
-//     },
-//     {
-//       'oid': '13911039',
-//       'waybill_id': '10000080',
-//       'cod_final': '1000.00',
-//       'cust_name': 'IT HOUSE',
-//       'name':
-//           'Dinesh Alahakoon, address: 603  Jayanthi Road  Gohagoda  Katugastota,',
-//       'phone': '712345678',
-//       'status': 'Out for Delivery, cust_internal:'
-//     },
-//     {
-//       'oid': '13911039',
-//       'waybill_id': '10000080',
-//       'cod_final': '1000.00',
-//       'cust_name': 'IT HOUSE',
-//       'name':
-//           'Dinesh Alahakoon, address: 603  Jayanthi Road  Gohagoda  Katugastota,',
-//       'phone': '712345678',
-//       'status': 'Out for Delivery, cust_internal:'
-//     },
-//     {
-//       'oid': '13911039',
-//       'waybill_id': '10000080',
-//       'cod_final': '1000.00',
-//       'cust_name': 'IT HOUSE',
-//       'name':
-//           'Dinesh Alahakoon, address: 603  Jayanthi Road  Gohagoda  Katugastota,',
-//       'phone': '712345678',
-//       'status': 'Out for Delivery, cust_internal:'
-//     },
-//     {
-//       'oid': '13911039',
-//       'waybill_id': '10000080',
-//       'cod_final': '1000.00',
-//       'cust_name': 'IT HOUSE',
-//       'name':
-//           'Dinesh Alahakoon, address: 603  Jayanthi Road  Gohagoda  Katugastota,',
-//       'phone': '712345678',
-//       'status': 'Out for Delivery, cust_internal:'
-//     }
