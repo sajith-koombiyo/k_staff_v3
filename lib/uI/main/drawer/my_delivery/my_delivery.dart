@@ -121,7 +121,7 @@ class _MyDeliveryState extends State<MyDelivery> {
     if (pendinDiiveryData.isNotEmpty) {
       print(
           'sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss1111111111111111');
-      await offlineDeliveryupdateApi();
+      // await offlineDeliveryupdateApi();
     }
 
     print('empty dataaaaaaaaaaaaaa');
@@ -825,38 +825,35 @@ class _MyDeliveryState extends State<MyDelivery> {
   }
 
   offlineDeliveryupdateApi() async {
+    print(
+        'ddddddddddddxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
     List data = await sqlDb.readData('select * from pending');
-    print(data);
     if (data.isNotEmpty) {
-      print(
-          '//////////////////////////////////////////xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx///');
       List.generate(data.length, (index) async {
         int status = int.parse(data[index]['statusType'].toString());
-        // var res = await CustomApi().oderData(
-        //   status,
-        //   data[index]['wayBillId'].toString(),
-        //   context,
-        //   data[index]['dropdownValue'].toString(),
-        //   data[index]['dropdownValue2'].toString(),
-        //   data[index]['cod'].toString(),
-        //   data[index]['rescheduleDate'].toString(),
-        //   data[index]['oId'].toString(),
-        // );
-
-        if (1 == 10) {
+        var res = await CustomApi().oderData(
+          status,
+          data[index]['wayBillId'].toString(),
+          context,
+          data[index]['dropdownValue'].toString(),
+          data[index]['dropdownValue2'].toString(),
+          data[index]['cod'].toString(),
+          data[index]['rescheduleDate'].toString(),
+          data[index]['oId'].toString(),
+        );
+        if (res == 1) {
           var ress = await sqlDb.deleteData(
               'delete from pending where oId = "${data[index]['oId'].toString()}"');
         } else {
           var ress = await sqlDb.replaceData('deliver_error', {
             'oId': data[index]['oId'].toString(),
-            'msg': '400',
+            'msg': res.toString(),
           });
-
+          if (ress == 1) {
+            var ress = await sqlDb.deleteData(
+                'delete from pending where oId = "${data[index]['oId'].toString()}"');
+          }
           List datas = await sqlDb.readData('select * from deliver_error');
-
-          print(datas);
-          print(
-              '33333333333333333333333333333333333333333333333333333333333333333333333333');
         }
       });
     }
@@ -912,28 +909,34 @@ class _MyDeliveryState extends State<MyDelivery> {
                         } else {
                           if (oderType == '1') {
                             if (x == 3 || x == 2) {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => Exchange(
-                                      exchangeBagWaybill: exchangeWayBill,
-                                      pWaybill: pWaybill,
-                                      backDataLoad: backDataLoad,
-                                      statusTyp: x,
-                                      waybill: waybill,
-                                      dropdownvalueItem: dropdownvalueItem,
-                                      dropdownvalueItem2: x == 4
-                                          ? remarkValue.toString()
-                                          : dropdownvalueItem2,
-                                      codController: codController.text,
-                                      date: provider.fomatedDate,
-                                      oderId: oId,
-                                    ),
-                                  ));
+                              if (dropdownvalue != null ||
+                                  remarkValue != null ||
+                                  dropdownvalue2 != null ||
+                                  x == 1) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Exchange(
+                                        exchangeBagWaybill: exchangeWayBill,
+                                        pWaybill: pWaybill,
+                                        backDataLoad: backDataLoad,
+                                        statusTyp: x,
+                                        waybill: waybill,
+                                        dropdownvalueItem: dropdownvalueItem,
+                                        dropdownvalueItem2: x == 4
+                                            ? remarkValue.toString()
+                                            : dropdownvalueItem2,
+                                        codController: codController.text,
+                                        date: provider.fomatedDate,
+                                        oderId: oId,
+                                      ),
+                                    ));
+                              } else {
+                                notification().warning(
+                                    context, 'please select the reason');
+                              }
                             } else {
                               if (isOffline) {
-                                print(
-                                    '=======================================================================');
                                 offlineDeliveryUpdate(
                                     oId,
                                     waybill,
@@ -966,18 +969,12 @@ class _MyDeliveryState extends State<MyDelivery> {
                               }
                             }
                           } else {
-                            print('fffffffffffffffffffffffffffffffffffffff');
-
-                            print(dropdownvalueItem);
-                            print(remarkValue);
-                            print(dropdownvalueItem2);
+                            ;
                             if (dropdownvalue != null ||
                                 remarkValue != null ||
                                 dropdownvalue2 != null ||
                                 x == 1) {
                               if (isOffline) {
-                                print(
-                                    '00000000000000000000000000000000000000000000000000');
                                 offlineDeliveryUpdate(
                                     oId,
                                     waybill,

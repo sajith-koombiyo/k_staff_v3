@@ -8,7 +8,10 @@ import 'package:flutter_application_2/app_details/color.dart';
 import 'package:flutter_application_2/class/class.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:image_picker/image_picker.dart';
-
+import 'package:logger/logger.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
+import '../../../../../sql_db/db.dart';
 import '../../../../widget/home_screen_widget/home_button.dart';
 import '../../../../widget/textField.dart';
 
@@ -41,6 +44,8 @@ class Exchange extends StatefulWidget {
 }
 
 class _ExchangeState extends State<Exchange> {
+  var logger = Logger();
+  SqlDb sqlDb = SqlDb();
   bool check = false;
   TextEditingController pWayBill = TextEditingController();
   TextEditingController exWayBill = TextEditingController();
@@ -321,5 +326,67 @@ class _ExchangeState extends State<Exchange> {
         ],
       ),
     );
+  }
+
+  pickAndSaveImageToFolder(XFile? pickedFile, String waybill) async {
+    if (pickedFile != null) {
+      File imageFile = File(pickedFile.path);
+      // Get the directory for the application's documents directory
+      final directory = await getApplicationDocumentsDirectory();
+      // Create a custom folder (if it doesn't already exist)
+      final customDir = Directory('${directory.path}/MyImages');
+      if (!(await customDir.exists())) {
+        await customDir.create(recursive: true);
+      }
+      // Construct the file path to save the image
+      final fileName = path.basename(pickedFile.path);
+      final savedImagePath = '${customDir.path}/$fileName';
+      // Save the image to the specified folder
+      await imageFile.copy(savedImagePath);
+      var res = await sqlDb.replaceData('pending_image', {
+        'waybill': waybill,
+        'image': savedImagePath,
+      });
+      List data = await sqlDb.readData('select * from pending_image');
+      notification().info(context,
+          'Image saved  The data has successfully returned to the online system and will be updated.');
+    }
+  }
+
+  offlineImageUpload() async {
+    List data = await sqlDb.readData('select * from pending_image');
+    logger.d(data);
+    if (data.isNotEmpty) {
+      List.generate(data.length, (index) async {
+        final customDir = Directory(data[index]['image']);
+        print(customDir.path);
+        var res = await CustomApi().immageUpload(context, XFile(customDir.path),
+            data[index]['waybill'].toString(), true);
+
+        if (res.toString() == '1') {
+          print('ddddddddddddddddddddddddddddddddddddddddddd');
+          deleteImage(customDir.path);
+          var ress = await sqlDb.deleteData(
+              'delete from pending_image where waybill = "${data[index]['waybill']}"');
+
+          print(ress);
+        } else {}
+      });
+    }
+  }
+
+  Future<void> deleteImage(String path) async {
+    final File file = File(path);
+
+    try {
+      if (await file.exists()) {
+        await file.delete();
+        print("File deleted successfully.");
+      } else {
+        print("File not found.");
+      }
+    } catch (e) {
+      print("Error occurred while deleting the file: $e");
+    }
   }
 }
