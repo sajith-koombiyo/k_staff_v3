@@ -25,6 +25,7 @@ class DrawerClz {
 // 24		Multi Duty Clark
 // 25	QC Team
 // 26	HR Department
+// 27	shutter Driver
 
   pickedList(int accessId) {
     List data = [1, 17];
@@ -88,6 +89,16 @@ class DrawerClz {
 
   myDelivery(int accessId) {
     List data = [1, 17];
+
+    if (data.contains(accessId) == true) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  inOut(int accessId) {
+    List data = [1, 17, 27];
 
     if (data.contains(accessId) == true) {
       return true;

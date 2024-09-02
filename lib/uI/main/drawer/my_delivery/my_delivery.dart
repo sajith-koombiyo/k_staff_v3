@@ -109,9 +109,11 @@ class _MyDeliveryState extends State<MyDelivery> {
   }
 
   firstData() async {
+    List datas = await sqlDb.readData('select * from deliver_error');
+    logger.f(datas);
     List imageData = await sqlDb.readData('select * from pending_image');
     errorData = await sqlDb.readData('select * from deliver_error');
-    logger.i(imageData.toString());
+    // logger.i(imageData.toString());
     List pendinDiiveryData = await sqlDb.readData('select * from pending');
     logger.d(pendinDiiveryData.toString());
     if (imageData.isNotEmpty) {
@@ -168,6 +170,8 @@ class _MyDeliveryState extends State<MyDelivery> {
           });
         });
       }
+
+      // “Congratulations on your new job! I am sad to see you go.”
       List data = await sqlDb.readData('select * from delivery_oder');
 
       logger.e(data.toString());
@@ -732,11 +736,11 @@ class _MyDeliveryState extends State<MyDelivery> {
                                                                     150),
                                                             child: Text(
                                                               errMsg == "400"
-                                                                  ? "Bad Request: Error Occurred"
+                                                                  ? "Bad Request: Error Occurred (400)"
                                                                   : errMsg ==
-                                                                          "400"
-                                                                      ? "Not Acceptable: Please Upload the POD"
-                                                                      : "Something went wrong",
+                                                                          "406"
+                                                                      ? "Not Acceptable: Please Upload the POD (406)"
+                                                                      : "Something went wrong (403)",
                                                               style: TextStyle(
                                                                   color: Colors
                                                                       .white),
@@ -854,6 +858,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                 'delete from pending where oId = "${data[index]['oId'].toString()}"');
           }
           List datas = await sqlDb.readData('select * from deliver_error');
+          logger.f(datas);
         }
       });
     }

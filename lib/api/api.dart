@@ -1779,7 +1779,7 @@ class CustomApi {
       };
       var resp =
           await https.post(headers: headers, Uri.parse(apiUrl), body: {});
-
+      print(resp);
       var data = jsonDecode(resp.body);
       if (data['status'] == 200) {
         return data['branches'];
@@ -1866,43 +1866,118 @@ class CustomApi {
     }
   }
 
-  deleveryExchangeitem(
-      BuildContext context, String img, String exWaybill) async {
+  // deleveryExchangeitem(
+  //     BuildContext context, String img, String exWaybill) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   final String? id = await prefs.getString('userkey');
+  //   var connectivityResult = await (Connectivity().checkConnectivity());
+  //   if (connectivityResult == ConnectivityResult.mobile ||
+  //       connectivityResult == ConnectivityResult.wifi) {
+  //     final apiUrl = '${ApiUrl}Updateexchange/users';
+  //     // Headers
+  //     Map<String, String> headers = {
+  //       'userkey': '$id',
+  //     };
+  //     // Make POST request
+
+  //     var res = await https.post(
+  //         headers: headers,
+  //         Uri.parse(apiUrl),
+  //         body: {"image": img, "ex_waybill": exWaybill});
+  //     var data = jsonDecode(res.body);
+
+  //     if (data['status'] == 200) {
+  //       Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+
+  //       return 1;
+  //     }
+  //     if (data['status'] == 400) {
+  //       notification().warning(context, 'Invalid branch locations');
+  //       Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+
+  //       return 0;
+  //     }
+  //     if (data['status'] == 403) {
+  //       Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+  //       return 0;
+  //     }
+  //   } else {
+  //     notification().warning(context, 'No Internet');
+  //   }
+  // }
+
+  deliveryimageExchange(BuildContext context, XFile? image, String waybill,
+      bool isOffline) async {
+    var logger = Logger();
+    logger.e(image!.path.toString());
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('userkey');
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
-      final apiUrl = '${ApiUrl}Updateexchange/users';
+      final apiUrl = '${ApiUrl}/Updateexchange/users';
       // Headers
       Map<String, String> headers = {
         'userkey': '$id',
       };
-      // Make POST request
+      if (image != null) {
+        Dio dio = Dio();
+        // progress = 0.0;
 
-      var res = await https.post(
-          headers: headers,
-          Uri.parse(apiUrl),
-          body: {"image": img, "ex_waybill": exWaybill});
-      var data = jsonDecode(res.body);
+        String uploadURL = apiUrl; // Replace with your server's upload URL
 
-      if (data['status'] == 200) {
-        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+        var formData = FormData.fromMap({
+          "image": await MultipartFile.fromFile(image.path),
+          "ex_waybill": waybill,
+        });
 
-        return 1;
-      }
-      if (data['status'] == 400) {
-        notification().warning(context, 'Invalid branch locations');
-        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
-
-        return 0;
-      }
-      if (data['status'] == 403) {
-        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
-        return 0;
+        try {
+          var responce = await dio.post(
+            options: Options(headers: headers),
+            uploadURL,
+            data: formData,
+            onSendProgress: (sent, total) {
+              Provider.of<ProviderS>(context, listen: false).progress =
+                  sent / total;
+            },
+          );
+          notification().info(
+              context,
+              isOffline
+                  ? 'offline Image uploaded successfully'
+                  : 'Image uploaded successfully');
+          return responce;
+        } catch (error) {
+          notification().info(context, 'Error uploading image');
+        }
       }
     } else {
       notification().warning(context, 'No Internet');
+    }
+  }
+
+  imageExchange(BuildContext context, String image, String waybill,
+      bool isOffline) async {
+    var headersList = {
+      'userkey': 'h9MnysZjFUuzW6Q0Y35tcqVd7rm1LDAfbwvGEXlOIiPx2SKTp4'
+    };
+    var url = Uri.parse(
+        'http://koombiyodelivery.net/api.koombiyodelivery.lk/staffapi/v3/delivery/Updateexchange/users');
+
+    var body = {'ex_waybill': '33334445'};
+
+    var req = https.MultipartRequest('POST', url);
+    req.headers.addAll(headersList);
+    req.files.add(await https.MultipartFile.fromPath('image', image));
+    req.fields.addAll(body);
+
+    var res = await req.send();
+    final resBody = await res.stream.bytesToString();
+    print(res.stream);
+    if (res.statusCode >= 200 && res.statusCode < 300) {
+      print(resBody);
+    } else {
+      print(res.reasonPhrase);
     }
   }
 
@@ -2441,6 +2516,80 @@ class CustomApi {
       if (data['status'] == 403) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
         return [];
+      }
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
+
+  shutteleVisitBrnchesList(BuildContext context, String branchId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      final apiUrl = '${ApiUrl}Shuttlevisit/my_route';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      // Make POST request
+
+      var res = await https.post(
+          headers: headers, Uri.parse(apiUrl), body: {"branch_id": branchId});
+      var data = jsonDecode(res.body);
+      print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+      print(data);
+      print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+      if (data['status'] == 200) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+
+        return data['branches'];
+      }
+
+      if (data['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+        return [];
+      }
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
+
+  shuttleVisitConfirm(
+      BuildContext context, String branchId, String lat, String long) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      final apiUrl = '${ApiUrl}Shuttlevisit/users';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      // Make POST request
+
+      var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {
+        "branch_id": branchId,
+        "lati": lat,
+        "longt": long,
+      });
+      var data = jsonDecode(res.body);
+      print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+      print(data);
+      print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+      if (data['status'] == 200) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+        notification().info(context, data['message']);
+      }
+
+      if (data['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+        notification().warning(context, 'Somthing went wrong');
+      }
+      if (data['status'] == 400) {
+        notification().warning(context, data['message']);
       }
     } else {
       notification().warning(context, 'No Internet');

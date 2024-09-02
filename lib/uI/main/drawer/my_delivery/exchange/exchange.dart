@@ -47,6 +47,7 @@ class _ExchangeState extends State<Exchange> {
   var logger = Logger();
   SqlDb sqlDb = SqlDb();
   bool check = false;
+  XFile? image;
   TextEditingController pWayBill = TextEditingController();
   TextEditingController exWayBill = TextEditingController();
   TextEditingController exBagWayBill = TextEditingController();
@@ -153,7 +154,7 @@ class _ExchangeState extends State<Exchange> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        newImage.isNotEmpty
+                        image != null
                             ? ClipRRect(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(12)),
@@ -161,7 +162,7 @@ class _ExchangeState extends State<Exchange> {
                                     height: h / 7,
                                     width: w / 2.2,
                                     child: Image.file(
-                                      File(newImage),
+                                      File(image!.path),
                                       fit: BoxFit.cover,
                                     )))
                             : DottedBorder(
@@ -204,15 +205,17 @@ class _ExchangeState extends State<Exchange> {
                           children: [
                             InkWell(
                               onTap: () async {
-                                final XFile? image = await _picker.pickImage(
+                                XFile? image = await _picker.pickImage(
                                     imageQuality: 25,
                                     source: ImageSource.camera);
+                                print(image!.path);
+                                var res = await CustomApi()
+                                    .deliveryimageExchange(
+                                        context, image, exWayBill.text, true);
 
                                 setState(() {
-                                  newImage = image!.path;
-                                  final bytes =
-                                      File(image!.path).readAsBytesSync();
-                                  Image64 = base64Encode(bytes);
+                                  image;
+                                  print(image);
                                 });
                               },
                               child: Card(
@@ -228,15 +231,14 @@ class _ExchangeState extends State<Exchange> {
                             InkWell(
                               borderRadius: BorderRadius.circular(20),
                               onTap: () async {
-                                final XFile? image = await _picker.pickImage(
+                                image = await _picker.pickImage(
                                     imageQuality: 25,
                                     source: ImageSource.gallery);
-
+                                var res = await CustomApi()
+                                    .deliveryimageExchange(
+                                        context, image, exWayBill.text, true);
                                 setState(() {
-                                  newImage = image!.path;
-                                  final bytes =
-                                      File(image!.path).readAsBytesSync();
-                                  Image64 = base64Encode(bytes);
+                                  image;
                                 });
 
                                 // source
@@ -280,15 +282,20 @@ class _ExchangeState extends State<Exchange> {
                       child: check
                           ? HomeButton(
                               onTap: () async {
-                                if (Image64.isNotEmpty) {
+                                print(image!.path);
+                                if (image != null) {
                                   setState(() {
                                     isLoading = true;
                                   });
-                                  var res = await CustomApi()
-                                      .deleveryExchangeitem(
-                                          context, Image64, exWayBill.text);
-                                  print(res);
-                                  if (res == 1) {
+                                  var res = await CustomApi().imageExchange(
+                                      context,
+                                      image!.path,
+                                      exWayBill.text,
+                                      true);
+                                  print('qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq');
+                                  print(widget.statusTyp);
+                                  print('qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq');
+                                  if (res == "1") {
                                     var res = await CustomApi().oderData(
                                         widget.statusTyp,
                                         widget.waybill,
@@ -327,6 +334,8 @@ class _ExchangeState extends State<Exchange> {
       ),
     );
   }
+
+
 
   pickAndSaveImageToFolder(XFile? pickedFile, String waybill) async {
     if (pickedFile != null) {
