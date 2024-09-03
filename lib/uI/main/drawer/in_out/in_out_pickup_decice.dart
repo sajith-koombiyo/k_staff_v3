@@ -239,7 +239,7 @@ class _InOutPickupDeviceState extends State<InOutPickupDevice> {
                                               position!.longitude),
                                           child: Icon(
                                             Icons.person_pin_circle_rounded,
-                                            size: 30,
+                                            size: 40,
                                             color:
                                                 Color.fromARGB(255, 240, 27, 4),
                                           ))
