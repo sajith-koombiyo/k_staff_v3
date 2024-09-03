@@ -51,7 +51,7 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
 
   @override
   void initState() {
-    getLocation();
+    // getLocation();
     userLocation();
 
     // TODO: implement initState
@@ -233,7 +233,7 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
             ),
             backgroundColor: Color.fromARGB(255, 229, 232, 238),
             body: Padding(
-              padding: const EdgeInsets.only(bottom: 70),
+              padding: EdgeInsets.only(bottom: isOpen ? 70 : 0),
               child: Stack(
                 children: [
                   SizedBox(
