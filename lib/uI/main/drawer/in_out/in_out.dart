@@ -155,7 +155,7 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
       _marker;
       log(_marker.toString());
     });
-  }
+  }  
 
   Future<void> _checkLocationPermission() async {
     setState(() {
