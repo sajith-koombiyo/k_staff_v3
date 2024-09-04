@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +37,7 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
   String branchName = '';
   String visitBranchId = '';
   bool isLoading = false;
-  final ImagePicker _picker = ImagePicker();
+
   String lat = '';
   String long = '';
   String image64 = '';
@@ -94,15 +92,15 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
   userLocation() async {
     BitmapDescriptor markerBitMap = await BitmapDescriptor.fromAssetImage(
       ImageConfiguration(size: Size(40, 40)),
-      "assets/green.png",
+      "assets/2.png",
     );
     BitmapDescriptor markerBitMap2 = await BitmapDescriptor.fromAssetImage(
       ImageConfiguration(size: Size(40, 40)),
-      "assets/blue.png",
+      "assets/1.png",
     );
     BitmapDescriptor markerBitMap3 = await BitmapDescriptor.fromAssetImage(
       ImageConfiguration(size: Size(40, 40)),
-      "assets/red.png",
+      "assets/3.png",
     );
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
@@ -116,10 +114,10 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
       log(todayVisitBranchList.toString());
     });
     setState(() {
-      List.generate(todayVisitBranchList.length, (index) {
+      List.generate(todayVisitBranchList.length, (index) async {
         double lat = double.parse(todayVisitBranchList[index]['lati']);
         double long = double.parse(todayVisitBranchList[index]['longt']);
-
+        log(todayVisitBranchList[index]['shv_status'].toString());
         Set<Marker> _markertemp = {
           Marker(
               onTap: () {
@@ -129,7 +127,15 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
                 });
               },
               // icon: BitmapDescriptor.defaultMarkerWithHue(0.4),
-              icon: markerBitMap3,
+              icon:
+                  await todayVisitBranchList[index]['shv_status'].toString() ==
+                          "2"
+                      ? markerBitMap3
+                      : await todayVisitBranchList[index]['shv_status']
+                                  .toString() ==
+                              "1"
+                          ? markerBitMap2
+                          : markerBitMap,
               infoWindow: InfoWindow(
                 onTap: () {
                   setState(() {
@@ -137,7 +143,7 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
                     isOpen = true;
                   });
                 },
-                title: todayVisitBranchList[index]['dname'],
+                title: "     ${todayVisitBranchList[index]['dname']}     ",
               ),
               markerId: MarkerId(todayVisitBranchList[index]['did']),
               position: LatLng(lat, long))

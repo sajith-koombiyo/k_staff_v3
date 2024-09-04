@@ -241,7 +241,9 @@ class _customDrawerState extends State<customDrawer> {
                                             icon: Icons
                                                 .indeterminate_check_box_outlined,
                                             onTap: () {
-                                              navigation(InOutPickupDevice());
+                                              navigation(pickupDevice == '1'
+                                                  ? InOutPickupDevice()
+                                                  : InOutUpdateGoogleMap());
                                             },
                                             text: 'In Out',
                                           )

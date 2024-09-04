@@ -250,6 +250,20 @@ class _InOutPickupDeviceState extends State<InOutPickupDevice> {
                             ],
                           ),
                         ),
+                        Positioned(
+                          right: 12,
+                          top: 12,
+                          child: Card(
+                              elevation: 20,
+                              color: Color.fromARGB(255, 248, 252, 250),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  branchName,
+                                  style: TextStyle(color: black),
+                                ),
+                              )),
+                        ),
                         isLoading ? Loader().loader(context) : SizedBox(),
                         provider.isanotherUserLog
                             ? UserLoginCheck()
