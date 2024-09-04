@@ -49,7 +49,8 @@ class _InOutPickupDeviceState extends State<InOutPickupDevice> {
   String MarkerTempId = '';
   List<Marker> markerList = <Marker>[];
   List<Marker> _marker = [];
-
+  List<Polyline>? polylines = [];
+  List<LatLng> _latLong = [];
   @override
   void initState() {
     getLocation();
@@ -112,7 +113,13 @@ class _InOutPickupDeviceState extends State<InOutPickupDevice> {
     List.generate(branchList.length, (index) {
       double lat = double.parse(branchList[index]['lati']);
       double long = double.parse(branchList[index]['longt']);
+      List<LatLng> _latLongTemp = [LatLng(lat, long)];
 
+      Polyline(
+        points: [],
+        strokeWidth: 4.0,
+        color: Colors.blue,
+      );
       final _markertemp = <Marker>[
         Marker(
           // key: Key(pickupLocation[index]['pickr_id']),
@@ -128,10 +135,11 @@ class _InOutPickupDeviceState extends State<InOutPickupDevice> {
               child: Image.asset('assets/red.png')),
         )
       ];
-
+      _latLong.addAll(_latLongTemp);
       _marker.addAll(_markertemp);
     });
     setState(() {
+      _latLong;
       _marker;
     });
   }
@@ -232,6 +240,13 @@ class _InOutPickupDeviceState extends State<InOutPickupDevice> {
                                           'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                                       subdomains: ['a', 'b', 'c'],
                                     ),
+                                    PolylineLayer(polylines: [
+                                      Polyline(
+                                        points: _latLong,
+                                        strokeWidth: 4.0,
+                                        color: Colors.blue,
+                                      ),
+                                    ]),
                                     MarkerLayer(markers: _marker),
                                     MarkerLayer(markers: [
                                       Marker(

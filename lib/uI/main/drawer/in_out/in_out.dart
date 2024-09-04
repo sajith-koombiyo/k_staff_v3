@@ -30,6 +30,7 @@ class InOutUpdateGoogleMap extends StatefulWidget {
 class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
+  Set<Polyline> _polylines = {};
   Position? position;
   bool isOpen = false;
   bool lConfirm = false;
@@ -46,7 +47,7 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
   List userBranchList = [];
   List branchList = [];
   List todayVisitBranchList = [];
-
+  List<LatLng> _latLong = [];
   @override
   void initState() {
     // getLocation();
@@ -91,16 +92,16 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
 
   userLocation() async {
     BitmapDescriptor markerBitMap = await BitmapDescriptor.fromAssetImage(
-      ImageConfiguration(size: Size(40, 40)),
-      "assets/2.png",
+      ImageConfiguration(size: Size(30, 30)),
+      "assets/m2.png",
     );
     BitmapDescriptor markerBitMap2 = await BitmapDescriptor.fromAssetImage(
-      ImageConfiguration(size: Size(40, 40)),
-      "assets/1.png",
+      ImageConfiguration(size: Size(30, 30)),
+      "assets/m3.png",
     );
     BitmapDescriptor markerBitMap3 = await BitmapDescriptor.fromAssetImage(
-      ImageConfiguration(size: Size(40, 40)),
-      "assets/3.png",
+      ImageConfiguration(size: Size(30, 30)),
+      "assets/m.png",
     );
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
@@ -118,6 +119,8 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
         double lat = double.parse(todayVisitBranchList[index]['lati']);
         double long = double.parse(todayVisitBranchList[index]['longt']);
         log(todayVisitBranchList[index]['shv_status'].toString());
+        List<LatLng> _latLongTemp = [LatLng(lat, long)];
+
         Set<Marker> _markertemp = {
           Marker(
               onTap: () {
@@ -148,14 +151,26 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
               markerId: MarkerId(todayVisitBranchList[index]['did']),
               position: LatLng(lat, long))
         };
-
+        _polylines = {
+          Polyline(
+            polylineId: PolylineId(todayVisitBranchList[index]['did']),
+            points: _latLong,
+            color: Color.fromARGB(255, 186, 10, 31),
+            width: 8,
+            endCap: Cap.roundCap,
+            geodesic: true,
+          )
+        };
+        _latLong.addAll(_latLongTemp);
         _marker.addAll(_markertemp);
       });
-
+      _polylines;
+      _latLong;
       _marker;
       log(_marker.toString());
+      isLoading = false;
     });
-  }  
+  }
 
   Future<void> _checkLocationPermission() async {
     setState(() {
@@ -242,98 +257,35 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
               padding: EdgeInsets.only(bottom: isOpen ? 70 : 0),
               child: Stack(
                 children: [
-                  SizedBox(
-                    height: h,
-                    width: w,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(),
-                        lConfirm
-                            ? Container(
-                                color: Colors.blueGrey,
-                                child: provider.lImage.isNotEmpty
-                                    ? ClipRRect(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(12)),
-                                        child: Container(
-                                            height: h / 2,
-                                            width: w,
-                                            child: Image.file(
-                                              File(provider.lImage),
-                                              fit: BoxFit.cover,
-                                            )))
-                                    : DottedBorder(
-                                        color: Colors.black38,
-                                        borderType: BorderType.RRect,
-                                        radius: Radius.circular(12),
-                                        padding: EdgeInsets.all(6),
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(12)),
-                                          child: Container(
-                                            alignment: Alignment.center,
-                                            height: h / 2,
-                                            width: w,
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Icon(
-                                                  Icons.cloud_upload_outlined,
-                                                  size: 40,
-                                                  color: const Color.fromARGB(
-                                                      96, 77, 76, 76),
-                                                ),
-                                                Text(
-                                                    'Please upload \nyour image',
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: Colors.black38,
-                                                      fontSize: 12.dp,
-                                                    )),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                              )
-                            : Expanded(
-                                child: GoogleMap(
-                                  zoomGesturesEnabled: true,
-                                  markers: _marker,
-                                  onCameraMoveStarted: () {},
-                                  padding:
-                                      EdgeInsets.only(top: h / 2.0, bottom: 0),
-                                  // on below line specifying map type.
-                                  mapType: MapType.normal,
-                                  // on below line setting user location enabled.
-                                  myLocationEnabled: true,
-                                  // on below line setting compass enabled.
-                                  // zoomControlsEnabled: false,
-                                  initialCameraPosition: CameraPosition(
-                                    target: LatLng(7.8731, 80.7718),
-                                    zoom: 8,
-                                  ),
-                                  onTap: (argument) {
-                                    argument.latitude;
-                                    argument.longitude;
-                                    // MapUtils.openMap(
-                                    //     argument.latitude, argument.longitude);
-                                  },
+                  isLoading
+                      ? Loader().loader(context)
+                      : GoogleMap(
+                          polylines: _polylines,
+                          zoomGesturesEnabled: true,
+                          markers: _marker,
+                          onCameraMoveStarted: () {},
+                          padding: EdgeInsets.only(top: h / 2.0, bottom: 0),
+                          // on below line specifying map type.
+                          mapType: MapType.normal,
+                          // on below line setting user location enabled.
+                          myLocationEnabled: true,
+                          // on below line setting compass enabled.
+                          // zoomControlsEnabled: false,
+                          initialCameraPosition: CameraPosition(
+                            target: LatLng(7.8731, 80.7718),
+                            zoom: 8,
+                          ),
+                          onTap: (argument) {
+                            argument.latitude;
+                            argument.longitude;
+                            // MapUtils.openMap(
+                            //     argument.latitude, argument.longitude);
+                          },
 
-                                  onMapCreated:
-                                      (GoogleMapController controller) {
-                                    _controller.complete(controller);
-                                  },
-                                ),
-                              ),
-                      ],
-                    ),
-                  ),
+                          onMapCreated: (GoogleMapController controller) {
+                            _controller.complete(controller);
+                          },
+                        ),
                   isLoading ? Loader().loader(context) : SizedBox(),
                   provider.isanotherUserLog ? UserLoginCheck() : SizedBox()
                 ],

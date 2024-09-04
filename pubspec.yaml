@@ -81,6 +81,7 @@ dependencies:
   carousel_slider:
   flutter_chat_bubble:
   logger:
+  flutter_polyline_points:
 
  
 
