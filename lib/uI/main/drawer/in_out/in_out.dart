@@ -42,6 +42,7 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
   String lat = '';
   String long = '';
   String image64 = '';
+  LatLng? fLatLong;
   // List userBranchList = [];
   String? selectval;
   List userBranchList = [];
@@ -93,15 +94,15 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
   userLocation() async {
     BitmapDescriptor markerBitMap = await BitmapDescriptor.fromAssetImage(
       ImageConfiguration(size: Size(30, 30)),
-      "assets/m2.png",
+      "assets/1.png",
     );
     BitmapDescriptor markerBitMap2 = await BitmapDescriptor.fromAssetImage(
       ImageConfiguration(size: Size(30, 30)),
-      "assets/m3.png",
+      "assets/2.png",
     );
     BitmapDescriptor markerBitMap3 = await BitmapDescriptor.fromAssetImage(
       ImageConfiguration(size: Size(30, 30)),
-      "assets/m.png",
+      "assets/3.png",
     );
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
@@ -112,7 +113,10 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
     setState(() {
       // branchList = temp;
       todayVisitBranchList = temp2;
-      log(todayVisitBranchList.toString());
+      log(todayVisitBranchList[0]['lati']);
+      double lat = double.parse(todayVisitBranchList[0]['lati']);
+      double long = double.parse(todayVisitBranchList[0]['longt']);
+      fLatLong = LatLng(lat, long);
     });
     setState(() {
       List.generate(todayVisitBranchList.length, (index) async {
@@ -155,7 +159,7 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
           Polyline(
             polylineId: PolylineId(todayVisitBranchList[index]['did']),
             points: _latLong,
-            color: Color.fromARGB(255, 186, 10, 31),
+            color: Color.fromARGB(255, 238, 3, 73),
             width: 8,
             endCap: Cap.roundCap,
             geodesic: true,
@@ -257,7 +261,7 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
               padding: EdgeInsets.only(bottom: isOpen ? 70 : 0),
               child: Stack(
                 children: [
-                  isLoading
+                  isLoading || fLatLong == null
                       ? Loader().loader(context)
                       : GoogleMap(
                           polylines: _polylines,
@@ -272,8 +276,8 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
                           // on below line setting compass enabled.
                           // zoomControlsEnabled: false,
                           initialCameraPosition: CameraPosition(
-                            target: LatLng(7.8731, 80.7718),
-                            zoom: 8,
+                            target: fLatLong!,
+                            zoom: 9,
                           ),
                           onTap: (argument) {
                             argument.latitude;
