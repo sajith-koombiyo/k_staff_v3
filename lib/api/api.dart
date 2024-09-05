@@ -2544,7 +2544,7 @@ class CustomApi {
       if (data['status'] == 200) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
 
-        return data['branches'];
+        return data;
       }
 
       if (data['status'] == 403) {

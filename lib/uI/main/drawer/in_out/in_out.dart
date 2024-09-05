@@ -38,7 +38,7 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
   String branchName = '';
   String visitBranchId = '';
   bool isLoading = false;
-
+  String routName = '';
   String lat = '';
   String long = '';
   String image64 = '';
@@ -112,7 +112,9 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
     if (!mounted) return;
     setState(() {
       // branchList = temp;
-      todayVisitBranchList = temp2;
+
+      todayVisitBranchList = temp2['branches'];
+      routName = temp2['route_name'];
       log(todayVisitBranchList[0]['lati']);
       double lat = double.parse(todayVisitBranchList[0]['lati']);
       double long = double.parse(todayVisitBranchList[0]['longt']);
@@ -290,6 +292,26 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
                             _controller.complete(controller);
                           },
                         ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Card(
+                        elevation: 20,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 4),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text("Route Name "),
+                              Text("-$routName",
+                                  style: TextStyle(
+                                      color: const Color.fromARGB(
+                                          255, 175, 13, 13),
+                                      fontWeight: FontWeight.bold)),
+                            ],
+                          ),
+                        )),
+                  ),
                   isLoading ? Loader().loader(context) : SizedBox(),
                   provider.isanotherUserLog ? UserLoginCheck() : SizedBox()
                 ],
