@@ -1262,7 +1262,7 @@ class CustomApi {
         connectivityResult == ConnectivityResult.wifi) {
       final apiUrl = '${ApiUrl}/Pending_dd/users';
       // Headers
-      Map<String, String> headers = {'userkey': '$id', 'dispatch_to': bId};
+      Map<String, String> headers = {'userkey': '$id', 'dispatch': bId};
       // Make POST request
       var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {});
       var data = jsonDecode(res.body);
