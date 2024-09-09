@@ -114,7 +114,7 @@ class _BranchVisitHistoryState extends State<BranchVisitHistory> {
                                         color: black, fontSize: 14.dp),
                                   ),
                                   Text(
-                                    '${branchVisit[index]['date']}',
+                                    ' In Time -${branchVisit[index]['date']}',
                                     style:
                                         TextStyle(color: black2, fontSize: 14),
                                   ),

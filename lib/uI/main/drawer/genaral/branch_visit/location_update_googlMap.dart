@@ -182,6 +182,10 @@ class _LocationUpdateGoogleMapState extends State<LocationUpdateGoogleMap> {
                 date,
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
               ),
+              Text(
+                date,
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+              ),
             ],
           )),
     );

@@ -1,8 +1,5 @@
 import 'dart:async';
 import 'dart:developer';
-import 'dart:io';
-import 'package:dotted_border/dotted_border.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/api/api.dart';
 import 'package:flutter_application_2/app_details/color.dart';
@@ -14,7 +11,6 @@ import 'package:flutter_application_2/uI/widget/diloag_button.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -53,7 +49,6 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
   void initState() {
     // getLocation();
     userLocation();
-
     // TODO: implement initState
     super.initState();
   }
