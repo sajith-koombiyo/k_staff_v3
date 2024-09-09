@@ -144,6 +144,12 @@ class _LocationUpdateGoogleMapState extends State<LocationUpdateGoogleMap> {
   }
 
   info(String img, String name, String branch, String date) {
+    //  2024-09-09 09:34:47
+    print(date);
+    DateTime? newDate;
+    newDate = DateTime.parse(date);
+    String formattedDate = DateFormat('EEEE, MMM d, yyyy').format(newDate);
+    String formattedTime = DateFormat.jm().format(newDate);
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     showDialog(
@@ -179,11 +185,11 @@ class _LocationUpdateGoogleMapState extends State<LocationUpdateGoogleMap> {
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
               ),
               Text(
-                date,
+                formattedDate,
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
               ),
               Text(
-                date,
+                formattedTime,
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
               ),
             ],

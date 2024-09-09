@@ -85,94 +85,120 @@ class _BranchVisitHistoryState extends State<BranchVisitHistory> {
               height: h,
               child: ListView.builder(
                 itemCount: branchVisit.length,
-                itemBuilder: (context, index) => Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    alignment: Alignment.center,
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                      color: branchVisit[index]['out_time'] == null
-                          ? Color.fromARGB(255, 215, 225, 232)
-                          : Color.fromARGB(255, 228, 201, 199),
-                      child: SizedBox(
-                        width: w - 16,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    branchVisit[index]['bv_branch_name'],
-                                    style: TextStyle(
-                                        color: black, fontSize: 14.dp),
-                                  ),
-                                  Text(
-                                    ' In Time -${branchVisit[index]['date']}',
-                                    style:
-                                        TextStyle(color: black2, fontSize: 14),
-                                  ),
-                                ],
-                              ),
-                              Spacer(),
-                              branchVisit[index]['out_time'] != null
-                                  ? Container(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Out Time',
-                                            style: TextStyle(
-                                                color: black2, fontSize: 14),
-                                          ),
-                                          Text(
-                                            '${branchVisit[index]['out_time']}',
-                                            style: TextStyle(
-                                                color: const Color.fromARGB(
-                                                    255, 46, 124, 164),
-                                                fontSize: 14),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  : DialogButton(
-                                      text: 'Exit',
-                                      onTap: () async {
-                                        if (today ==
-                                            branchVisit[index]['date']) {
-                                          CustomDialog().alert(context, 'Info',
-                                              'Do you want to exit the branch',
-                                              () {
-                                            Navigator.pop(context);
-                                            getLocation(
-                                                branchVisit[index]
-                                                    ['bv_branch_id'],
-                                                branchVisit[index]['bv_id']);
+                itemBuilder: (context, index) {
+                  print(date);
+                  DateTime? newDate;
+                  newDate = DateTime.parse(branchVisit[index]['date']);
+                  String formattedDate =
+                      DateFormat('EEEE, MMM d, yyyy').format(newDate);
+                  String formattedTime = DateFormat.jm().format(newDate);
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        color: branchVisit[index]['out_time'] == null
+                            ? Color.fromARGB(255, 215, 225, 232)
+                            : Color.fromARGB(255, 228, 201, 199),
+                        child: SizedBox(
+                          width: w - 16,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'IN  ',
+                                          style: TextStyle(
+                                              color: const Color.fromARGB(
+                                                  255, 157, 18, 8),
+                                              fontSize: 14.dp),
+                                        ),
+                                        Text(
+                                          branchVisit[index]['bv_branch_name'],
+                                          style: TextStyle(
+                                              color: black, fontSize: 14.dp),
+                                        ),
+                                      ],
+                                    ),
+                                    Text(
+                                      '-$formattedDate',
+                                      style: TextStyle(
+                                          color: black2, fontSize: 14),
+                                    ),
+                                    Text(
+                                      '-$formattedTime',
+                                      style: TextStyle(
+                                          color: black2, fontSize: 14),
+                                    ),
+                                  ],
+                                ),
+                                Spacer(),
+                                branchVisit[index]['out_time'] != null
+                                    ? Container(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Out Time',
+                                              style: TextStyle(
+                                                  color: black2, fontSize: 14),
+                                            ),
+                                            Text(
+                                              '${branchVisit[index]['out_time']}',
+                                              style: TextStyle(
+                                                  color: const Color.fromARGB(
+                                                      255, 46, 124, 164),
+                                                  fontSize: 14),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    : DialogButton(
+                                        text: 'Exit',
+                                        onTap: () async {
+                                          if (today ==
+                                              branchVisit[index]['date']) {
+                                            CustomDialog().alert(
+                                                context,
+                                                'Info',
+                                                'Do you want to exit the branch',
+                                                () {
+                                              Navigator.pop(context);
+                                              getLocation(
+                                                  branchVisit[index]
+                                                      ['bv_branch_id'],
+                                                  branchVisit[index]['bv_id']);
 
-                                            exitBranch();
-                                          });
-                                        } else {
-                                          notification().warning(context,
-                                              'Your branch visit day and exit day are different. Please contact your admin.');
-                                        }
-                                      },
-                                      buttonHeight: h / 20,
-                                      width: w / 4,
-                                      color: Color.fromARGB(255, 2, 174, 91)),
-                            ],
+                                              exitBranch();
+                                            });
+                                          } else {
+                                            notification().warning(context,
+                                                'Your branch visit day and exit day are different. Please contact your admin.');
+                                          }
+                                        },
+                                        buttonHeight: h / 20,
+                                        width: w / 4,
+                                        color: Color.fromARGB(255, 2, 174, 91)),
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ),
+                  );
+                },
               ),
             ),
             isLoading ? Loader().loader(context) : SizedBox(),
