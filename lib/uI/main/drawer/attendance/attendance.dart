@@ -37,6 +37,7 @@ class _AttendanceState extends State<Attendance> {
   final ImagePicker _picker = ImagePicker();
   List meterMtData = [];
   bool mt = false;
+  bool serverErr = false;
   bool sMeter = false;
   bool eMeter = false;
   bool isClickStart = false;
@@ -53,6 +54,14 @@ class _AttendanceState extends State<Attendance> {
       isLoading = true;
     });
     var res = await CustomApi().attendanceVehicleMeter(context);
+    print(res);
+
+    if (res == 500) {
+      setState(() {
+        serverErr = true;
+        isLoading = false;
+      });
+    }
     if (res == 0) {
       setState(() {
         isLoading = false;
@@ -68,11 +77,10 @@ class _AttendanceState extends State<Attendance> {
 
         startKM = int.parse(res[0]['start']);
 
-      
         if (res[0]['start_img'] != null) {
           sMeter = true;
           start64ConvertData = base64Decode(res[0]['start_img']);
-       
+
           startController.text = res[0]['start'];
         }
         if (res[0]['end_img'] != null) {
@@ -101,6 +109,14 @@ class _AttendanceState extends State<Attendance> {
               fontWeight: FontWeight.bold,
             ),
           ),
+          bottom: serverErr
+              ? PreferredSize(
+                  preferredSize: Size(w, 20),
+                  child: Container(
+                      width: w,
+                      color: const Color.fromARGB(255, 250, 70, 57),
+                      child: Text('server error')))
+              : null,
           leading: IconButton(
               onPressed: () {
                 Navigator.pop(context);
@@ -405,7 +421,7 @@ class _AttendanceState extends State<Attendance> {
                                               endController.text.toString());
                                           if (end > startKM) {
                                             int doneKm = end - startKM;
-                                         
+
                                             setState(() {
                                               isLoading = true;
                                             });
@@ -566,14 +582,14 @@ class _AttendanceState extends State<Attendance> {
       if (isStart) {
         final bytes = File(image!.path).readAsBytesSync();
         String base64Image = base64Encode(bytes);
-       
+
         startMeter = image!.path;
         start64 = base64Image;
         end64 = '';
       } else {
         final bytes = File(image!.path).readAsBytesSync();
         String base64Image = base64Encode(bytes);
-     
+
         startMeter = image!.path;
         end64 = base64Image;
         start64 = '';
@@ -589,7 +605,7 @@ class _AttendanceState extends State<Attendance> {
       if (isStart) {
         final bytes = File(image!.path).readAsBytesSync();
         String base64Image = base64Encode(bytes);
-      
+
         startMeter = image!.path;
         start64 = base64Image;
         end64 = '';

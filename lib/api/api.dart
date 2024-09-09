@@ -1640,8 +1640,12 @@ class CustomApi {
       };
       var resp =
           await https.post(headers: headers, Uri.parse(apiUrl), body: {});
-
+      print(resp.statusCode);
+      if (resp.statusCode == 500) {
+        return 500;
+      }
       var res = jsonDecode(resp.body);
+      print(res);
 
       if (res['status'] == 404) {
         return 1;
