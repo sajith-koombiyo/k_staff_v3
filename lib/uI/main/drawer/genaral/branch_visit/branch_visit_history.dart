@@ -119,7 +119,10 @@ class _BranchVisitHistoryState extends State<BranchVisitHistory> {
                                       children: [
                                         branchVisit[index]['out_time'] == null
                                             ? Card(
-                                                elevation: 20,
+                                                color: Color.fromARGB(
+                                                        255, 245, 221, 6)
+                                                    .withOpacity(0.8),
+                                                elevation: 1,
                                                 margin: EdgeInsets.only(
                                                     left: 0, right: 10),
                                                 child: Padding(
@@ -128,9 +131,8 @@ class _BranchVisitHistoryState extends State<BranchVisitHistory> {
                                                   child: Text(
                                                     ' IN ',
                                                     style: TextStyle(
-                                                        color: const Color
-                                                            .fromARGB(
-                                                            255, 157, 18, 8),
+                                                        color: Color.fromARGB(
+                                                            255, 58, 7, 3),
                                                         fontSize: 14.dp),
                                                   ),
                                                 ),
