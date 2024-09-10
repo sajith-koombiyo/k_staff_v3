@@ -117,13 +117,25 @@ class _BranchVisitHistoryState extends State<BranchVisitHistory> {
                                   children: [
                                     Row(
                                       children: [
-                                        Text(
-                                          'IN  ',
-                                          style: TextStyle(
-                                              color: const Color.fromARGB(
-                                                  255, 157, 18, 8),
-                                              fontSize: 14.dp),
-                                        ),
+                                        branchVisit[index]['out_time'] == null
+                                            ? Card(
+                                                elevation: 20,
+                                                margin: EdgeInsets.only(
+                                                    left: 0, right: 10),
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(horizontal: 8),
+                                                  child: Text(
+                                                    ' IN ',
+                                                    style: TextStyle(
+                                                        color: const Color
+                                                            .fromARGB(
+                                                            255, 157, 18, 8),
+                                                        fontSize: 14.dp),
+                                                  ),
+                                                ),
+                                              )
+                                            : SizedBox(),
                                         Text(
                                           branchVisit[index]['bv_branch_name'],
                                           style: TextStyle(
@@ -168,8 +180,16 @@ class _BranchVisitHistoryState extends State<BranchVisitHistory> {
                                     : DialogButton(
                                         text: 'Exit',
                                         onTap: () async {
-                                          if (today ==
-                                              branchVisit[index]['date']) {
+                                          print(today);
+
+                                          DateTime date = DateTime.parse(
+                                              branchVisit[index]['date']);
+
+                                          String formattedDate =
+                                              DateFormat('yyyy-MM-dd')
+                                                  .format(date);
+                                          log(formattedDate);
+                                          if (today == formattedDate) {
                                             CustomDialog().alert(
                                                 context,
                                                 'Info',

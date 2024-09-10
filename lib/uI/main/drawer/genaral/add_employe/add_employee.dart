@@ -428,7 +428,7 @@ class _AddEmployeeState extends State<AddEmployee> {
     final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: selectedDate,
-        firstDate: DateTime(2015, 8),
+        firstDate: DateTime(1940, 8),
         lastDate: DateTime(2101));
     if (picked != null && picked != selectedDate) {
       setState(() {

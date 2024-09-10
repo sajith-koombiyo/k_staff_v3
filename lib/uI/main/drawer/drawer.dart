@@ -392,7 +392,7 @@ class _customDrawerState extends State<customDrawer> {
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        pickupDevice == '1'
+                                                        pickupDevice == '0'
                                                             ? LocationScreen()
                                                             : LocationUpdateGoogleMap()),
                                               );
