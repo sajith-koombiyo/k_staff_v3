@@ -105,10 +105,15 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
     var temp2 = await CustomApi().shutteleVisitBrnchesList(context, '');
     log(temp2.toString());
     if (!mounted) return;
+    if (temp2 == 1) {}
     setState(() {
       // branchList = temp;
+      if (temp2['branches'] == null) {
+        todayVisitBranchList = [];
+      } else {
+        todayVisitBranchList = temp2['branches'];
+      }
 
-      todayVisitBranchList = temp2['branches'];
       routName = temp2['route_name'];
       log(todayVisitBranchList[0]['lati']);
       double lat = double.parse(todayVisitBranchList[0]['lati']);
@@ -128,6 +133,7 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
                 setState(() {
                   isOpen = true;
                   branchName = todayVisitBranchList[index]['dname'];
+                  visitBranchId = todayVisitBranchList[index]['did'];
                 });
               },
               // icon: BitmapDescriptor.defaultMarkerWithHue(0.4),

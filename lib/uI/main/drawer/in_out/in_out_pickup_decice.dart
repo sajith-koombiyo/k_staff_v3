@@ -108,6 +108,11 @@ class _InOutPickupDeviceState extends State<InOutPickupDevice> {
     if (!mounted) return;
     setState(() {
       branchList = temp2;
+      if (temp2['branches'] == null) {
+        branchList = [];
+      } else {
+        branchList = temp2['branches'];
+      }
     });
 
     List.generate(branchList.length, (index) {
@@ -130,6 +135,7 @@ class _InOutPickupDeviceState extends State<InOutPickupDevice> {
                 setState(() {
                   branchName = branchList[index]['dname'];
                   isOpen = true;
+                  visitBranchId = branchList[index]['did'];
                 });
               },
               child: Image.asset('assets/red.png')),

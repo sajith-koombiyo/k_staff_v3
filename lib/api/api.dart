@@ -2538,17 +2538,24 @@ class CustomApi {
         'userkey': '$id',
       };
       // Make POST request
-
+      print('dddddddddddd');
+      print(branchId);
+      print('dddddddddddd');
       var res = await https.post(
           headers: headers, Uri.parse(apiUrl), body: {"branch_id": branchId});
       var data = jsonDecode(res.body);
-      print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+      print(
+          'xxxdddddddddddddddxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
       print(data);
       print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+
       if (data['status'] == 200) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
-
-        return data;
+        if (data['route_name'] == "null") {
+          return [];
+        } else {
+          return data;
+        }
       }
 
       if (data['status'] == 403) {
@@ -2573,14 +2580,17 @@ class CustomApi {
         'userkey': '$id',
       };
       // Make POST request
-
+      print(branchId);
+      print(lat);
+      print(long);
       var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {
         "branch_id": branchId,
         "lati": lat,
         "longt": long,
       });
       var data = jsonDecode(res.body);
-      print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+      print(
+          'xxxxxxxxxxxxxxxxxxxxxxxxxxxxssssssssssssssssxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
       print(data);
       print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
       if (data['status'] == 200) {

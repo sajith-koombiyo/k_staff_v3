@@ -236,18 +236,7 @@ class _customDrawerState extends State<customDrawer> {
                                             text: 'Reschedule',
                                           )
                                         : SizedBox(),
-                                    DrawerClz().inOut(accessGroupId)
-                                        ? CustomDrawerButton(
-                                            icon: Icons
-                                                .indeterminate_check_box_outlined,
-                                            onTap: () {
-                                              navigation(pickupDevice == '1'
-                                                  ? InOutPickupDevice()
-                                                  : InOutUpdateGoogleMap());
-                                            },
-                                            text: 'In Out',
-                                          )
-                                        : SizedBox(),
+
                                     DrawerClz().branchOperation(accessGroupId)
                                         ? drawwerList('Branch Operations',
                                             Icons.accessibility_outlined, () {
@@ -503,7 +492,21 @@ class _customDrawerState extends State<customDrawer> {
                                         setState(() {
                                           key = '12';
                                         });
-                                      }, key, '12')
+                                      }, key, '12'),
+                                      tileButton('In Out', () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  pickupDevice == '1'
+                                                      ? InOutPickupDevice()
+                                                      : InOutUpdateGoogleMap()),
+                                        );
+
+                                        setState(() {
+                                          key = '13';
+                                        });
+                                      }, key, '13')
                                     ]),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
