@@ -164,7 +164,7 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
             polylineId: PolylineId(todayVisitBranchList[index]['did']),
             points: _latLong,
             color: Color.fromARGB(255, 238, 3, 73),
-            width: 8,
+            width: 5,
             endCap: Cap.roundCap,
             geodesic: true,
           )
@@ -314,69 +314,72 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
                           ),
                         )),
                   ),
-                  Card(
-                    elevation: 20,
-                    color: Colors.black38,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SizedBox(
-                                width: 70,
-                                child: Text("Start",
-                                    style: TextStyle(
-                                        color: white,
-                                        fontWeight: FontWeight.bold)),
-                              ),
-                              Image.asset(
-                                'assets/1.png',
-                                height: 25,
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            height: 8,
-                          ),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SizedBox(
-                                width: 70,
-                                child: Text("On Time",
-                                    style: TextStyle(
-                                        color: white,
-                                        fontWeight: FontWeight.bold)),
-                              ),
-                              Image.asset(
-                                'assets/2.png',
-                                height: 25,
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            height: 8,
-                          ),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SizedBox(
-                                width: 70,
-                                child: Text("Late",
-                                    style: TextStyle(
-                                        color: white,
-                                        fontWeight: FontWeight.bold)),
-                              ),
-                              Image.asset(
-                                'assets/3.png',
-                                height: 25,
-                              )
-                            ],
-                          ),
-                        ],
+                  Padding(
+                    padding: const EdgeInsets.only(top: 50),
+                    child: Card(
+                      elevation: 20,
+                      color: Colors.black38,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(
+                                  width: 70,
+                                  child: Text("Start",
+                                      style: TextStyle(
+                                          color: white,
+                                          fontWeight: FontWeight.bold)),
+                                ),
+                                Image.asset(
+                                  'assets/1.png',
+                                  height: 25,
+                                )
+                              ],
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(
+                                  width: 70,
+                                  child: Text("On Time",
+                                      style: TextStyle(
+                                          color: white,
+                                          fontWeight: FontWeight.bold)),
+                                ),
+                                Image.asset(
+                                  'assets/2.png',
+                                  height: 25,
+                                )
+                              ],
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(
+                                  width: 70,
+                                  child: Text("Late",
+                                      style: TextStyle(
+                                          color: white,
+                                          fontWeight: FontWeight.bold)),
+                                ),
+                                Image.asset(
+                                  'assets/3.png',
+                                  height: 25,
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
