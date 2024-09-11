@@ -1514,6 +1514,8 @@ class CustomApi {
         'userkey': '$id',
       };
       print(lati);
+      print(bId);
+      print(bv_id);
       print(longt);
       // Make POST request
       var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {
@@ -2594,18 +2596,23 @@ class CustomApi {
       print(
           'xxxxxxxxxxxxxxxxxxxxxxxxxxxxssssssssssssssssxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
       print(data);
-      print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+
       if (data['status'] == 200) {
+        print(
+            'xxxxxxxxxxxxxxxxqqqqqqqqqqqqqqqqqqqxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
-        notification().info(context, data['message']);
+        notification().info(context, 'Branch Visit Successfully Updated');
+        return 1;
       }
 
       if (data['status'] == 403) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
         notification().warning(context, 'Somthing went wrong');
+        return 0;
       }
       if (data['status'] == 400) {
         notification().warning(context, data['message']);
+        return 0;
       }
     } else {
       notification().warning(context, 'No Internet');

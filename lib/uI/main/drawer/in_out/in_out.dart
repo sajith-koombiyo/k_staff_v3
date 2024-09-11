@@ -72,13 +72,14 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
       position!.latitude.toString(),
       position!.longitude.toString(),
     );
-
-    Navigator.pop(context);
-    Navigator.pop(context);
     setState(() {
+      _marker.clear();
       position;
       isLoading = false;
     });
+    await userLocation();
+    Navigator.pop(context);
+    Navigator.pop(context);
   }
 
   String MarkerTempId = '';
@@ -229,7 +230,7 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
             appBar: AppBar(
               backgroundColor: appliteBlue,
               title: Text(
-                'In Out',
+                'Shuttle In Out',
                 style: TextStyle(
                   fontSize: 18.dp,
                   color: white,
@@ -312,6 +313,72 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
                             ],
                           ),
                         )),
+                  ),
+                  Card(
+                    elevation: 20,
+                    color: Colors.black38,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(
+                                width: 70,
+                                child: Text("Start",
+                                    style: TextStyle(
+                                        color: white,
+                                        fontWeight: FontWeight.bold)),
+                              ),
+                              Image.asset(
+                                'assets/1.png',
+                                height: 25,
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(
+                                width: 70,
+                                child: Text("On Time",
+                                    style: TextStyle(
+                                        color: white,
+                                        fontWeight: FontWeight.bold)),
+                              ),
+                              Image.asset(
+                                'assets/2.png',
+                                height: 25,
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(
+                                width: 70,
+                                child: Text("Late",
+                                    style: TextStyle(
+                                        color: white,
+                                        fontWeight: FontWeight.bold)),
+                              ),
+                              Image.asset(
+                                'assets/3.png',
+                                height: 25,
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                   isLoading ? Loader().loader(context) : SizedBox(),
                   provider.isanotherUserLog ? UserLoginCheck() : SizedBox()
