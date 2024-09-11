@@ -1513,6 +1513,8 @@ class CustomApi {
       Map<String, String> headers = {
         'userkey': '$id',
       };
+      print(lati);
+      print(longt);
       // Make POST request
       var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {
         "branch_id": bId,
@@ -1521,7 +1523,7 @@ class CustomApi {
         "longt": longt
       });
       var data = jsonDecode(res.body);
-
+      print(data);
       if (data['status'] == 200) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
         notification().info(context, 'Branch exit successfully completed');

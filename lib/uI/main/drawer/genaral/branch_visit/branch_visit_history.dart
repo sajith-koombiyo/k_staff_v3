@@ -196,14 +196,14 @@ class _BranchVisitHistoryState extends State<BranchVisitHistory> {
                                                 context,
                                                 'Info',
                                                 'Do you want to exit the branch',
-                                                () {
+                                                () async {
                                               Navigator.pop(context);
                                               getLocation(
                                                   branchVisit[index]
                                                       ['bv_branch_id'],
                                                   branchVisit[index]['bv_id']);
 
-                                              exitBranch();
+                                              await exitBranch();
                                             });
                                           } else {
                                             notification().warning(context,
@@ -244,7 +244,9 @@ class _BranchVisitHistoryState extends State<BranchVisitHistory> {
         desiredAccuracy: LocationAccuracy.high);
     // var res = await Geolocator.distanceBetween(
     //     37.4219988, -122.084, 37.4219983, -122.084);
-
+//  37.4219983, bv_longt: -122.084
+    print(position!.latitude.toString());
+    print(position!.longitude.toString());
     await CustomApi().branchExit(context, bId, bHistoryId,
         position!.latitude.toString(), position!.longitude.toString());
     getDat();

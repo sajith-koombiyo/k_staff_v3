@@ -376,12 +376,12 @@ class _customDrawerState extends State<customDrawer> {
                                             }, key, '6')
                                           : SizedBox(),
                                       DrawerClz().branchVisit(accessGroupId)
-                                          ? tileButton('Branch In Out', () {
+                                          ? tileButton('Branch Visit', () {
                                               Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        pickupDevice == '0'
+                                                        pickupDevice == '1'
                                                             ? LocationScreen()
                                                             : LocationUpdateGoogleMap()),
                                               );
