@@ -2651,7 +2651,7 @@ class CustomApi {
         print(
             'xxxxxxxxxxxxxxxxqqqqqqqqqqqqqqqqqqqxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
-        notification().info(context, 'Branch Visit Successfully Updated');
+        notification().info(context, 'Branch Exit Successfully Updated');
         return 1;
       }
 

@@ -35,13 +35,13 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
   String visitBranchId = '';
   bool isLoading = false;
   String routName = '';
-  String shvStatus = '';
+  String visitStatus = '';
   String lat = '';
   String long = '';
   String image64 = '';
   LatLng? fLatLong;
   double mapZoom = 9;
-  bool branchIn = false;
+  bool isBranchIn = false;
   // List userBranchList = [];
   String? selectval;
   List userBranchList = [];
@@ -69,16 +69,22 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
     }
     position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
-    if (branchIn) {
-      log('kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
+    if (isBranchIn) {
+      log('vvvvvvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
       var res = await CustomApi().shuttleExit(
         context,
         visitBranchId,
-        shvStatus,
+        visitStatus,
         position!.latitude.toString(),
         position!.longitude.toString(),
       );
+
+      log(visitBranchId);
+      log(visitStatus);
+      log(position!.latitude.toString());
+      log(position!.longitude.toString());
     } else {
+      log('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb');
       var res = await CustomApi().shuttleVisitConfirm(
         context,
         visitBranchId,
@@ -139,6 +145,8 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
         fLatLong = LatLng(lat, long);
         routName = temp2['route_name'];
         setState(() {
+          _polylines.clear();
+          _latLong.clear();
           List.generate(todayVisitBranchList.length, (index) async {
             double lat = double.parse(todayVisitBranchList[index]['lati']);
             double long = double.parse(todayVisitBranchList[index]['longt']);
@@ -152,15 +160,17 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
                       isOpen = true;
                       branchName = todayVisitBranchList[index]['dname'];
                       visitBranchId = todayVisitBranchList[index]['did'];
-                      shvStatus = todayVisitBranchList[index]['shv_status'];
+                      visitStatus =
+                          todayVisitBranchList[index]['shv_status'].toString();
                       if (todayVisitBranchList[index]['shv_status']
                               .toString() ==
-                          'null') {
-                        log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-                        branchIn = false;
+                          "null") {
+                        isBranchIn = false;
+
+                        log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
                       } else {
-                        log('xxxxxxaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-                        branchIn = true;
+                        log('vvvvvvvvvvvvvvvvvvvvvvvvvvxxxxxxxxxxxxxxxxxxxxxxxvvvvvvvvvvvvvvvvv');
+                        isBranchIn = true;
                       }
                     });
                   },
@@ -171,7 +181,7 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
                       ? markerBitMap3
                       : await todayVisitBranchList[index]['shv_status']
                                   .toString() ==
-                              "1"
+                              "0"
                           ? markerBitMap2
                           : markerBitMap,
                   infoWindow: InfoWindow(
@@ -186,6 +196,7 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
                   markerId: MarkerId(todayVisitBranchList[index]['did']),
                   position: LatLng(lat, long))
             };
+
             _polylines = {
               Polyline(
                 polylineId: PolylineId(todayVisitBranchList[index]['did']),
@@ -193,9 +204,10 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
                 color: Color.fromARGB(255, 238, 3, 73),
                 width: 5,
                 endCap: Cap.roundCap,
-                geodesic: true,
+                geodesic: false,
               )
             };
+
             _latLong.addAll(_latLongTemp);
             _marker.addAll(_markertemp);
           });
@@ -238,10 +250,10 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
             ? Loader().loader(context)
             : SizedBox(),
         title: branchName,
-        text: branchIn
-            ? 'Do you want to exit branch'
+        text: isBranchIn
+            ? 'Dou you want to Exit branch'
             : 'Do you want to confirm branch visit',
-        onConfirmBtnTap: () async {
+        onConfirmBtnTap: () {
           QuickAlert.show(
             context: context,
             type: QuickAlertType.loading,
@@ -430,14 +442,14 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
                       width: w,
                       child: DialogButton(
                           buttonHeight: h / 17,
-                          text: branchIn ? "Branch Exit" : 'Branch In',
+                          text: isBranchIn ? 'Branch Out' : 'Branch In',
                           onTap: () async {
                             info();
                           },
                           // buttonHeight: h / 16,
                           width: w / 1.5,
-                          color: branchIn
-                              ? Color.fromARGB(255, 36, 146, 13)
+                          color: isBranchIn
+                              ? Color.fromARGB(255, 10, 194, 4)
                               : appButtonColorLite),
                     ),
                   )
