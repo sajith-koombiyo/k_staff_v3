@@ -68,6 +68,7 @@ class _OderAllDetailsState extends State<OderAllDetails> {
 
     setState(() {
       dataList = data;
+      print(dataList);
       timeLine = dataList['timeline'];
 
       oderData = dataList['order_data'];
@@ -245,7 +246,7 @@ class _OderAllDetailsState extends State<OderAllDetails> {
                                                 ? SizedBox()
                                                 : myRow(
                                                     'Customer Name',
-                                                    oderData[0]['cust_name']
+                                                    oderData[0]['address_name']
                                                         .toString()),
                                             oderData.isEmpty
                                                 ? SizedBox()
