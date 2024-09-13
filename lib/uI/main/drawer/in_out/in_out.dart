@@ -39,6 +39,7 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
   String long = '';
   String image64 = '';
   LatLng? fLatLong;
+  double mapZoom = 9;
   // List userBranchList = [];
   String? selectval;
   List userBranchList = [];
@@ -66,12 +67,15 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
     }
     position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
-    var res = await CustomApi().shuttleVisitConfirm(
-      context,
-      visitBranchId,
-      position!.latitude.toString(),
-      position!.longitude.toString(),
-    );
+    if (1 == 1) {
+      var res = await CustomApi().shuttleVisitConfirm(
+        context,
+        visitBranchId,
+        position!.latitude.toString(),
+        position!.longitude.toString(),
+      );
+    } else {}
+
     setState(() {
       _marker.clear();
       position;
@@ -106,40 +110,42 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
     var temp2 = await CustomApi().shutteleVisitBrnchesList(context, '');
     log(temp2.toString());
     if (!mounted) return;
-    if (temp2 == 1) {}
+
     setState(() {
       // branchList = temp;
       if (temp2['branches'] == null) {
+        log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
         todayVisitBranchList = [];
+
+        isLoading = false;
+        fLatLong = LatLng(7.8731, 80.7718);
+        mapZoom = 7;
       } else {
+        mapZoom = 9;
         todayVisitBranchList = temp2['branches'];
-      }
+        double lat = double.parse(todayVisitBranchList[0]['lati']);
+        double long = double.parse(todayVisitBranchList[0]['longt']);
+        fLatLong = LatLng(lat, long);
+        routName = temp2['route_name'];
+        setState(() {
+          List.generate(todayVisitBranchList.length, (index) async {
+            double lat = double.parse(todayVisitBranchList[index]['lati']);
+            double long = double.parse(todayVisitBranchList[index]['longt']);
+            log(todayVisitBranchList[index]['shv_status'].toString());
+            List<LatLng> _latLongTemp = [LatLng(lat, long)];
 
-      routName = temp2['route_name'];
-      log(todayVisitBranchList[0]['lati']);
-      double lat = double.parse(todayVisitBranchList[0]['lati']);
-      double long = double.parse(todayVisitBranchList[0]['longt']);
-      fLatLong = LatLng(lat, long);
-    });
-    setState(() {
-      List.generate(todayVisitBranchList.length, (index) async {
-        double lat = double.parse(todayVisitBranchList[index]['lati']);
-        double long = double.parse(todayVisitBranchList[index]['longt']);
-        log(todayVisitBranchList[index]['shv_status'].toString());
-        List<LatLng> _latLongTemp = [LatLng(lat, long)];
-
-        Set<Marker> _markertemp = {
-          Marker(
-              onTap: () {
-                setState(() {
-                  isOpen = true;
-                  branchName = todayVisitBranchList[index]['dname'];
-                  visitBranchId = todayVisitBranchList[index]['did'];
-                });
-              },
-              // icon: BitmapDescriptor.defaultMarkerWithHue(0.4),
-              icon:
-                  await todayVisitBranchList[index]['shv_status'].toString() ==
+            Set<Marker> _markertemp = {
+              Marker(
+                  onTap: () {
+                    setState(() {
+                      isOpen = true;
+                      branchName = todayVisitBranchList[index]['dname'];
+                      visitBranchId = todayVisitBranchList[index]['did'];
+                    });
+                  },
+                  // icon: BitmapDescriptor.defaultMarkerWithHue(0.4),
+                  icon: await todayVisitBranchList[index]['shv_status']
+                              .toString() ==
                           "2"
                       ? markerBitMap3
                       : await todayVisitBranchList[index]['shv_status']
@@ -147,36 +153,38 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
                               "1"
                           ? markerBitMap2
                           : markerBitMap,
-              infoWindow: InfoWindow(
-                onTap: () {
-                  setState(() {
-                    branchName = todayVisitBranchList[index]['dname'];
-                    isOpen = true;
-                  });
-                },
-                title: "     ${todayVisitBranchList[index]['dname']}     ",
-              ),
-              markerId: MarkerId(todayVisitBranchList[index]['did']),
-              position: LatLng(lat, long))
-        };
-        _polylines = {
-          Polyline(
-            polylineId: PolylineId(todayVisitBranchList[index]['did']),
-            points: _latLong,
-            color: Color.fromARGB(255, 238, 3, 73),
-            width: 5,
-            endCap: Cap.roundCap,
-            geodesic: true,
-          )
-        };
-        _latLong.addAll(_latLongTemp);
-        _marker.addAll(_markertemp);
-      });
-      _polylines;
-      _latLong;
-      _marker;
-      log(_marker.toString());
-      isLoading = false;
+                  infoWindow: InfoWindow(
+                    onTap: () {
+                      setState(() {
+                        branchName = todayVisitBranchList[index]['dname'];
+                        isOpen = true;
+                      });
+                    },
+                    title: "     ${todayVisitBranchList[index]['dname']}     ",
+                  ),
+                  markerId: MarkerId(todayVisitBranchList[index]['did']),
+                  position: LatLng(lat, long))
+            };
+            _polylines = {
+              Polyline(
+                polylineId: PolylineId(todayVisitBranchList[index]['did']),
+                points: _latLong,
+                color: Color.fromARGB(255, 238, 3, 73),
+                width: 5,
+                endCap: Cap.roundCap,
+                geodesic: true,
+              )
+            };
+            _latLong.addAll(_latLongTemp);
+            _marker.addAll(_markertemp);
+          });
+          _polylines;
+          _latLong;
+          _marker;
+          log(_marker.toString());
+          isLoading = false;
+        });
+      }
     });
   }
 
@@ -281,7 +289,7 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
                           // zoomControlsEnabled: false,
                           initialCameraPosition: CameraPosition(
                             target: fLatLong!,
-                            zoom: 9,
+                            zoom: mapZoom,
                           ),
                           onTap: (argument) {
                             argument.latitude;

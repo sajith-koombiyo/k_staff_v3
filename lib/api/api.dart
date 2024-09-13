@@ -367,10 +367,10 @@ class CustomApi {
       Map<String, String> headers = {
         'userkey': '$id',
       };
-
+      print('ssssssssssssssssssssssssssssssssss');
       print(userID);
+      print('ssssssssssssssssssssssssssssssssss');
       if (sWaybill == '') {
-        print('ssssssssssssssssssssssssssssssssss');
         final apiUrl = '${ApiUrl}Pendings/users';
         print(apiUrl);
         // Headers
@@ -877,6 +877,7 @@ class CustomApi {
       Map<String, String> headers = {
         'userkey': '$id',
       };
+      print(id);
       // Make POST request
       var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {});
 
@@ -2589,6 +2590,55 @@ class CustomApi {
       print(long);
       var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {
         "branch_id": branchId,
+        "lati": lat,
+        "longt": long,
+      });
+      var data = jsonDecode(res.body);
+      print(
+          'xxxxxxxxxxxxxxxxxxxxxxxxxxxxssssssssssssssssxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+      print(data);
+
+      if (data['status'] == 200) {
+        print(
+            'xxxxxxxxxxxxxxxxqqqqqqqqqqqqqqqqqqqxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+        notification().info(context, 'Branch Visit Successfully Updated');
+        return 1;
+      }
+
+      if (data['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+        notification().warning(context, 'Somthing went wrong');
+        return 0;
+      }
+      if (data['status'] == 400) {
+        notification().warning(context, data['message']);
+        return 0;
+      }
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
+
+  shuttleExit(BuildContext context, String branchId, String shvId, String lat,
+      String long) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      final apiUrl = '${ApiUrl}Shuttlevisit/exit';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      // Make POST request
+      print(branchId);
+      print(lat);
+      print(long);
+      var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {
+        "branch_id": branchId,
+        "shv_id": shvId,
         "lati": lat,
         "longt": long,
       });

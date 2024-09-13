@@ -335,8 +335,6 @@ class _ExchangeState extends State<Exchange> {
     );
   }
 
-
-
   pickAndSaveImageToFolder(XFile? pickedFile, String waybill) async {
     if (pickedFile != null) {
       File imageFile = File(pickedFile.path);
@@ -399,3 +397,4 @@ class _ExchangeState extends State<Exchange> {
     }
   }
 }
+ 

@@ -47,12 +47,16 @@ class _LocationUpdateGoogleMapState extends State<LocationUpdateGoogleMap> {
   List userBranchList = [];
   List branchList = [];
   List todayVisitBranchList = [];
+  String MarkerTempId = '';
 
+  List<Marker> markerList = <Marker>[];
+  Set<Marker> _marker = {};
   @override
   void initState() {
+    getUserBranch();
     getLocation();
     userLocation();
-    getUserBranch();
+
     // TODO: implement initState
     super.initState();
   }
@@ -65,8 +69,6 @@ class _LocationUpdateGoogleMapState extends State<LocationUpdateGoogleMap> {
 
     setState(() {
       userBranchList = brancheList;
-
-      isLoading = false;
     });
   }
 
@@ -87,17 +89,20 @@ class _LocationUpdateGoogleMapState extends State<LocationUpdateGoogleMap> {
     });
   }
 
-  String MarkerTempId = '';
-
-  List<Marker> markerList = <Marker>[];
-  Set<Marker> _marker = {};
-
   userLocation() async {
+    setState(() {
+      isLoading = true;
+    });
+    BitmapDescriptor markerBitMap3 = await BitmapDescriptor.fromAssetImage(
+      ImageConfiguration(size: Size(30, 30)),
+      "assets/3.png",
+    );
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
     var temp = await CustomApi().branchVisitHistroy(context);
     var temp2 = await CustomApi().branchVisitToday(context);
     // log(temp2.toString());
+    // delivey2.png
     if (!mounted) return;
     setState(() {
       branchList = temp;
@@ -118,7 +123,7 @@ class _LocationUpdateGoogleMapState extends State<LocationUpdateGoogleMap> {
                     todayVisitBranchList[index]['bv_branch_name'].toString(),
                     todayVisitBranchList[index]['date'].toString());
               },
-              icon: BitmapDescriptor.defaultMarkerWithHue(0.4),
+              icon: markerBitMap3,
               // icon: markerBitMap2,
               infoWindow: InfoWindow(
                 onTap: () {},
@@ -133,6 +138,9 @@ class _LocationUpdateGoogleMapState extends State<LocationUpdateGoogleMap> {
 
       _marker;
       log(_marker.toString());
+    });
+    setState(() {
+      isLoading = false;
     });
   }
 
@@ -297,7 +305,7 @@ class _LocationUpdateGoogleMapState extends State<LocationUpdateGoogleMap> {
               backgroundColor: Color.fromARGB(255, 229, 232, 238),
               body: Padding(
                 padding: const EdgeInsets.only(bottom: 70),
-                child: position == null
+                child: position == null && isLoading == false
                     ? Loader().loader(context)
                     : Stack(
                         children: [

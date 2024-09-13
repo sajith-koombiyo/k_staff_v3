@@ -31,6 +31,7 @@ import 'genaral/employee/employee_details.dart';
 import 'genaral/branch_visit/location_update.dart';
 import 'genaral/manage_users/manage_users.dart';
 import 'genaral/youtube_tutorial.dart';
+import 'in_out/all_rout.dart';
 import 'in_out/in_out_pickup_decice.dart';
 import 'my_delivery/my_delivery.dart';
 import 'pending_picked/pending_picked.dart';
@@ -506,7 +507,18 @@ class _customDrawerState extends State<customDrawer> {
                                         setState(() {
                                           key = '13';
                                         });
-                                      }, key, '13')
+                                      }, key, '13'),
+                                      tileButton('All ', () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => AllRout()),
+                                        );
+
+                                        setState(() {
+                                          key = '14';
+                                        });
+                                      }, key, '14')
                                     ]),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(

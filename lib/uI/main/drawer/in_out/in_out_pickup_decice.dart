@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:dotted_border/dotted_border.dart';
@@ -51,6 +52,7 @@ class _InOutPickupDeviceState extends State<InOutPickupDevice> {
   List<Marker> _marker = [];
   List<Polyline>? polylines = [];
   List<LatLng> _latLong = [];
+  String routName = '';
   @override
   void initState() {
     getLocation();
@@ -105,49 +107,51 @@ class _InOutPickupDeviceState extends State<InOutPickupDevice> {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
     var temp2 = await CustomApi().shutteleVisitBrnchesList(context, '');
+    log(temp2.toString());
     if (!mounted) return;
     setState(() {
-      branchList = temp2;
       if (temp2['branches'] == null) {
         branchList = [];
+        log('ccccccccccccccvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
       } else {
+        routName = temp2['route_name'];
         branchList = temp2['branches'];
+        List.generate(branchList.length, (index) {
+          double lat = double.parse(branchList[index]['lati']);
+          double long = double.parse(branchList[index]['longt']);
+          List<LatLng> _latLongTemp = [LatLng(lat, long)];
+
+          Polyline(
+            points: [],
+            strokeWidth: 4.0,
+            color: Colors.blue,
+          );
+          final _markertemp = <Marker>[
+            Marker(
+              // key: Key(pickupLocation[index]['pickr_id']),
+              point: LatLng(lat, long),
+
+              child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      branchName = branchList[index]['dname'];
+                      isOpen = true;
+                      visitBranchId = branchList[index]['did'];
+                    });
+                  },
+                  child: Image.asset('assets/red.png')),
+            )
+          ];
+          _latLong.addAll(_latLongTemp);
+          _marker.addAll(_markertemp);
+        });
       }
     });
 
-    List.generate(branchList.length, (index) {
-      double lat = double.parse(branchList[index]['lati']);
-      double long = double.parse(branchList[index]['longt']);
-      List<LatLng> _latLongTemp = [LatLng(lat, long)];
-
-      Polyline(
-        points: [],
-        strokeWidth: 4.0,
-        color: Colors.blue,
-      );
-      final _markertemp = <Marker>[
-        Marker(
-          // key: Key(pickupLocation[index]['pickr_id']),
-          point: LatLng(lat, long),
-
-          child: InkWell(
-              onTap: () {
-                setState(() {
-                  branchName = branchList[index]['dname'];
-                  isOpen = true;
-                  visitBranchId = branchList[index]['did'];
-                });
-              },
-              child: Image.asset('assets/red.png')),
-        )
-      ];
-      _latLong.addAll(_latLongTemp);
-      _marker.addAll(_markertemp);
-    });
-    setState(() {
-      _latLong;
-      _marker;
-    });
+    // setState(() {
+    //   _latLong;
+    //   _marker;
+    // });
   }
 
   Future<void> _checkLocationPermission() async {
@@ -287,6 +291,95 @@ class _InOutPickupDeviceState extends State<InOutPickupDevice> {
                                     )),
                               )
                             : SizedBox(),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Card(
+                              elevation: 20,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 4),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text("Route Name "),
+                                    Text("-$routName",
+                                        style: TextStyle(
+                                            color: const Color.fromARGB(
+                                                255, 175, 13, 13),
+                                            fontWeight: FontWeight.bold)),
+                                  ],
+                                ),
+                              )),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 50),
+                          child: Card(
+                            elevation: 20,
+                            color: Colors.black38,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      SizedBox(
+                                        width: 70,
+                                        child: Text("Start",
+                                            style: TextStyle(
+                                                color: white,
+                                                fontWeight: FontWeight.bold)),
+                                      ),
+                                      Image.asset(
+                                        'assets/1.png',
+                                        height: 25,
+                                      )
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 8,
+                                  ),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      SizedBox(
+                                        width: 70,
+                                        child: Text("On Time",
+                                            style: TextStyle(
+                                                color: white,
+                                                fontWeight: FontWeight.bold)),
+                                      ),
+                                      Image.asset(
+                                        'assets/2.png',
+                                        height: 25,
+                                      )
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 8,
+                                  ),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      SizedBox(
+                                        width: 70,
+                                        child: Text("Late",
+                                            style: TextStyle(
+                                                color: white,
+                                                fontWeight: FontWeight.bold)),
+                                      ),
+                                      Image.asset(
+                                        'assets/3.png',
+                                        height: 25,
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                         isLoading ? Loader().loader(context) : SizedBox(),
                         provider.isanotherUserLog
                             ? UserLoginCheck()
