@@ -35,11 +35,13 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
   String visitBranchId = '';
   bool isLoading = false;
   String routName = '';
+  String shvStatus = '';
   String lat = '';
   String long = '';
   String image64 = '';
   LatLng? fLatLong;
   double mapZoom = 9;
+  bool branchIn = false;
   // List userBranchList = [];
   String? selectval;
   List userBranchList = [];
@@ -67,14 +69,23 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
     }
     position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
-    if (1 == 1) {
+    if (branchIn) {
+      log('kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
+      var res = await CustomApi().shuttleExit(
+        context,
+        visitBranchId,
+        shvStatus,
+        position!.latitude.toString(),
+        position!.longitude.toString(),
+      );
+    } else {
       var res = await CustomApi().shuttleVisitConfirm(
         context,
         visitBranchId,
         position!.latitude.toString(),
         position!.longitude.toString(),
       );
-    } else {}
+    }
 
     setState(() {
       _marker.clear();
@@ -141,6 +152,16 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
                       isOpen = true;
                       branchName = todayVisitBranchList[index]['dname'];
                       visitBranchId = todayVisitBranchList[index]['did'];
+                      shvStatus = todayVisitBranchList[index]['shv_status'];
+                      if (todayVisitBranchList[index]['shv_status']
+                              .toString() ==
+                          'null') {
+                        log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+                        branchIn = false;
+                      } else {
+                        log('xxxxxxaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+                        branchIn = true;
+                      }
                     });
                   },
                   // icon: BitmapDescriptor.defaultMarkerWithHue(0.4),
@@ -217,7 +238,9 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
             ? Loader().loader(context)
             : SizedBox(),
         title: branchName,
-        text: 'Do you want to confirm branch visit',
+        text: branchIn
+            ? 'Do you want to exit branch'
+            : 'Do you want to confirm branch visit',
         onConfirmBtnTap: () async {
           QuickAlert.show(
             context: context,
@@ -407,13 +430,15 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
                       width: w,
                       child: DialogButton(
                           buttonHeight: h / 17,
-                          text: 'Confirm My Location',
+                          text: branchIn ? "Branch Exit" : 'Branch In',
                           onTap: () async {
                             info();
                           },
                           // buttonHeight: h / 16,
                           width: w / 1.5,
-                          color: appButtonColorLite),
+                          color: branchIn
+                              ? Color.fromARGB(255, 36, 146, 13)
+                              : appButtonColorLite),
                     ),
                   )
                 : null));

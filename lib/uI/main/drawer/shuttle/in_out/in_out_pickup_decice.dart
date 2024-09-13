@@ -24,7 +24,7 @@ import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
 
-import '../../../widget/diloag_button.dart';
+import '../../../../widget/diloag_button.dart';
 
 class InOutPickupDevice extends StatefulWidget {
   const InOutPickupDevice({super.key});
