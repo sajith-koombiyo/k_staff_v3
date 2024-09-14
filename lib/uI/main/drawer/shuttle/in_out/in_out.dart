@@ -58,6 +58,7 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
 
   getLocation() async {
     setState(() {
+      isOpen = true;
       isLoading = true;
     });
     LocationPermission permission;
