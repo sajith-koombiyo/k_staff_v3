@@ -161,7 +161,7 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
                       branchName = todayVisitBranchList[index]['dname'];
                       visitBranchId = todayVisitBranchList[index]['did'];
                       visitStatus =
-                          todayVisitBranchList[index]['shv_status'].toString();
+                          todayVisitBranchList[index]['shv_id'].toString();
                       if (todayVisitBranchList[index]['shv_status']
                               .toString() ==
                           "null") {
