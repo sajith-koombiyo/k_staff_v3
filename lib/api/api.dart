@@ -163,10 +163,13 @@ class CustomApi {
 
       if (response.statusCode != 500) {
         Map<String, dynamic> map = jsonDecode(response.body);
+        print(map);
         if (map['status'] == 200) {
           String userkey = map['userkey'].toString();
           int accessesKey = int.parse(map['access_group'].toString());
+          String phone = map['phone_no'].toString();
 
+          print(phone);
           SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setString('userkey', userkey);
           await prefs.setInt('accessesKey', accessesKey);
@@ -174,7 +177,8 @@ class CustomApi {
           Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => OTP(userId: userkey, userName: username),
+                builder: (context) =>
+                    OTP(userId: userkey, userName: username, number: phone),
               ));
         } else if (map['status'] == 400) {
           notification().info(context, 'Bad Request: Error Occurred');

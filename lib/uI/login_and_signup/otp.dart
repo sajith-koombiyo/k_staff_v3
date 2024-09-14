@@ -15,9 +15,14 @@ import '../../app_details/color.dart';
 import '../../class/class.dart';
 
 class OTP extends StatefulWidget {
-  const OTP({super.key, required this.userId, required this.userName});
+  const OTP(
+      {super.key,
+      required this.userId,
+      required this.userName,
+      required this.number});
   final String userId;
   final String userName;
+  final String number;
 
   @override
   State<OTP> createState() => _OTPState();
@@ -67,8 +72,7 @@ class _OTPState extends State<OTP> {
       // iOS-specific code
     }
 //0773094300
- 
- 
+
     // TODO: implement initState
     super.initState();
   }
@@ -127,7 +131,7 @@ class _OTPState extends State<OTP> {
                                             fontFamily: 'Inter'),
                                       ),
                                       Text(
-                                        "We have send the  code verification to \nYour Mobile Number",
+                                        "We have send the  code verification to \nYour Mobile Number \n OTP Sent to ${widget.number}",
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                             fontSize: 14.dp,
