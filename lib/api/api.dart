@@ -2651,7 +2651,7 @@ class CustomApi {
         print(
             'xxxxxxxxxxxxxxxxqqqqqqqqqqqqqqqqqqqxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
-        notification().info(context, 'Branch Exit Successfully Updated');
+        notification().info(context, data['msg']);
         return 1;
       }
 
@@ -2661,7 +2661,7 @@ class CustomApi {
         return 0;
       }
       if (data['status'] == 400) {
-        notification().warning(context, data['message']);
+        notification().warning(context, data['Somthing went wrong']);
         return 0;
       }
     } else {
