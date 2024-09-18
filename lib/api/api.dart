@@ -2649,13 +2649,13 @@ class CustomApi {
       var data = jsonDecode(res.body);
       print(
           'xxxxxxxxxxxxxxxxxxxxxxxxxxxxssssssssssssssssxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-      print(data);
+      print(data['status']);
 
       if (data['status'] == 200) {
         print(
             'xxxxxxxxxxxxxxxxqqqqqqqqqqqqqqqqqqqxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
-        notification().info(context, data['msg']);
+        notification().info(context, data['message']);
         return 1;
       }
 
@@ -2665,7 +2665,8 @@ class CustomApi {
         return 0;
       }
       if (data['status'] == 400) {
-        notification().warning(context, data['Somthing went wrong']);
+        print('dddddddddddddddddddccccccccccccccccd');
+        notification().warning(context, data['message']);
         return 0;
       }
     } else {

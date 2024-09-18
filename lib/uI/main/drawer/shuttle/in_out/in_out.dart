@@ -80,7 +80,7 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
         position!.longitude.toString(),
       );
 
-      log(visitBranchId);
+      // log(res);
       log(visitStatus);
       log(position!.latitude.toString());
       log(position!.longitude.toString());
