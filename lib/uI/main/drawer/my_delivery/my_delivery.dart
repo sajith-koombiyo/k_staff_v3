@@ -86,7 +86,6 @@ class _MyDeliveryState extends State<MyDelivery> {
 
     _streamSubscription = _connectivity.onConnectivityChanged.listen((result) {
       if (result != ConnectivityResult.none) {
-        print('dddddddddddddddddddddddddddddddddddddddddddd');
         firstData();
         setState(() {
           isOffline = false;
@@ -96,7 +95,6 @@ class _MyDeliveryState extends State<MyDelivery> {
         setState(() {
           isOffline = true;
         });
-        print('dddddddsssssssssssssssssddddddddddddddddddddddddddddddddddddd');
       }
     });
     super.initState();
@@ -114,20 +112,16 @@ class _MyDeliveryState extends State<MyDelivery> {
       isLoading = true;
     });
     List datas = await sqlDb.readData('select * from deliver_error');
-    logger.f(datas);
+
     List imageData = await sqlDb.readData('select * from pending_image');
     errorData = await sqlDb.readData('select * from deliver_error');
     // logger.i(imageData.toString());
     List pendinDiiveryData = await sqlDb.readData('select * from pending');
-    logger.d(pendinDiiveryData.toString());
     if (imageData.isNotEmpty) {
       offlineImageUpload();
     }
 
     if (pendinDiiveryData.isNotEmpty) {
-      print(pendinDiiveryData);
-      print(
-          'sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss1111111111111111');
       await offlineDeliveryupdateApi();
     }
 
@@ -155,8 +149,6 @@ class _MyDeliveryState extends State<MyDelivery> {
         });
       }
 
-      print(
-          '/////////////////////////////////////////////////////////////////////////////////////////////////////////');
       var red = await sqlDb.truncateTable('delivery_oder');
       List.generate(temp.length, (index) async {
         var res = await sqlDb.replaceData('delivery_oder', {
@@ -180,24 +172,16 @@ class _MyDeliveryState extends State<MyDelivery> {
         });
       });
 
-      // “Congratulations on your new job! I am sad to see you go.”
-
-      logger.e(data.toString());
       setState(() {
         errorData;
         dataList = data.where((item) => item['type'] == "0").toList();
         dataListTemp = data.where((item) => item['type'] == "0").toList();
-        ;
-        print('nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn');
-        print(dataListTemp);
-        print('nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn');
+
         isLoading = false;
       });
     } else {
-      print(
-          'aaaaaaaaaaaaaaaaaaaaaaaaaaaadddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddaa');
       localData = await sqlDb.readData('select * from delivery_oder');
-      // logger.e(localData.toString());
+
       setState(() {
         errorData;
         dataList = localData.where((item) => item['type'] == "0").toList();
@@ -258,22 +242,18 @@ class _MyDeliveryState extends State<MyDelivery> {
               "reason_id": "${res[index]['reason_id']}",
               "reason": "${res[index]['reason']}"
             });
-
-            logger.f(pdliveryList.toString());
           }
           if (res[index]['type'] == '1') {
             rescheduleList.add({
               "reason_id": "${res[index]['reason_id']}",
               "reason": "${res[index]['reason']}"
             });
-            logger.i(rescheduleList.toString());
           }
           if (res[index]['type'] == '4') {
             remarkList.add({
               "reason_id": "${res[index]['reason_id']}",
               "reason": "${res[index]['reason']}"
             });
-            logger.d(rescheduleList.toString());
           }
         });
       });
