@@ -110,6 +110,9 @@ class _MyDeliveryState extends State<MyDelivery> {
   }
 
   firstData() async {
+    setState(() {
+      isLoading = true;
+    });
     List datas = await sqlDb.readData('select * from deliver_error');
     logger.f(datas);
     List imageData = await sqlDb.readData('select * from pending_image');
