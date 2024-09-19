@@ -122,12 +122,12 @@ class _MyDeliveryState extends State<MyDelivery> {
     }
 
     if (pendinDiiveryData.isNotEmpty) {
+      print(pendinDiiveryData);
       print(
           'sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss1111111111111111');
       await offlineDeliveryupdateApi();
     }
 
-    print('empty dataaaaaaaaaaaaaa');
     getData(true, false);
   }
 
@@ -174,7 +174,6 @@ class _MyDeliveryState extends State<MyDelivery> {
         data = await sqlDb.readData('select * from delivery_oder');
         setState(() {
           dataList = data.where((item) => item['type'] == "0").toList();
-          dataListTemp = data.where((item) => item['type'] == "0").toList();
         });
       });
 
@@ -203,6 +202,19 @@ class _MyDeliveryState extends State<MyDelivery> {
         isLoading = false;
       });
     }
+  }
+
+  oderDataSerch(String waybill) async {
+    setState(() {
+      isLoading = true;
+    });
+    var data = await CustomApi().oderDetailAndTimeLine(context, waybill
+        // '80808082'
+        );
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   dropDownData() async {
@@ -827,36 +839,48 @@ class _MyDeliveryState extends State<MyDelivery> {
   }
 
   offlineDeliveryupdateApi() async {
-    print(
-        'ddddddddddddxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
     List data = await sqlDb.readData('select * from pending');
+    List datas = await sqlDb.readData('select * from deliver_error');
     if (data.isNotEmpty) {
       List.generate(data.length, (index) async {
-        int status = int.parse(data[index]['statusType'].toString());
-        var res = await CustomApi().oderData(
-          status,
-          data[index]['wayBillId'].toString(),
-          context,
-          data[index]['dropdownValue'].toString(),
-          data[index]['dropdownValue2'].toString(),
-          data[index]['cod'].toString(),
-          data[index]['rescheduleDate'].toString(),
-          data[index]['oId'].toString(),
-        );
-        if (res == 1) {
-          var ress = await sqlDb.deleteData(
-              'delete from pending where oId = "${data[index]['oId'].toString()}"');
-        } else {
-          var ress = await sqlDb.replaceData('deliver_error', {
-            'oId': data[index]['oId'].toString(),
-            'msg': res.toString(),
-          });
-          if (ress == 1) {
+        if (datas.any((element) {
+          print(element['oId']);
+          print(data[index]['oid']);
+
+          errMsg = element['msg'].toString();
+          return element['oId'].toString() != dataList[index]['oid'].toString();
+        })) {
+          print(
+              'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaddddddddddddxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+          int status = int.parse(data[index]['statusType'].toString());
+          var res = await CustomApi().oderData(
+            status,
+            data[index]['wayBillId'].toString(),
+            context,
+            data[index]['dropdownValue'].toString(),
+            data[index]['dropdownValue2'].toString(),
+            data[index]['cod'].toString(),
+            data[index]['rescheduleDate'].toString(),
+            data[index]['oId'].toString(),
+          );
+          print('qqqqqqqqqqqqqqqqqqqq');
+          print(res);
+          print('qqqqqqqqqqqqqqqqqqqq');
+          if (res == 1) {
             var ress = await sqlDb.deleteData(
                 'delete from pending where oId = "${data[index]['oId'].toString()}"');
+          } else {
+            var ress = await sqlDb.replaceData('deliver_error', {
+              'oId': data[index]['oId'].toString(),
+              'msg': res.toString(),
+            });
+            if (ress == 1) {
+              var ress = await sqlDb.deleteData(
+                  'delete from pending where oId = "${data[index]['oId'].toString()}"');
+            }
+            List datas = await sqlDb.readData('select * from deliver_error');
+            logger.f(datas);
           }
-          List datas = await sqlDb.readData('select * from deliver_error');
-          logger.f(datas);
         }
       });
     }
