@@ -196,6 +196,9 @@ class _NavigationScreenState extends State<NavigationScreen>
 
     setState(() {
       pickupDevice = deviceType.toString();
+
+      print(pickupDevice);
+      print('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb');
       if (userActive == '1') {
         page = true;
       } else {

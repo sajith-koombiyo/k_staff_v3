@@ -124,7 +124,7 @@ class _MyDeliveryState extends State<MyDelivery> {
     if (pendinDiiveryData.isNotEmpty) {
       print(
           'sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss1111111111111111');
-      // await offlineDeliveryupdateApi();
+      await offlineDeliveryupdateApi();
     }
 
     print('empty dataaaaaaaaaaaaaa');
@@ -203,19 +203,6 @@ class _MyDeliveryState extends State<MyDelivery> {
         isLoading = false;
       });
     }
-  }
-
-  oderDataSerch(String waybill) async {
-    setState(() {
-      isLoading = true;
-    });
-    var data = await CustomApi().oderDetailAndTimeLine(context, waybill
-        // '80808082'
-        );
-
-    setState(() {
-      isLoading = false;
-    });
   }
 
   dropDownData() async {
