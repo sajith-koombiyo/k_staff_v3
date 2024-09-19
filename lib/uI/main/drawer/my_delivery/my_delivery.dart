@@ -52,6 +52,7 @@ class _MyDeliveryState extends State<MyDelivery> {
   String errMsg = '';
   String formattedDate = '';
   List dataList = [];
+  List dataListTemp = [];
   bool isOffline = true;
   bool isError = false;
   bool itemLoading = false;
@@ -127,10 +128,11 @@ class _MyDeliveryState extends State<MyDelivery> {
     }
 
     print('empty dataaaaaaaaaaaaaa');
-    getData(true);
+    getData(true, false);
   }
 
-  getData(bool load) async {
+  getData(bool load, bool isSearching) async {
+    List data = [];
     var connectivityResult = await (Connectivity().checkConnectivity());
 
     setState(() {
@@ -149,35 +151,44 @@ class _MyDeliveryState extends State<MyDelivery> {
           isError = true;
         });
       }
-      if (temp.isNotEmpty) {
-        print('ffffffffffffffffffffffffffffffffffffffffffffff');
-        var red = await sqlDb.truncateTable('delivery_oder');
-        List.generate(temp.length, (index) async {
-          var res = await sqlDb.replaceData('delivery_oder', {
-            'oid': temp[index]['oid'],
-            'waybill_id': temp[index]['waybill_id'],
-            'cod_final': temp[index]['cod_final'],
-            'order_type': temp[index]['order_type'],
-            'cust_name': temp[index]['cust_name'],
-            'name': temp[index]['name'],
-            'address': temp[index]['address'],
-            'phone': temp[index]['phone'],
-            'status': temp[index]['status'],
-            'cust_internal': temp[index]['cust_internal'],
-            'prev_waybill': temp[index]['prev_waybill'],
-            'ex_bag_waybill': temp[index]['ex_bag_waybill'],
-            'type': '0'
-          });
+
+      print(
+          '/////////////////////////////////////////////////////////////////////////////////////////////////////////');
+      var red = await sqlDb.truncateTable('delivery_oder');
+      List.generate(temp.length, (index) async {
+        var res = await sqlDb.replaceData('delivery_oder', {
+          'oid': temp[index]['oid'],
+          'waybill_id': temp[index]['waybill_id'],
+          'cod_final': temp[index]['cod_final'],
+          'order_type': temp[index]['order_type'],
+          'cust_name': temp[index]['cust_name'],
+          'name': temp[index]['name'],
+          'address': temp[index]['address'],
+          'phone': temp[index]['phone'],
+          'status': temp[index]['status'],
+          'cust_internal': temp[index]['cust_internal'],
+          'prev_waybill': temp[index]['prev_waybill'],
+          'ex_bag_waybill': temp[index]['ex_bag_waybill'],
+          'type': '0'
         });
-      }
+        data = await sqlDb.readData('select * from delivery_oder');
+        setState(() {
+          dataList = data.where((item) => item['type'] == "0").toList();
+          dataListTemp = data.where((item) => item['type'] == "0").toList();
+        });
+      });
 
       // “Congratulations on your new job! I am sad to see you go.”
-      List data = await sqlDb.readData('select * from delivery_oder');
 
       logger.e(data.toString());
       setState(() {
         errorData;
         dataList = data.where((item) => item['type'] == "0").toList();
+        dataListTemp = data.where((item) => item['type'] == "0").toList();
+        ;
+        print('nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn');
+        print(dataListTemp);
+        print('nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn');
         isLoading = false;
       });
     } else {
@@ -188,7 +199,7 @@ class _MyDeliveryState extends State<MyDelivery> {
       setState(() {
         errorData;
         dataList = localData.where((item) => item['type'] == "0").toList();
-
+        dataListTemp = dataList;
         isLoading = false;
       });
     }
@@ -319,7 +330,7 @@ class _MyDeliveryState extends State<MyDelivery> {
           children: [
             RefreshIndicator(
               onRefresh: () {
-                return getData(false);
+                return getData(false, false);
               },
               child: SingleChildScrollView(
                 controller: _scrollController,
@@ -789,7 +800,7 @@ class _MyDeliveryState extends State<MyDelivery> {
   }
 
   backDataLoad() {
-    getData(false);
+    getData(false, false);
     codController.clear();
   }
 
@@ -825,7 +836,7 @@ class _MyDeliveryState extends State<MyDelivery> {
     List dataa = await sqlDb.readData('select * from delivery_oder');
     Navigator.pop(context);
     logger.d(dataa.toString());
-    getData(false);
+    getData(false, false);
   }
 
   offlineDeliveryupdateApi() async {
@@ -862,7 +873,7 @@ class _MyDeliveryState extends State<MyDelivery> {
         }
       });
     }
-    getData(true);
+    getData(true, false);
   }
 
   itemDetails(String waybill, bool updateBTN, String cod, String oId,
@@ -968,7 +979,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                                     oId);
 
                                 if (res == 200) {
-                                  getData(false);
+                                  getData(false, false);
                                   codController.clear();
                                 }
                               }
@@ -1006,7 +1017,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                                     oId);
 
                                 if (res == 200) {
-                                  getData(false);
+                                  getData(false, false);
                                   codController.clear();
                                 }
                               }
@@ -1826,22 +1837,28 @@ class _MyDeliveryState extends State<MyDelivery> {
   void _runFilter(String enteredKeyword) {
     List results = [];
     if (enteredKeyword.isEmpty) {
+      print(
+          '0000000000000000022222222222222222222222222222222222222222222222222222222222222');
       // if the search field is empty or only contains white-space, we'll display all users
-      results = allProduct;
-    } else if (allProduct
-        .where((user) =>
-            user["item"].toLowerCase().contains(enteredKeyword.toLowerCase()))
+      results = dataListTemp;
+    } else if (dataListTemp
+        .where((user) => user["waybill_id"]
+            .toLowerCase()
+            .contains(enteredKeyword.toLowerCase()))
         .toList()
         .isNotEmpty) {
-      results = allProduct
-          .where((user) =>
-              user["item"].toLowerCase().contains(enteredKeyword.toLowerCase()))
+      print(
+          'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb');
+      results = dataListTemp
+          .where((user) => user["waybill_id"]
+              .toLowerCase()
+              .contains(enteredKeyword.toLowerCase()))
           .toList();
     }
-
+    print(results);
     // Refresh the UI
     setState(() {
-      product = results;
+      dataList = results;
     });
   }
 
@@ -1871,7 +1888,9 @@ class _MyDeliveryState extends State<MyDelivery> {
             Expanded(
               child: TextFormField(
                 onChanged: (value) {
-                  1 == 2 ? getData(true) : oderDataSerch(value);
+                  // getData(true, true);
+
+                  _runFilter(value);
                 },
                 controller: search,
                 style: TextStyle(color: black, fontSize: 13.sp),
@@ -1924,7 +1943,7 @@ class _MyDeliveryState extends State<MyDelivery> {
         search.text = "";
       } else {
         search.text = _scanBarcode.toString();
-        getData(true);
+        getData(true, true);
       }
     });
   }

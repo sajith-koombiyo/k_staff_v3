@@ -398,7 +398,8 @@ class CustomApi {
           return data['pendings'];
         }
       } else {
-        print('ssssssfffffffffffssssssssssssssssssssssssssss');
+        print(
+            'qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqssssssfffffffffffssssssssssssssssssssssssssss');
         final apiUrl = '${ApiUrl}/Singleorder/users';
         // Headers
 
@@ -409,6 +410,8 @@ class CustomApi {
             body: {'status': '5,7', 'search': sWaybill});
 
         var data = jsonDecode(resp.body);
+
+        print(data);
         if (data['status'] == 403) {
           return [];
         } else if (data['status'] == 200) {
@@ -1818,7 +1821,8 @@ class CustomApi {
         connectivityResult == ConnectivityResult.wifi) {
       final apiUrl = '${ApiUrl}/Timeline/users';
       // Headers
-      print('fffffffffffffffffffffffffffffffffffffff');
+      print(
+          'fqqqqqqqqqqqqqfffffffffffffffffdddddddddddddddddddddddddddddfffffffffffffffffffff');
       Map<String, String> headers = {
         'userkey': '$id',
       };
@@ -1826,7 +1830,7 @@ class CustomApi {
           headers: headers, Uri.parse(apiUrl), body: {"waybill_id": waybill});
 
       var data = jsonDecode(resp.body);
-
+      print(data);
       if (data['status'] == 200) {
         return data['data'];
       } else if (data['status'] == 204) {
