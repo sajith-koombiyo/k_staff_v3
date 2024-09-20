@@ -81,6 +81,13 @@ class ProviderS with ChangeNotifier {
     notifyListeners();
   }
 
+    String _fcmKey = '';
+  String get fcmKey => _fcmKey;
+  set fcmKey(String i) {
+    _fcmKey = i;
+    notifyListeners();
+  }
+
   bool _location = false;
   bool get location => _location;
   set location(bool i) {

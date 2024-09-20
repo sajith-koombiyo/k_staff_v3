@@ -8,10 +8,11 @@ import 'package:flutter/material.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 
-Future<void> handleBckgroundMessage(RemoteMessage message) async {
+import '../provider/provider.dart';
 
-}
+Future<void> handleBckgroundMessage(RemoteMessage message) async {}
 
 Future<void> img() async {}
 
@@ -64,19 +65,20 @@ class notify {
   // }
 
   Future<void> initNotifications() async {
-   
     await firebaseMessaging.requestPermission();
-   
+
     final fCMTocken = await firebaseMessaging.getToken();
     log(fCMTocken.toString());
+
+    // Provider.of<ProviderS>(context, listen: false).fcmKey =
+    //     fCMTocken.toString();
     // initLocalNotificatons();
     FirebaseMessaging.onBackgroundMessage(handleBckgroundMessage);
 
     FirebaseMessaging.onMessage.listen((message) async {
       final notification = message.notification;
-  
+
       // print(channel);
-   
 
       var url = message.notification?.android?.imageUrl;
       // String imgurl = await url.toString();
@@ -127,7 +129,6 @@ class Utils {
 
     final file = File(filepath);
     await file.writeAsBytes(responce.bodyBytes);
-
 
     return filepath;
   }

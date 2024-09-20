@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:app_install_date/app_install_date.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/app_details/color.dart';
 import 'package:flutter_application_2/class/class.dart';
@@ -151,15 +152,28 @@ class CustomApi {
 
   // user login
 
-  login(String userNameController, BuildContext context) async {
+  login(
+    String userNameController,
+    BuildContext context,
+  ) async {
+    String? fCMTocken;
+    final firebaseMessaging = FirebaseMessaging.instance;
+
+    await firebaseMessaging.requestPermission();
+
+    fCMTocken = await firebaseMessaging.getToken();
+    print(fCMTocken.toString());
+
+    fCMTocken;
+// fZSfYewBT_S74v4mLnO48q:APA91bH2M307Ndk-LjqV9PrV3oXA2vUN5UZxnGwzIH1fhMiRqEARQVma3m9o8SD6oWWiSwbjkiMDz5uXJnfFUkAvjeTPvehr37l8odg4s0LkflWCToiESgRQbJs11b2RQgV239mw4jaN
     String username = userNameController;
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
       var urll = '${ApiUrl}Loginn/users';
 
-      var response =
-          await https.post(Uri.parse(urll), body: {'username': username});
+      var response = await https.post(Uri.parse(urll),
+          body: {'username': username, 'noti_key': fCMTocken.toString()});
 
       if (response.statusCode != 500) {
         Map<String, dynamic> map = jsonDecode(response.body);
