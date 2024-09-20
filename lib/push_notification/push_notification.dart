@@ -68,6 +68,7 @@ class notify {
     await firebaseMessaging.requestPermission();
 
     final fCMTocken = await firebaseMessaging.getToken();
+
     log(fCMTocken.toString());
 
     // Provider.of<ProviderS>(context, listen: false).fcmKey =
@@ -93,6 +94,11 @@ class notify {
         log('my notiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii');
         AwesomeNotifications().createNotification(
             content: NotificationContent(
+                notificationLayout: NotificationLayout.BigPicture,
+                //actionType : ActionType.DismissAction,
+                color: Colors.black,
+                backgroundColor: Colors.black,
+                bigPicture: notification.android!.imageUrl,
                 id: notification.hashCode,
                 channelKey: 'call_channel',
                 /* same name */
