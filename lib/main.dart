@@ -1,8 +1,8 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_application_2/app_details/const.dart';
 import 'package:flutter_application_2/push_notification/push_notification.dart';
 import 'package:flutter_application_2/uI/splash/splash.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 // import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 // import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 import 'provider/provider.dart';
-import 'uI/app_permission/app_permission.dart';
+
 
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
@@ -21,7 +21,7 @@ void main() async {
     null,
     [
       NotificationChannel(
-        channelShowBadge: true,
+        channelShowBadge: true,  
         channelKey: 'call_channel',
         defaultColor: Colors.blue,
         channelName: "Basic Notifications",
@@ -31,10 +31,11 @@ void main() async {
     ],
   );
 
+  FirebaseMessaging.onMessageOpenedApp.listen((event) {});
   // ZegoUIKitPrebuiltCallInvitationService().setNavigatorKey(navigatorKey);
 
   // // call the useSystemCallingUI
-  // ZegoUIKit().initLog().then((value) {
+  // ZegoUI Kit().initLog().then((value) {
   //   ZegoUIKitPrebuiltCallInvitationService().useSystemCallingUI(
   //     [ZegoUIKitSignalingPlugin()],
   //   );

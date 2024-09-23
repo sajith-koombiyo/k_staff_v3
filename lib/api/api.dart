@@ -396,11 +396,11 @@ class CustomApi {
         // Make POST request
         var resp =
             await https.post(headers: headers, Uri.parse(apiUrl), body: {});
+
         if (resp.statusCode == 500) {
           return 1;
         }
         var data = jsonDecode(resp.body);
-        print(data);
 
         if (data['status'] == 403) {
           Provider.of<ProviderS>(context, listen: false).isanotherUserLog =
@@ -603,6 +603,7 @@ class CustomApi {
             headers: headers,
             Uri.parse(apiUrl),
             body: {'owner': id, 'waybill_id': wayBillId, 'status': '17'});
+        print(res.statusCode);
         var data = jsonDecode(res.body);
 
         print(data);
@@ -612,7 +613,6 @@ class CustomApi {
 // - 403 Forbidden: Invalid User Key
         if (data['status'] == 200) {
           notification().info(context, 'Order Delivered Successfully');
-          Navigator.pop(context);
         } else if (data['status'] == 400) {
           notification().info(context, 'Bad Request: Error Occurred');
         } else if (data['status'] == 403) {
@@ -645,9 +645,10 @@ class CustomApi {
               'reason': dropdownValue,
               'pcod': cod
             });
-
+            print(responses.statusCode);
             var data = jsonDecode(responses.body);
             print(data);
+
             if (data['status'] == 200) {
               notification().info(context, 'Order Update Successfully');
               Navigator.pop(context);
@@ -678,10 +679,10 @@ class CustomApi {
             'reason': dropdownValue2.toString(),
             'rdate': rescheduleDate,
           });
+          print(responses.statusCode);
           var data = jsonDecode(responses.body);
           if (data['status'] == 200) {
             notification().info(context, 'Order Delivered Successfully');
-            Navigator.pop(context);
           } else if (data['status'] == 403) {
             Provider.of<ProviderS>(context, listen: false).isanotherUserLog =
                 true;
@@ -713,9 +714,9 @@ class CustomApi {
           });
           var data = jsonDecode(responses.body);
 
+          print(responses.statusCode);
           if (data['status'] == 200) {
             notification().info(context, 'Remark successfully Updated');
-            Navigator.pop(context);
           } else if (data['status'] == 403) {
             Provider.of<ProviderS>(context, listen: false).isanotherUserLog =
                 true;

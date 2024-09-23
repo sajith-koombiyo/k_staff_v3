@@ -15,9 +15,9 @@ class SqlDb {
 
   intialDb() async {
     String databasepath = await getDatabasesPath();
-    String path = join(databasepath, 'ad.db');
+    String path = join(databasepath, 'adf.db');
     Database mydb = await openDatabase(path,
-        onCreate: _onCreate, version: 17, onUpgrade: _onUpgrade);
+        onCreate: _onCreate, version: 19, onUpgrade: _onUpgrade);
     return mydb;
   }
 
@@ -84,7 +84,8 @@ class SqlDb {
       "dropdownValue" TEXT ,
       "dropdownValue2" TEXT ,
         "cod" TEXT ,
-          "rescheduleDate" TEXT
+          "rescheduleDate" TEXT,
+           "err" TEXT
         
            
     

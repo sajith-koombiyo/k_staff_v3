@@ -107,6 +107,11 @@ class _MyDeliveryState extends State<MyDelivery> {
     _buttonSubscription?.cancel();
   }
 
+// The function to be run when IDs don't match
+  void runMyFunction(String id) {
+    print('Running function for id: $id');
+  }
+
   firstData() async {
     setState(() {
       isLoading = true;
@@ -116,15 +121,15 @@ class _MyDeliveryState extends State<MyDelivery> {
     List imageData = await sqlDb.readData('select * from pending_image');
     errorData = await sqlDb.readData('select * from deliver_error');
     // logger.i(imageData.toString());
-    List pendinDiiveryData = await sqlDb.readData('select * from pending');
+    List pendinDiiveryData =
+        await sqlDb.readData('select * from pending Where  err ="0"');
     if (imageData.isNotEmpty) {
       offlineImageUpload();
     }
-
     if (pendinDiiveryData.isNotEmpty) {
-      await offlineDeliveryupdateApi();
+      print('pending dataaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+      await offlineDeliveryupdateApi(pendinDiiveryData);
     }
-
     getData(true, false);
   }
 
@@ -264,518 +269,516 @@ class _MyDeliveryState extends State<MyDelivery> {
   Widget build(BuildContext context) {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
-    return Consumer<ProviderS>(
-      builder: (context, provider, child) => Scaffold(
-        backgroundColor: backgroundColor,
-        appBar: widget.isFromHome == false
-            ? AppBar(
-                backgroundColor: appliteBlue,
-                bottom: PreferredSize(
-                    preferredSize: Size(w, isError ? 90 : 70),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: serchBar(),
-                        ),
-                        isError
-                            ? Container(
-                                width: w,
-                                height: 30,
-                                color: Colors.redAccent,
-                                child: Text(
-                                  'Server is not responding',
-                                  style: TextStyle(color: white),
-                                ))
-                            : SizedBox()
-                      ],
-                    )),
-                title: Text(
-                  'My Delivery',
-                  style: TextStyle(
-                    fontSize: 18.dp,
-                    color: white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                leading: IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: Icon(
-                      Icons.arrow_back_ios_new,
+    return AbsorbPointer(
+      absorbing: isLoading,
+      child: Consumer<ProviderS>(
+        builder: (context, provider, child) => Scaffold(
+          backgroundColor: backgroundColor,
+          appBar: widget.isFromHome == false
+              ? AppBar(
+                  backgroundColor: appliteBlue,
+                  bottom: PreferredSize(
+                      preferredSize: Size(w, isError ? 90 : 70),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: serchBar(),
+                          ),
+                          isError
+                              ? Container(
+                                  width: w,
+                                  height: 30,
+                                  color: Colors.redAccent,
+                                  child: Text(
+                                    'Server is not responding',
+                                    style: TextStyle(color: white),
+                                  ))
+                              : SizedBox()
+                        ],
+                      )),
+                  title: Text(
+                    'My Delivery',
+                    style: TextStyle(
+                      fontSize: 18.dp,
                       color: white,
-                    )),
-              )
-            : null,
-        body: Stack(
-          children: [
-            RefreshIndicator(
-              onRefresh: () {
-                return getData(false, false);
-              },
-              child: SingleChildScrollView(
-                controller: _scrollController,
-                child: Column(
-                  children: [
-                    widget.isFromHome
-                        ? Stack(
-                            children: [
-                              Column(
-                                children: [
-                                  Container(
-                                    child: Image.asset(
-                                      'assets/picked_50.png',
-                                      fit: BoxFit.cover,
-                                    ),
-                                    height: h / 3,
-                                    width: w,
-                                  ),
-                                  isOffline
-                                      ? Container(
-                                          alignment: Alignment.center,
-                                          width: w,
-                                          height: 20,
-                                          color: Colors.redAccent,
-                                          child: Text('offline',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w400,
-                                                color: white,
-                                                fontSize: 11.dp,
-                                              )),
-                                        )
-                                      : SizedBox()
-                                ],
-                              ),
-                              Container(
-                                height: h / 3,
-                                width: w,
-                                color: black.withOpacity(0.4),
-                              ),
-                              Positioned(
-                                bottom: 0,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text('Track Orders',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w400,
-                                        color: white,
-                                        fontSize: 22.dp,
-                                      )),
-                                ),
-                              ),
-                              Positioned(
-                                  bottom: h / 9,
-                                  left: 0,
-                                  right: 0,
-                                  child: serchBar())
-                            ],
-                          )
-                        : SizedBox(),
-                    dataList.isEmpty && isLoading == false
-                        ? SizedBox(
-                            height: h,
-                            width: w,
-                            child: Column(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  leading: IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: Icon(
+                        Icons.arrow_back_ios_new,
+                        color: white,
+                      )),
+                )
+              : null,
+          body: Stack(
+            children: [
+              RefreshIndicator(
+                onRefresh: () {
+                  return getData(false, false);
+                },
+                child: SingleChildScrollView(
+                  controller: _scrollController,
+                  child: Column(
+                    children: [
+                      widget.isFromHome
+                          ? Stack(
                               children: [
-                                Center(child: NoData()),
-                              ],
-                            ))
-                        : SizedBox(
-                            height: dataList.length >= 2 ? null : h,
-                            width: w,
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              controller: _scrollController,
-                              physics: NeverScrollableScrollPhysics(),
-                              padding: EdgeInsets.all(0),
-                              itemCount: dataList.length,
-                              itemBuilder: (context, index) {
-                                return Column(
+                                Column(
                                   children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Material(
-                                        color: Colors.transparent,
-                                        child: InkWell(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          splashColor: blue,
-                                          onTap: () {
-                                            bool updateBTN = false;
-                                            setState(() {
-                                              newImage = '';
-                                              dropdownvalue = null;
-                                              codController.clear();
-                                            });
+                                    Container(
+                                      child: Image.asset(
+                                        'assets/picked_50.png',
+                                        fit: BoxFit.cover,
+                                      ),
+                                      height: h / 3,
+                                      width: w,
+                                    ),
+                                    isOffline
+                                        ? Container(
+                                            alignment: Alignment.center,
+                                            width: w,
+                                            height: 20,
+                                            color: Colors.redAccent,
+                                            child: Text('offline',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w400,
+                                                  color: white,
+                                                  fontSize: 11.dp,
+                                                )),
+                                          )
+                                        : SizedBox()
+                                  ],
+                                ),
+                                Container(
+                                  height: h / 3,
+                                  width: w,
+                                  color: black.withOpacity(0.4),
+                                ),
+                                Positioned(
+                                  bottom: 0,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text('Track Orders',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          color: white,
+                                          fontSize: 22.dp,
+                                        )),
+                                  ),
+                                ),
+                                Positioned(
+                                    bottom: h / 9,
+                                    left: 0,
+                                    right: 0,
+                                    child: serchBar())
+                              ],
+                            )
+                          : SizedBox(),
+                      dataList.isEmpty && isLoading == false
+                          ? SizedBox(
+                              height: h,
+                              width: w,
+                              child: Column(
+                                children: [
+                                  Center(child: NoData()),
+                                ],
+                              ))
+                          : SizedBox(
+                              height: dataList.length >= 2 ? null : h,
+                              width: w,
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                controller: _scrollController,
+                                physics: NeverScrollableScrollPhysics(),
+                                padding: EdgeInsets.all(0),
+                                itemCount: dataList.length,
+                                itemBuilder: (context, index) {
+                                  return Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Material(
+                                          color: Colors.transparent,
+                                          child: InkWell(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            splashColor: blue,
+                                            onTap: () {
+                                              bool updateBTN = false;
+                                              setState(() {
+                                                newImage = '';
+                                                dropdownvalue = null;
+                                                codController.clear();
+                                              });
 
-                                            itemDetails(
-                                                dataList[index]['waybill_id'],
-                                                updateBTN,
-                                                dataList[index]['cod_final'],
-                                                dataList[index]['oid'],
-                                                dataList[index]['order_type'],
-                                                dataList[index]['order_type'] ==
-                                                        '1'
-                                                    ? dataList[index]
-                                                            ['ex_bag_waybill']
-                                                        .toString()
-                                                    : "",
-                                                dataList[index]['order_type']
-                                                            .toString() ==
-                                                        '1'
-                                                    ? dataList[index]
-                                                            ['prev_waybill']
-                                                        .toString()
-                                                    : '');
-                                          },
-                                          child: Card(
-                                            margin: EdgeInsets.only(left: 0),
-                                            color: dataList[index]
-                                                        ['order_type'] ==
-                                                    '1'
-                                                ? Colors.red
-                                                : appliteBlue,
+                                              itemDetails(
+                                                  dataList[index]['waybill_id'],
+                                                  updateBTN,
+                                                  dataList[index]['cod_final'],
+                                                  dataList[index]['oid'],
+                                                  dataList[index]['order_type'],
+                                                  dataList[index]
+                                                              ['order_type'] ==
+                                                          '1'
+                                                      ? dataList[index]
+                                                              ['ex_bag_waybill']
+                                                          .toString()
+                                                      : "",
+                                                  dataList[index]['order_type']
+                                                              .toString() ==
+                                                          '1'
+                                                      ? dataList[index]
+                                                              ['prev_waybill']
+                                                          .toString()
+                                                      : '');
+                                            },
                                             child: Card(
+                                              margin: EdgeInsets.only(left: 0),
                                               color: dataList[index]
                                                           ['order_type'] ==
                                                       '1'
-                                                  ? Color.fromARGB(
-                                                      255, 243, 240, 210)
-                                                  : white,
-                                              elevation: 50,
-                                              margin: EdgeInsets.only(left: 3),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(12.0),
-                                                child: Column(
-                                                  children: [
-                                                    SizedBox(
-                                                      width: w,
-                                                      child: Row(
-                                                        children: [
-                                                          Card(
-                                                            color: dataList[index]
-                                                                        [
-                                                                        'order_type'] ==
-                                                                    '1'
-                                                                ? Color
-                                                                    .fromARGB(
-                                                                        255,
-                                                                        210,
-                                                                        208,
-                                                                        191)
-                                                                : white,
-                                                            elevation: 1,
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(8.0),
-                                                              child: Icon(
-                                                                Icons
-                                                                    .delivery_dining_sharp,
-                                                                size: 40,
-                                                                color: Color(Random()
-                                                                        .nextInt(
-                                                                            0xffffffff))
-                                                                    .withAlpha(
-                                                                        0xff),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            width: 10,
-                                                          ),
-                                                          SizedBox(
-                                                            width: w / 2.4,
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Text(
-                                                                    '${dataList[index]['waybill_id']}',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color:
-                                                                          black,
-                                                                      fontSize:
-                                                                          14.dp,
-                                                                    )),
-                                                                Text(
-                                                                    'Name:-${dataList[index]['name']}',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600,
-                                                                      color: Colors
-                                                                          .black87,
-                                                                      fontSize:
-                                                                          14.dp,
-                                                                    )),
-                                                                Text(
-                                                                    'Client:-${dataList[index]['cust_name']}',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .normal,
-                                                                      color: Colors
-                                                                          .black87,
-                                                                      fontSize:
-                                                                          12.dp,
-                                                                    )),
-                                                                Text(
-                                                                    '${dataList[index]['address']}',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .normal,
-                                                                      color: Colors
-                                                                          .black87,
-                                                                      fontSize:
-                                                                          12.dp,
-                                                                    )),
-                                                                Text(
-                                                                    'COD:-${dataList[index]['cod_final']}',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500,
-                                                                      color: Color.fromARGB(
-                                                                          221,
-                                                                          31,
-                                                                          116,
-                                                                          152),
-                                                                      fontSize:
-                                                                          14.dp,
-                                                                    )),
-                                                                Text(
-                                                                    'Phone:-${dataList[index]['phone']}',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .normal,
-                                                                      color: Color.fromARGB(
-                                                                          221,
-                                                                          220,
-                                                                          44,
-                                                                          44),
-                                                                      fontSize:
-                                                                          14.dp,
-                                                                    )),
-                                                                dataList[index][
-                                                                            'cust_internal'] ==
-                                                                        ''
-                                                                    ? SizedBox()
-                                                                    : Text(
-                                                                        'Remark:-${dataList[index]['cust_internal']}',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          fontWeight:
-                                                                              FontWeight.normal,
-                                                                          color:
-                                                                              Colors.black87,
-                                                                          fontSize:
-                                                                              12.dp,
-                                                                        )),
-                                                                Card(
-                                                                  elevation: 20,
-                                                                  margin:
-                                                                      EdgeInsets
-                                                                          .all(
-                                                                              0),
-                                                                  color: Color
+                                                  ? Colors.red
+                                                  : appliteBlue,
+                                              child: Card(
+                                                color: dataList[index]
+                                                            ['order_type'] ==
+                                                        '1'
+                                                    ? Color.fromARGB(
+                                                        255, 243, 240, 210)
+                                                    : white,
+                                                elevation: 50,
+                                                margin:
+                                                    EdgeInsets.only(left: 3),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      12.0),
+                                                  child: Column(
+                                                    children: [
+                                                      SizedBox(
+                                                        width: w,
+                                                        child: Row(
+                                                          children: [
+                                                            Card(
+                                                              color: dataList[index]
+                                                                          [
+                                                                          'order_type'] ==
+                                                                      '1'
+                                                                  ? Color
                                                                       .fromARGB(
                                                                           255,
-                                                                          62,
-                                                                          13,
-                                                                          130),
-                                                                  child:
-                                                                      Padding(
-                                                                    padding:
-                                                                        const EdgeInsets
-                                                                            .all(
-                                                                            8.0),
-                                                                    child: Text(
-                                                                        '${dataList[index]['status']}',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          fontWeight:
-                                                                              FontWeight.normal,
-                                                                          color:
-                                                                              white,
-                                                                          fontSize:
-                                                                              10.dp,
-                                                                        )),
+                                                                          210,
+                                                                          208,
+                                                                          191)
+                                                                  : white,
+                                                              elevation: 1,
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(
+                                                                        8.0),
+                                                                child: Icon(
+                                                                  Icons
+                                                                      .delivery_dining_sharp,
+                                                                  size: 40,
+                                                                  color: Color(Random()
+                                                                          .nextInt(
+                                                                              0xffffffff))
+                                                                      .withAlpha(
+                                                                          0xff),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              width: 10,
+                                                            ),
+                                                            SizedBox(
+                                                              width: w / 2.4,
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Text(
+                                                                      '${dataList[index]['waybill_id']}',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight.bold,
+                                                                        color:
+                                                                            black,
+                                                                        fontSize:
+                                                                            14.dp,
+                                                                      )),
+                                                                  Text(
+                                                                      'Name:-${dataList[index]['name']}',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight.w600,
+                                                                        color: Colors
+                                                                            .black87,
+                                                                        fontSize:
+                                                                            14.dp,
+                                                                      )),
+                                                                  Text(
+                                                                      'Client:-${dataList[index]['cust_name']}',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight.normal,
+                                                                        color: Colors
+                                                                            .black87,
+                                                                        fontSize:
+                                                                            12.dp,
+                                                                      )),
+                                                                  Text(
+                                                                      '${dataList[index]['address']}',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight.normal,
+                                                                        color: Colors
+                                                                            .black87,
+                                                                        fontSize:
+                                                                            12.dp,
+                                                                      )),
+                                                                  Text(
+                                                                      'COD:-${dataList[index]['cod_final']}',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight.w500,
+                                                                        color: Color.fromARGB(
+                                                                            221,
+                                                                            31,
+                                                                            116,
+                                                                            152),
+                                                                        fontSize:
+                                                                            14.dp,
+                                                                      )),
+                                                                  Text(
+                                                                      'Phone:-${dataList[index]['phone']}',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight.normal,
+                                                                        color: Color.fromARGB(
+                                                                            221,
+                                                                            220,
+                                                                            44,
+                                                                            44),
+                                                                        fontSize:
+                                                                            14.dp,
+                                                                      )),
+                                                                  dataList[index]
+                                                                              [
+                                                                              'cust_internal'] ==
+                                                                          ''
+                                                                      ? SizedBox()
+                                                                      : Text(
+                                                                          'Remark:-${dataList[index]['cust_internal']}',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.normal,
+                                                                            color:
+                                                                                Colors.black87,
+                                                                            fontSize:
+                                                                                12.dp,
+                                                                          )),
+                                                                  Card(
+                                                                    elevation:
+                                                                        20,
+                                                                    margin: EdgeInsets
+                                                                        .all(0),
+                                                                    color: Color
+                                                                        .fromARGB(
+                                                                            255,
+                                                                            62,
+                                                                            13,
+                                                                            130),
+                                                                    child:
+                                                                        Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .all(
+                                                                          8.0),
+                                                                      child: Text(
+                                                                          '${dataList[index]['status']}',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.normal,
+                                                                            color:
+                                                                                white,
+                                                                            fontSize:
+                                                                                10.dp,
+                                                                          )),
+                                                                    ),
                                                                   ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              width: 10,
+                                                            ),
+                                                            Spacer(),
+                                                            Column(
+                                                              children: [
+                                                                // Card(
+                                                                //   elevation: 20,
+                                                                //   shape: RoundedRectangleBorder(
+                                                                //       borderRadius:
+                                                                //           BorderRadius.circular(
+                                                                //               100)),
+                                                                //   child:
+                                                                //       IconButton(
+                                                                //     onPressed:
+                                                                //         () {},
+                                                                //     icon: Icon(
+                                                                //       Icons
+                                                                //           .voice_over_off_rounded,
+                                                                //       size: 35,
+                                                                //       color: Color
+                                                                //           .fromARGB(
+                                                                //               255,
+                                                                //               13,
+                                                                //               173,
+                                                                //               45),
+                                                                //     ),
+                                                                //   ),
+                                                                // ),
+                                                                Card(
+                                                                  elevation: 20,
+                                                                  shape: RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              100)),
+                                                                  child:
+                                                                      IconButton(
+                                                                    onPressed:
+                                                                        () async {
+                                                                      final call =
+                                                                          Uri.parse(
+                                                                              'tel:${dataList[index]['phone']}');
+                                                                      if (await canLaunchUrl(
+                                                                          call)) {
+                                                                        launchUrl(
+                                                                            call);
+                                                                      } else {
+                                                                        throw 'Could not launch $call';
+                                                                      }
+                                                                    },
+                                                                    icon: Icon(
+                                                                      Icons
+                                                                          .call,
+                                                                      size: 35,
+                                                                      color: Colors
+                                                                          .red,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Card(
+                                                                  elevation: 20,
+                                                                  shape: RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              100)),
+                                                                  child: IconButton(
+                                                                      onPressed: () async {
+                                                                        notification().warning(
+                                                                            context,
+                                                                            'Location not found');
+                                                                        // MapUtils.openMap(
+                                                                        //     -3.823216,
+                                                                        //     -38.481700);
+                                                                      },
+                                                                      icon: Image.asset('assets/icons8-google-maps-old-30.png')),
                                                                 ),
                                                               ],
                                                             ),
-                                                          ),
-                                                          SizedBox(
-                                                            width: 10,
-                                                          ),
-                                                          Spacer(),
-                                                          Column(
-                                                            children: [
-                                                              // Card(
-                                                              //   elevation: 20,
-                                                              //   shape: RoundedRectangleBorder(
-                                                              //       borderRadius:
-                                                              //           BorderRadius.circular(
-                                                              //               100)),
-                                                              //   child:
-                                                              //       IconButton(
-                                                              //     onPressed:
-                                                              //         () {},
-                                                              //     icon: Icon(
-                                                              //       Icons
-                                                              //           .voice_over_off_rounded,
-                                                              //       size: 35,
-                                                              //       color: Color
-                                                              //           .fromARGB(
-                                                              //               255,
-                                                              //               13,
-                                                              //               173,
-                                                              //               45),
-                                                              //     ),
-                                                              //   ),
-                                                              // ),
-                                                              Card(
-                                                                elevation: 20,
-                                                                shape: RoundedRectangleBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            100)),
-                                                                child:
-                                                                    IconButton(
-                                                                  onPressed:
-                                                                      () async {
-                                                                    final call =
-                                                                        Uri.parse(
-                                                                            'tel:${dataList[index]['phone']}');
-                                                                    if (await canLaunchUrl(
-                                                                        call)) {
-                                                                      launchUrl(
-                                                                          call);
-                                                                    } else {
-                                                                      throw 'Could not launch $call';
-                                                                    }
-                                                                  },
-                                                                  icon: Icon(
-                                                                    Icons.call,
-                                                                    size: 35,
-                                                                    color: Colors
-                                                                        .red,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              Card(
-                                                                elevation: 20,
-                                                                shape: RoundedRectangleBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            100)),
-                                                                child:
-                                                                    IconButton(
-                                                                        onPressed:
-                                                                            () async {
-                                                                          notification().warning(
-                                                                              context,
-                                                                              'Location not found');
-                                                                          // MapUtils.openMap(
-                                                                          //     -3.823216,
-                                                                          //     -38.481700);
-                                                                        },
-                                                                        icon: Image.asset(
-                                                                            'assets/icons8-google-maps-old-30.png')),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
+                                                          ],
+                                                        ),
                                                       ),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 8,
-                                                    ),
-                                                    errorData.any((element) {
-                                                      print(element['oId']);
-                                                      print(dataList[index]
-                                                          ['oid']);
+                                                      SizedBox(
+                                                        height: 8,
+                                                      ),
+                                                      errorData.any((element) {
+                                                        print(element['oId']);
+                                                        print(dataList[index]
+                                                            ['oid']);
 
-                                                      errMsg = element['msg']
-                                                          .toString();
-                                                      return element['oId']
-                                                              .toString() ==
-                                                          dataList[index]['oid']
-                                                              .toString();
-                                                    })
-                                                        ? Container(
-                                                            height: 20,
-                                                            width: w,
-                                                            color:
-                                                                Color.fromARGB(
-                                                                    255,
-                                                                    198,
-                                                                    26,
-                                                                    150),
-                                                            child: Text(
-                                                              errMsg == "400"
-                                                                  ? "Bad Request: Error Occurred (400)"
-                                                                  : errMsg ==
-                                                                          "406"
-                                                                      ? "Not Acceptable: Please Upload the POD (406)"
-                                                                      : "Something went wrong (403)",
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .white),
-                                                            ))
-                                                        : SizedBox()
-                                                  ],
+                                                        errMsg = element['msg']
+                                                            .toString();
+                                                        return element['oId']
+                                                                .toString() ==
+                                                            dataList[index]
+                                                                    ['oid']
+                                                                .toString();
+                                                      })
+                                                          ? Container(
+                                                              height: 20,
+                                                              width: w,
+                                                              color: Color
+                                                                  .fromARGB(
+                                                                      255,
+                                                                      198,
+                                                                      26,
+                                                                      150),
+                                                              child: Text(
+                                                                errMsg == "400"
+                                                                    ? "Bad Request: Error Occurred (400)"
+                                                                    : errMsg ==
+                                                                            "406"
+                                                                        ? "Not Acceptable: Please Upload the POD (406)"
+                                                                        : "Something went wrong (403)",
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .white),
+                                                              ))
+                                                          : SizedBox()
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                );
-                              },
+                                    ],
+                                  );
+                                },
+                              ),
                             ),
-                          ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-            widget.isFromHome
-                ? Positioned(
-                    top: MediaQuery.of(context).padding.top + 10,
-                    left: 12,
-                    child: CircleAvatar(
-                      backgroundColor: black.withOpacity(0.4),
-                      child: IconButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          icon: Icon(
-                            Icons.arrow_back_ios_new,
-                            color: white,
-                          )),
-                    ),
-                  )
-                : SizedBox(),
-            isLoading ? Loader().loader(context) : SizedBox(),
-            provider.isanotherUserLog ? UserLoginCheck() : SizedBox()
-          ],
+              widget.isFromHome
+                  ? Positioned(
+                      top: MediaQuery.of(context).padding.top + 10,
+                      left: 12,
+                      child: CircleAvatar(
+                        backgroundColor: black.withOpacity(0.4),
+                        child: IconButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            icon: Icon(
+                              Icons.arrow_back_ios_new,
+                              color: white,
+                            )),
+                      ),
+                    )
+                  : SizedBox(),
+              isLoading ? Loader().loader(context) : SizedBox(),
+              provider.isanotherUserLog ? UserLoginCheck() : SizedBox()
+            ],
+          ),
         ),
       ),
     );
@@ -801,7 +804,8 @@ class _MyDeliveryState extends State<MyDelivery> {
       'dropdownValue': dropdownValue,
       'dropdownValue2': dropdownValue2,
       'cod': cod,
-      'rescheduleDate': rescheduleDate
+      'rescheduleDate': rescheduleDate,
+      'err': '0'
     });
 
     if (res == 1) {
@@ -817,63 +821,54 @@ class _MyDeliveryState extends State<MyDelivery> {
         'UPDATE delivery_oder SET type = "$statusType" WHERE  oId ="$oId"');
     List dataa = await sqlDb.readData('select * from delivery_oder');
     Navigator.pop(context);
-    logger.d(dataa.toString());
+
     getData(false, false);
   }
 
-  offlineDeliveryupdateApi() async {
-    List data = await sqlDb.readData('select * from pending');
-    List datas = await sqlDb.readData('select * from deliver_error');
+  offlineDeliveryupdateApi(List data) async {
     if (data.isNotEmpty) {
       List.generate(data.length, (index) async {
-        if (datas.any((element) {
-          print(element['oId']);
-          print(data[index]['oid']);
-
-          errMsg = element['msg'].toString();
-          return element['oId'].toString() != dataList[index]['oid'].toString();
-        })) {
+        print(
+            'dataaaaaaaaaaaaaaaaaaaaaaaaadddddddddddddddddddddddddddddaaaaaaaa');
+        int status = int.parse(data[index]['statusType'].toString());
+        var res = await CustomApi().oderData(
+          status,
+          data[index]['wayBillId'].toString(),
+          context,
+          data[index]['dropdownValue'].toString(),
+          data[index]['dropdownValue2'].toString(),
+          data[index]['cod'].toString(),
+          data[index]['rescheduleDate'].toString(),
+          data[index]['oId'].toString(),
+        );
+        print('////////////////////');
+        print(res);
+        print('////////////////////');
+        if (res == 200) {
           print(
-              'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaddddddddddddxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-          int status = int.parse(data[index]['statusType'].toString());
-          var res = await CustomApi().oderData(
-            status,
-            data[index]['wayBillId'].toString(),
-            context,
-            data[index]['dropdownValue'].toString(),
-            data[index]['dropdownValue2'].toString(),
-            data[index]['cod'].toString(),
-            data[index]['rescheduleDate'].toString(),
-            data[index]['oId'].toString(),
-          );
-          print('qqqqqqqqqqqqqqqqqqqq');
-          print(res);
-          print('qqqqqqqqqqqqqqqqqqqq');
-          if (res == 1) {
-            var ress = await sqlDb.deleteData(
-                'delete from pending where oId = "${data[index]['oId'].toString()}"');
-          } else {
-            var ress = await sqlDb.replaceData('deliver_error', {
-              'oId': data[index]['oId'].toString(),
-              'msg': res.toString(),
-            });
-            if (ress == 1) {
-              var ress = await sqlDb.deleteData(
-                  'delete from pending where oId = "${data[index]['oId'].toString()}"');
-            }
-            List datas = await sqlDb.readData('select * from deliver_error');
-            logger.f(datas);
-          }
+              '///////xxxxxxxxx////////////////////////////////////////////////////////////////');
+          var ress = await sqlDb.deleteData(
+              'delete from pending where oId = "${data[index]['oId'].toString()}"');
+          await getData(true, false);
+        } else {
+          await sqlDb.updateData(
+              'update pending  set err = "0"  where oId = "${data[index]['oId'].toString()}"');
+          print('///////xxxxxxxxx/////////////');
+          var ress = await sqlDb.replaceData('deliver_error', {
+            'oId': data[index]['oId'].toString(),
+            'msg': res.toString(),
+          });
+          await getData(true, false);
         }
       });
-    }
-    getData(true, false);
+    } else {}
   }
 
   itemDetails(String waybill, bool updateBTN, String cod, String oId,
       String oderType, String exchangeWayBill, String pWaybill) {
     double codValue = double.parse(cod);
-
+    print(oderType);
+    print('ddddddddddddddddddddddd');
     dropdownvalue = null;
     dropdownvalue2 = null;
     remarkValue = null;
@@ -1743,6 +1738,7 @@ class _MyDeliveryState extends State<MyDelivery> {
   offlineImageUpload() async {
     List data = await sqlDb.readData('select * from pending_image');
     logger.d(data);
+
     if (data.isNotEmpty) {
       List.generate(data.length, (index) async {
         final customDir = Directory(data[index]['image']);
