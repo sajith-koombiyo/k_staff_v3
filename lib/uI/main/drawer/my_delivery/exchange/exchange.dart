@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/api/api.dart';
@@ -55,6 +57,9 @@ class _ExchangeState extends State<Exchange> {
   String Image64 = '';
   final ImagePicker _picker = ImagePicker();
   bool isLoading = false;
+  bool isOffline = true;
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription _streamSubscription;
   @override
   void initState() {
     setState(() {
@@ -62,8 +67,28 @@ class _ExchangeState extends State<Exchange> {
       exWayBill.text = widget.waybill;
       exBagWayBill.text = widget.exchangeBagWaybill;
     });
+
+    _streamSubscription = _connectivity.onConnectivityChanged.listen((result) {
+      if (result != ConnectivityResult.none) {
+        setState(() {
+          print('ddddddddddddddddddddddddddddddddddddddddd');
+          isOffline = false;
+        });
+      } else {
+        print('dddddddxxxxxxxxxxxxxxdddddddddddddddddddddddddddddddddd');
+        setState(() {
+          isOffline = true;
+        });
+      }
+    });
     // TODO: implement initState
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _streamSubscription.cancel();
+    super.dispose();
   }
 
   @override
@@ -73,13 +98,26 @@ class _ExchangeState extends State<Exchange> {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 220, 247, 255),
       appBar: AppBar(
-        iconTheme: IconThemeData(color: white),
-        backgroundColor: appliteBlue,
-        title: Text(
-          'exchange',
-          style: TextStyle(color: white),
-        ),
-      ),
+          iconTheme: IconThemeData(color: white),
+          backgroundColor: appliteBlue,
+          title: Text(
+            'exchange',
+            style: TextStyle(color: white),
+          ),
+          bottom: isOffline
+              ? PreferredSize(
+                  preferredSize: Size(w, 20),
+                  child: Container(
+                    alignment: Alignment.center,
+                    width: w,
+                    height: 20,
+                    color: Colors.red,
+                    child: Text(
+                      'Offline',
+                      style: TextStyle(color: white),
+                    ),
+                  ))
+              : null),
       body: Stack(
         children: [
           Padding(
@@ -154,7 +192,7 @@ class _ExchangeState extends State<Exchange> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        image != null
+                        newImage.isNotEmpty
                             ? ClipRRect(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(12)),
@@ -162,7 +200,7 @@ class _ExchangeState extends State<Exchange> {
                                     height: h / 7,
                                     width: w / 2.2,
                                     child: Image.file(
-                                      File(image!.path),
+                                      File(newImage),
                                       fit: BoxFit.cover,
                                     )))
                             : DottedBorder(
@@ -205,18 +243,15 @@ class _ExchangeState extends State<Exchange> {
                           children: [
                             InkWell(
                               onTap: () async {
-                                XFile? image = await _picker.pickImage(
+                                image = await _picker.pickImage(
                                     imageQuality: 25,
                                     source: ImageSource.camera);
-                                print(image!.path);
-                                var res = await CustomApi()
-                                    .deliveryimageExchange(
-                                        context, image, exWayBill.text, true);
 
                                 setState(() {
                                   image;
-                                  print(image);
+                                  newImage = image!.path;
                                 });
+                                await imageUpdate();
                               },
                               child: Card(
                                   elevation: 5,
@@ -233,10 +268,14 @@ class _ExchangeState extends State<Exchange> {
                               onTap: () async {
                                 image = await _picker.pickImage(
                                     imageQuality: 25,
-                                    source: ImageSource.gallery);
-                                var res = await CustomApi()
-                                    .deliveryimageExchange(
-                                        context, image, exWayBill.text, true);
+                                    source: ImageSource.camera);
+
+                                setState(() {
+                                  image;
+                                  newImage = image!.path;
+                                });
+
+                                imageUpdate();
                                 setState(() {
                                   image;
                                 });
@@ -282,42 +321,10 @@ class _ExchangeState extends State<Exchange> {
                       child: check
                           ? HomeButton(
                               onTap: () async {
-                                print(image!.path);
-                                if (image != null) {
-                                  setState(() {
-                                    isLoading = true;
-                                  });
-                                  var res = await CustomApi().imageExchange(
-                                      context,
-                                      image!.path,
-                                      exWayBill.text,
-                                      true);
-                                  print('qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq');
-                                  print(widget.statusTyp);
-                                  print('qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq');
-                                  if (res == "1") {
-                                    var res = await CustomApi().oderData(
-                                        widget.statusTyp,
-                                        widget.waybill,
-                                        context,
-                                        widget.dropdownvalueItem.toString(),
-                                        widget.dropdownvalueItem2.toString(),
-                                        widget.codController,
-                                        widget.date,
-                                        widget.date);
-
-                                    if (res == 200) {
-                                      widget.backDataLoad();
-                                      Navigator.pop(context);
-                                    }
-                                  } else {
-                                    notification()
-                                        .warning(context, 'Update failed');
-                                  }
-                                } else {
-                                  notification().warning(context,
-                                      'Please upload the exchange item image');
-                                }
+                                setState(() {
+                                  isLoading = true;
+                                });
+                                exchangeUpdate();
                                 setState(() {
                                   isLoading = false;
                                 });
@@ -335,6 +342,70 @@ class _ExchangeState extends State<Exchange> {
     );
   }
 
+  imageUpdate() async {
+    if (isOffline) {
+      var res = await pickAndSaveImageToFolder(image, exWayBill.text);
+    } else {
+      var res = await CustomApi()
+          .deliveryimageExchange(context, image, exWayBill.text, true);
+    }
+  }
+
+  exchangeUpdate() async {
+    if (isOffline) {
+      print('gggggggggggggggggggggggggggggggggg');
+      var res = await sqlDb.replaceData(
+          'exchange_order', {'oId': widget.oderId, 'wayBill': widget.waybill});
+      print(res);
+      var r = await sqlDb.readData('select * from exchange_order');
+      print(r);
+      if (res.toString() == widget.oderId) {
+        var res = await sqlDb.replaceData('pending', {
+          'oId': widget.oderId,
+          'wayBillId': widget.waybill,
+          'statusType': widget.statusTyp,
+          'dropdownValue': widget.dropdownvalueItem,
+          'dropdownValue2': widget.dropdownvalueItem2,
+          'cod': widget.codController,
+          'rescheduleDate': widget.date,
+          'err': '0'
+        });
+        print(res);
+        if (res.toString() == widget.oderId) {
+          notification().info(context,
+              'data saved  The data has successfully returned to the online system and will be updated.');
+          widget.backDataLoad();
+          Navigator.pop(context);
+          Navigator.pop(context);
+        } else {
+          notification().info(context, 'Something went wrong try again');
+        }
+      }
+    } else {
+      var res = await CustomApi()
+          .Collectexchange(context, widget.waybill, widget.oderId);
+
+      if (res == "1") {
+        var res = await CustomApi().oderData(
+            widget.statusTyp,
+            widget.waybill,
+            context,
+            widget.dropdownvalueItem.toString(),
+            widget.dropdownvalueItem2.toString(),
+            widget.codController,
+            widget.date,
+            widget.date);
+
+        if (res == 200) {
+          widget.backDataLoad();
+          Navigator.pop(context);
+        }
+      } else {
+        notification().warning(context, 'Update failed please try again');
+      }
+    }
+  }
+
   pickAndSaveImageToFolder(XFile? pickedFile, String waybill) async {
     if (pickedFile != null) {
       File imageFile = File(pickedFile.path);
@@ -350,51 +421,14 @@ class _ExchangeState extends State<Exchange> {
       final savedImagePath = '${customDir.path}/$fileName';
       // Save the image to the specified folder
       await imageFile.copy(savedImagePath);
-      var res = await sqlDb.replaceData('pending_image', {
+      var res = await sqlDb.replaceData('exchange_image', {
         'waybill': waybill,
         'image': savedImagePath,
       });
       List data = await sqlDb.readData('select * from pending_image');
       notification().info(context,
           'Image saved  The data has successfully returned to the online system and will be updated.');
-    }
-  }
-
-  offlineImageUpload() async {
-    List data = await sqlDb.readData('select * from pending_image');
-    logger.d(data);
-    if (data.isNotEmpty) {
-      List.generate(data.length, (index) async {
-        final customDir = Directory(data[index]['image']);
-        print(customDir.path);
-        var res = await CustomApi().immageUpload(context, XFile(customDir.path),
-            data[index]['waybill'].toString(), true);
-
-        if (res.toString() == '1') {
-          print('ddddddddddddddddddddddddddddddddddddddddddd');
-          deleteImage(customDir.path);
-          var ress = await sqlDb.deleteData(
-              'delete from pending_image where waybill = "${data[index]['waybill']}"');
-
-          print(ress);
-        } else {}
-      });
-    }
-  }
-
-  Future<void> deleteImage(String path) async {
-    final File file = File(path);
-
-    try {
-      if (await file.exists()) {
-        await file.delete();
-        print("File deleted successfully.");
-      } else {
-        print("File not found.");
-      }
-    } catch (e) {
-      print("Error occurred while deleting the file: $e");
+      return res;
     }
   }
 }
- 

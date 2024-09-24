@@ -1960,7 +1960,7 @@ class CustomApi {
 
         var formData = FormData.fromMap({
           "image": await MultipartFile.fromFile(image.path),
-          "ex_waybill": waybill,
+          "ex_waybill": '33334445',
         });
 
         try {
@@ -1988,28 +1988,46 @@ class CustomApi {
     }
   }
 
-  imageExchange(BuildContext context, String image, String waybill,
-      bool isOffline) async {
-    var headersList = {
-      'userkey': 'h9MnysZjFUuzW6Q0Y35tcqVd7rm1LDAfbwvGEXlOIiPx2SKTp4'
-    };
-    var url = Uri.parse(
-        'http://koombiyodelivery.net/api.koombiyodelivery.lk/staffapi/v3/delivery/Updateexchange/users');
+  Collectexchange(
+    BuildContext context,
+    String wayBill,
+    String ordrId,
+  ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      print(id);
+      final apiUrl = '${ApiUrl}Collectexchange/users';
 
-    var body = {'ex_waybill': '33334445'};
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      // Make POST request
+      print(apiUrl);
+      var res = await https.post(
+          headers: headers,
+          Uri.parse(apiUrl),
+          body: {"ex_waybill": wayBill, "oid": ordrId});
+      print(res.statusCode);
+      var data = jsonDecode(res.body);
 
-    var req = https.MultipartRequest('POST', url);
-    req.headers.addAll(headersList);
-    req.files.add(await https.MultipartFile.fromPath('image', image));
-    req.fields.addAll(body);
+      print(data);
 
-    var res = await req.send();
-    final resBody = await res.stream.bytesToString();
-    print(res.stream);
-    if (res.statusCode >= 200 && res.statusCode < 300) {
-      print(resBody);
+      if (data['status'] == 200) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+
+        return data['deposits']['branch_deposit'];
+      }
+
+      if (data['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+        return 0;
+      }
     } else {
-      print(res.reasonPhrase);
+      notification().warning(context, 'No Internet');
     }
   }
 

@@ -75,6 +75,9 @@ class _MyDeliveryState extends State<MyDelivery> {
   List rescheduleList = [];
   List errorData = [];
   List remarkList = [];
+  List pendingOrder = [];
+  List pendingImage = [];
+  List exchangeOffline = [];
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription _streamSubscription;
   @override
@@ -91,7 +94,7 @@ class _MyDeliveryState extends State<MyDelivery> {
           isOffline = false;
         });
       } else {
-        firstData();
+        // firstData();
         setState(() {
           isOffline = true;
         });
@@ -112,6 +115,24 @@ class _MyDeliveryState extends State<MyDelivery> {
     print('Running function for id: $id');
   }
 
+  statusUpdate() async {
+    List datas = await sqlDb.readData('select * from deliver_error');
+
+    List imageData = await sqlDb.readData('select * from pending_image');
+    List exchangeImage = await sqlDb.readData('select * from pending_image');
+    List exchangeOrder = await sqlDb.readData('select * from pending_image');
+
+    // logger.i(imageData.toString());
+    List pendinDiiveryData =
+        await sqlDb.readData('select * from pending Where  err ="0"');
+
+    setState(() {
+      pendingImage = imageData;
+      pendingOrder = pendinDiiveryData;
+      exchangeOffline = exchangeOrder;
+    });
+  }
+
   firstData() async {
     setState(() {
       isLoading = true;
@@ -119,12 +140,27 @@ class _MyDeliveryState extends State<MyDelivery> {
     List datas = await sqlDb.readData('select * from deliver_error');
 
     List imageData = await sqlDb.readData('select * from pending_image');
+    List exchangeImage = await sqlDb.readData('select * from exchange_image');
     errorData = await sqlDb.readData('select * from deliver_error');
+    List exchangeOffline = await sqlDb.readData('select * from exchange_order');
+
     // logger.i(imageData.toString());
     List pendinDiiveryData =
         await sqlDb.readData('select * from pending Where  err ="0"');
+
+    setState(() {
+      pendingImage = imageData;
+      pendingOrder = pendinDiiveryData;
+      exchangeOffline = exchangeOffline;
+    });
     if (imageData.isNotEmpty) {
       offlineImageUpload();
+    }
+    if (exchangeImage.isNotEmpty) {
+      exchangeOfflineImageUpload();
+    }
+    if (exchangeOffline.isNotEmpty) {
+      offlineExchangeApi(exchangeOffline);
     }
     if (pendinDiiveryData.isNotEmpty) {
       print('pending dataaaaaaaaaaaaaaaaaaaaaaaaaaaa');
@@ -194,6 +230,7 @@ class _MyDeliveryState extends State<MyDelivery> {
         isLoading = false;
       });
     }
+    statusUpdate();
   }
 
   oderDataSerch(String waybill) async {
@@ -335,7 +372,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                                         'assets/picked_50.png',
                                         fit: BoxFit.cover,
                                       ),
-                                      height: h / 3,
+                                      height: h / 3.2,
                                       width: w,
                                     ),
                                     isOffline
@@ -355,7 +392,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                                   ],
                                 ),
                                 Container(
-                                  height: h / 3,
+                                  height: h / 3.2,
                                   width: w,
                                   color: black.withOpacity(0.4),
                                 ),
@@ -372,7 +409,53 @@ class _MyDeliveryState extends State<MyDelivery> {
                                   ),
                                 ),
                                 Positioned(
-                                    bottom: h / 9,
+                                  bottom: 0,
+                                  child: SizedBox(
+                                    width: w,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Icon(
+                                          Icons.upload_file_rounded,
+                                          color:
+                                              Color.fromARGB(255, 4, 177, 105),
+                                        ),
+                                        SizedBox(
+                                          width: 5,
+                                        ),
+                                        Text(pendingImage.length.toString(),
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: white,
+                                              fontSize: 12.dp,
+                                            )),
+                                        SizedBox(
+                                          width: 12,
+                                        ),
+                                        Icon(
+                                          Icons.upload,
+                                          color: Colors.blue,
+                                        ),
+                                        SizedBox(
+                                          width: 5,
+                                        ),
+                                        Text(pendingOrder.length.toString(),
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: white,
+                                              fontSize: 12.dp,
+                                            )),
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                    bottom: h / 10,
                                     left: 0,
                                     right: 0,
                                     child: serchBar())
@@ -398,6 +481,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                                 padding: EdgeInsets.all(0),
                                 itemCount: dataList.length,
                                 itemBuilder: (context, index) {
+                                  print(dataList);
                                   return Column(
                                     children: [
                                       Padding(
@@ -787,6 +871,7 @@ class _MyDeliveryState extends State<MyDelivery> {
   backDataLoad() {
     getData(false, false);
     codController.clear();
+    statusUpdate();
   }
 
   offlineDeliveryUpdate(
@@ -823,6 +908,7 @@ class _MyDeliveryState extends State<MyDelivery> {
     Navigator.pop(context);
 
     getData(false, false);
+    statusUpdate();
   }
 
   offlineDeliveryupdateApi(List data) async {
@@ -862,6 +948,25 @@ class _MyDeliveryState extends State<MyDelivery> {
         }
       });
     } else {}
+    statusUpdate();
+  }
+
+  offlineExchangeApi(List data) async {
+    if (data.isNotEmpty) {
+      List.generate(data.length, (index) async {
+        var res = await CustomApi().Collectexchange(
+            context, data[index]['wayBill'], data[index]['oId']);
+
+        if (res == 200) {
+          print(
+              '///////xxxxxxxxx////////////////////////////////////////////////////////////////');
+          var ress = await sqlDb.deleteData(
+              'delete from exchange_order where oId = "${data[index]['oId'].toString()}"');
+          await getData(true, false);
+        }
+      });
+      statusUpdate();
+    } else {}
   }
 
   itemDetails(String waybill, bool updateBTN, String cod, String oId,
@@ -898,7 +1003,7 @@ class _MyDeliveryState extends State<MyDelivery> {
               DialogButton(
                 buttonHeight: h / 14,
                 width: w,
-                text: 'Save',
+                text: oderType == '1' ? 'Exchange' : 'Save',
                 color:
                     updateBTN ? Color.fromARGB(255, 8, 152, 219) : Colors.grey,
                 onTap: updateBTN
@@ -913,6 +1018,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                           });
                         } else {
                           if (oderType == '1') {
+                            print('ccccddddddddddddddddddddddddcccccccc');
                             if (x == 3 || x == 2) {
                               if (dropdownvalue != null ||
                                   remarkValue != null ||
@@ -941,40 +1047,26 @@ class _MyDeliveryState extends State<MyDelivery> {
                                     context, 'please select the reason');
                               }
                             } else {
-                              if (isOffline) {
-                                offlineDeliveryUpdate(
-                                    oId,
-                                    waybill,
-                                    x.toString(),
-                                    dropdownvalueItem,
-                                    x == 4
-                                        ? remarkValue.toString()
-                                        : dropdownvalueItem2.toString(),
-                                    codController.text,
-                                    provider.fomatedDate);
-
-                                codController.clear();
-                              } else {
-                                var res = await CustomApi().oderData(
-                                    x,
-                                    waybill,
-                                    context,
-                                    dropdownvalueItem.toString(),
-                                    x == 4
-                                        ? remarkValue.toString()
-                                        : dropdownvalueItem2.toString(),
-                                    codController.text,
-                                    provider.fomatedDate,
-                                    oId);
-
-                                if (res == 200) {
-                                  getData(false, false);
-                                  codController.clear();
-                                }
-                              }
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Exchange(
+                                      exchangeBagWaybill: exchangeWayBill,
+                                      pWaybill: pWaybill,
+                                      backDataLoad: backDataLoad,
+                                      statusTyp: x,
+                                      waybill: waybill,
+                                      dropdownvalueItem: dropdownvalueItem,
+                                      dropdownvalueItem2: x == 4
+                                          ? remarkValue.toString()
+                                          : dropdownvalueItem2,
+                                      codController: codController.text,
+                                      date: provider.fomatedDate,
+                                      oderId: oId,
+                                    ),
+                                  ));
                             }
                           } else {
-                            ;
                             if (dropdownvalue != null ||
                                 remarkValue != null ||
                                 dropdownvalue2 != null ||
@@ -993,19 +1085,21 @@ class _MyDeliveryState extends State<MyDelivery> {
 
                                 codController.clear();
                               } else {
-                                var res = await CustomApi().oderData(
-                                    x,
-                                    waybill,
-                                    context,
-                                    dropdownvalueItem.toString(),
-                                    x == 4
-                                        ? remarkValue.toString()
-                                        : dropdownvalueItem2.toString(),
-                                    codController.text,
-                                    provider.fomatedDate,
-                                    oId);
+                                var res = '';
+                                // await CustomApi().oderData(
+                                //     x,
+                                //     waybill,
+                                //     context,
+                                //     dropdownvalueItem.toString(),
+                                //     x == 4
+                                //         ? remarkValue.toString()
+                                //         : dropdownvalueItem2.toString(),
+                                //     codController.text,
+                                //     provider.fomatedDate,
+                                //     oId);
 
                                 if (res == 200) {
+                                  Navigator.pop(context);
                                   getData(false, false);
                                   codController.clear();
                                 }
@@ -1756,6 +1850,31 @@ class _MyDeliveryState extends State<MyDelivery> {
         } else {}
       });
     }
+    statusUpdate();
+  }
+
+  exchangeOfflineImageUpload() async {
+    List data = await sqlDb.readData('select * from exchange_image');
+    logger.d(data);
+
+    if (data.isNotEmpty) {
+      List.generate(data.length, (index) async {
+        final customDir = Directory(data[index]['image']);
+        print(customDir.path);
+        var res = await CustomApi().immageUpload(context, XFile(customDir.path),
+            data[index]['waybill'].toString(), true);
+
+        if (res.toString() == '1') {
+          print('ddddddddddddddddddddddddddddddddddddddddddd');
+          deleteImage(customDir.path);
+          var ress = await sqlDb.deleteData(
+              'delete from exchange_image where waybill = "${data[index]['waybill']}"');
+
+          print(ress);
+        } else {}
+      });
+    }
+    statusUpdate();
   }
 
   Future<void> deleteImage(String path) async {

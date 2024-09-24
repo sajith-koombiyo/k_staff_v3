@@ -15,9 +15,9 @@ class SqlDb {
 
   intialDb() async {
     String databasepath = await getDatabasesPath();
-    String path = join(databasepath, 'adf.db');
+    String path = join(databasepath, 'z.db');
     Database mydb = await openDatabase(path,
-        onCreate: _onCreate, version: 19, onUpgrade: _onUpgrade);
+        onCreate: _onCreate, version: 21, onUpgrade: _onUpgrade);
     return mydb;
   }
 
@@ -109,11 +109,38 @@ class SqlDb {
 
   )
  ''');
+     await db.execute('''
+  CREATE TABLE "exchange_image" (
+    "waybill" INTEGER  NOT NULL PRIMARY KEY ,
+    "image" TEXT  NOT NULL 
+      
+           
+    
+      
+    
+
+
+  )
+ ''');
 
     await db.execute('''
   CREATE TABLE "deliver_error" (
     "oId" INTEGER  NOT NULL PRIMARY KEY ,
     "msg" TEXT  NOT NULL 
+      
+           
+    
+      
+    
+
+
+  )
+ ''');
+
+    await db.execute('''
+  CREATE TABLE "exchange_order" (
+    "oId" INTEGER  NOT NULL PRIMARY KEY ,
+    "wayBill" TEXT  NOT NULL 
       
            
     
