@@ -24,7 +24,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:math';
 import 'dart:ui';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:http/http.dart' as https;
 import '../../../../sql_db/db.dart';
 import '../../navigation/navigation.dart';
 import 'exchange/exchange.dart';
@@ -60,16 +59,13 @@ class _MyDeliveryState extends State<MyDelivery> {
   bool isLoading = false;
   double progress = 0.0;
   ScrollController _scrollController = ScrollController();
-
   List item = [];
   int x = 0;
-
   String? dropdownvalue;
   String? dropdownvalue2;
   String? remarkValue;
   String dropdownvalueItem = '';
   String dropdownvalueItem2 = '';
-
   DateTime selectedDate = DateTime.now();
   List pdliveryList = [];
   List rescheduleList = [];
@@ -83,7 +79,7 @@ class _MyDeliveryState extends State<MyDelivery> {
   @override
   void initState() {
     // offlineDeliveryupdateApi();
-    firstData();
+    // firstData();
     dropDownData();
     // TODO: implement initState
 
@@ -108,11 +104,6 @@ class _MyDeliveryState extends State<MyDelivery> {
     _streamSubscription.cancel();
     super.dispose();
     _buttonSubscription?.cancel();
-  }
-
-// The function to be run when IDs don't match
-  void runMyFunction(String id) {
-    print('Running function for id: $id');
   }
 
   statusUpdate() async {
@@ -154,13 +145,15 @@ class _MyDeliveryState extends State<MyDelivery> {
       exchangeOffline = exchangeOffline;
     });
     if (imageData.isNotEmpty) {
-      offlineImageUpload();
+      await offlineImageUpload();
     }
     if (exchangeImage.isNotEmpty) {
-      exchangeOfflineImageUpload();
+      await exchangeOfflineImageUpload();
     }
     if (exchangeOffline.isNotEmpty) {
-      offlineExchangeApi(exchangeOffline);
+      print(exchangeOffline);
+      print('ggggggggggggggggggggggggggggg');
+      await offlineExchangeApi(exchangeOffline);
     }
     if (pendinDiiveryData.isNotEmpty) {
       print('pending dataaaaaaaaaaaaaaaaaaaaaaaaaaaa');
@@ -955,17 +948,21 @@ class _MyDeliveryState extends State<MyDelivery> {
     if (data.isNotEmpty) {
       List.generate(data.length, (index) async {
         var res = await CustomApi().Collectexchange(
-            context, data[index]['wayBill'], data[index]['oId']);
+            context, data[index]['wayBill'], data[index]['oId'].toString());
+
+        print(res);
 
         if (res == 200) {
           print(
               '///////xxxxxxxxx////////////////////////////////////////////////////////////////');
           var ress = await sqlDb.deleteData(
               'delete from exchange_order where oId = "${data[index]['oId'].toString()}"');
-          await getData(true, false);
+        } else {
+          print('dddddddddddddddddddd');
         }
       });
-      statusUpdate();
+      // await getData(true, false);
+      // statusUpdate();
     } else {}
   }
 

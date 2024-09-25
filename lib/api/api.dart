@@ -2019,13 +2019,16 @@ class CustomApi {
       if (data['status'] == 200) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
 
-        return data['deposits']['branch_deposit'];
+        return data['status'];
       }
 
       if (data['status'] == 403) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
-        return 0;
+        return data['status'];
+      } else {
+        return data['status'];
       }
+      ;
     } else {
       notification().warning(context, 'No Internet');
     }
