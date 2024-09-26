@@ -79,7 +79,7 @@ class _MyDeliveryState extends State<MyDelivery> {
   @override
   void initState() {
     // offlineDeliveryupdateApi();
-    // firstData();
+    firstData();
     dropDownData();
     // TODO: implement initState
 
@@ -90,7 +90,7 @@ class _MyDeliveryState extends State<MyDelivery> {
           isOffline = false;
         });
       } else {
-        // firstData();
+        firstData();
         setState(() {
           isOffline = true;
         });
@@ -159,7 +159,10 @@ class _MyDeliveryState extends State<MyDelivery> {
       print('pending dataaaaaaaaaaaaaaaaaaaaaaaaaaaa');
       await offlineDeliveryupdateApi(pendinDiiveryData);
     }
-    getData(true, false);
+    if (isOffline) {
+    } else {
+      getData(true, false);
+    }
   }
 
   getData(bool load, bool isSearching) async {
@@ -200,16 +203,16 @@ class _MyDeliveryState extends State<MyDelivery> {
           'ex_bag_waybill': temp[index]['ex_bag_waybill'],
           'type': '0'
         });
-        data = await sqlDb.readData('select * from delivery_oder');
+        data = await sqlDb
+            .readData('select * from delivery_oder where type = "0"');
         setState(() {
-          dataList = data.where((item) => item['type'] == "0").toList();
+          dataList = data;
+          dataListTemp = data;
         });
       });
 
       setState(() {
         errorData;
-        dataList = data.where((item) => item['type'] == "0").toList();
-        dataListTemp = data.where((item) => item['type'] == "0").toList();
 
         isLoading = false;
       });
@@ -223,7 +226,7 @@ class _MyDeliveryState extends State<MyDelivery> {
         isLoading = false;
       });
     }
-    statusUpdate();
+    // statusUpdate();
   }
 
   oderDataSerch(String waybill) async {
@@ -2049,7 +2052,7 @@ class _MyDeliveryState extends State<MyDelivery> {
         search.text = "";
       } else {
         search.text = _scanBarcode.toString();
-        getData(true, true);
+        _runFilter(search.text);
       }
     });
   }

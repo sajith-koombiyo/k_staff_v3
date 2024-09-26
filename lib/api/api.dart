@@ -385,12 +385,10 @@ class CustomApi {
       Map<String, String> headers = {
         'userkey': '$id',
       };
-      print('ssssssssssssssssssssssssssssssssss');
-      print(userID);
-      print('ssssssssssssssssssssssssssssssssss');
+
       if (sWaybill == '') {
         final apiUrl = '${ApiUrl}Pendings/users';
-        print(apiUrl);
+
         // Headers
 
         // Make POST request
@@ -412,8 +410,6 @@ class CustomApi {
           return data['pendings'];
         }
       } else {
-        print(
-            'qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqssssssfffffffffffssssssssssssssssssssssssssss');
         final apiUrl = '${ApiUrl}/Singleorder/users';
         // Headers
 
@@ -425,7 +421,6 @@ class CustomApi {
 
         var data = jsonDecode(resp.body);
 
-        print(data);
         if (data['status'] == 403) {
           return [];
         } else if (data['status'] == 200) {
