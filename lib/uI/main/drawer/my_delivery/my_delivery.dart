@@ -913,16 +913,11 @@ class _MyDeliveryState extends State<MyDelivery> {
             true,
           );
         } else {
-          // await sqlDb.updateData(
-          //     'update pending  set err = "1"  where oId = "${data[index]['oId'].toString()}"');
-          // print('///////xxxxxxxxx/////////////');
-          // var ress = await sqlDb.replaceData('deliver_error', {
-          //   'oId': data[index]['oId'].toString(),
-          //   'msg': res.toString(),
-          // });
-
-          await sqlDb.updateData(
-              'update delivery_oder  set err_msg = "${res.toString()}"  where oid = "${data[index]['oId'].toString()}"');
+          var ress = await sqlDb.deleteData(
+              'delete from pending where oId = "${data[index]['oId'].toString()}"');
+          await getData(
+            true,
+          );
         }
       });
     } else {
