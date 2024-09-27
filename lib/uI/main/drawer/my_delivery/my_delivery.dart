@@ -80,7 +80,7 @@ class _MyDeliveryState extends State<MyDelivery> {
   void initState() {
     // // offlineDeliveryupdateApi();
     // firstData();
-    // dropDownData();
+    dropDownData();
     // // TODO: implement initState
 
     _streamSubscription = _connectivity.onConnectivityChanged.listen((result) {
