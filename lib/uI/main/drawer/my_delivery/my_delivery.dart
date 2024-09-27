@@ -132,6 +132,7 @@ class _MyDeliveryState extends State<MyDelivery> {
   }
 
   getData(bool load) async {
+    statusUpdate();
     List data = [];
     var connectivityResult = await (Connectivity().checkConnectivity());
 
@@ -910,7 +911,7 @@ class _MyDeliveryState extends State<MyDelivery> {
           );
         } else {
           await sqlDb.updateData(
-              'update pending  set err = "0"  where oId = "${data[index]['oId'].toString()}"');
+              'update pending  set err = "1"  where oId = "${data[index]['oId'].toString()}"');
           print('///////xxxxxxxxx/////////////');
           var ress = await sqlDb.replaceData('deliver_error', {
             'oId': data[index]['oId'].toString(),
@@ -1076,17 +1077,17 @@ class _MyDeliveryState extends State<MyDelivery> {
                                 codController.clear();
                               } else {
                                 var res = '';
-                                // await CustomApi().oderData(
-                                //     x,
-                                //     waybill,
-                                //     context,
-                                //     dropdownvalueItem.toString(),
-                                //     x == 4
-                                //         ? remarkValue.toString()
-                                //         : dropdownvalueItem2.toString(),
-                                //     codController.text,
-                                //     provider.fomatedDate,
-                                //     oId);
+                                await CustomApi().oderData(
+                                    x,
+                                    waybill,
+                                    context,
+                                    dropdownvalueItem.toString(),
+                                    x == 4
+                                        ? remarkValue.toString()
+                                        : dropdownvalueItem2.toString(),
+                                    codController.text,
+                                    provider.fomatedDate,
+                                    oId);
 
                                 if (res == 200) {
                                   Navigator.pop(context);

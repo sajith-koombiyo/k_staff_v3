@@ -602,10 +602,7 @@ class CustomApi {
         var data = jsonDecode(res.body);
 
         print(data);
-//         - 200 OK: Order Delivered Successfully
-// - 400 Bad Request: Error Occurred
-// - 406 Not Acceptable: Please Upload the POD
-// - 403 Forbidden: Invalid User Key
+
         if (data['status'] == 200) {
           notification().info(context, 'Order Delivered Successfully');
         } else if (data['status'] == 400) {
@@ -617,14 +614,6 @@ class CustomApi {
           notification().info(context, 'Not Acceptable: Please Upload the POD');
         }
 
-        // var url =
-        //     'https://api.koombiyodelivery.lk/staffapi/v2/delivery/Delivered/users';
-        // var responses = await https.post(Uri.parse(url),
-        //     body: {'owner': id, 'waybill_id': wayBillId, 'status': '17'});
-        // String rawJson = responses.body.toString();
-        // final newString = rawJson.replaceAll('"', '');
-
-        // notification().info(context, newString.toString());
         return data['status'];
       } else if (statusType == 2) {
         if (dropdownValue != '') {
