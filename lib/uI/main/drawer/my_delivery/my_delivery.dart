@@ -78,6 +78,7 @@ class _MyDeliveryState extends State<MyDelivery> {
   late StreamSubscription _streamSubscription;
   @override
   void initState() {
+    isOnline();
     // // offlineDeliveryupdateApi();
     // firstData();
     dropDownData();
@@ -90,7 +91,9 @@ class _MyDeliveryState extends State<MyDelivery> {
           isOffline = false;
         });
       } else {
-        firstData();
+        print(
+            'sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss');
+        getData(false);
         setState(() {
           isOffline = true;
         });
@@ -104,6 +107,20 @@ class _MyDeliveryState extends State<MyDelivery> {
     _streamSubscription.cancel();
     super.dispose();
     _buttonSubscription?.cancel();
+  }
+
+  isOnline() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+    } else {
+      localData = await sqlDb.readData('select * from delivery_oder');
+
+      setState(() {
+        dataList = localData;
+        dataListTemp = dataList;
+      });
+    }
   }
 
   firstData() async {
@@ -172,8 +189,7 @@ class _MyDeliveryState extends State<MyDelivery> {
           'type': '0',
           'err_msg': '0'
         });
-        data = await sqlDb
-            .readData('select * from delivery_oder where type = "0"');
+        data = await sqlDb.readData('select * from delivery_oder');
         setState(() {
           dataList = data;
           dataListTemp = data;
@@ -190,7 +206,7 @@ class _MyDeliveryState extends State<MyDelivery> {
 
       setState(() {
         errorData;
-        dataList = localData.where((item) => item['type'] == "0").toList();
+        dataList = localData;
         dataListTemp = dataList;
         isLoading = false;
       });
@@ -897,13 +913,13 @@ class _MyDeliveryState extends State<MyDelivery> {
             true,
           );
         } else {
-          await sqlDb.updateData(
-              'update pending  set err = "1"  where oId = "${data[index]['oId'].toString()}"');
-          print('///////xxxxxxxxx/////////////');
-          var ress = await sqlDb.replaceData('deliver_error', {
-            'oId': data[index]['oId'].toString(),
-            'msg': res.toString(),
-          });
+          // await sqlDb.updateData(
+          //     'update pending  set err = "1"  where oId = "${data[index]['oId'].toString()}"');
+          // print('///////xxxxxxxxx/////////////');
+          // var ress = await sqlDb.replaceData('deliver_error', {
+          //   'oId': data[index]['oId'].toString(),
+          //   'msg': res.toString(),
+          // });
 
           await sqlDb.updateData(
               'update delivery_oder  set err_msg = "${res.toString()}"  where oid = "${data[index]['oId'].toString()}"');
