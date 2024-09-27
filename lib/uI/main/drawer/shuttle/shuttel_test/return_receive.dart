@@ -5,14 +5,14 @@ import 'package:flutter_sizer/flutter_sizer.dart';
 
 import '../../../../../app_details/color.dart';
 
-class ReturnReceive extends StatefulWidget {
-  const ReturnReceive({super.key});
+class BranchRout extends StatefulWidget {
+  const BranchRout({super.key});
 
   @override
-  State<ReturnReceive> createState() => _ReturnReceiveState();
+  State<BranchRout> createState() => _BranchRoutState();
 }
 
-class _ReturnReceiveState extends State<ReturnReceive> {
+class _BranchRoutState extends State<BranchRout> {
   TextEditingController search = TextEditingController();
   @override
   Widget build(BuildContext context) {

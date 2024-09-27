@@ -2606,7 +2606,11 @@ class CustomApi {
 
       if (data['status'] == 403) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
-        return [];
+        return '';
+      }
+      if (data['status'] == 400) {
+        print('xxxxxxxxxxxxxxxxxxxx');
+        return '';
       }
     } else {
       notification().warning(context, 'No Internet');

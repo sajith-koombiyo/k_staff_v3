@@ -458,68 +458,70 @@ class _customDrawerState extends State<customDrawer> {
                                             text: 'Attendance',
                                           )
                                         : SizedBox(),
+                                    // DrawerClz().shuttle(accessGroupId)
+                                    //     ? CustomDrawerButton(
+                                    //         icon:
+                                    //             Icons.departure_board_outlined,
+                                    //         onTap: () {
+                                    //           navigation(Shuttle());
+                                    //         },
+                                    //         text: 'Shuttle',
+                                    //       )
+                                    //     : SizedBox(),
+
                                     DrawerClz().shuttle(accessGroupId)
-                                        ? CustomDrawerButton(
-                                            icon:
-                                                Icons.departure_board_outlined,
-                                            onTap: () {
-                                              navigation(Shuttle());
-                                            },
-                                            text: 'Shuttle',
-                                          )
+                                        ? drawwerList('Shuttle',
+                                            Icons.access_time_outlined, () {
+                                            setState(() {
+                                              if (drawOpen == 4 && drawTab) {
+                                                drawTab = false;
+                                              } else {
+                                                drawOpen = 4;
+                                                // temp = drawOpen;
+
+                                                drawTab = true;
+                                              }
+                                            });
+                                          }, 4, [
+                                            // tileButton('Branch Route', () {
+                                            //   Navigator.push(
+                                            //     context,
+                                            //     MaterialPageRoute(
+                                            //         builder: (context) =>
+                                            //             BranchRout()),
+                                            //   );
+                                            //   setState(() {
+                                            //     key = '12';
+                                            //   });
+                                            // }, key, '12'),
+                                            tileButton('In Out', () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        pickupDevice == '1'
+                                                            ? InOutPickupDevice()
+                                                            : InOutUpdateGoogleMap()),
+                                              );
+
+                                              setState(() {
+                                                key = '13';
+                                              });
+                                            }, key, '13'),
+                                            tileButton('All ', () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        AllRout()),
+                                              );
+
+                                              setState(() {
+                                                key = '14';
+                                              });
+                                            }, key, '14')
+                                          ])
                                         : SizedBox(),
-
-                                    drawwerList(
-                                        'Shuttle', Icons.access_time_outlined,
-                                        () {
-                                      setState(() {
-                                        if (drawOpen == 4 && drawTab) {
-                                          drawTab = false;
-                                        } else {
-                                          drawOpen = 4;
-                                          // temp = drawOpen;
-
-                                          drawTab = true;
-                                        }
-                                      });
-                                    }, 4, [
-                                      tileButton('Branch Route', () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ReturnReceive()),
-                                        );
-                                        setState(() {
-                                          key = '12';
-                                        });
-                                      }, key, '12'),
-                                      tileButton('In Out', () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  pickupDevice == '1'
-                                                      ? InOutPickupDevice()
-                                                      : InOutUpdateGoogleMap()),
-                                        );
-
-                                        setState(() {
-                                          key = '13';
-                                        });
-                                      }, key, '13'),
-                                      tileButton('All ', () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => AllRout()),
-                                        );
-
-                                        setState(() {
-                                          key = '14';
-                                        });
-                                      }, key, '14')
-                                    ]),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 10),
