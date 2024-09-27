@@ -59,7 +59,7 @@ class _ExchangeState extends State<Exchange> {
   bool isLoading = false;
   bool isOffline = true;
   final Connectivity _connectivity = Connectivity();
-  late StreamSubscription _streamSubscription;
+
   @override
   void initState() {
     setState(() {
@@ -67,27 +67,31 @@ class _ExchangeState extends State<Exchange> {
       exWayBill.text = widget.waybill;
       exBagWayBill.text = widget.exchangeBagWaybill;
     });
+    internet();
 
-    _streamSubscription = _connectivity.onConnectivityChanged.listen((result) {
-      if (result != ConnectivityResult.none) {
-        setState(() {
-          print('ddddddddddddddddddddddddddddddddddddddddd');
-          isOffline = false;
-        });
-      } else {
-        print('dddddddxxxxxxxxxxxxxxdddddddddddddddddddddddddddddddddd');
-        setState(() {
-          isOffline = true;
-        });
-      }
-    });
     // TODO: implement initState
     super.initState();
   }
 
+  internet() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      setState(() {
+        print('ddddddddddddddddddddddddddddddddddddddddd');
+        isOffline = false;
+      });
+    } else {
+      print(
+          'dddddddxxxxxxxxxxxxxxdddddddddddddddddffffffffffffffffddddddddddddddddd');
+      setState(() {
+        isOffline = true;
+      });
+    }
+  }
+
   @override
   void dispose() {
-    _streamSubscription.cancel();
     super.dispose();
   }
 
@@ -346,16 +350,21 @@ class _ExchangeState extends State<Exchange> {
     if (isOffline) {
       var res = await pickAndSaveImageToFolder(image, exWayBill.text);
     } else {
+      print('/////////////////////////');
       var res = await CustomApi()
-          .deliveryimageExchange(context, image, exWayBill.text, true);
+          .deliveryimageExchange(context, image, exWayBill.text, false);
     }
   }
 
   exchangeUpdate() async {
     if (isOffline) {
       print('gggggggggggggggggggggggggggggggggg');
-      var res = await sqlDb.replaceData(
-          'exchange_order', {'oId': widget.oderId, 'wayBill': widget.waybill});
+      var res = await sqlDb.replaceData('exchange_order', {
+        'oId': widget.oderId,
+        'wayBill': widget.waybill,
+        'ex_bag_waybill': widget.exchangeBagWaybill,
+        'prev_waybill': widget.pWaybill
+      });
       print(res);
       var r = await sqlDb.readData('select * from exchange_order');
       print(r);
@@ -370,8 +379,12 @@ class _ExchangeState extends State<Exchange> {
           'rescheduleDate': widget.date,
           'err': '0'
         });
+        var r = await sqlDb.readData('select * from pending');
+        print(r);
         print(res);
         if (res.toString() == widget.oderId) {
+          var t = await sqlDb.updateData(
+              'UPDATE delivery_oder SET type = "$widget.statusTyp}" WHERE  oId ="${widget.oderId}"');
           notification().info(context,
               'data saved  The data has successfully returned to the online system and will be updated.');
           widget.backDataLoad();
@@ -382,10 +395,10 @@ class _ExchangeState extends State<Exchange> {
         }
       }
     } else {
-      var res = await CustomApi()
-          .Collectexchange(context, widget.waybill, widget.oderId);
+      var res = await CustomApi().Collectexchange(context, widget.waybill,
+          widget.oderId, widget.exchangeBagWaybill, widget.pWaybill);
 
-      if (res == "1") {
+      if (res == 200) {
         var res = await CustomApi().oderData(
             widget.statusTyp,
             widget.waybill,
@@ -398,6 +411,7 @@ class _ExchangeState extends State<Exchange> {
 
         if (res == 200) {
           widget.backDataLoad();
+          Navigator.pop(context);
           Navigator.pop(context);
         }
       } else {

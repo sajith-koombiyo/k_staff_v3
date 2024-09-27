@@ -1987,13 +1987,14 @@ class CustomApi {
     BuildContext context,
     String wayBill,
     String ordrId,
+    String exbag_waybill,
+    String prev_waybill,
   ) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('userkey');
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
-      print(id);
       final apiUrl = '${ApiUrl}Collectexchange/users';
 
       // Headers
@@ -2001,11 +2002,23 @@ class CustomApi {
         'userkey': '$id',
       };
       // Make POST request
-      print(apiUrl);
-      var res = await https.post(
-          headers: headers,
-          Uri.parse(apiUrl),
-          body: {"ex_waybill": wayBill, "oid": ordrId});
+      print(id);
+      print('99999999999999999999999999999');
+
+      print(wayBill);
+      print('99999999999999999999999999999');
+      print(ordrId);
+      print('9999aaaa9999999999999999999999999');
+      print(exbag_waybill);
+      print('99999aaaaa999999999999999999999999');
+      print(prev_waybill);
+      print('99999999999999999999999999999');
+      var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {
+        "ex_waybill": wayBill,
+        "oid": ordrId,
+        "exbag_waybill": exbag_waybill,
+        "prev_waybill": prev_waybill
+      });
       print(res.statusCode);
       var data = jsonDecode(res.body);
 

@@ -78,10 +78,10 @@ class _MyDeliveryState extends State<MyDelivery> {
   late StreamSubscription _streamSubscription;
   @override
   void initState() {
-    // offlineDeliveryupdateApi();
-    firstData();
-    dropDownData();
-    // TODO: implement initState
+    // // offlineDeliveryupdateApi();
+    // firstData();
+    // dropDownData();
+    // // TODO: implement initState
 
     _streamSubscription = _connectivity.onConnectivityChanged.listen((result) {
       if (result != ConnectivityResult.none) {
@@ -106,28 +106,12 @@ class _MyDeliveryState extends State<MyDelivery> {
     _buttonSubscription?.cancel();
   }
 
-  statusUpdate() async {
-    List datas = await sqlDb.readData('select * from deliver_error');
-
-    List imageData = await sqlDb.readData('select * from pending_image');
-    List exchangeImage = await sqlDb.readData('select * from pending_image');
-    List exchangeOrder = await sqlDb.readData('select * from pending_image');
-
-    // logger.i(imageData.toString());
-    List pendinDiiveryData =
-        await sqlDb.readData('select * from pending Where  err ="0"');
-
-    setState(() {
-      pendingImage = imageData;
-      pendingOrder = pendinDiiveryData;
-      exchangeOffline = exchangeOrder;
-    });
-  }
-
   firstData() async {
     setState(() {
       isLoading = true;
     });
+    List data = await sqlDb.readData('select * from exchange_order');
+    print(data);
     List datas = await sqlDb.readData('select * from deliver_error');
 
     List imageData = await sqlDb.readData('select * from pending_image');
@@ -144,28 +128,10 @@ class _MyDeliveryState extends State<MyDelivery> {
       pendingOrder = pendinDiiveryData;
       exchangeOffline = exchangeOffline;
     });
-    if (imageData.isNotEmpty) {
-      await offlineImageUpload();
-    }
-    if (exchangeImage.isNotEmpty) {
-      await exchangeOfflineImageUpload();
-    }
-    if (exchangeOffline.isNotEmpty) {
-      print(exchangeOffline);
-      print('ggggggggggggggggggggggggggggg');
-      await offlineExchangeApi(exchangeOffline);
-    }
-    if (pendinDiiveryData.isNotEmpty) {
-      print('pending dataaaaaaaaaaaaaaaaaaaaaaaaaaaa');
-      await offlineDeliveryupdateApi(pendinDiiveryData);
-    }
-    if (isOffline) {
-    } else {
-      getData(true, false);
-    }
+    await offlineImageUpload();
   }
 
-  getData(bool load, bool isSearching) async {
+  getData(bool load) async {
     List data = [];
     var connectivityResult = await (Connectivity().checkConnectivity());
 
@@ -179,7 +145,8 @@ class _MyDeliveryState extends State<MyDelivery> {
         connectivityResult == ConnectivityResult.wifi) {
       List temp = await CustomApi()
           .getmyorders(search.text.toString(), id.toString(), context);
-
+      print(temp);
+      print('ddddddddddddddddddddddddddddddddddddddd');
       if (temp == 1) {
         setState(() {
           isError = true;
@@ -226,7 +193,7 @@ class _MyDeliveryState extends State<MyDelivery> {
         isLoading = false;
       });
     }
-    // statusUpdate();
+    statusUpdate();
   }
 
   oderDataSerch(String waybill) async {
@@ -352,7 +319,9 @@ class _MyDeliveryState extends State<MyDelivery> {
             children: [
               RefreshIndicator(
                 onRefresh: () {
-                  return getData(false, false);
+                  return getData(
+                    false,
+                  );
                 },
                 child: SingleChildScrollView(
                   controller: _scrollController,
@@ -864,10 +833,13 @@ class _MyDeliveryState extends State<MyDelivery> {
     );
   }
 
-  backDataLoad() {
-    getData(false, false);
+  backDataLoad() async {
+    print('fffffffffffffffffffffffffffffffffffffffffffffffffffffff');
+    await getData(
+      false,
+    );
     codController.clear();
-    statusUpdate();
+    await statusUpdate();
   }
 
   offlineDeliveryUpdate(
@@ -903,11 +875,13 @@ class _MyDeliveryState extends State<MyDelivery> {
     List dataa = await sqlDb.readData('select * from delivery_oder');
     Navigator.pop(context);
 
-    getData(false, false);
+    getData(false);
     statusUpdate();
   }
 
-  offlineDeliveryupdateApi(List data) async {
+  offlineDeliveryupdateApi() async {
+    List data = await sqlDb.readData('select * from pending where err ="0"');
+    print(data);
     if (data.isNotEmpty) {
       List.generate(data.length, (index) async {
         print(
@@ -931,7 +905,9 @@ class _MyDeliveryState extends State<MyDelivery> {
               '///////xxxxxxxxx////////////////////////////////////////////////////////////////');
           var ress = await sqlDb.deleteData(
               'delete from pending where oId = "${data[index]['oId'].toString()}"');
-          await getData(true, false);
+          await getData(
+            true,
+          );
         } else {
           await sqlDb.updateData(
               'update pending  set err = "0"  where oId = "${data[index]['oId'].toString()}"');
@@ -940,33 +916,47 @@ class _MyDeliveryState extends State<MyDelivery> {
             'oId': data[index]['oId'].toString(),
             'msg': res.toString(),
           });
-          await getData(true, false);
         }
       });
-    } else {}
-    statusUpdate();
+    } else {
+      print(
+          'udate api datasssssssssssssssssssssssssssssssssssssssssssssssssss empty');
+    }
+
+    await getData(
+      true,
+    );
   }
 
-  offlineExchangeApi(List data) async {
+  offlineExchangeApi() async {
+    List data = await sqlDb.readData('select * from exchange_order');
+
     if (data.isNotEmpty) {
       List.generate(data.length, (index) async {
         var res = await CustomApi().Collectexchange(
-            context, data[index]['wayBill'], data[index]['oId'].toString());
-
+            context,
+            data[index]['wayBill'],
+            data[index]['oId'].toString(),
+            data[index]['ex_bag_waybill'].toString(),
+            data[index]['prev_waybill'].toString());
         print(res);
-
         if (res == 200) {
+          print('offlineExchangeApi update 200');
           print(
-              '///////xxxxxxxxx////////////////////////////////////////////////////////////////');
+              '///////xxxxxxxxx///////////////////////////////////qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/////////////////////////////');
           var ress = await sqlDb.deleteData(
               'delete from exchange_order where oId = "${data[index]['oId'].toString()}"');
         } else {
-          print('dddddddddddddddddddd');
+          print(
+              'ddddddddddddddsssssssssssssssssssssssssssssssssssssssssssssssssdddddd');
         }
       });
-      // await getData(true, false);
+
       // statusUpdate();
-    } else {}
+    } else {
+      print('exchange order data empty');
+    }
+    await offlineDeliveryupdateApi();
   }
 
   itemDetails(String waybill, bool updateBTN, String cod, String oId,
@@ -1100,7 +1090,9 @@ class _MyDeliveryState extends State<MyDelivery> {
 
                                 if (res == 200) {
                                   Navigator.pop(context);
-                                  getData(false, false);
+                                  getData(
+                                    false,
+                                  );
                                   codController.clear();
                                 }
                               }
@@ -1831,7 +1823,6 @@ class _MyDeliveryState extends State<MyDelivery> {
 
   offlineImageUpload() async {
     List data = await sqlDb.readData('select * from pending_image');
-    logger.d(data);
 
     if (data.isNotEmpty) {
       List.generate(data.length, (index) async {
@@ -1849,32 +1840,36 @@ class _MyDeliveryState extends State<MyDelivery> {
           print(ress);
         } else {}
       });
+    } else {
+      print('image data empty');
     }
-    statusUpdate();
+
+    await exchangeOfflineImageUpload();
+
+    // statusUpdate();
   }
 
   exchangeOfflineImageUpload() async {
     List data = await sqlDb.readData('select * from exchange_image');
-    logger.d(data);
 
     if (data.isNotEmpty) {
       List.generate(data.length, (index) async {
         final customDir = Directory(data[index]['image']);
-        print(customDir.path);
+
         var res = await CustomApi().immageUpload(context, XFile(customDir.path),
             data[index]['waybill'].toString(), true);
 
         if (res.toString() == '1') {
-          print('ddddddddddddddddddddddddddddddddddddddddddd');
           deleteImage(customDir.path);
           var ress = await sqlDb.deleteData(
               'delete from exchange_image where waybill = "${data[index]['waybill']}"');
-
-          print(ress);
-        } else {}
+        }
       });
+    } else {
+      print('exchange image data empty');
     }
-    statusUpdate();
+
+    await offlineExchangeApi();
   }
 
   Future<void> deleteImage(String path) async {
@@ -2054,6 +2049,27 @@ class _MyDeliveryState extends State<MyDelivery> {
         search.text = _scanBarcode.toString();
         _runFilter(search.text);
       }
+    });
+  }
+
+  statusUpdate() async {
+    List datas = await sqlDb.readData('select * from deliver_error');
+
+    List imageData = await sqlDb.readData('select * from pending_image');
+    List exchangeImage = await sqlDb.readData('select * from pending_image');
+    List exchangeOrder = await sqlDb.readData('select * from pending_image');
+
+    // logger.i(imageData.toString());
+    List pendinDiiveryData =
+        await sqlDb.readData('select * from pending Where  err ="0"');
+    localData = await sqlDb.readData('select * from delivery_oder');
+
+    setState(() {
+      dataList = localData.where((item) => item['type'] == "0").toList();
+      dataListTemp = dataList;
+      pendingImage = imageData;
+      pendingOrder = pendinDiiveryData;
+      exchangeOffline = exchangeOrder;
     });
   }
 }
