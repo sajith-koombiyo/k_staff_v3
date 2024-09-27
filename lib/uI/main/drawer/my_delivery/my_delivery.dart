@@ -169,7 +169,8 @@ class _MyDeliveryState extends State<MyDelivery> {
           'cust_internal': temp[index]['cust_internal'],
           'prev_waybill': temp[index]['prev_waybill'],
           'ex_bag_waybill': temp[index]['ex_bag_waybill'],
-          'type': '0'
+          'type': '0',
+          'err_msg': '0'
         });
         data = await sqlDb
             .readData('select * from delivery_oder where type = "0"');
@@ -757,19 +758,9 @@ class _MyDeliveryState extends State<MyDelivery> {
                                                       SizedBox(
                                                         height: 8,
                                                       ),
-                                                      errorData.any((element) {
-                                                        print(element['oId']);
-                                                        print(dataList[index]
-                                                            ['oid']);
-
-                                                        errMsg = element['msg']
-                                                            .toString();
-                                                        return element['oId']
-                                                                .toString() ==
-                                                            dataList[index]
-                                                                    ['oid']
-                                                                .toString();
-                                                      })
+                                                      dataList[index]
+                                                                  ['err_msg'] !=
+                                                              '0'
                                                           ? Container(
                                                               height: 20,
                                                               width: w,
@@ -780,12 +771,8 @@ class _MyDeliveryState extends State<MyDelivery> {
                                                                       26,
                                                                       150),
                                                               child: Text(
-                                                                errMsg == "400"
-                                                                    ? "Bad Request: Error Occurred (400)"
-                                                                    : errMsg ==
-                                                                            "406"
-                                                                        ? "Not Acceptable: Please Upload the POD (406)"
-                                                                        : "Something went wrong (403)",
+                                                                dataList[index]
+                                                                    ['err_msg'],
                                                                 style: TextStyle(
                                                                     color: Colors
                                                                         .white),
@@ -917,6 +904,9 @@ class _MyDeliveryState extends State<MyDelivery> {
             'oId': data[index]['oId'].toString(),
             'msg': res.toString(),
           });
+
+          await sqlDb.updateData(
+              'update delivery_oder  set err_msg = "${res.toString()}"  where oid = "${data[index]['oId'].toString()}"');
         }
       });
     } else {

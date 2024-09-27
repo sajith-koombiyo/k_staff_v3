@@ -15,9 +15,9 @@ class SqlDb {
 
   intialDb() async {
     String databasepath = await getDatabasesPath();
-    String path = join(databasepath, 'qzwe.db');
+    String path = join(databasepath, 'qq.db');
     Database mydb = await openDatabase(path,
-        onCreate: _onCreate, version: 24, onUpgrade: _onUpgrade);
+        onCreate: _onCreate, version: 26, onUpgrade: _onUpgrade);
     return mydb;
   }
 
@@ -40,7 +40,8 @@ class SqlDb {
             "cust_internal" TEXT ,
             "prev_waybill" TEXT ,
               "ex_bag_waybill" TEXT ,
-                "type" TEXT
+                "type" TEXT,
+                 "err_msg" TEXT
                
 
     
@@ -86,6 +87,7 @@ class SqlDb {
         "cod" TEXT ,
           "rescheduleDate" TEXT,
            "err" TEXT
+          
         
            
     
