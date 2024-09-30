@@ -42,14 +42,20 @@ class CustomApi {
     Provider.of<ProviderS>(context, listen: false).permission = status;
     bool _seen = (prefs.getBool('seen') ?? false);
     if (_seen) {
+      print('ddddddddddddddddddddddddddddddddddddd');
       var connectivityResult = await (Connectivity().checkConnectivity());
       if (connectivityResult == ConnectivityResult.mobile ||
           connectivityResult == ConnectivityResult.wifi) {
-        var urll = '${ApiUrl}/Version/users';
+        print('ddddddddddddddddddddddddddfffffffddddddddddd');
+        var urll = '${ApiUrl}Version/users';
+        print(urll);
         var res = await https.post(Uri.parse(urll), body: {});
+        print(res.statusCode);
         var responce = jsonDecode(res.body);
+
         print(responce);
         if (res.statusCode == 500) {
+          print('ddddddddddddddddddddddddddddddddddddd');
           Provider.of<ProviderS>(context, listen: false).isServerDown = true;
         } else {
           Provider.of<ProviderS>(context, listen: false).isServerDown = false;

@@ -81,11 +81,13 @@ class _MyDeliveryState extends State<MyDelivery> {
     isOnline();
     // // offlineDeliveryupdateApi();
     // firstData();
+    getData(false);
     dropDownData();
     // // TODO: implement initState
 
     _streamSubscription = _connectivity.onConnectivityChanged.listen((result) {
       if (result != ConnectivityResult.none) {
+        print('dddddddddddddddd');
         firstData();
         setState(() {
           isOffline = false;
