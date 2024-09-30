@@ -13,8 +13,8 @@ import 'provider/provider.dart';
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp();
-  // await notify().initNotifications();
+  await Firebase.initializeApp();
+  await notify().initNotifications();
   await AwesomeNotifications().initialize(
     null,
     [
