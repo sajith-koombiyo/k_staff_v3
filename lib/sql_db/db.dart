@@ -15,9 +15,9 @@ class SqlDb {
 
   intialDb() async {
     String databasepath = await getDatabasesPath();
-    String path = join(databasepath, 'qq.db');
+    String path = join(databasepath, 'qzq.db');
     Database mydb = await openDatabase(path,
-        onCreate: _onCreate, version: 26, onUpgrade: _onUpgrade);
+        onCreate: _onCreate, version: 27, onUpgrade: _onUpgrade);
     return mydb;
   }
 
@@ -86,7 +86,8 @@ class SqlDb {
       "dropdownValue2" TEXT ,
         "cod" TEXT ,
           "rescheduleDate" TEXT,
-           "err" TEXT
+           "err" TEXT,
+            "date" TEXT
           
         
            
@@ -144,7 +145,8 @@ class SqlDb {
     "oId" INTEGER  NOT NULL PRIMARY KEY ,
     "wayBill" TEXT  NOT NULL, 
     "ex_bag_waybill" TEXT  NOT NULL, 
-    "prev_waybill" TEXT  NOT NULL
+    "prev_waybill" TEXT  NOT NULL,
+      "date" TEXT
       
            
     

@@ -363,7 +363,8 @@ class _ExchangeState extends State<Exchange> {
         'oId': widget.oderId,
         'wayBill': widget.waybill,
         'ex_bag_waybill': widget.exchangeBagWaybill,
-        'prev_waybill': widget.pWaybill
+        'prev_waybill': widget.pWaybill,
+        'date': DateTime.now()
       });
       print(res);
       var r = await sqlDb.readData('select * from exchange_order');
@@ -377,7 +378,8 @@ class _ExchangeState extends State<Exchange> {
           'dropdownValue2': widget.dropdownvalueItem2,
           'cod': widget.codController,
           'rescheduleDate': widget.date,
-          'err': '0'
+          'err': '0',
+          'date': DateTime.now()
         });
         var r = await sqlDb.readData('select * from pending');
         print(r);
@@ -395,8 +397,13 @@ class _ExchangeState extends State<Exchange> {
         }
       }
     } else {
-      var res = await CustomApi().Collectexchange(context, widget.waybill,
-          widget.oderId, widget.exchangeBagWaybill, widget.pWaybill);
+      var res = await CustomApi().Collectexchange(
+          context,
+          widget.waybill,
+          widget.oderId,
+          widget.exchangeBagWaybill,
+          widget.pWaybill,
+          DateTime.now().toString());
 
       if (res == 200) {
         var res = await CustomApi().oderData(
@@ -407,7 +414,8 @@ class _ExchangeState extends State<Exchange> {
             widget.dropdownvalueItem2.toString(),
             widget.codController,
             widget.date,
-            widget.date);
+            widget.date,
+            DateTime.now().toString());
 
         if (res == 200) {
           widget.backDataLoad();

@@ -13,6 +13,7 @@ import 'package:flutter_application_2/sql_db/db.dart';
 import 'package:flutter_application_2/uI/app_agreement/agreement.dart';
 import 'package:flutter_application_2/uI/login_and_signup/otp.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -47,7 +48,7 @@ class CustomApi {
       if (connectivityResult == ConnectivityResult.mobile ||
           connectivityResult == ConnectivityResult.wifi) {
         print('ddddddddddddddddddddddddddfffffffddddddddddd');
-        var urll = '${ApiUrl}Version/users';
+        var urll = '${ApiUrl}/Version/users';
         print(urll);
         var res = await https.post(Uri.parse(urll), body: {});
         print(res.statusCode);
@@ -585,12 +586,15 @@ class CustomApi {
       String dropdownValue2,
       String cod,
       String rescheduleDate,
-      String oId) async {
+      String oId,
+      String date) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('userkey');
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
+      DateTime newDate = DateTime.parse(date);
+      String fomatedDate = DateFormat('yyyy-MMM-dd').format(newDate).toString();
       print('${statusType.toString()} ddddddddddddddddddddddddddddddd');
       Map<String, String> headers = {
         'userkey': '$id',
@@ -600,10 +604,13 @@ class CustomApi {
         // Headers
 
         // Make POST request
-        var res = await https.post(
-            headers: headers,
-            Uri.parse(apiUrl),
-            body: {'owner': id, 'waybill_id': wayBillId, 'status': '17'});
+        var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {
+          'owner': id,
+          'waybill_id': wayBillId,
+          'status': '17',
+          'datetime': date,
+          "date": fomatedDate
+        });
         print(res.statusCode);
         var data = jsonDecode(res.body);
 
@@ -633,7 +640,9 @@ class CustomApi {
               'waybill_id': wayBillId,
               'status': '19',
               'reason': dropdownValue,
-              'pcod': cod
+              'pcod': cod,
+              'datetime': date,
+              "date": fomatedDate
             });
             print(responses.statusCode);
             var data = jsonDecode(responses.body);
@@ -668,6 +677,8 @@ class CustomApi {
             'status': '7',
             'reason': dropdownValue2.toString(),
             'rdate': rescheduleDate,
+            'datetime': date,
+            "date": fomatedDate
           });
           print(responses.statusCode);
           var data = jsonDecode(responses.body);
@@ -701,6 +712,8 @@ class CustomApi {
             "remarks": dropdownValue2.toString(),
             "internal": "",
             "branch_id": Provider.of<ProviderS>(context, listen: false).bId,
+            'datetime': date,
+            "date": fomatedDate
           });
           var data = jsonDecode(responses.body);
 
@@ -1984,6 +1997,7 @@ class CustomApi {
     String ordrId,
     String exbag_waybill,
     String prev_waybill,
+    String date,
   ) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('userkey');
@@ -1991,7 +2005,8 @@ class CustomApi {
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
       final apiUrl = '${ApiUrl}Collectexchange/users';
-
+      DateTime newDate = DateTime.parse(date);
+      String fomatedDate = DateFormat('yyyy-MMM-dd').format(newDate).toString();
       // Headers
       Map<String, String> headers = {
         'userkey': '$id',
@@ -2012,7 +2027,9 @@ class CustomApi {
         "ex_waybill": wayBill,
         "oid": ordrId,
         "exbag_waybill": exbag_waybill,
-        "prev_waybill": prev_waybill
+        "prev_waybill": prev_waybill,
+        "datetime": date,
+        "date": fomatedDate
       });
       print(res.statusCode);
       var data = jsonDecode(res.body);

@@ -404,48 +404,48 @@ class _customDrawerState extends State<customDrawer> {
                                               });
                                             }, key, '8')
                                           : SizedBox(),
-                                      DrawerClz().branchDeposit(accessGroupId)
-                                          ? tileButton2('Demarcation', () {
-                                              setState(() {
-                                                if (x == 0) {
-                                                  x = 1;
-                                                } else {
-                                                  x = 0;
-                                                }
-                                              });
-                                            },
-                                              key,
-                                              '9',
-                                              x == 1
-                                                  ? [
-                                                      tileButton(
-                                                          'Find Demarcation',
-                                                          () {
-                                                        Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  FindDemarcation()),
-                                                        );
-                                                        setState(() {
-                                                          key = '10';
-                                                        });
-                                                      }, key, '10'),
-                                                      tileButton('Branch Route',
-                                                          () {
-                                                        Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  BranchRoute()),
-                                                        );
-                                                        setState(() {
-                                                          key = '11';
-                                                        });
-                                                      }, key, '11')
-                                                    ]
-                                                  : [])
-                                          : SizedBox(),
+                                      // DrawerClz().branchDeposit(accessGroupId)
+                                      //     ?
+                                      tileButton2('Demarcation', () {
+                                        setState(() {
+                                          if (x == 0) {
+                                            x = 1;
+                                          } else {
+                                            x = 0;
+                                          }
+                                        });
+                                      },
+                                          key,
+                                          '9',
+                                          x == 1
+                                              ? [
+                                                  tileButton('Find Demarcation',
+                                                      () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              FindDemarcation()),
+                                                    );
+                                                    setState(() {
+                                                      key = '10';
+                                                    });
+                                                  }, key, '10'),
+                                                  tileButton('Branch Route',
+                                                      () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              BranchRoute()),
+                                                    );
+                                                    setState(() {
+                                                      key = '11';
+                                                    });
+                                                  }, key, '11')
+                                                ]
+                                              : []),
+                                      // : SizedBox(),
                                       Container(),
                                     ]),
 

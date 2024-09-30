@@ -864,7 +864,8 @@ class _MyDeliveryState extends State<MyDelivery> {
       'dropdownValue2': dropdownValue2,
       'cod': cod,
       'rescheduleDate': rescheduleDate,
-      'err': '0'
+      'err': '0',
+      "date": DateTime.now().toString()
     });
 
     if (res == 1) {
@@ -875,7 +876,7 @@ class _MyDeliveryState extends State<MyDelivery> {
     List data = await sqlDb.readData('select * from pending');
 //
     // logger.e(data.toString());
-
+    print(data);
     var t = await sqlDb.updateData(
         'UPDATE delivery_oder SET type = "$statusType" WHERE  oId ="$oId"');
     List dataa = await sqlDb.readData('select * from delivery_oder');
@@ -902,6 +903,7 @@ class _MyDeliveryState extends State<MyDelivery> {
           data[index]['cod'].toString(),
           data[index]['rescheduleDate'].toString(),
           data[index]['oId'].toString(),
+          data[index]['date'].toString(),
         );
         print('////////////////////');
         print(res);
@@ -938,11 +940,14 @@ class _MyDeliveryState extends State<MyDelivery> {
     if (data.isNotEmpty) {
       List.generate(data.length, (index) async {
         var res = await CustomApi().Collectexchange(
-            context,
-            data[index]['wayBill'],
-            data[index]['oId'].toString(),
-            data[index]['ex_bag_waybill'].toString(),
-            data[index]['prev_waybill'].toString());
+          context,
+          data[index]['wayBill'],
+          data[index]['oId'].toString(),
+          data[index]['ex_bag_waybill'].toString(),
+          data[index]['prev_waybill'].toString(),
+          data[index]['date'].toString(),
+        );
+
         print(res);
         if (res == 200) {
           print('offlineExchangeApi update 200');
@@ -1090,7 +1095,8 @@ class _MyDeliveryState extends State<MyDelivery> {
                                         : dropdownvalueItem2.toString(),
                                     codController.text,
                                     provider.fomatedDate,
-                                    oId);
+                                    oId,
+                                    DateTime.now().toString());
 
                                 if (res == 200) {
                                   Navigator.pop(context);
