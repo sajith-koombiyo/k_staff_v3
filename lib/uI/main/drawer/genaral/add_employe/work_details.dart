@@ -112,6 +112,11 @@ class _WorkDetailsState extends State<WorkDetails> {
   @override
   void initState() {
     Future.delayed(Duration(milliseconds: 200)).then((value) {
+      String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+      regDate.text = formattedDate.toString();
+      setState(() {
+        regDate.text;
+      });
       Provider.of<ProviderDropDown>(context, listen: false).designation = '';
       Provider.of<ProviderDropDown>(context, listen: false).branch = '';
       Provider.of<ProviderDropDown>(context, listen: false).emp_Type = '';
@@ -144,7 +149,6 @@ class _WorkDetailsState extends State<WorkDetails> {
                     sAmount.text.isNotEmpty &&
                     provider.salaryType.isNotEmpty) {
                   if (provider.designation != '55') {
-                 
                     var res = await CustomApi().addUser(
                       context,
                       widget.name,
@@ -170,7 +174,6 @@ class _WorkDetailsState extends State<WorkDetails> {
                     var respp = jsonDecode(res);
 
                     if (respp['status'] == 1) {
-                     
                       var resp = await CustomApi().addUserImages(
                           context,
                           respp['temp_id'].toString(),
@@ -218,14 +221,12 @@ class _WorkDetailsState extends State<WorkDetails> {
                     }
                   } else {
                     if (provider.bondType == '1') {
-                   
                       if (newImage.isNotEmpty &&
                           newImage2.isNotEmpty &&
                           newImage3.isNotEmpty &&
                           newImage4.isNotEmpty &&
                           newImage5.isNotEmpty &&
                           newImage6.isNotEmpty) {
-                    
                         var res = await CustomApi().addUser(
                           context,
                           widget.name, widget.addres,
@@ -248,7 +249,7 @@ class _WorkDetailsState extends State<WorkDetails> {
                         );
 
                         var respp = jsonDecode(res);
-                     
+
                         if (respp['status'] == 1) {
                           var resp = await CustomApi().addUserImages(
                               context,
@@ -291,7 +292,6 @@ class _WorkDetailsState extends State<WorkDetails> {
                             Navigator.pop(context);
                           }
                         } else {
-                      
                           String data =
                               removeAllHtmlTags(respp['msg'].toString());
                           notification().warning(context, data);
@@ -391,11 +391,9 @@ class _WorkDetailsState extends State<WorkDetails> {
                             style: TextStyle(
                                 fontSize: 14, fontWeight: FontWeight.bold),
                           ),
-                          AddUserTextFelid(
-                            controller: regDate,
-                            hint: 'Reg.Date',
-                            icon: Icons.person,
-                            type: TextInputType.number,
+                          customTextFieldDate(
+                            'Reg.Date',
+                            regDate,
                           ),
                           Text(
                             'Salary Type',
@@ -471,7 +469,7 @@ class _WorkDetailsState extends State<WorkDetails> {
                                                 controller: vehicleNumber,
                                                 hint: 'Vehicle Number',
                                                 icon: Icons.person,
-                                                type: TextInputType.number,
+                                                type: TextInputType.text,
                                               ),
                                               SizedBox(
                                                 height: 12,

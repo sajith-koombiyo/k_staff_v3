@@ -320,23 +320,22 @@ class _customDrawerState extends State<customDrawer> {
                                           key = '0';
                                         });
                                       }, key, '1'),
-                                      DrawerClz().addEmployee(accessGroupId)
-                                          ? tileButton('Add Employee', () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        AddEmployee(
-                                                          branchId:
-                                                              color.userData[0]
-                                                                  ['branch_id'],
-                                                        )),
-                                              );
-                                              setState(() {
-                                                key = '2';
-                                              });
-                                            }, key, '2')
-                                          : SizedBox(),
+                                      // DrawerClz().addEmployee(accessGroupId)
+                                      //     ?
+                                      tileButton('Add Employee', () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => AddEmployee(
+                                                    branchId: color.userData[0]
+                                                        ['branch_id'],
+                                                  )),
+                                        );
+                                        setState(() {
+                                          key = '2';
+                                        });
+                                      }, key, '2'),
+                                      // : SizedBox(),
                                       DrawerClz().manageUser(accessGroupId)
                                           ? tileButton('Manage Users', () {
                                               Navigator.push(
