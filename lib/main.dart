@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -29,7 +31,13 @@ void main() async {
     ],
   );
 
-  FirebaseMessaging.onMessageOpenedApp.listen((event) {});
+  FirebaseMessaging.onMessageOpenedApp.listen((event) {
+
+
+
+    print('ffffdfdfndefdshfhsbhbshbdhsbhdbshbdhsbdhbshdbshbdhsbdhsbdhbshdbshdbshdbhsybdhsbdhsbdsbdhsbdhbsdhsbdhsbdhsß');
+    
+  });
   // ZegoUIKitPrebuiltCallInvitationService().setNavigatorKey(navigatorKey);
 
   // // call the useSystemCallingUI

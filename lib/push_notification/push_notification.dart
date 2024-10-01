@@ -8,15 +8,22 @@ import 'package:flutter/material.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/provider.dart';
 
-Future<void> handleBckgroundMessage(RemoteMessage message) async {}
+Future<void> handleBckgroundMessage(RemoteMessage message) async {
+
+print(message);
+
+}
 
 Future<void> img() async {}
 
 class notify {
+  final fire = FirebaseMessaging.instance.requestPermission();
+  
   final firebaseMessaging = FirebaseMessaging.instance;
 
   // AndroidNotificationChannel channel = AndroidNotificationChannel(
@@ -65,7 +72,7 @@ class notify {
   // }
 
   Future<void> initNotifications() async {
-    await firebaseMessaging.requestPermission();
+    await firebaseMessaging.requestPermission( alert: true,badge: true, provisional: false,sound: true);
 
     final fCMTocken = await firebaseMessaging.getToken();
 
@@ -104,6 +111,7 @@ class notify {
                 /* same name */
                 title: notification.title,
                 body: notification.body));
+                
 
         // localNotificationsPlugin.show(
         //     notification.hashCode,
