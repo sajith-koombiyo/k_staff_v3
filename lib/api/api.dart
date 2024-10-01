@@ -160,11 +160,9 @@ class CustomApi {
   // user login
 
   login(
-
     String userNameController,
     BuildContext context,
   ) async {
-
     String? fCMTocken;
     // final firebaseMessaging = FirebaseMessaging.instance;
     //
@@ -174,7 +172,7 @@ class CustomApi {
     // print(fCMTocken.toString());
     //
     // fCMTocken;
-    fCMTocken ='test noti';
+    fCMTocken = 'test noti';
 // fZSfYewBT_S74v4mLnO48q:APA91bH2M307Ndk-LjqV9PrV3oXA2vUN5UZxnGwzIH1fhMiRqEARQVma3m9o8SD6oWWiSwbjkiMDz5uXJnfFUkAvjeTPvehr37l8odg4s0LkflWCToiESgRQbJs11b2RQgV239mw4jaN
     String username = userNameController;
     var connectivityResult = await (Connectivity().checkConnectivity());
@@ -686,7 +684,7 @@ class CustomApi {
           print(responses.statusCode);
           var data = jsonDecode(responses.body);
           if (data['status'] == 200) {
-            notification().info(context, 'Order Delivered Successfully');
+            notification().info(context, 'Reshedule Update Successfully');
           } else if (data['status'] == 403) {
             Provider.of<ProviderS>(context, listen: false).isanotherUserLog =
                 true;
