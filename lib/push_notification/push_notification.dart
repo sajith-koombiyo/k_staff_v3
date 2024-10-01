@@ -79,7 +79,7 @@ class notify {
     FirebaseMessaging.onMessage.listen((message) async {
       final notification = message.notification;
 
-      // print(channel);
+      print(notification);
 
       var url = message.notification?.android?.imageUrl;
       // String imgurl = await url.toString();
