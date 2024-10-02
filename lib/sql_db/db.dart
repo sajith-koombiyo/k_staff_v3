@@ -31,7 +31,7 @@ class SqlDb {
     "oid" TEXT  NOT NULL PRIMARY KEY ,
       "waybill_id" TEXT NOT NULL,
       "cod_final" TEXT NOT NULL,
-      "order_type" TEXT NOT NULL,
+      "order_type" TEXT NOT NULL,             
       "cust_name" TEXT NOT NULL,
        "name" TEXT NOT NULL,
          "address" TEXT NOT NULL,
