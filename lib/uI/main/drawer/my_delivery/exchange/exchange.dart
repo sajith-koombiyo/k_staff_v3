@@ -357,6 +357,8 @@ class _ExchangeState extends State<Exchange> {
   }
 
   exchangeUpdate() async {
+    var re = DateTime.now().toString();
+    print(re);
     if (isOffline) {
       print('gggggggggggggggggggggggggggggggggg');
       var res = await sqlDb.replaceData('exchange_order', {
@@ -364,7 +366,7 @@ class _ExchangeState extends State<Exchange> {
         'wayBill': widget.waybill,
         'ex_bag_waybill': widget.exchangeBagWaybill,
         'prev_waybill': widget.pWaybill,
-        'date': DateTime.now()
+        'date': DateTime.now().toString()
       });
       print(res);
       var r = await sqlDb.readData('select * from exchange_order');
@@ -379,7 +381,7 @@ class _ExchangeState extends State<Exchange> {
           'cod': widget.codController,
           'rescheduleDate': widget.date,
           'err': '0',
-          'date': DateTime.now()
+          'date': DateTime.now().toString()
         });
         var r = await sqlDb.readData('select * from pending');
         print(r);

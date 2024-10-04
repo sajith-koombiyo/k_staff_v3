@@ -53,8 +53,9 @@ class CustomApi {
         var res = await https.post(Uri.parse(urll), body: {});
         print(res.statusCode);
         var responce = jsonDecode(res.body);
-
+        print('dddddddsssssssssssssdddddddddddddddddddddddddddddd');
         print(responce);
+        print('ddddddsssssssssssssssddddddddddddddddddddddddddddddd');
         if (res.statusCode == 500) {
           print('ddddddddddddddddddddddddddddddddddddd');
           Provider.of<ProviderS>(context, listen: false).isServerDown = true;
@@ -63,6 +64,7 @@ class CustomApi {
         }
 
         if (responce == "3.0") {
+          print('dddddddsssssssssssssssdddddddddddddddddddddddddddddd');
           late String installDate;
           final DateTime date = await AppInstallDate().installDate;
           installDate = date.toString();

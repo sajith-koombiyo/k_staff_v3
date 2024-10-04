@@ -1084,8 +1084,7 @@ class _MyDeliveryState extends State<MyDelivery> {
 
                                 codController.clear();
                               } else {
-                                var res = '';
-                                await CustomApi().oderData(
+                                var res = await CustomApi().oderData(
                                     x,
                                     waybill,
                                     context,
