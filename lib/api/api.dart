@@ -569,7 +569,7 @@ class CustomApi {
       // Headers
       Map<String, String> headers = {
         'userkey': '$id',
-      }; 
+      };
       var resp =
           await https.post(headers: headers, Uri.parse(apiUrl), body: {});
       return jsonDecode(resp.body);
@@ -650,7 +650,19 @@ class CustomApi {
             var data = jsonDecode(responses.body);
             print(data);
 
-            notification().info(context, data['status']);
+            if (data['status'] == 200) {
+              notification().info(context, 'Order Update Successfully');
+              Navigator.pop(context);
+            } else if (data['status'] == 400) {
+              notification().info(context, 'Bad Request: Order Update Failed');
+            } else if (data['status'] == 403) {
+              Provider.of<ProviderS>(context, listen: false).isanotherUserLog =
+                  true;
+            } else if (data['status'] == 406) {
+              notification()
+                  .info(context, 'Not Acceptable: Please Upload the POD');
+            }
+
             return data['status'];
           } else {
             notification().info(context, 'Collected COD ?');
@@ -681,23 +693,7 @@ class CustomApi {
           print('/////////////////////');
           print(data);
           print('/////////////////////');
-          if (data['status'] == 200) {
-            print('dddddddddddddddddddddddddd');
-            notification().info(context, 'Reshedule Update Successfully');
-          } else if (data['status'] == 403) {
-            Provider.of<ProviderS>(context, listen: false).isanotherUserLog =
-                true;
-          } else if (data['status'] == 400) {
-            notification().info(context, 'Bad Request: Order Update Failed');
-          } else if (data['status'] == 406) {
-            notification()
-                .info(context, 'Not Acceptable: Please Try Again on Tomorrow');
-          } else if (data['status'] == 409) {
-            notification()
-                .info(context, 'Conflict: Please Submit the Correct Date');
-          } else if (data['status'] == 410) {
-            notification().info(context, 'Gone: Error Occurred ');
-          }
+          notification().info(context, data['msg'].toString());
 
           return data['status'];
         } else {

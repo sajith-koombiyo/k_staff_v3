@@ -23,6 +23,7 @@ import 'branch_operation/delivery_approval.dart';
 import 'branch_operation/dd_aproval/pending_DD.dart';
 import 'contact_us/contact_us.dart';
 import 'darwer_clz.dart';
+import 'domestic/domestic.dart';
 import 'genaral/add_employe/add_employee.dart';
 import 'genaral/branch_deposit/branch_deposit.dart';
 import 'genaral/branch_visit/location_update_googlMap.dart';
@@ -228,6 +229,16 @@ class _customDrawerState extends State<customDrawer> {
                                             text: 'My Orders',
                                           )
                                         : SizedBox(),
+                                    DrawerClz().myOrders(accessGroupId)
+                                        ? CustomDrawerButton(
+                                            icon: Icons.add_shopping_cart_sharp,
+                                            onTap: () {
+                                              navigation(Domestic());
+                                            },
+                                            text: 'Domestic',
+                                          )
+                                        : SizedBox(),
+
                                     DrawerClz().reschedule(accessGroupId)
                                         ? CustomDrawerButton(
                                             icon: Icons.query_builder,
