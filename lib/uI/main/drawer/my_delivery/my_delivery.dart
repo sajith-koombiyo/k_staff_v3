@@ -1940,7 +1940,7 @@ class _MyDeliveryState extends State<MyDelivery> {
       setState(() {
         selectedDate = picked;
         Provider.of<ProviderS>(context, listen: false).fomatedDate =
-            DateFormat.yMMMEd().format(picked);
+            DateFormat('yyyy-M-dd').format(picked).toString();
 
         var formattedDate = DateFormat.yMMMEd().format(picked);
       });

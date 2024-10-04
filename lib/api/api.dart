@@ -589,13 +589,14 @@ class CustomApi {
       String rescheduleDate,
       String oId,
       String date) async {
+    print(date);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('userkey');
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
       DateTime newDate = DateTime.parse(date);
-      String fomatedDate = DateFormat('yyyy-MMM-dd').format(newDate).toString();
+      String fomatedDate = DateFormat('yyyy-M-dd').format(newDate).toString();
       print('${statusType.toString()} ddddddddddddddddddddddddddddddd');
       Map<String, String> headers = {
         'userkey': '$id',
@@ -649,19 +650,7 @@ class CustomApi {
             var data = jsonDecode(responses.body);
             print(data);
 
-            if (data['status'] == 200) {
-              notification().info(context, 'Order Update Successfully');
-              Navigator.pop(context);
-            } else if (data['status'] == 400) {
-              notification().info(context, 'Bad Request: Order Update Failed');
-            } else if (data['status'] == 403) {
-              Provider.of<ProviderS>(context, listen: false).isanotherUserLog =
-                  true;
-            } else if (data['status'] == 406) {
-              notification()
-                  .info(context, 'Not Acceptable: Please Upload the POD');
-            }
-
+            notification().info(context, data['status']);
             return data['status'];
           } else {
             notification().info(context, 'Collected COD ?');
@@ -671,6 +660,11 @@ class CustomApi {
         }
       } else if (statusType == 3) {
         if (dropdownValue2 != '') {
+          print(wayBillId);
+          print(dropdownValue2);
+          print(rescheduleDate);
+          print(date);
+          print(fomatedDate);
           final apiUrl = '${ApiUrl}/Reshedule/users';
           var responses =
               await https.post(headers: headers, Uri.parse(apiUrl), body: {
@@ -682,8 +676,13 @@ class CustomApi {
             "date": fomatedDate
           });
           print(responses.statusCode);
+
           var data = jsonDecode(responses.body);
+          print('/////////////////////');
+          print(data);
+          print('/////////////////////');
           if (data['status'] == 200) {
+            print('dddddddddddddddddddddddddd');
             notification().info(context, 'Reshedule Update Successfully');
           } else if (data['status'] == 403) {
             Provider.of<ProviderS>(context, listen: false).isanotherUserLog =
