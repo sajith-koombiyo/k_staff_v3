@@ -17,6 +17,7 @@ Future<void> handleBckgroundMessage(RemoteMessage message) async {
 
 print(message);
 
+
 }
 
 Future<void> img() async {}
@@ -70,7 +71,7 @@ class notify {
 
   //   // Get initial notification action is optional
   // }
-
+// @pragma("vm:entry-point")
   Future<void> initNotifications() async {
     await firebaseMessaging.requestPermission( alert: true,badge: true, provisional: false,sound: true);
 
@@ -82,6 +83,8 @@ class notify {
     //     fCMTocken.toString();
     // initLocalNotificatons();
     FirebaseMessaging.onBackgroundMessage(handleBckgroundMessage);
+
+
 
     FirebaseMessaging.onMessage.listen((message) async {
       final notification = message.notification;
