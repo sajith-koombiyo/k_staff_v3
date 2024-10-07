@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/api/api.dart';
 import 'package:flutter_application_2/provider/provider.dart';
 import 'package:flutter_application_2/uI/widget/add_user_textfeald/add_user_textfeald.dart';
+import 'package:flutter_application_2/uI/widget/diloag_button.dart';
+import 'package:flutter_application_2/uI/widget/home_screen_widget/home_button.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:provider/provider.dart';
 import '../../../../../app_details/color.dart';
@@ -435,7 +437,20 @@ class _DomesticState extends State<Domestic> {
                               icon: Icons.emergency,
                               type: TextInputType.number,
                             ),
-                          ])))
+                          ]))),
+              SizedBox(
+                height: 12,
+              ),
+              SizedBox(
+                width: w / 1.5,
+                child: HomeButton(
+                  text: 'Save',
+                  onTap: () {},
+                ),
+              ),
+              SizedBox(
+                height: 12,
+              ),
             ],
           ),
         ),

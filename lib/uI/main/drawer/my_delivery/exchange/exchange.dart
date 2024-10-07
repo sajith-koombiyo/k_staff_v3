@@ -325,18 +325,23 @@ class _ExchangeState extends State<Exchange> {
                       child: check
                           ? HomeButton(
                               onTap: () async {
-                                setState(() {
-                                  isLoading = true;
-                                });
-                                exchangeUpdate();
-                                setState(() {
-                                  isLoading = false;
-                                });
+                                if (newImage.isNotEmpty) {
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+                                  exchangeUpdate();
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                } else {
+                                  notification()
+                                      .warning(context, 'Please upload image');
+                                }
                               },
                               text: 'COLLECT',
                             )
                           : SizedBox(),
-                    ),
+                    )
                   ]),
             ),
           ),
