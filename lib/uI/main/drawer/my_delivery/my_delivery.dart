@@ -1088,27 +1088,26 @@ class _MyDeliveryState extends State<MyDelivery> {
 
                                 codController.clear();
                               } else {
-                                print('ffffffff');
-                                // var res = await CustomApi().oderData(
-                                //     x,
-                                //     waybill,
-                                //     context,
-                                //     dropdownvalueItem.toString(),
-                                //     x == 4
-                                //         ? remark.toString()
-                                //         : dropdownvalueItem2.toString(),
-                                //     codController.text,
-                                //     provider.fomatedDate,
-                                //     oId,
-                                //     DateTime.now().toString());
+                                var res = await CustomApi().oderData(
+                                    x,
+                                    waybill,
+                                    context,
+                                    dropdownvalueItem.toString(),
+                                    x == 4
+                                        ? remark.toString()
+                                        : dropdownvalueItem2.toString(),
+                                    codController.text,
+                                    provider.fomatedDate,
+                                    oId,
+                                    DateTime.now().toString());
 
-                                // if (res == 200) {
-                                //   Navigator.pop(context);
-                                //   getData(
-                                //     false,
-                                //   );
-                                //   codController.clear();
-                                // }
+                                if (res == 200) {
+                                  Navigator.pop(context);
+                                  getData(
+                                    false,
+                                  );
+                                  codController.clear();
+                                }
                               }
                             } else {
                               notification()
