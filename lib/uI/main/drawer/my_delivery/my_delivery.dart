@@ -64,6 +64,7 @@ class _MyDeliveryState extends State<MyDelivery> {
   String? dropdownvalue;
   String? dropdownvalue2;
   String? remarkValue;
+  String remark = '';
   String dropdownvalueItem = '';
   String dropdownvalueItem2 = '';
   DateTime selectedDate = DateTime.now();
@@ -1002,7 +1003,7 @@ class _MyDeliveryState extends State<MyDelivery> {
               DialogButton(
                 buttonHeight: h / 14,
                 width: w,
-                text: oderType == '1' ? 'Exchange' : 'Save',
+                text: oderType == '1' && x == 1 || x == 2 ? 'Exchange' : 'Save',
                 color:
                     updateBTN ? Color.fromARGB(255, 8, 152, 219) : Colors.grey,
                 onTap: updateBTN
@@ -1016,11 +1017,11 @@ class _MyDeliveryState extends State<MyDelivery> {
                             updateBTN = false;
                           });
                         } else {
-                          if (oderType == '1') {
-                            print('ccccddddddddddddddddddddddddcccccccc');
-                            if (x == 3 || x == 2) {
+                          if (oderType == '1' && x == 1 || x == 2) {
+                            if (x == 2) {
+                              print('ccccddddddddddddddddddddddddcccccccc');
                               if (dropdownvalue != null ||
-                                  remarkValue != null ||
+                                  remark != '' ||
                                   dropdownvalue2 != null ||
                                   x == 1) {
                                 Navigator.push(
@@ -1034,7 +1035,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                                         waybill: waybill,
                                         dropdownvalueItem: dropdownvalueItem,
                                         dropdownvalueItem2: x == 4
-                                            ? remarkValue.toString()
+                                            ? remark.toString()
                                             : dropdownvalueItem2,
                                         codController: codController.text,
                                         date: provider.fomatedDate,
@@ -1046,6 +1047,9 @@ class _MyDeliveryState extends State<MyDelivery> {
                                     context, 'please select the reason');
                               }
                             } else {
+                              print('.......');
+                              print(remark);
+                              print('.......');
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -1057,7 +1061,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                                       waybill: waybill,
                                       dropdownvalueItem: dropdownvalueItem,
                                       dropdownvalueItem2: x == 4
-                                          ? remarkValue.toString()
+                                          ? remark.toString()
                                           : dropdownvalueItem2,
                                       codController: codController.text,
                                       date: provider.fomatedDate,
@@ -1067,7 +1071,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                             }
                           } else {
                             if (dropdownvalue != null ||
-                                remarkValue != null ||
+                                remark != '' ||
                                 dropdownvalue2 != null ||
                                 x == 1) {
                               if (isOffline) {
@@ -1077,33 +1081,34 @@ class _MyDeliveryState extends State<MyDelivery> {
                                     x.toString(),
                                     dropdownvalueItem,
                                     x == 4
-                                        ? remarkValue.toString()
+                                        ? remark.toString()
                                         : dropdownvalueItem2.toString(),
                                     codController.text,
                                     provider.fomatedDate);
 
                                 codController.clear();
                               } else {
-                                var res = await CustomApi().oderData(
-                                    x,
-                                    waybill,
-                                    context,
-                                    dropdownvalueItem.toString(),
-                                    x == 4
-                                        ? remarkValue.toString()
-                                        : dropdownvalueItem2.toString(),
-                                    codController.text,
-                                    provider.fomatedDate,
-                                    oId,
-                                    DateTime.now().toString());
+                                print('ffffffff');
+                                // var res = await CustomApi().oderData(
+                                //     x,
+                                //     waybill,
+                                //     context,
+                                //     dropdownvalueItem.toString(),
+                                //     x == 4
+                                //         ? remark.toString()
+                                //         : dropdownvalueItem2.toString(),
+                                //     codController.text,
+                                //     provider.fomatedDate,
+                                //     oId,
+                                //     DateTime.now().toString());
 
-                                if (res == 200) {
-                                  Navigator.pop(context);
-                                  getData(
-                                    false,
-                                  );
-                                  codController.clear();
-                                }
+                                // if (res == 200) {
+                                //   Navigator.pop(context);
+                                //   getData(
+                                //     false,
+                                //   );
+                                //   codController.clear();
+                                // }
                               }
                             } else {
                               notification()
@@ -1208,6 +1213,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                       onTap: () {
                         setstate(() {
                           x = 1;
+                          newImage = '';
                           if (x == 1 &&
                               codValue >= 100.00 &&
                               newImage.isEmpty) {
@@ -1247,6 +1253,8 @@ class _MyDeliveryState extends State<MyDelivery> {
                         setstate(() {
                           x = 2;
                           updateBTN = false;
+                          dropdownvalue = null;
+                          newImage = '';
                         });
                       },
                       child: Container(
@@ -1281,6 +1289,8 @@ class _MyDeliveryState extends State<MyDelivery> {
                         setstate(() {
                           x = 3;
                           updateBTN = false;
+                          dropdownvalue2 = null;
+                          newImage = '';
                         });
                       },
                       child: Container(
@@ -1315,6 +1325,8 @@ class _MyDeliveryState extends State<MyDelivery> {
                         setstate(() {
                           x = 4;
                           updateBTN = false;
+                          remarkValue = null;
+                          newImage = '';
                         });
                       },
                       child: Container(
@@ -1563,6 +1575,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                                     //implement initial value or selected value
                                     onChanged: (value) {
                                       setstate(() {
+                                        print(value);
                                         //set state will update UI and State of your App
                                         remarkValue = value.toString();
                                         if (remarkValue!.isNotEmpty) {
@@ -1575,7 +1588,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                                           alignment: Alignment.centerLeft,
                                           onTap: () {
                                             setstate(() {
-                                              dropdownvalueItem2 =
+                                              remark =
                                                   itemone['reason'].toString();
                                             });
                                           },

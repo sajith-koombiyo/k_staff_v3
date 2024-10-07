@@ -3,14 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/api/api.dart';
 import 'package:flutter_application_2/provider/provider.dart';
+import 'package:flutter_application_2/uI/widget/add_user_textfeald/add_user_textfeald.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import '../../../../../app_details/color.dart';
-import '../../../../../class/class.dart';
-
-import '../../../widget/nothig_found.dart';
-import '../../navigation/navigation.dart';
 
 class Domestic extends StatefulWidget {
   const Domestic({super.key});
@@ -21,8 +17,17 @@ class Domestic extends StatefulWidget {
 
 class _DomesticState extends State<Domestic> {
   int accessGroupId = 1;
-  TextEditingController dateController = TextEditingController();
-  TextEditingController remarkController = TextEditingController();
+  TextEditingController Name = TextEditingController();
+  TextEditingController address = TextEditingController();
+  TextEditingController phone = TextEditingController();
+  TextEditingController nic = TextEditingController();
+  TextEditingController oderDestination = TextEditingController();
+  TextEditingController actualeValue = TextEditingController();
+  TextEditingController weight = TextEditingController();
+  TextEditingController toWaybill = TextEditingController();
+  TextEditingController toName = TextEditingController();
+  TextEditingController toAddress = TextEditingController();
+  TextEditingController toPhone = TextEditingController();
   DateTime selectedDate = DateTime.now();
   String? selectval;
   String? selectDistrict;
@@ -42,12 +47,7 @@ class _DomesticState extends State<Domestic> {
   List districtList = [];
   List cityList = [];
   bool isLoading = false;
-  String branchListID = '';
-  bool isActive = true;
-  bool active = true;
-  List destinationList = [];
-  String? selectDId;
-  var destinationId;
+
   void initState() {
     getUserBranch();
     getDistrict();
@@ -141,277 +141,406 @@ class _DomesticState extends State<Domestic> {
               )),
         ),
         backgroundColor: white,
-        body: Stack(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  color: appliteBlue,
-                  child: Column(
-                    children: [
-                      Divider(),
-                      Column(
-                        children: [
-                          Row(
-                            children: [
-                              Flexible(
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 8),
-                                  child: Card(
-                                    child: Container(
-                                      height: h / 17,
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 15),
-                                      alignment: Alignment.centerRight,
-                                      width: w,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(5.0),
-                                        border: Border.all(
-                                            color: black3,
-                                            style: BorderStyle.solid,
-                                            width: 0.80),
-                                      ),
-                                      child: DropdownButton(
-                                        isExpanded: true,
-                                        alignment:
-                                            AlignmentDirectional.centerEnd,
-                                        hint: Container(
-                                          //and here
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            "Pickup Rider",
-                                            style: TextStyle(color: black1),
-                                            textAlign: TextAlign.end,
-                                          ),
-                                        ),
-                                        value:
-                                            selectDistrict, //implement initial value or selected value
-                                        onChanged: (value) {
-                                          setState(() {
-                                            selectDistrict = value
-                                                .toString(); //change selectval to new value
-                                          });
-                                        },
-                                        items: districtList.map((itemone) {
-                                          return DropdownMenuItem(
-                                              onTap: () async {
-                                                setState(() {
-                                                  selectval = null;
-                                                  selectCity = null;
-                                                  districtId =
-                                                      itemone['district_sl_id'];
-                                                });
-                                                await getCity(
-                                                    itemone['district_sl_id']);
-
-                                                demarcationData(
-                                                    districtId, '', '');
-                                              },
-                                              value: itemone['district_name'],
-                                              child: Text(
-                                                itemone['district_name'],
-                                                style: TextStyle(color: black2),
-                                              ));
-                                        }).toList(),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Flexible(
-                                child: Stack(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8),
-                                      child: Card(
-                                        child: Container(
-                                          height: h / 17,
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 15),
-                                          alignment: Alignment.centerRight,
-                                          width: w,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(5.0),
-                                            border: Border.all(
-                                                color: black3,
-                                                style: BorderStyle.solid,
-                                                width: 0.80),
-                                          ),
-                                          child: DropdownButton(
-                                            isExpanded: true,
-                                            alignment:
-                                                AlignmentDirectional.centerEnd,
-                                            hint: Container(
-                                              //and here
-                                              alignment: Alignment.centerLeft,
-                                              child: Text(
-                                                "Pickup Id",
-                                                style: TextStyle(color: black1),
-                                                textAlign: TextAlign.end,
-                                              ),
-                                            ),
-                                            value:
-                                                selectCity, //implement initial value or selected value
-                                            onChanged: (value) {
-                                              setState(() {
-                                                // _runFilter(value.toString());
-                                                //set state will update UI and State of your App
-                                                selectCity = value
-                                                    .toString(); //change selectval to new value
-                                              });
-                                            },
-                                            items: cityList.map((itemone) {
-                                              return DropdownMenuItem(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      selectval = null;
-                                                      destinationId =
-                                                          itemone['cid'];
-                                                      cityName =
-                                                          itemone['cname'];
-                                                    });
-                                                    demarcationData(districtId,
-                                                        cityName, '');
-                                                  },
-                                                  value: itemone['cname'],
-                                                  child: Text(
-                                                    itemone['cname'],
-                                                    style: TextStyle(
-                                                        color: black2),
-                                                  ));
-                                            }).toList(),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    cityLoading
-                                        ? Center(
-                                            child: SizedBox(
-                                            height: h / 16,
-                                            child: LoadingAnimationWidget
-                                                .prograssiveDots(
-                                              color: Color.fromARGB(
-                                                  255, 198, 187, 186),
-                                              size: 40,
-                                            ),
-                                          ))
-                                        : SizedBox()
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 5,
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 12,
-                ),
-                Padding(
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
+                height: 10,
+              ),
+              Card(
+                elevation: 20,
+                child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'DELIVERY CHARGE TYPE',
-                        style: TextStyle(
-                            color: black, fontWeight: FontWeight.bold),
+                      text(
+                        'Picked By',
+                      ),
+                      Row(
+                        children: [
+                          dropDown(
+                            'Pick ID',
+                            cityList,
+                            () {},
+                            cityList!.map((itemone) {
+                              return DropdownMenuItem(
+                                  onTap: () {
+                                    setState(() {
+                                      selectval = null;
+
+                                      cityName = itemone['cname'];
+                                    });
+                                  },
+                                  value: itemone['cname'],
+                                  child: Text(
+                                    itemone['cname'],
+                                    style: TextStyle(color: black2),
+                                  ));
+                            }).toList(),
+                          ),
+                          dropDown(
+                            'Pick ID',
+                            cityList,
+                            () {},
+                            cityList!.map((itemone) {
+                              return DropdownMenuItem(
+                                  onTap: () {
+                                    setState(() {
+                                      selectval = null;
+
+                                      cityName = itemone['cname'];
+                                    });
+                                  },
+                                  value: itemone['cname'],
+                                  child: Text(
+                                    itemone['cname'],
+                                    style: TextStyle(color: black2),
+                                  ));
+                            }).toList(),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 12,
+                      ),
+                      text(
+                        'Delivery Charge Type',
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Radio(
+                                    value: 1,
+                                    groupValue: 'null',
+                                    onChanged: (index) {}),
+                                Expanded(
+                                  child: Text('Charge On pickup'),
+                                )
+                              ],
+                            ),
+                            flex: 1,
+                          ),
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Radio(
+                                    value: 2,
+                                    groupValue: 'null',
+                                    onChanged: (index) {}),
+                                Expanded(child: Text('Charge On Delivery'))
+                              ],
+                            ),
+                            flex: 1,
+                          ),
+                        ],
+                      ),
+                      text(
+                        'DELIVERY TYPE',
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Radio(
+                                    value: 1,
+                                    groupValue: 'null',
+                                    onChanged: (index) {}),
+                                Expanded(
+                                  child: Text('Parcel(Max 99Kg)'),
+                                )
+                              ],
+                            ),
+                            flex: 1,
+                          ),
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Radio(
+                                    value: 2,
+                                    groupValue: 'null',
+                                    onChanged: (index) {}),
+                                Expanded(child: Text('Letter'))
+                              ],
+                            ),
+                            flex: 1,
+                          ),
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Radio(
+                                    value: 2,
+                                    groupValue: 'null',
+                                    onChanged: (index) {}),
+                                Expanded(child: Text('Bulk'))
+                              ],
+                            ),
+                            flex: 1,
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Row(
+                        children: [
+                          dropDown(
+                            'From Branch',
+                            cityList,
+                            () {},
+                            districtList.map((itemone) {
+                              return DropdownMenuItem(
+                                  onTap: () async {
+                                    setState(() {
+                                      selectval = null;
+                                      selectCity = null;
+                                      districtId = itemone['district_sl_id'];
+                                    });
+                                    await getCity(itemone['district_sl_id']);
+                                  },
+                                  value: itemone['district_name'],
+                                  child: Text(
+                                    itemone['district_name'],
+                                    style: TextStyle(color: black2),
+                                  ));
+                            }).toList(),
+                          ),
+                          dropDown(
+                            'From Branch',
+                            cityList,
+                            () {},
+                            districtList.map((itemone) {
+                              return DropdownMenuItem(
+                                  onTap: () async {
+                                    setState(() {
+                                      selectval = null;
+                                      selectCity = null;
+                                      districtId = itemone['district_sl_id'];
+                                    });
+                                    await getCity(itemone['district_sl_id']);
+                                  },
+                                  value: itemone['district_name'],
+                                  child: Text(
+                                    itemone['district_name'],
+                                    style: TextStyle(color: black2),
+                                  ));
+                            }).toList(),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
-                redioWidget()
-              ],
-            ),
-          ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Card(
+                elevation: 20,
+                color: Color.fromARGB(255, 216, 233, 247),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      text(
+                        'FROM',
+                      ),
+                      AddUserTextFelid(
+                        controller: Name,
+                        hint: 'Name',
+                        icon: Icons.person,
+                        type: TextInputType.multiline,
+                      ),
+                      AddUserTextFelid(
+                        controller: address,
+                        hint: 'Address',
+                        icon: Icons.home,
+                        type: TextInputType.multiline,
+                      ),
+                      AddUserTextFelid(
+                        controller: phone,
+                        hint: 'Phone',
+                        icon: Icons.call,
+                        type: TextInputType.number,
+                      ),
+                      customTextField(
+                        'Nic',
+                        Icons.account_box_outlined,
+                        nic,
+                        TextInputType.number,
+                      ),
+                      AddUserTextFelid(
+                        controller: actualeValue,
+                        hint: 'Actual Value',
+                        icon: Icons.emergency,
+                        type: TextInputType.number,
+                      ),
+                      AddUserTextFelid(
+                        controller: weight,
+                        hint: 'Weight',
+                        icon: Icons.accessibility_new_rounded,
+                        type: TextInputType.number,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Card(
+                  color: Color.fromARGB(255, 230, 252, 226),
+                  elevation: 20,
+                  child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            text(
+                              'TO',
+                            ),
+                            AddUserTextFelid(
+                              controller: toWaybill,
+                              hint: 'Waybill ID',
+                              icon: Icons.adb,
+                              type: TextInputType.number,
+                            ),
+                            AddUserTextFelid(
+                              controller: toName,
+                              hint: 'Name',
+                              icon: Icons.person_3,
+                              type: TextInputType.number,
+                            ),
+                            AddUserTextFelid(
+                              controller: toAddress,
+                              hint: 'Address',
+                              icon: Icons.home,
+                              type: TextInputType.number,
+                            ),
+                            AddUserTextFelid(
+                              controller: toPhone,
+                              hint: 'Phone',
+                              icon: Icons.emergency,
+                              type: TextInputType.number,
+                            ),
+                          ])))
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget redioWidget() {
-    int selectedOption = 0;
+  Widget text(String text) {
+    return Text(
+      text,
+      style: TextStyle(color: black, fontWeight: FontWeight.bold),
+    );
+  }
 
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Expanded(
-              child: Row(
-                children: [
-                  Radio(value: 1, groupValue: 'null', onChanged: (index) {}),
-                  Expanded(
-                    child: Text('Radio button 1'),
-                  )
-                ],
+  Widget dropDown(String title, List dataList, VoidCallback onTap,
+      List<DropdownMenuItem> mapList) {
+    var h = MediaQuery.of(context).size.height;
+    var w = MediaQuery.of(context).size.width;
+    return Flexible(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Container(
+          height: h / 17,
+          padding: EdgeInsets.symmetric(horizontal: 15),
+          alignment: Alignment.centerRight,
+          width: w,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5.0),
+            // border: Border.all(
+            //     color: black3, style: BorderStyle.solid, width: 0.80),
+          ),
+          child: DropdownButton(
+              isExpanded: true,
+              alignment: AlignmentDirectional.centerEnd,
+              hint: Container(
+                //and here
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  title,
+                  style: TextStyle(color: black1),
+                  textAlign: TextAlign.end,
+                ),
               ),
-              flex: 1,
-            ),
-            Expanded(
-              child: Row(
-                children: [
-                  Radio(value: 1, groupValue: 'null', onChanged: (index) {}),
-                  Expanded(child: Text('Radio 2'))
-                ],
-              ),
-              flex: 1,
-            ),
-            Expanded(
-              child: Row(
-                children: [
-                  Radio(value: 1, groupValue: 'null', onChanged: (index) {}),
-                  Expanded(child: Text('Test'))
-                ],
-              ),
-              flex: 1,
-            ),
-          ],
+              value: selectCity, //implement initial value or selected value
+              onChanged: (value) {
+                setState(() {
+                  // _runFilter(value.toString());
+                  //set state will update UI and State of your App
+                  selectCity = value.toString(); //change selectval to new value
+                });
+              },
+              items: mapList),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Expanded(
-              flex: 1,
-              child: Row(
-                children: [
-                  Radio(value: 1, groupValue: 'null', onChanged: (index) {}),
-                  Expanded(child: Text('RB 1'))
-                ],
+      ),
+    );
+  }
+
+  Widget customTextField(
+    String hint,
+    IconData icon,
+    TextEditingController controller,
+    TextInputType type,
+  ) {
+    var w = MediaQuery.of(context).size.width;
+    final h = MediaQuery.of(context).size.height;
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SizedBox(
+        // height: h / 10,
+        child: TextField(
+          keyboardType: type,
+          controller: controller,
+          onChanged: (value) {
+            setState(() {
+              controller;
+            });
+          },
+          // maxLines: 5,
+          // minLines: 1,
+          decoration: InputDecoration(
+              errorText:
+                  controller.text.isEmpty ? "Value Can't Be Empty" : null,
+              label: Text(
+                hint,
+                style: TextStyle(color: black3),
               ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Row(
-                children: [
-                  Radio(value: 1, groupValue: 'null', onChanged: (index) {}),
-                  Expanded(child: Text('Btn Radio 2'))
-                ],
+              // labelText: hint,
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+                borderRadius: BorderRadius.circular(10),
               ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Row(
-                children: [
-                  Radio(value: 1, groupValue: 'null', onChanged: (index) {}),
-                  Expanded(
-                    child: Text('Rad 3'),
-                  )
-                ],
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black12),
+                borderRadius: BorderRadius.circular(10),
               ),
-            ),
-          ],
+              border: OutlineInputBorder(
+                borderSide: BorderSide(width: 0.2, color: Colors.black12),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              filled: true,
+              fillColor: Colors.black12,
+              prefixIcon: Icon(icon),
+              hintText: 'Type here'),
         ),
-      ],
+      ),
     );
   }
 }
