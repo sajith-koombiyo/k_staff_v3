@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -21,7 +22,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:math';
+
 import 'dart:ui';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../sql_db/db.dart';
@@ -166,7 +167,7 @@ class _MyDeliveryState extends State<MyDelivery> {
         connectivityResult == ConnectivityResult.wifi) {
       List temp = await CustomApi()
           .getmyorders(search.text.toString(), id.toString(), context);
-      print(temp);
+      log(temp.toString());
       print('ddddddddddddddddddddddddddddddddddddddd');
       if (temp == 1) {
         setState(() {
@@ -190,7 +191,9 @@ class _MyDeliveryState extends State<MyDelivery> {
           'prev_waybill': temp[index]['prev_waybill'],
           'ex_bag_waybill': temp[index]['ex_bag_waybill'],
           'type': '0',
-          'err_msg': '0'
+          'err_msg': '0',
+          'oderage': temp[index]['oderage'],
+          'attempts': temp[index]['attempts']
         });
         data = await sqlDb.readData('select * from delivery_oder');
         setState(() {
@@ -346,471 +349,541 @@ class _MyDeliveryState extends State<MyDelivery> {
                 },
                 child: SingleChildScrollView(
                   controller: _scrollController,
-                  child: Column(
-                    children: [
-                      widget.isFromHome
-                          ? Stack(
-                              children: [
-                                Column(
-                                  children: [
-                                    Container(
-                                      child: Image.asset(
-                                        'assets/picked_50.png',
-                                        fit: BoxFit.cover,
+                  child: SizedBox(
+                    child: Column(
+                      children: [
+                        widget.isFromHome
+                            ? Stack(
+                                children: [
+                                  Column(
+                                    children: [
+                                      Container(
+                                        child: Image.asset(
+                                          'assets/picked_50.png',
+                                          fit: BoxFit.cover,
+                                        ),
+                                        height: h / 3.7,
+                                        width: w,
                                       ),
-                                      height: h / 3.2,
-                                      width: w,
-                                    ),
-                                    isOffline
-                                        ? Container(
-                                            alignment: Alignment.center,
-                                            width: w,
-                                            height: 20,
-                                            color: Colors.redAccent,
-                                            child: Text('offline',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.w400,
-                                                  color: white,
-                                                  fontSize: 11.dp,
-                                                )),
-                                          )
-                                        : SizedBox()
-                                  ],
-                                ),
-                                Container(
-                                  height: h / 3.2,
-                                  width: w,
-                                  color: black.withOpacity(0.4),
-                                ),
-                                Positioned(
-                                  bottom: 0,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text('Track Orders',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w400,
-                                          color: white,
-                                          fontSize: 22.dp,
-                                        )),
+                                      isOffline
+                                          ? Container(
+                                              alignment: Alignment.center,
+                                              width: w,
+                                              height: 20,
+                                              color: Colors.redAccent,
+                                              child: Text('offline',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w400,
+                                                    color: white,
+                                                    fontSize: 11.dp,
+                                                  )),
+                                            )
+                                          : SizedBox()
+                                    ],
                                   ),
-                                ),
-                                Positioned(
-                                  bottom: 0,
-                                  child: SizedBox(
+                                  Container(
+                                    height: h / 3.7,
                                     width: w,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
+                                    color: black.withOpacity(0.4),
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    child: Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.end,
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Icon(
-                                          Icons.upload_file_rounded,
-                                          color:
-                                              Color.fromARGB(255, 4, 177, 105),
-                                        ),
                                         SizedBox(
-                                          width: 5,
-                                        ),
-                                        Text(pendingImage.length.toString(),
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: white,
-                                              fontSize: 12.dp,
-                                            )),
-                                        SizedBox(
-                                          width: 12,
-                                        ),
-                                        Icon(
-                                          Icons.upload,
-                                          color: Colors.blue,
-                                        ),
-                                        SizedBox(
-                                          width: 5,
-                                        ),
-                                        Text(pendingOrder.length.toString(),
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: white,
-                                              fontSize: 12.dp,
-                                            )),
-                                        SizedBox(
-                                          width: 20,
+                                            width: w / 1, child: serchBar()),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text('Track Orders',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w400,
+                                                color: white,
+                                                fontSize: 22.dp,
+                                              )),
                                         ),
                                       ],
                                     ),
                                   ),
-                                ),
-                                Positioned(
-                                    bottom: h / 10,
-                                    left: 0,
-                                    right: 0,
-                                    child: serchBar())
-                              ],
-                            )
-                          : SizedBox(),
-                      dataList.isEmpty && isLoading == false
-                          ? SizedBox(
-                              height: h,
-                              width: w,
-                              child: Column(
-                                children: [
-                                  Center(child: NoData()),
+                                  Positioned(
+                                    bottom: 0,
+                                    child: SizedBox(
+                                      width: w,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Icon(
+                                            Icons.upload_file_rounded,
+                                            color: Color.fromARGB(
+                                                255, 4, 177, 105),
+                                          ),
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          Text(pendingImage.length.toString(),
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: white,
+                                                fontSize: 12.dp,
+                                              )),
+                                          SizedBox(
+                                            width: 12,
+                                          ),
+                                          Icon(
+                                            Icons.upload,
+                                            color: Colors.blue,
+                                          ),
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          Text(pendingOrder.length.toString(),
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: white,
+                                                fontSize: 12.dp,
+                                              )),
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                                 ],
-                              ))
-                          : SizedBox(
-                              height: dataList.length >= 2 ? null : h,
-                              width: w,
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                controller: _scrollController,
-                                physics: NeverScrollableScrollPhysics(),
-                                padding: EdgeInsets.all(0),
-                                itemCount: dataList.length,
-                                itemBuilder: (context, index) {
-                                  print(dataList);
-                                  return Column(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Material(
-                                          color: Colors.transparent,
-                                          child: InkWell(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            splashColor: blue,
-                                            onTap: () {
-                                              bool updateBTN = false;
-                                              setState(() {
-                                                newImage = '';
-                                                dropdownvalue = null;
-                                                codController.clear();
-                                              });
+                              )
+                            : SizedBox(),
+                        dataList.isEmpty && isLoading == false
+                            ? SizedBox(
+                                height: h,
+                                width: w,
+                                child: Column(
+                                  children: [
+                                    Center(child: NoData()),
+                                  ],
+                                ))
+                            : SizedBox(
+                                height: h,
+                                width: w,
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  controller: _scrollController,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  padding: EdgeInsets.all(0),
+                                  itemCount: dataList.length,
+                                  itemBuilder: (context, index) {
+                                    print(dataList);
+                                    return Column(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Material(
+                                            color: Colors.transparent,
+                                            child: InkWell(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              splashColor: blue,
+                                              onTap: () {
+                                                bool updateBTN = false;
+                                                setState(() {
+                                                  newImage = '';
+                                                  dropdownvalue = null;
+                                                  codController.clear();
+                                                });
 
-                                              itemDetails(
-                                                  dataList[index]['waybill_id'],
-                                                  updateBTN,
-                                                  dataList[index]['cod_final'],
-                                                  dataList[index]['oid'],
-                                                  dataList[index]['order_type'],
-                                                  dataList[index]
-                                                              ['order_type'] ==
-                                                          '1'
-                                                      ? dataList[index]
-                                                              ['ex_bag_waybill']
-                                                          .toString()
-                                                      : "",
-                                                  dataList[index]['order_type']
-                                                              .toString() ==
-                                                          '1'
-                                                      ? dataList[index]
-                                                              ['prev_waybill']
-                                                          .toString()
-                                                      : '');
-                                            },
-                                            child: Card(
-                                              margin: EdgeInsets.only(left: 0),
-                                              color: dataList[index]
-                                                          ['order_type'] ==
-                                                      '1'
-                                                  ? Colors.red
-                                                  : appliteBlue,
+                                                itemDetails(
+                                                    dataList[index]
+                                                        ['waybill_id'],
+                                                    updateBTN,
+                                                    dataList[index]
+                                                        ['cod_final'],
+                                                    dataList[index]['oid'],
+                                                    dataList[index]
+                                                        ['order_type'],
+                                                    dataList[index][
+                                                                'order_type'] ==
+                                                            '1'
+                                                        ? dataList[index][
+                                                                'ex_bag_waybill']
+                                                            .toString()
+                                                        : "",
+                                                    dataList[index]['order_type']
+                                                                .toString() ==
+                                                            '1'
+                                                        ? dataList[index]
+                                                                ['prev_waybill']
+                                                            .toString()
+                                                        : '');
+                                              },
                                               child: Card(
+                                                margin:
+                                                    EdgeInsets.only(left: 0),
                                                 color: dataList[index]
                                                             ['order_type'] ==
                                                         '1'
-                                                    ? Color.fromARGB(
-                                                        255, 243, 240, 210)
-                                                    : white,
-                                                elevation: 50,
-                                                margin:
-                                                    EdgeInsets.only(left: 3),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(
-                                                      12.0),
-                                                  child: Column(
-                                                    children: [
-                                                      SizedBox(
-                                                        width: w,
-                                                        child: Row(
-                                                          children: [
-                                                            Card(
-                                                              color: dataList[index]
-                                                                          [
-                                                                          'order_type'] ==
-                                                                      '1'
-                                                                  ? Color
-                                                                      .fromARGB(
-                                                                          255,
-                                                                          210,
-                                                                          208,
-                                                                          191)
-                                                                  : white,
-                                                              elevation: 1,
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(
-                                                                        8.0),
-                                                                child: Icon(
-                                                                  Icons
-                                                                      .delivery_dining_sharp,
-                                                                  size: 40,
-                                                                  color: Color(Random()
-                                                                          .nextInt(
-                                                                              0xffffffff))
-                                                                      .withAlpha(
-                                                                          0xff),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              width: 10,
-                                                            ),
-                                                            SizedBox(
-                                                              width: w / 2.4,
-                                                              child: Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
+                                                    ? Colors.red
+                                                    : appliteBlue,
+                                                child: Card(
+                                                  color: dataList[index]
+                                                              ['order_type'] ==
+                                                          '1'
+                                                      ? Color.fromARGB(
+                                                          255, 243, 240, 210)
+                                                      : white,
+                                                  elevation: 50,
+                                                  margin:
+                                                      EdgeInsets.only(left: 3),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            12.0),
+                                                    child: Column(
+                                                      children: [
+                                                        SizedBox(
+                                                          width: w,
+                                                          child: Row(
+                                                            children: [
+                                                              Column(
                                                                 children: [
-                                                                  Text(
-                                                                      '${dataList[index]['waybill_id']}',
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.bold,
-                                                                        color:
-                                                                            black,
-                                                                        fontSize:
-                                                                            14.dp,
-                                                                      )),
-                                                                  Text(
-                                                                      'Name:-${dataList[index]['name']}',
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.w600,
-                                                                        color: Colors
-                                                                            .black87,
-                                                                        fontSize:
-                                                                            14.dp,
-                                                                      )),
-                                                                  Text(
-                                                                      'Client:-${dataList[index]['cust_name']}',
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.normal,
-                                                                        color: Colors
-                                                                            .black87,
-                                                                        fontSize:
-                                                                            12.dp,
-                                                                      )),
-                                                                  Text(
-                                                                      '${dataList[index]['address']}',
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.normal,
-                                                                        color: Colors
-                                                                            .black87,
-                                                                        fontSize:
-                                                                            12.dp,
-                                                                      )),
-                                                                  Text(
-                                                                      'COD:-${dataList[index]['cod_final']}',
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.w500,
-                                                                        color: Color.fromARGB(
-                                                                            221,
-                                                                            31,
-                                                                            116,
-                                                                            152),
-                                                                        fontSize:
-                                                                            14.dp,
-                                                                      )),
-                                                                  Text(
-                                                                      'Phone:-${dataList[index]['phone']}',
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.normal,
-                                                                        color: Color.fromARGB(
-                                                                            221,
-                                                                            220,
-                                                                            44,
-                                                                            44),
-                                                                        fontSize:
-                                                                            14.dp,
-                                                                      )),
-                                                                  dataList[index]
-                                                                              [
-                                                                              'cust_internal'] ==
-                                                                          ''
-                                                                      ? SizedBox()
-                                                                      : Text(
-                                                                          'Remark:-${dataList[index]['cust_internal']}',
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.normal,
-                                                                            color:
-                                                                                Colors.black87,
-                                                                            fontSize:
-                                                                                12.dp,
-                                                                          )),
                                                                   Card(
                                                                     elevation:
                                                                         20,
-                                                                    margin: EdgeInsets
-                                                                        .all(0),
-                                                                    color: Color
-                                                                        .fromARGB(
-                                                                            255,
-                                                                            62,
-                                                                            13,
-                                                                            130),
+                                                                    color: Color(
+                                                                        0xfffff668),
+                                                                    shape: RoundedRectangleBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(
+                                                                                8),
+                                                                        side: BorderSide(
+                                                                            width:
+                                                                                1,
+                                                                            color:
+                                                                                black1)),
                                                                     child:
                                                                         Padding(
                                                                       padding: const EdgeInsets
                                                                           .all(
                                                                           8.0),
-                                                                      child: Text(
-                                                                          '${dataList[index]['status']}',
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.normal,
-                                                                            color:
-                                                                                white,
-                                                                            fontSize:
-                                                                                10.dp,
-                                                                          )),
+                                                                      child:
+                                                                          SizedBox(
+                                                                        child:
+                                                                            Column(
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.center,
+                                                                          children: [
+                                                                            Text('Age',
+                                                                                style: TextStyle(
+                                                                                  fontWeight: FontWeight.w600,
+                                                                                  color: Colors.black87,
+                                                                                  fontSize: 14.dp,
+                                                                                )),
+                                                                            Text('${dataList[index]['oderage'].toString()}\n Days     ',
+                                                                                textAlign: TextAlign.center,
+                                                                                style: TextStyle(
+                                                                                  fontWeight: FontWeight.bold,
+                                                                                  color: Colors.black87,
+                                                                                  fontSize: 14.dp,
+                                                                                )),
+                                                                          ],
+                                                                        ),
+                                                                      ),
                                                                     ),
+                                                                  ),
+                                                                  Card(
+                                                                    elevation:
+                                                                        20,
+                                                                    color: Color(
+                                                                        0xfff662c3),
+                                                                    shape: RoundedRectangleBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(
+                                                                                5),
+                                                                        side: BorderSide(
+                                                                            color:
+                                                                                black1)),
+                                                                    child:
+                                                                        Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .all(
+                                                                          8.0),
+                                                                      child:
+                                                                          SizedBox(
+                                                                        child:
+                                                                            Column(
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.center,
+                                                                          children: [
+                                                                            Text(dataList[index]['attempts'].toString(),
+                                                                                style: TextStyle(
+                                                                                  fontWeight: FontWeight.w600,
+                                                                                  color: Colors.black87,
+                                                                                  fontSize: 14.dp,
+                                                                                )),
+                                                                            Text('Attempt',
+                                                                                textAlign: TextAlign.center,
+                                                                                style: TextStyle(
+                                                                                  fontWeight: FontWeight.w600,
+                                                                                  color: Colors.black87,
+                                                                                  fontSize: 14.dp,
+                                                                                )),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  // Card(
+                                                                  //   color: dataList[index]['order_type'] ==
+                                                                  //           '1'
+                                                                  //       ? Color.fromARGB(
+                                                                  //           255,
+                                                                  //           210,
+                                                                  //           208,
+                                                                  //           191)
+                                                                  //       : white,
+                                                                  //   elevation:
+                                                                  //       1,
+                                                                  //   child:
+                                                                  //       Padding(
+                                                                  //     padding: const EdgeInsets
+                                                                  //         .all(
+                                                                  //         8.0),
+                                                                  //     child:
+                                                                  //         Icon(
+                                                                  //       Icons
+                                                                  //           .delivery_dining_sharp,
+                                                                  //       size:
+                                                                  //           40,
+                                                                  //       color: Color(Random().nextInt(0xffffffff))
+                                                                  //           .withAlpha(0xff),
+                                                                  //     ),
+                                                                  //   ),
+                                                                  // ),
+                                                                ],
+                                                              ),
+                                                              SizedBox(
+                                                                width: 10,
+                                                              ),
+                                                              SizedBox(
+                                                                width: w / 2.4,
+                                                                child: Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    Text(
+                                                                        '${dataList[index]['waybill_id']}',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                          color:
+                                                                              black,
+                                                                          fontSize:
+                                                                              14.dp,
+                                                                        )),
+                                                                    Text(
+                                                                        'Name:-${dataList[index]['name']}',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight.w600,
+                                                                          color:
+                                                                              Colors.black87,
+                                                                          fontSize:
+                                                                              14.dp,
+                                                                        )),
+                                                                    Text(
+                                                                        'Client:-${dataList[index]['cust_name']}',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight.normal,
+                                                                          color:
+                                                                              Colors.black87,
+                                                                          fontSize:
+                                                                              12.dp,
+                                                                        )),
+                                                                    Text(
+                                                                        '${dataList[index]['address']}',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight.normal,
+                                                                          color:
+                                                                              Colors.black87,
+                                                                          fontSize:
+                                                                              12.dp,
+                                                                        )),
+                                                                    Text(
+                                                                        'COD:-${dataList[index]['cod_final']}',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight.w500,
+                                                                          color: Color.fromARGB(
+                                                                              221,
+                                                                              31,
+                                                                              116,
+                                                                              152),
+                                                                          fontSize:
+                                                                              14.dp,
+                                                                        )),
+                                                                    Text(
+                                                                        'Phone:-${dataList[index]['phone']}',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight.normal,
+                                                                          color: Color.fromARGB(
+                                                                              221,
+                                                                              220,
+                                                                              44,
+                                                                              44),
+                                                                          fontSize:
+                                                                              14.dp,
+                                                                        )),
+                                                                    dataList[index]['cust_internal'] ==
+                                                                            ''
+                                                                        ? SizedBox()
+                                                                        : Text(
+                                                                            'Remark:-${dataList[index]['cust_internal']}',
+                                                                            style:
+                                                                                TextStyle(
+                                                                              fontWeight: FontWeight.normal,
+                                                                              color: Colors.black87,
+                                                                              fontSize: 12.dp,
+                                                                            )),
+                                                                    Card(
+                                                                      elevation:
+                                                                          20,
+                                                                      margin: EdgeInsets
+                                                                          .all(
+                                                                              0),
+                                                                      color: Color.fromARGB(
+                                                                          255,
+                                                                          62,
+                                                                          13,
+                                                                          130),
+                                                                      child:
+                                                                          Padding(
+                                                                        padding: const EdgeInsets
+                                                                            .all(
+                                                                            8.0),
+                                                                        child: Text(
+                                                                            '${dataList[index]['status']}',
+                                                                            style:
+                                                                                TextStyle(
+                                                                              fontWeight: FontWeight.normal,
+                                                                              color: white,
+                                                                              fontSize: 10.dp,
+                                                                            )),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                width: 10,
+                                                              ),
+                                                              Spacer(),
+                                                              Column(
+                                                                children: [
+                                                                  Card(
+                                                                    elevation:
+                                                                        20,
+                                                                    shape: RoundedRectangleBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(100)),
+                                                                    child:
+                                                                        IconButton(
+                                                                      onPressed:
+                                                                          () async {
+                                                                        final call =
+                                                                            Uri.parse('tel:${dataList[index]['phone']}');
+                                                                        if (await canLaunchUrl(
+                                                                            call)) {
+                                                                          launchUrl(
+                                                                              call);
+                                                                        } else {
+                                                                          throw 'Could not launch $call';
+                                                                        }
+                                                                      },
+                                                                      icon:
+                                                                          Icon(
+                                                                        Icons
+                                                                            .call,
+                                                                        size:
+                                                                            35,
+                                                                        color: Colors
+                                                                            .red,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  Card(
+                                                                    elevation:
+                                                                        20,
+                                                                    shape: RoundedRectangleBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(100)),
+                                                                    child: IconButton(
+                                                                        onPressed: () async {
+                                                                          notification().warning(
+                                                                              context,
+                                                                              'Location not found');
+                                                                          // MapUtils.openMap(
+                                                                          //     -3.823216,
+                                                                          //     -38.481700);
+                                                                        },
+                                                                        icon: Image.asset('assets/icons8-google-maps-old-30.png')),
                                                                   ),
                                                                 ],
                                                               ),
-                                                            ),
-                                                            SizedBox(
-                                                              width: 10,
-                                                            ),
-                                                            Spacer(),
-                                                            Column(
-                                                              children: [
-                                                                // Card(
-                                                                //   elevation: 20,
-                                                                //   shape: RoundedRectangleBorder(
-                                                                //       borderRadius:
-                                                                //           BorderRadius.circular(
-                                                                //               100)),
-                                                                //   child:
-                                                                //       IconButton(
-                                                                //     onPressed:
-                                                                //         () {},
-                                                                //     icon: Icon(
-                                                                //       Icons
-                                                                //           .voice_over_off_rounded,
-                                                                //       size: 35,
-                                                                //       color: Color
-                                                                //           .fromARGB(
-                                                                //               255,
-                                                                //               13,
-                                                                //               173,
-                                                                //               45),
-                                                                //     ),
-                                                                //   ),
-                                                                // ),
-                                                                Card(
-                                                                  elevation: 20,
-                                                                  shape: RoundedRectangleBorder(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              100)),
-                                                                  child:
-                                                                      IconButton(
-                                                                    onPressed:
-                                                                        () async {
-                                                                      final call =
-                                                                          Uri.parse(
-                                                                              'tel:${dataList[index]['phone']}');
-                                                                      if (await canLaunchUrl(
-                                                                          call)) {
-                                                                        launchUrl(
-                                                                            call);
-                                                                      } else {
-                                                                        throw 'Could not launch $call';
-                                                                      }
-                                                                    },
-                                                                    icon: Icon(
-                                                                      Icons
-                                                                          .call,
-                                                                      size: 35,
-                                                                      color: Colors
-                                                                          .red,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                Card(
-                                                                  elevation: 20,
-                                                                  shape: RoundedRectangleBorder(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              100)),
-                                                                  child: IconButton(
-                                                                      onPressed: () async {
-                                                                        notification().warning(
-                                                                            context,
-                                                                            'Location not found');
-                                                                        // MapUtils.openMap(
-                                                                        //     -3.823216,
-                                                                        //     -38.481700);
-                                                                      },
-                                                                      icon: Image.asset('assets/icons8-google-maps-old-30.png')),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
+                                                            ],
+                                                          ),
                                                         ),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 8,
-                                                      ),
-                                                      dataList[index]
-                                                                  ['err_msg'] !=
-                                                              '0'
-                                                          ? Container(
-                                                              height: 20,
-                                                              width: w,
-                                                              color: Color
-                                                                  .fromARGB(
-                                                                      255,
-                                                                      198,
-                                                                      26,
-                                                                      150),
-                                                              child: Text(
-                                                                dataList[index]
-                                                                    ['err_msg'],
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .white),
-                                                              ))
-                                                          : SizedBox()
-                                                    ],
+                                                        SizedBox(
+                                                          height: 8,
+                                                        ),
+                                                        dataList[index][
+                                                                    'err_msg'] !=
+                                                                '0'
+                                                            ? Container(
+                                                                height: 20,
+                                                                width: w,
+                                                                color: Color
+                                                                    .fromARGB(
+                                                                        255,
+                                                                        198,
+                                                                        26,
+                                                                        150),
+                                                                child: Text(
+                                                                  dataList[
+                                                                          index]
+                                                                      [
+                                                                      'err_msg'],
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .white),
+                                                                ))
+                                                            : SizedBox()
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
                                               ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  );
-                                },
+                                      ],
+                                    );
+                                  },
+                                ),
                               ),
-                            ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

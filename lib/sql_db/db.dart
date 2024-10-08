@@ -15,9 +15,9 @@ class SqlDb {
 
   intialDb() async {
     String databasepath = await getDatabasesPath();
-    String path = join(databasepath, 'qzq.db');
+    String path = join(databasepath, 'qzqc.db');
     Database mydb = await openDatabase(path,
-        onCreate: _onCreate, version: 27, onUpgrade: _onUpgrade);
+        onCreate: _onCreate, version: 28, onUpgrade: _onUpgrade);
     return mydb;
   }
 
@@ -41,7 +41,9 @@ class SqlDb {
             "prev_waybill" TEXT ,
               "ex_bag_waybill" TEXT ,
                 "type" TEXT,
-                 "err_msg" TEXT
+                 "err_msg" TEXT,
+                  "oderage" TEXT,
+                 "attempts" TEXT
                
 
     

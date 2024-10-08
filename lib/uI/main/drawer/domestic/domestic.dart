@@ -32,8 +32,9 @@ class _DomesticState extends State<Domestic> {
   TextEditingController toPhone = TextEditingController();
   DateTime selectedDate = DateTime.now();
   String? selectval;
-  String? selectDistrict;
-  String? selectCity;
+
+  String? selectBranch;
+  String? selectToBranchBranch;
   List<File> loadImages = [];
   List userBranchList = [
     {'dname': 'All', 'did': '10000'}
@@ -43,17 +44,15 @@ class _DomesticState extends State<Domestic> {
   String districtId = '';
   String cityName = '';
   int selectedIndex = 0;
+  List riderList = [];
   bool cityLoading = false;
   late ScrollController mycontroller = ScrollController();
-  List demarcationList = [];
-  List districtList = [];
-  List cityList = [];
+
   bool isLoading = false;
 
   void initState() {
     getUserBranch();
-    getDistrict();
-
+    getRider();
     super.initState();
   }
 
@@ -66,53 +65,21 @@ class _DomesticState extends State<Domestic> {
     log(brancheList.toString());
 
     setState(() {
-      userBranchList.addAll(brancheList);
+      userBranchList = brancheList;
 
-      // isLoading = false;
-    });
-  }
-
-  getDistrict() async {
-    setState(() {
-      isLoading = true;
-      cityLoading = true;
-    });
-
-    var res = await CustomApi().demacationDistrict(context);
-    log(res.toString());
-
-    setState(() {
-      districtList = res;
-      cityLoading = false;
       isLoading = false;
     });
   }
 
-  getCity(String districtId) async {
-    log(districtId);
+  getRider() async {
     setState(() {
       isLoading = true;
     });
 
-    var res = await CustomApi().demacationCity(context, districtId);
-    log(res.toString());
-
+    List rider = await CustomApi().assignRiderList(context);
+    log(rider.toString());
     setState(() {
-      cityList = res;
-
-      // isLoading = false;
-    });
-  }
-
-  demarcationData(String districtId, String cityName, String branchId) async {
-    setState(() {
-      isLoading = true;
-    });
-    var res =
-        await CustomApi().demacation(context, districtId, cityName, branchId);
-
-    setState(() {
-      demarcationList = res;
+      riderList = rider;
       isLoading = false;
     });
   }
@@ -156,51 +123,57 @@ class _DomesticState extends State<Domestic> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      SizedBox(
+                        height: 10,
+                      ),
                       text(
-                        'Picked By',
+                        'PICKED BY',
+                      ),
+                      SizedBox(
+                        height: 10,
                       ),
                       Row(
                         children: [
                           dropDown(
-                            'Pick ID',
-                            cityList,
-                            () {},
-                            cityList!.map((itemone) {
-                              return DropdownMenuItem(
-                                  onTap: () {
-                                    setState(() {
-                                      selectval = null;
+                              'Select Rider',
+                              riderList,
+                              () {},
+                              riderList.map((itemone) {
+                                return DropdownMenuItem(
+                                    onTap: () {
+                                      setState(() {
+                                        selectval = null;
 
-                                      cityName = itemone['cname'];
-                                    });
-                                  },
-                                  value: itemone['cname'],
-                                  child: Text(
-                                    itemone['cname'],
-                                    style: TextStyle(color: black2),
-                                  ));
-                            }).toList(),
-                          ),
+                                        selectval = itemone['staff_name'];
+                                      });
+                                    },
+                                    value: itemone['staff_name'],
+                                    child: Text(
+                                      itemone['staff_name'],
+                                      style: TextStyle(color: black2),
+                                    ));
+                              }).toList(),
+                              selectval),
                           dropDown(
-                            'Pick ID',
-                            cityList,
-                            () {},
-                            cityList!.map((itemone) {
-                              return DropdownMenuItem(
-                                  onTap: () {
-                                    setState(() {
-                                      selectval = null;
+                              'Pickup Note ID',
+                              riderList,
+                              () {},
+                              riderList.map((itemone) {
+                                return DropdownMenuItem(
+                                    onTap: () {
+                                      setState(() {
+                                        selectval = null;
 
-                                      cityName = itemone['cname'];
-                                    });
-                                  },
-                                  value: itemone['cname'],
-                                  child: Text(
-                                    itemone['cname'],
-                                    style: TextStyle(color: black2),
-                                  ));
-                            }).toList(),
-                          ),
+                                        selectval = itemone['staff_name'];
+                                      });
+                                    },
+                                    value: itemone['staff_name'],
+                                    child: Text(
+                                      itemone['staff_name'],
+                                      style: TextStyle(color: black2),
+                                    ));
+                              }).toList(),
+                              selectval),
                         ],
                       ),
                       SizedBox(
@@ -213,34 +186,10 @@ class _DomesticState extends State<Domestic> {
                         height: 8,
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Expanded(
-                            child: Row(
-                              children: [
-                                Radio(
-                                    value: 1,
-                                    groupValue: 'null',
-                                    onChanged: (index) {}),
-                                Expanded(
-                                  child: Text('Charge On pickup'),
-                                )
-                              ],
-                            ),
-                            flex: 1,
-                          ),
-                          Expanded(
-                            child: Row(
-                              children: [
-                                Radio(
-                                    value: 2,
-                                    groupValue: 'null',
-                                    onChanged: (index) {}),
-                                Expanded(child: Text('Charge On Delivery'))
-                              ],
-                            ),
-                            flex: 1,
-                          ),
+                          pickedBy(0, 'Charge On pickup'),
+                          pickedBy(1, 'Charge On Delivery'),
                         ],
                       ),
                       text(
@@ -252,44 +201,9 @@ class _DomesticState extends State<Domestic> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Expanded(
-                            child: Row(
-                              children: [
-                                Radio(
-                                    value: 1,
-                                    groupValue: 'null',
-                                    onChanged: (index) {}),
-                                Expanded(
-                                  child: Text('Parcel(Max 99Kg)'),
-                                )
-                              ],
-                            ),
-                            flex: 1,
-                          ),
-                          Expanded(
-                            child: Row(
-                              children: [
-                                Radio(
-                                    value: 2,
-                                    groupValue: 'null',
-                                    onChanged: (index) {}),
-                                Expanded(child: Text('Letter'))
-                              ],
-                            ),
-                            flex: 1,
-                          ),
-                          Expanded(
-                            child: Row(
-                              children: [
-                                Radio(
-                                    value: 2,
-                                    groupValue: 'null',
-                                    onChanged: (index) {}),
-                                Expanded(child: Text('Bulk'))
-                              ],
-                            ),
-                            flex: 1,
-                          ),
+                          dTypeRadio(0, 'Parcel(Max 99Kg)'),
+                          dTypeRadio(1, 'Letter'),
+                          dTypeRadio(2, 'Bulk'),
                         ],
                       ),
                       SizedBox(
@@ -298,47 +212,43 @@ class _DomesticState extends State<Domestic> {
                       Row(
                         children: [
                           dropDown(
-                            'From Branch',
-                            cityList,
-                            () {},
-                            districtList.map((itemone) {
-                              return DropdownMenuItem(
-                                  onTap: () async {
-                                    setState(() {
-                                      selectval = null;
-                                      selectCity = null;
-                                      districtId = itemone['district_sl_id'];
-                                    });
-                                    await getCity(itemone['district_sl_id']);
-                                  },
-                                  value: itemone['district_name'],
-                                  child: Text(
-                                    itemone['district_name'],
-                                    style: TextStyle(color: black2),
-                                  ));
-                            }).toList(),
-                          ),
-                          dropDown(
-                            'From Branch',
-                            cityList,
-                            () {},
-                            districtList.map((itemone) {
-                              return DropdownMenuItem(
-                                  onTap: () async {
-                                    setState(() {
-                                      selectval = null;
-                                      selectCity = null;
-                                      districtId = itemone['district_sl_id'];
-                                    });
-                                    await getCity(itemone['district_sl_id']);
-                                  },
-                                  value: itemone['district_name'],
-                                  child: Text(
-                                    itemone['district_name'],
-                                    style: TextStyle(color: black2),
-                                  ));
-                            }).toList(),
-                          ),
+                              'From Branch',
+                              userBranchList,
+                              () {},
+                              userBranchList.map((itemone) {
+                                return DropdownMenuItem(
+                                    onTap: () async {
+                                      setState(() {
+                                        selectToBranchBranch = itemone['dname'];
+                                      });
+                                    },
+                                    value: itemone['dname'],
+                                    child: Text(
+                                      itemone['dname'],
+                                      style: TextStyle(color: black2),
+                                    ));
+                              }).toList(),
+                              selectToBranchBranch),
+                          // dropDown(
+                          //   'To Branch',
+                          //   riderList,
+                          //   () {},
+                          //   riderList.map((itemone) {
+                          //     return DropdownMenuItem(
+                          //         onTap: () async {
+                          //           setState(() {
+                          //             selectval = null;
+                          //             selectCity = null;
+                          //             districtId = itemone['district_sl_id'];
+                          //           });
+                          //         },
+                          //         value: itemone['district_name'],
+                          //         child: Text(
+                          //           itemone['district_name'],
+                          //           style: TextStyle(color: black2),
+                          //         ));
+                          //   }).toList(),
+                          // ),
                         ],
                       ),
                     ],
@@ -356,8 +266,14 @@ class _DomesticState extends State<Domestic> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      SizedBox(
+                        height: 10,
+                      ),
                       text(
                         'FROM',
+                      ),
+                      SizedBox(
+                        height: 10,
                       ),
                       AddUserTextFelid(
                         controller: Name,
@@ -403,15 +319,21 @@ class _DomesticState extends State<Domestic> {
                 height: 10,
               ),
               Card(
-                  color: Color.fromARGB(255, 230, 252, 226),
-                  elevation: 20,
+                  color: Color.fromARGB(255, 221, 226, 221),
+                  elevation: 10,
                   child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            SizedBox(
+                              height: 10,
+                            ),
                             text(
                               'TO',
+                            ),
+                            SizedBox(
+                              height: 10,
                             ),
                             AddUserTextFelid(
                               controller: toWaybill,
@@ -466,45 +388,109 @@ class _DomesticState extends State<Domestic> {
   }
 
   Widget dropDown(String title, List dataList, VoidCallback onTap,
-      List<DropdownMenuItem> mapList) {
+      List<DropdownMenuItem> mapList, String? select) {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     return Flexible(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: Container(
-          height: h / 17,
-          padding: EdgeInsets.symmetric(horizontal: 15),
-          alignment: Alignment.centerRight,
-          width: w,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5.0),
-            // border: Border.all(
-            //     color: black3, style: BorderStyle.solid, width: 0.80),
-          ),
-          child: DropdownButton(
-              isExpanded: true,
-              alignment: AlignmentDirectional.centerEnd,
-              hint: Container(
-                //and here
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  title,
-                  style: TextStyle(color: black1),
-                  textAlign: TextAlign.end,
-                ),
+        child: Column(
+          children: [
+            Container(
+              height: h / 17,
+              padding: EdgeInsets.symmetric(horizontal: 15),
+              alignment: Alignment.centerRight,
+              width: w,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5.0),
+                border: Border.all(
+                    color: black3, style: BorderStyle.solid, width: 0.80),
               ),
-              value: selectCity, //implement initial value or selected value
-              onChanged: (value) {
-                setState(() {
-                  // _runFilter(value.toString());
-                  //set state will update UI and State of your App
-                  selectCity = value.toString(); //change selectval to new value
-                });
-              },
-              items: mapList),
+              child: DropdownButton(
+                  isExpanded: true,
+                  alignment: AlignmentDirectional.centerEnd,
+                  hint: Container(
+                    //and here
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      title,
+                      style: TextStyle(color: black1),
+                      textAlign: TextAlign.end,
+                    ),
+                  ),
+                  value: select, //implement initial value or selected value
+                  onChanged: (value) {
+                    setState(() {
+                      // _runFilter(value.toString());
+                      //set state will update UI and State of your App
+                      select = value.toString(); //change selectval to new value
+                    });
+                  },
+                  items: mapList),
+            ),
+          ],
         ),
       ),
+    );
+  }
+
+  List picked = ["Charge On pickup", "Female", "Other"];
+  String select = '';
+  String pickedValue = '';
+  Row pickedBy(int btnValue, String title) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        Radio(
+          activeColor: Theme.of(context).primaryColor,
+          value: picked[btnValue],
+          groupValue: select,
+          onChanged: (value) {
+            pickedValue;
+
+            setState(() {
+              if (value == 'pickedBy') {
+                pickedValue = '0';
+              } else if (value == 'Male') {
+                pickedValue = '1';
+              }
+              select = value;
+            });
+          },
+        ),
+        Text(title)
+      ],
+    );
+  }
+
+  List dType = ["Parcel(Max 99Kg)", "Letter", "Bulk"];
+  String dTypeSelect = '';
+  String dTypeValue = '';
+  Row dTypeRadio(int btnValue, String title) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        Radio(
+          activeColor: Theme.of(context).primaryColor,
+          value: dType[btnValue],
+          groupValue: dTypeSelect,
+          onChanged: (value) {
+            dTypeValue;
+
+            setState(() {
+              if (value == 'Parcel(Max 99Kg)') {
+                dTypeValue = '0';
+              } else if (value == 'Letter') {
+                dTypeValue = '1';
+              } else if (value == 'Bulk') {
+                dTypeValue = '3';
+              }
+              dTypeSelect = value;
+            });
+          },
+        ),
+        Text(title)
+      ],
     );
   }
 
