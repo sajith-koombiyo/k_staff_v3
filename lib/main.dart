@@ -11,17 +11,20 @@ import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:provider/provider.dart';
 import 'provider/provider.dart';
 
-
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await notify().initNotifications();
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    // This will be called when the app is opened from a notification click
+    print('vnottiiiiinnvnvnnvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
+  });
   await AwesomeNotifications().initialize(
     null,
     [
       NotificationChannel(
-        channelShowBadge: true,  
+        channelShowBadge: true,
         channelKey: 'call_channel',
         defaultColor: Colors.blue,
         channelName: "Basic Notifications",
@@ -30,22 +33,6 @@ void main() async {
       ),
     ],
   );
-
-  FirebaseMessaging.onMessageOpenedApp.listen((event) {
-
-
-
-    print('ffffdfdfndefdshfhsbhbshbdhsbhdbshbdhsbdhbshdbshbdhsbdhsbdhbshdbshdbshdbhsybdhsbdhsbdsbdhsbdhbsdhsbdhsbdhsß');
-    
-  });
-  // ZegoUIKitPrebuiltCallInvitationService().setNavigatorKey(navigatorKey);
-
-  // // call the useSystemCallingUI
-  // ZegoUI Kit().initLog().then((value) {
-  //   ZegoUIKitPrebuiltCallInvitationService().useSystemCallingUI(
-  //     [ZegoUIKitSignalingPlugin()],
-  //   );
-  // });
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => ProviderS()),

@@ -134,6 +134,20 @@ class _OderAllDetailsState extends State<OderAllDetails> {
                               padding: const EdgeInsets.all(12.0),
                               child: Column(
                                 children: [
+                                  Row(
+                                    children: [
+                                      card(
+                                          'Age ${oderData[0]['oderage'].toString()} Days    ',
+                                          Color(0xfffff668)),
+                                      card(
+                                          'Attempt ${oderData[0]['attempts'].toString()}',
+                                          Color(0xfff662c3)),
+                                      card(
+                                        'Exchange',
+                                        Color.fromARGB(255, 49, 218, 100),
+                                      ),
+                                    ],
+                                  ),
                                   Padding(
                                     padding: const EdgeInsets.all(12.0),
                                     child: Container(
@@ -493,6 +507,35 @@ class _OderAllDetailsState extends State<OderAllDetails> {
             isLoading ? Loader().loader(context) : SizedBox(),
             provider.isanotherUserLog ? UserLoginCheck() : SizedBox()
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget card(String title, Color color) {
+    return Flexible(
+      child: Card(
+        elevation: 2,
+        color: color,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+            side: BorderSide(color: black1)),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SizedBox(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(title,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                      fontSize: 14.dp,
+                    )),
+              ],
+            ),
+          ),
         ),
       ),
     );

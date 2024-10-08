@@ -14,66 +14,20 @@ import 'package:provider/provider.dart';
 import '../provider/provider.dart';
 
 Future<void> handleBckgroundMessage(RemoteMessage message) async {
-
-print(message);
-
-
+  print(message);
+  log('ddddddddddddddddddddddddddddddddddddddddddddd');
 }
 
 Future<void> img() async {}
 
 class notify {
   final fire = FirebaseMessaging.instance.requestPermission();
-  
+
   final firebaseMessaging = FirebaseMessaging.instance;
 
-  // AndroidNotificationChannel channel = AndroidNotificationChannel(
-  //   'high_importance_channel', // id
-  //   'High Importance Notifications', // title
-  //   // description
-  //   description: "this chanl used",
-  //   importance: Importance.max,
-  //   showBadge: true,
-  // );
-
-  // final localNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  // Future initLocalNotificatons() async {
-  //   const android = AndroidInitializationSettings('appicon');
-  //   const settings = InitializationSettings(android: android);
-  //   await localNotificationsPlugin.initialize(
-  //     settings,
-  //     onDidReceiveNotificationResponse: (details) {
-  //       print(details);
-  //       final message = RemoteMessage.fromMap(jsonDecode(details.toString()));
-
-  //       handleBckgroundMessage(message);
-  //     },
-  //   );
-  //   final platform =
-  //       localNotificationsPlugin.resolvePlatformSpecificImplementation<
-  //           AndroidFlutterLocalNotificationsPlugin>();
-  //   await platform?.createNotificationChannel(channel);
-  // }
-  // static Future initializeLocalNotifications() async {
-  //   await AwesomeNotifications().initialize(
-  //     null,
-  //     [
-  //       NotificationChannel(
-  //         channelShowBadge: true,
-  //         channelKey: "channel",
-  //         defaultColor: Colors.blue,
-  //         channelName: "Basic Notifications",
-  //         importance: NotificationImportance.High,
-  //         channelDescription: "Description",
-  //       ),
-  //     ],
-  //   );
-
-  //   // Get initial notification action is optional
-  // }
-// @pragma("vm:entry-point")
   Future<void> initNotifications() async {
-    await firebaseMessaging.requestPermission( alert: true,badge: true, provisional: false,sound: true);
+    await firebaseMessaging.requestPermission(
+        alert: true, badge: true, provisional: false, sound: true);
 
     final fCMTocken = await firebaseMessaging.getToken();
 
@@ -83,8 +37,6 @@ class notify {
     //     fCMTocken.toString();
     // initLocalNotificatons();
     FirebaseMessaging.onBackgroundMessage(handleBckgroundMessage);
-
-
 
     FirebaseMessaging.onMessage.listen((message) async {
       final notification = message.notification;
@@ -111,10 +63,14 @@ class notify {
                 bigPicture: notification.android!.imageUrl,
                 id: notification.hashCode,
                 channelKey: 'call_channel',
-       
                 title: notification.title,
                 body: notification.body));
-                
+
+        FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+          // This will be called when the app is opened from a notification click
+          print(
+              'dddddddddddddddddzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzddddddddddd');
+        });
 
         // localNotificationsPlugin.show(
         //     notification.hashCode,
@@ -132,6 +88,30 @@ class notify {
         //     )),
         //     payload: jsonEncode(message.notification?.android?.imageUrl));
       }
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      // This will be called when the app is opened from a notification click
+      log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
+    });
+
+    listenActionStream() {
+      AwesomeNotifications()
+          .getAllActiveNotificationIdsOnStatusBar()
+          .then((value) {
+        log(value.toString());
+      });
+    }
+  }
+
+  listenActionStream() {
+    AwesomeNotifications()
+        .getAllActiveNotificationIdsOnStatusBar()
+        .then((value) {
+      // This will be called when the app is opened from a notification click
+      log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
+
+      log(value.toString());
     });
   }
 }
