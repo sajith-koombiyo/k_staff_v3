@@ -54,25 +54,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
     var w = MediaQuery.of(context).size.width;
     return Consumer<ProviderS>(
       builder: (context, provider, child) => Scaffold(
-          appBar: AppBar(
-            backgroundColor: appliteBlue,
-            title: Text(
-              'Notification',
-              style: TextStyle(
-                fontSize: 18.dp,
-                color: white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            leading: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(
-                  Icons.arrow_back_ios_new,
-                  color: white,
-                )),
-          ),
           backgroundColor: white,
           body: RefreshIndicator(
             onRefresh: () {

@@ -5,6 +5,7 @@ import 'package:flutter_application_2/class/class.dart';
 import 'package:flutter_application_2/uI/main/drawer/branch_List/branch_list.dart';
 import 'package:flutter_application_2/uI/main/drawer/genaral/branch_route/branch_route.dart';
 import 'package:flutter_application_2/uI/main/drawer/genaral/find_demarcation/find_demarcation.dart';
+import 'package:flutter_application_2/uI/main/drawer/my_deposit/my_deposite.dart';
 import 'package:flutter_application_2/uI/main/drawer/shuttle/in_out/in_out.dart';
 import 'package:flutter_application_2/uI/main/drawer/my_oders/my_oders.dart';
 import 'package:flutter_application_2/uI/main/navigation/navigation.dart';
@@ -17,6 +18,7 @@ import '../../../app_details/color.dart';
 import '../../../provider/provider.dart';
 import '../../widget/drower/drower_button.dart';
 import 'about/about.dart';
+import 'admin_panel/notification_admin.dart';
 import 'attendance/attendance.dart';
 import 'branch_List/branchListGooglemap.dart';
 import 'branch_operation/delivery_approval.dart';
@@ -227,6 +229,26 @@ class _customDrawerState extends State<customDrawer> {
                                               navigation(MyOrders());
                                             },
                                             text: 'My Orders',
+                                          )
+                                        : SizedBox(),
+                                    DrawerClz().myOrders(accessGroupId)
+                                        ? CustomDrawerButton(
+                                            icon:
+                                                Icons.account_balance_outlined,
+                                            onTap: () {
+                                              navigation(MyDeposit());
+                                            },
+                                            text: 'My Deposit',
+                                          )
+                                        : SizedBox(),
+                                    DrawerClz().myOrders(accessGroupId)
+                                        ? CustomDrawerButton(
+                                            icon:
+                                                Icons.account_balance_outlined,
+                                            onTap: () {
+                                              navigation(NotificationAdmin());
+                                            },
+                                            text: 'Notification Admin',
                                           )
                                         : SizedBox(),
                                     DrawerClz().myOrders(accessGroupId)

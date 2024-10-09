@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:circular_reveal_animation/circular_reveal_animation.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -92,6 +93,7 @@ class _NavigationScreenState extends State<NavigationScreen>
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      Provider.of<ProviderS>(context, listen: false).navigateIndex = index;
       log(_selectedIndex.toString());
       if (index != 1) {
         Provider.of<ProviderS>(context, listen: false).isAppbarsheerOpen =
@@ -104,8 +106,15 @@ class _NavigationScreenState extends State<NavigationScreen>
   void initState() {
     // onUserLogin();
     notificationCount();
+
     data();
     super.initState();
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      log('fffffffffffffffffffffffffffffffffffffffff');
+      Provider.of<ProviderS>(context, listen: false).navigateIndex = 2;
+      // This will be called when the app is opened from a notification click
+    });
+    FirebaseMessaging.onMessage.listen((event) {});
 
     _controller = AnimationController(
       duration: Duration(microseconds: 200),
@@ -272,7 +281,7 @@ class _NavigationScreenState extends State<NavigationScreen>
             child: Scaffold(
                 appBar: AppBar(
                   title: Text(
-                    _selectedIndex == 2 ? 'My Deposit' : '',
+                    provider.navigateIndex == 2 ? 'Notification' : '',
                     style: TextStyle(
                       fontSize: 18.dp,
                       color: white,
@@ -280,14 +289,16 @@ class _NavigationScreenState extends State<NavigationScreen>
                     ),
                   ),
                   centerTitle: true,
-                  backgroundColor: Colors.transparent,
+                  backgroundColor: provider.navigateIndex == 2
+                      ? appliteBlue
+                      : Colors.transparent,
                   automaticallyImplyLeading: false,
                   leadingWidth: 44,
                   systemOverlayStyle: SystemUiOverlayStyle(
-                      statusBarIconBrightness:
-                          _selectedIndex == 1 || _selectedIndex == 3
-                              ? Brightness.dark
-                              : Brightness.light,
+                      statusBarIconBrightness: provider.navigateIndex == 1 ||
+                              provider.navigateIndex == 3
+                          ? Brightness.dark
+                          : Brightness.light,
                       statusBarColor: Colors.transparent),
                   leading: Padding(
                     padding: const EdgeInsets.all(2.0),
@@ -305,7 +316,7 @@ class _NavigationScreenState extends State<NavigationScreen>
                     ),
                   ),
                   actions: [
-                    _selectedIndex == 1 && provider.isAppbarsheerOpen
+                    provider.navigateIndex == 1 && provider.isAppbarsheerOpen
                         ? IconButton(
                             onPressed: () async {
                               MapUtils.openMap(
@@ -317,36 +328,36 @@ class _NavigationScreenState extends State<NavigationScreen>
                                   'assets/icons8-google-maps-old-48.png'),
                             ))
                         : SizedBox(),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: CircleAvatar(
-                        backgroundColor: black.withOpacity(0.4),
-                        child: IconButton(
-                            color: white,
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                PageTransition(
-                                    type: PageTransitionType.leftToRight,
-                                    duration: Duration(milliseconds: 600),
-                                    child: NotificationScreen(
-                                        userId: widget.userId),
-                                    inheritTheme: true,
-                                    ctx: context),
-                              );
-                            },
-                            icon: provider.noteCount == '0'
-                                ? Icon(Icons.notification_important)
-                                : badges.Badge(
-                                    badgeContent: Text(
-                                      provider.noteCount,
-                                      style:
-                                          TextStyle(fontSize: 9, color: white),
-                                    ),
-                                    child: Icon(Icons.notification_important),
-                                  )),
-                      ),
-                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.all(8.0),
+                    //   child: CircleAvatar(
+                    //     backgroundColor: black.withOpacity(0.4),
+                    //     child: IconButton(
+                    //         color: white,
+                    //         onPressed: () {
+                    //           Navigator.push(
+                    //             context,
+                    //             PageTransition(
+                    //                 type: PageTransitionType.leftToRight,
+                    //                 duration: Duration(milliseconds: 600),
+                    //                 child: NotificationScreen(
+                    //                     userId: widget.userId),
+                    //                 inheritTheme: true,
+                    //                 ctx: context),
+                    //           );
+                    //         },
+                    //         icon: provider.noteCount == '0'
+                    //             ? Icon(Icons.notification_important)
+                    //             : badges.Badge(
+                    //                 badgeContent: Text(
+                    //                   provider.noteCount,
+                    //                   style:
+                    //                       TextStyle(fontSize: 9, color: white),
+                    //                 ),
+                    //                 child: Icon(Icons.notification_important),
+                    //               )),
+                    //   ),
+                    // ),
                   ],
                 ),
                 extendBodyBehindAppBar: true,
@@ -369,8 +380,17 @@ class _NavigationScreenState extends State<NavigationScreen>
                             label: 'Map',
                           ),
                           CurvedNavigationBarItem(
-                            child: Icon(Icons.newspaper),
-                            label: 'My Deposit',
+                            child: provider.noteCount == '0'
+                                ? Icon(Icons.notification_important)
+                                : badges.Badge(
+                                    badgeContent: Text(
+                                      provider.noteCount,
+                                      style:
+                                          TextStyle(fontSize: 9, color: white),
+                                    ),
+                                    child: Icon(Icons.notification_important),
+                                  ),
+                            label: 'Notification',
                           ),
                           CurvedNavigationBarItem(
                             child: Icon(Icons.perm_identity),
@@ -402,14 +422,16 @@ class _NavigationScreenState extends State<NavigationScreen>
                       SizedBox(
                         height: MediaQuery.of(context).size.height,
                         child: Center(
-                          child: _selectedIndex == 0
+                          child: provider.navigateIndex == 0
                               ? Home()
-                              : _selectedIndex == 1
+                              : provider.navigateIndex == 1
                                   ? pickupDevice == "1"
                                       ? Map2()
                                       : MapScreen()
-                                  : _selectedIndex == 2
-                                      ? MyDeposit()
+                                  : provider.navigateIndex == 2
+                                      ? NotificationScreen(
+                                          userId: widget.userId,
+                                        )
                                       : Account(),
                           //New
                         ),
@@ -446,7 +468,7 @@ class _NavigationScreenState extends State<NavigationScreen>
                                   ),
                                   CurvedNavigationBarItem(
                                     child: Icon(Icons.newspaper),
-                                    label: 'My Deposit',
+                                    label: 'Notification',
                                   ),
                                   CurvedNavigationBarItem(
                                     child: Icon(Icons.perm_identity),
@@ -519,7 +541,7 @@ class _NavigationScreenState extends State<NavigationScreen>
                                                     : x == 1
                                                         ? "Map screen - Showing all the rider pickups \nand deliveries "
                                                         : x == 2
-                                                            ? "My Deposit Screen - bank deposit history of the rider."
+                                                            ? "Notification Screen - showing all Notification of the rider."
                                                             : "Account Screen, your personnel profile details",
                                                 style: TextStyle(
                                                     fontSize: 11.sp,

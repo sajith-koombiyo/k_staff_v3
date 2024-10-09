@@ -6,6 +6,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_application_2/push_notification/push_notification.dart';
+import 'package:flutter_application_2/uI/main/navigation/navigation.dart';
 import 'package:flutter_application_2/uI/splash/splash.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:provider/provider.dart';
@@ -16,10 +17,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await notify().initNotifications();
-  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    // This will be called when the app is opened from a notification click
-    print('vnottiiiiinnvnvnnvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
-  });
+  FirebaseMessaging.instance.subscribeToTopic('allDevices');
+
   await AwesomeNotifications().initialize(
     null,
     [
@@ -33,6 +32,10 @@ void main() async {
       ),
     ],
   );
+
+  FirebaseMessaging.onMessageOpenedApp.listen((event) {
+    print(event!.notification!.body!.toString());
+  });
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => ProviderS()),

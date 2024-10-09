@@ -1,17 +1,10 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
-import 'package:printing/printing.dart';
-import 'package:provider/provider.dart';
-
-import '../provider/provider.dart';
 
 Future<void> handleBckgroundMessage(RemoteMessage message) async {
   print(message);
@@ -39,6 +32,7 @@ class notify {
     FirebaseMessaging.onBackgroundMessage(handleBckgroundMessage);
 
     FirebaseMessaging.onMessage.listen((message) async {
+      print(message);
       final notification = message.notification;
 
       print(notification);
@@ -56,6 +50,7 @@ class notify {
         log('my notiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii');
         AwesomeNotifications().createNotification(
             content: NotificationContent(
+                actionType: ActionType.KeepOnTop,
                 notificationLayout: NotificationLayout.BigPicture,
                 //actionType : ActionType.DismissAction,
                 color: Colors.black,
@@ -65,12 +60,6 @@ class notify {
                 channelKey: 'call_channel',
                 title: notification.title,
                 body: notification.body));
-
-        FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-          // This will be called when the app is opened from a notification click
-          print(
-              'dddddddddddddddddzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzddddddddddd');
-        });
 
         // localNotificationsPlugin.show(
         //     notification.hashCode,
@@ -88,30 +77,6 @@ class notify {
         //     )),
         //     payload: jsonEncode(message.notification?.android?.imageUrl));
       }
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      // This will be called when the app is opened from a notification click
-      log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
-    });
-
-    listenActionStream() {
-      AwesomeNotifications()
-          .getAllActiveNotificationIdsOnStatusBar()
-          .then((value) {
-        log(value.toString());
-      });
-    }
-  }
-
-  listenActionStream() {
-    AwesomeNotifications()
-        .getAllActiveNotificationIdsOnStatusBar()
-        .then((value) {
-      // This will be called when the app is opened from a notification click
-      log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
-
-      log(value.toString());
     });
   }
 }

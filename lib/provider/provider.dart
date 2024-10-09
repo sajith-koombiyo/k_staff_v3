@@ -74,6 +74,13 @@ class ProviderS with ChangeNotifier {
     notifyListeners();
   }
 
+  int _navigateIndex = 0;
+  int get navigateIndex => _navigateIndex;
+  set navigateIndex(int i) {
+    _navigateIndex = i;
+    notifyListeners();
+  }
+
   String _staffName = '';
   String get staffName => _staffName;
   set staffName(String i) {
@@ -81,7 +88,7 @@ class ProviderS with ChangeNotifier {
     notifyListeners();
   }
 
-    String _fcmKey = '';
+  String _fcmKey = '';
   String get fcmKey => _fcmKey;
   set fcmKey(String i) {
     _fcmKey = i;
@@ -210,15 +217,16 @@ class ProviderS with ChangeNotifier {
     notifyListeners();
   }
 
-  VoidCallback ? _count ;
+  VoidCallback? _count;
 
   VoidCallback get count => _count!;
 
-  void increment( VoidCallback onTap) {
-  onTap(){}
+  void increment(VoidCallback onTap) {
+    onTap() {}
     notifyListeners(); // Notify listeners about the change
   }
-   bool _readOnly = false;
+
+  bool _readOnly = false;
   bool get readOnly => _readOnly;
 
   set readOnly(bool time) {

@@ -61,6 +61,7 @@ class _MyDepositState extends State<MyDeposit> {
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
+    var h = MediaQuery.of(context).size.height;
     return RefreshIndicator(
       onRefresh: () {
         return refeshData();
@@ -70,10 +71,27 @@ class _MyDepositState extends State<MyDeposit> {
         extendBody: true,
         key: _scaffoldKey,
         appBar: AppBar(
-            centerTitle: true,
-            automaticallyImplyLeading: false,
-            backgroundColor: appliteBlue,
-            title: serchBarr(context)),
+          centerTitle: true,
+          leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: white,
+              )),
+          backgroundColor: appliteBlue,
+          title: Text(
+            'My Deposit',
+            style: TextStyle(
+              fontSize: 18.dp,
+              color: white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          bottom: PreferredSize(
+              preferredSize: Size(w, h / 17), child: serchBarr(context)),
+        ),
         backgroundColor: white,
         body: Consumer<ProviderS>(
           builder: (context, provider, child) => deposit.isEmpty
