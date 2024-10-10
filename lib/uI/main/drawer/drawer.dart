@@ -241,16 +241,16 @@ class _customDrawerState extends State<customDrawer> {
                                             text: 'My Deposit',
                                           )
                                         : SizedBox(),
-                                    DrawerClz().myOrders(accessGroupId)
-                                        ? CustomDrawerButton(
-                                            icon:
-                                                Icons.account_balance_outlined,
-                                            onTap: () {
-                                              navigation(NotificationAdmin());
-                                            },
-                                            text: 'Notification Admin',
-                                          )
-                                        : SizedBox(),
+                                    // DrawerClz().myOrders(accessGroupId)
+                                    //     ? CustomDrawerButton(
+                                    //         icon:
+                                    //             Icons.account_balance_outlined,
+                                    //         onTap: () {
+                                    //           navigation(NotificationAdmin());
+                                    //         },
+                                    //         text: 'Notification Admin',
+                                    //       )
+                                    //     : SizedBox(),
                                     DrawerClz().myOrders(accessGroupId)
                                         ? CustomDrawerButton(
                                             icon: Icons.add_shopping_cart_sharp,

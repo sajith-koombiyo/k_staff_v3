@@ -247,13 +247,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                       PageTransition(
                                         duration: Duration(milliseconds: 200),
                                         type: PageTransitionType.bottomToTop,
-                                        child:
-                                            //  DrawerClz()
-                                            //         .oderAllDetail(accessGroupId)
-                                            //     ? MyDelivery(isFromHome: true)
-                                            //     :
-
-                                            OderAllDetails(),
+                                        child: DrawerClz()
+                                                .oderAllDetail(accessGroupId)
+                                            ? MyDelivery(isFromHome: true)
+                                            : OderAllDetails(),
                                       ),
                                     );
 
