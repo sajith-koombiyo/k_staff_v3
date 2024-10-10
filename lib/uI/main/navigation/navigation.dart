@@ -105,6 +105,7 @@ class _NavigationScreenState extends State<NavigationScreen>
   @override
   void initState() {
     // onUserLogin();
+
     notificationCount();
 
     data();

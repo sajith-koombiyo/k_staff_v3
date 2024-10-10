@@ -63,6 +63,9 @@ class _MyAppState extends State<MyApp> {
 
     return FlutterSizer(builder: (context, orientation, screenType) {
       return MaterialApp(
+        onGenerateRoute: (settings) {
+          
+        },
         navigatorKey: widget.navigatorKey,
         themeMode: ThemeMode.dark,
         debugShowCheckedModeBanner: false,
