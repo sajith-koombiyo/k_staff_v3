@@ -981,16 +981,28 @@ class _MapScreenState extends State<MapScreen> {
                                                     setState(() {
                                                       isLoading = true;
                                                     });
-
+                                                    Position? position;
+                                                    LocationPermission
+                                                        permission;
+                                                    permission = await Geolocator
+                                                        .requestPermission();
+                                                    position = await Geolocator
+                                                        .getCurrentPosition(
+                                                            desiredAccuracy:
+                                                                LocationAccuracy
+                                                                    .high);
+                                                    log(position.toString());
                                                     await CustomApi()
                                                         .pickupComplete(
                                                             context,
                                                             pickId,
                                                             quantity.text,
                                                             phone,
-                                                            'lat',
-                                                            'lon',
-                                                            'pick');
+                                                            position!.latitude
+                                                                .toString(),
+                                                            position!.longitude
+                                                                .toString(),
+                                                            '');
 
                                                     _marker.clear();
                                                     await userLocation();
