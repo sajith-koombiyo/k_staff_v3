@@ -207,6 +207,8 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   void initState() {
+    print(
+        'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb');
     userLocation();
     getLocation(false);
     _signController.addListener(() {

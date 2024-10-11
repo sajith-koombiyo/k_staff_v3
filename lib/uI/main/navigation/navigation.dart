@@ -428,7 +428,7 @@ class _NavigationScreenState extends State<NavigationScreen>
                               ? Home()
                               : provider.navigateIndex == 1
                                   ? pickupDevice == "1"
-                                      ? Map3()
+                                      ? Map2()
                                       : MapScreen()
                                   : provider.navigateIndex == 2
                                       ? NotificationScreen(

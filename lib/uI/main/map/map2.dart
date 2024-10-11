@@ -137,50 +137,50 @@ class _Map2State extends State<Map2> {
           width: 100,
           height: 80,
           child: InkWell(
-              onTap: () async {
-                if (mounted) {
-                  if (sacanList.any((element) =>
-                      element["pick_id"].toString() ==
-                      pickupLocation[index]['pickr_id'].toString())) {
-                    List res = await sqlDb.readData(
-                        'Select * from scanData where pick_id ="${pickupLocation[index]['pickr_id'].toString()}" ');
+            onTap: () async {
+              if (mounted) {
+                if (sacanList.any((element) =>
+                    element["pick_id"].toString() ==
+                    pickupLocation[index]['pickr_id'].toString())) {
+                  List res = await sqlDb.readData(
+                      'Select * from scanData where pick_id ="${pickupLocation[index]['pickr_id'].toString()}" ');
 
-                    final removedBrackets = res[0]['scan_list']
-                        .substring(1, res[0]['scan_list'].length - 1);
-                    final parts = removedBrackets.split(', ');
-                    setState(() {
-                      barcodeScanData = parts;
-                    });
-                  } else {
-                    setState(() {
-                      barcodeScanData = [];
-                    });
-                  }
+                  final removedBrackets = res[0]['scan_list']
+                      .substring(1, res[0]['scan_list'].length - 1);
+                  final parts = removedBrackets.split(', ');
                   setState(() {
-                    Provider.of<ProviderS>(context, listen: false)
-                        .isAppbarsheerOpen = true;
-                    Provider.of<ProviderS>(context, listen: false).mapDLat =
-                        lat;
-                    Provider.of<ProviderS>(context, listen: false).mapDLong =
-                        long;
-                    isDelivery = false;
-                    name = pickupLocation[index]['cust_name'];
-                    address = pickupLocation[index]['address'];
-                    phone = pickupLocation[index]['phone'];
-                    pickId = pickupLocation[index]['pickr_id'];
-                    Provider.of<ProviderS>(context, listen: false).pickId =
-                        pickId;
-                    accept = pickupLocation[index]['accept'];
-                    // MapUtils.openMap(list[index]['lat'], list[index]['lon']);
+                    barcodeScanData = parts;
+                  });
+                } else {
+                  setState(() {
+                    barcodeScanData = [];
                   });
                 }
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Image.asset(pickupLocation[index]['accept'] == '0'
-                    ? 'assets/location_pin_gradient_set-red.png'
-                    : 'assets/location_d.png'),
-              ),),
+                setState(() {
+                  Provider.of<ProviderS>(context, listen: false)
+                      .isAppbarsheerOpen = true;
+                  Provider.of<ProviderS>(context, listen: false).mapDLat = lat;
+                  Provider.of<ProviderS>(context, listen: false).mapDLong =
+                      long;
+                  isDelivery = false;
+                  name = pickupLocation[index]['cust_name'];
+                  address = pickupLocation[index]['address'];
+                  phone = pickupLocation[index]['phone'];
+                  pickId = pickupLocation[index]['pickr_id'];
+                  Provider.of<ProviderS>(context, listen: false).pickId =
+                      pickId;
+                  accept = pickupLocation[index]['accept'];
+                  // MapUtils.openMap(list[index]['lat'], list[index]['lon']);
+                });
+              }
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.asset(pickupLocation[index]['accept'] == '0'
+                  ? 'assets/location_pin_gradient_set-red.png'
+                  : 'assets/location_d.png'),
+            ),
+          ),
         )
       ];
       _marker.addAll(_markertemp);
@@ -238,6 +238,7 @@ class _Map2State extends State<Map2> {
 
   @override
   void initState() {
+    print('==================================================================');
     getLocation(false);
     // userLoaction();
     // TODO: implement initState
