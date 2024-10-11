@@ -18,7 +18,7 @@ void main() async {
   await Firebase.initializeApp();
   await notify().initNotifications();
   FirebaseMessaging.instance.subscribeToTopic('allDevices');
-
+  FirebaseMessaging.instance.requestPermission(alert: true,sound:  true,badge: true);
   await AwesomeNotifications().initialize(
     null,
     [
