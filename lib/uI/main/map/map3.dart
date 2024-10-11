@@ -8,38 +8,41 @@ import 'package:flutter_application_2/api/api.dart';
 import 'package:flutter_application_2/app_details/color.dart';
 import 'package:flutter_application_2/class/class.dart';
 import 'package:flutter_application_2/class/location.dart';
+
 import 'package:flutter_application_2/provider/provider.dart';
 import 'package:flutter_application_2/uI/widget/diloag_button.dart';
 import 'package:flutter_application_2/uI/widget/map/details.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:flutter_map/flutter_map.dart';
+
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:keyboard_hider/keyboard_hider.dart';
-import 'package:latlong2/latlong.dart';
+
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../sql_db/db.dart';
 
-class Map2 extends StatefulWidget {
-  const Map2({super.key});
+class Map3 extends StatefulWidget {
+  const Map3({super.key});
 
   @override
-  State<Map2> createState() => _Map2State();
+  State<Map3> createState() => _Map3State();
 }
 
-class _Map2State extends State<Map2> {
+class _Map3State extends State<Map3> {
   late bool visible;
+    Set<Marker> _marker = {};
   Position? position;
   List pickupLocation = [];
   List deliveryLocation = [];
   int status0Count = 0;
   int status1Count = 0;
   bool isPickupRequest = false;
-  MapController mapController = MapController();
+
   String base64Image = '';
 
   final ImagePicker _picker = ImagePicker();
@@ -63,9 +66,9 @@ class _Map2State extends State<Map2> {
   String MarkerTempId = '';
   List sacanList = [];
   bool isLoading = false;
-  List<Marker> markerList = <Marker>[];
+
   // Set<Marker> _marker = {};
-  List<Marker> _marker = [];
+
   List barcodeScanData = [];
   bool sign = false;
   String pickupDevice = '';
@@ -82,39 +85,39 @@ class _Map2State extends State<Map2> {
     log(sacanList.toString());
   }
 
-  userLoaction() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var res = await prefs.getString('pickup_device');
-    Provider.of<ProviderS>(context, listen: false).scanQnt.clear();
-    sacanData();
+   userLocation() async {
     setState(() {
       isLoading = true;
-      pickupDevice = res.toString();
-
       _marker.clear();
-
-      log(pickupDevice);
     });
     status0Count = 0;
     status1Count = 0;
-
     var temp = await CustomApi().getmypickups(context);
     var temp2 = await CustomApi().getMyPDeliveryMap(context);
-    log(temp.toString());
-    log(temp2.toString());
 
-    if (mounted) {
-      setState(() {
-        pickupLocation = temp;
-        deliveryLocation = temp2;
-        for (var item in pickupLocation) {
-          if (item['accept'] == 0) {
-          } else if (item['accept'] == 1) {
-            status1Count++;
-          }
+    if (!mounted) return;
+    setState(() {
+      pickupLocation = temp;
+      deliveryLocation = temp2;
+      for (var item in pickupLocation) {
+        if (item['accept'] == 0) {
+        } else if (item['accept'] == 1) {
+          status1Count++;
         }
-      });
-    }
+      }
+    });
+    BitmapDescriptor markerBitMap = await BitmapDescriptor.fromAssetImage(
+      ImageConfiguration(size: Size(30, 30)),
+      "assets/location_pin_gradient_set-red.png",
+    );
+    BitmapDescriptor markerBitMap2 = await BitmapDescriptor.fromAssetImage(
+      ImageConfiguration(size: Size(30, 30)),
+      "assets/location_d.png",
+    );
+    BitmapDescriptor markerBitMap3 = await BitmapDescriptor.fromAssetImage(
+      ImageConfiguration(size: Size(30, 30)),
+      "assets/delivey2.png",
+    );
 
     List.generate(pickupLocation.length, (index) {
       if (pickupLocation[index]['accept'] == '0') {
@@ -130,101 +133,74 @@ class _Map2State extends State<Map2> {
       }
       double lat = double.parse(pickupLocation[index]['lati']);
       double long = double.parse(pickupLocation[index]['longt']);
-      final _markertemp = <Marker>[
+      Set<Marker> _markertemp = {
         Marker(
-          // key: Key(pickupLocation[index]['pickr_id']),
-          point: LatLng(lat, long),
-          width: 100,
-          height: 80,
-          child: InkWell(
-              onTap: () async {
-                if (mounted) {
-                  if (sacanList.any((element) =>
-                      element["pick_id"].toString() ==
-                      pickupLocation[index]['pickr_id'].toString())) {
-                    List res = await sqlDb.readData(
-                        'Select * from scanData where pick_id ="${pickupLocation[index]['pickr_id'].toString()}" ');
-
-                    final removedBrackets = res[0]['scan_list']
-                        .substring(1, res[0]['scan_list'].length - 1);
-                    final parts = removedBrackets.split(', ');
-                    setState(() {
-                      barcodeScanData = parts;
-                    });
-                  } else {
-                    setState(() {
-                      barcodeScanData = [];
-                    });
-                  }
-                  setState(() {
-                    Provider.of<ProviderS>(context, listen: false)
-                        .isAppbarsheerOpen = true;
-                    Provider.of<ProviderS>(context, listen: false).mapDLat =
-                        lat;
-                    Provider.of<ProviderS>(context, listen: false).mapDLong =
-                        long;
-                    isDelivery = false;
-                    name = pickupLocation[index]['cust_name'];
-                    address = pickupLocation[index]['address'];
-                    phone = pickupLocation[index]['phone'];
-                    pickId = pickupLocation[index]['pickr_id'];
-                    Provider.of<ProviderS>(context, listen: false).pickId =
-                        pickId;
-                    accept = pickupLocation[index]['accept'];
-                    // MapUtils.openMap(list[index]['lat'], list[index]['lon']);
-                  });
-                }
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Image.asset(pickupLocation[index]['accept'] == '0'
-                    ? 'assets/location_pin_gradient_set-red.png'
-                    : 'assets/location_d.png'),
-              ),),
-        )
-      ];
+            onTap: () async {
+              if (!mounted) return;
+              setState(() {
+                Provider.of<ProviderS>(context, listen: false)
+                    .isAppbarsheerOpen = true;
+                Provider.of<ProviderS>(context, listen: false).mapDLat = lat;
+                Provider.of<ProviderS>(context, listen: false).mapDLong = long;
+                isDelivery = false;
+                name = pickupLocation[index]['cust_name'];
+                address = pickupLocation[index]['address'];
+                phone = pickupLocation[index]['phone'];
+                pickId = pickupLocation[index]['pickr_id'];
+                Provider.of<ProviderS>(context, listen: false).pickId = pickId;
+                accept = pickupLocation[index]['accept'];
+                // MapUtils.openMap(list[index]['lat'], list[index]['lon']);
+              });
+            },
+            visible: true,
+            icon: pickupLocation[index]['accept'] == '0'
+                ? markerBitMap
+                : markerBitMap3,
+            infoWindow: InfoWindow(
+                title: pickupLocation[index]['staff_name'],
+                snippet: pickupLocation[index]['cust_name'],
+                onTap: () {}),
+            markerId: MarkerId(pickupLocation[index]['pickr_id']),
+            position: LatLng(lat, long)),
+      };
       _marker.addAll(_markertemp);
     });
-
     List.generate(deliveryLocation.length, (index) {
       double lat = double.parse(deliveryLocation[index]['latitude']);
       double long = double.parse(deliveryLocation[index]['longitude']);
-      final _markertemp = <Marker>[
-        Marker(
-          // key: Key(pickupLocation[index]['pickr_id']),
-          point: LatLng(6.9271, 79.8612),
-          width: 100,
-          height: 80,
-          child: InkWell(
-              onTap: () {
-                if (mounted) {
-                  setState(() {
-                    Provider.of<ProviderS>(context, listen: false)
-                        .isAppbarsheerOpen = true;
 
-                    isDelivery = true;
-                    name = deliveryLocation[index]['name'];
-                    address = deliveryLocation[index]['address'];
-                    phone = deliveryLocation[index]['phone'];
-                    pickId = deliveryLocation[index]['waybill_id'];
-                    COD = deliveryLocation[index]['cod_final'];
-                    dLat = double.parse(deliveryLocation[index]['latitude']);
-                    dLong = double.parse(deliveryLocation[index]['longitude']);
-                    // accept = deliveryLocation[index]['accept'];
-                    // MapUtils.openMap(dLat, dLong);
-                  });
-                }
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Image.asset(pickupLocation[index]['accept'] == '0'
-                    ? 'assets/location_pin_gradient_set-red.png'
-                    : 'assets/location_d.png'),
-              )),
-        )
-      ];
-      _marker.addAll(_markertemp);
+      Set<Marker> _markertemp2 = {
+        Marker(
+            onTap: () async {
+              if (!mounted) return;
+              setState(() {
+                Provider.of<ProviderS>(context, listen: false)
+                    .isAppbarsheerOpen = true;
+
+                isDelivery = true;
+                name = deliveryLocation[index]['name'];
+                address = deliveryLocation[index]['address'];
+                phone = deliveryLocation[index]['phone'];
+                pickId = deliveryLocation[index]['waybill_id'];
+                COD = deliveryLocation[index]['cod_final'];
+                dLat = double.parse(deliveryLocation[index]['latitude']);
+                dLong = double.parse(deliveryLocation[index]['longitude']);
+                // accept = deliveryLocation[index]['accept'];
+                // MapUtils.openMap(dLat, dLong);
+              });
+            },
+            visible: true,
+            icon: markerBitMap3,
+            infoWindow: InfoWindow(
+                title: deliveryLocation[index]['name'],
+                snippet: deliveryLocation[index]['address'],
+                onTap: () {}),
+            markerId: MarkerId(deliveryLocation[index]['waybill_id']),
+            position: LatLng(lat, long)),
+      };
+      _marker.addAll(_markertemp2);
     });
+
     _marker.isEmpty
         ? notification().warning(
             context, 'Any delivery location is not available at this moment.')
@@ -232,8 +208,6 @@ class _Map2State extends State<Map2> {
     setState(() {
       isLoading = false;
     });
-
-    log(_marker.toString());
   }
 
   @override
@@ -286,41 +260,17 @@ class _Map2State extends State<Map2> {
                 children: [
                   position == null
                       ? Loader().loader(context)
-                      : FlutterMap(
-                          mapController: mapController,
-                          // mapController: mapController,
-                          options: MapOptions(
-                            initialCenter: LatLng(7.8731, 80.7718),
-                            minZoom: 8,
-                            maxZoom: 40,
-                            zoom: 7.9,
-                            keepAlive: true,
-                            onMapReady: () {
-                              //
-                            },
-                            onPositionChanged: (position, hasGesture) {
-                              //
-                            },
-                          ),
-                          children: [
-                            TileLayer(
-                              urlTemplate:
-                                  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                              subdomains: ['a', 'b', 'c'],
-                            ),
-                            MarkerLayer(markers: _marker),
-                            MarkerLayer(markers: [
-                              Marker(
-                                  point: LatLng(
-                                      position!.latitude, position!.longitude),
-                                  child: Icon(
-                                    Icons.person_pin_circle_rounded,
-                                    size: 20,
-                                    color: Color.fromARGB(255, 240, 27, 4),
-                                  ))
-                            ]),
-                          ],
-                        ),
+                      :   GoogleMap(
+                  padding: EdgeInsets.only(top: h / 2, bottom: 100),
+                  myLocationEnabled: true,
+                  initialCameraPosition: CameraPosition(
+                    target: LatLng(7.8731, 80.7718),
+                    // LatLng(position!.latitude, position!.longitude),
+                    zoom: 8,
+                  ),
+                  markers: _marker,
+                  onMapCreated: (GoogleMapController _controller) {},
+                ),
                   Positioned(
                     top: 100,
                     left: 10,
@@ -431,32 +381,30 @@ class _Map2State extends State<Map2> {
                                 color: const Color.fromARGB(255, 136, 9, 0),
                               ),
                               onPressed: () {
-                                Geolocator.getCurrentPosition(
-                                        desiredAccuracy: LocationAccuracy.high)
-                                    .then((pickedCurrentLocation) {
-                                  setState(() {
-                                    position = pickedCurrentLocation;
-                                  });
-                                  mapController.move(
-                                      LatLng(position!.latitude,
-                                          position!.longitude),
-                                      2);
-                                });
+                         
+
+
+
+
                               }),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 100),
-                          child: FloatingActionButton.small(
-                              heroTag: '2',
-                              backgroundColor: white.withOpacity(0.6),
-                              child: Icon(
-                                Icons.refresh,
-                                color: Color.fromARGB(255, 2, 135, 244),
-                              ),
-                              onPressed: () {
-                                userLoaction();
-                              }),
+                        Positioned(
+                  top: 200,
+                  right: 10,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 100),
+                    child: FloatingActionButton.small(
+                        heroTag: '2',
+                        backgroundColor: white.withOpacity(0.6),
+                        child: Icon(
+                          Icons.refresh,
+                          color: Color.fromARGB(255, 2, 135, 244),
                         ),
+                        onPressed: () {
+                          userLocation();
+                        }),
+                  ),
+                ),
                       ],
                     ),
                   ),
@@ -690,7 +638,7 @@ class _Map2State extends State<Map2> {
                                         });
                                         await CustomApi()
                                             .sendSms(phone, pickId, context);
-                                        await userLoaction();
+                                        await userLocation();
                                         setState(() {
                                           Provider.of<ProviderS>(context,
                                                   listen: false)
@@ -745,7 +693,7 @@ class _Map2State extends State<Map2> {
                                                 _marker.clear();
                                               });
 
-                                              await userLoaction();
+                                              await userLocation();
 
                                               setState(() {
                                                 Provider.of<ProviderS>(context,
@@ -1074,7 +1022,7 @@ class _Map2State extends State<Map2> {
         isPickupRequest = false;
       });
     }
-    userLoaction();
+    userLocation();
   }
 
   Future<void> _checkLocationPermission(bool isCanselPickup) async {

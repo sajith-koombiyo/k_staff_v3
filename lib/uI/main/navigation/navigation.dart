@@ -34,6 +34,7 @@ import '../drawer/drawer.dart';
 import '../drawer/my_deposit/my_deposite.dart';
 import '../map/map.dart';
 import '../map/map2.dart';
+import '../map/map3.dart';
 import '../notification/notification.dart';
 import 'package:badges/badges.dart' as badges;
 
@@ -427,7 +428,7 @@ class _NavigationScreenState extends State<NavigationScreen>
                               ? Home()
                               : provider.navigateIndex == 1
                                   ? pickupDevice == "1"
-                                      ? Map2()
+                                      ? Map3()
                                       : MapScreen()
                                   : provider.navigateIndex == 2
                                       ? NotificationScreen(

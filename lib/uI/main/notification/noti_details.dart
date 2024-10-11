@@ -12,8 +12,7 @@ class NotificationDetails extends StatefulWidget {
       required this.date,
       required this.msg,
       required this.title,
-      required this.userId,
-      required this.read});
+      required this.userId,required this.read});
   final String title;
   final String msg;
   final String date;

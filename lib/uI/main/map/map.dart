@@ -102,15 +102,15 @@ class _MapScreenState extends State<MapScreen> {
       }
     });
     BitmapDescriptor markerBitMap = await BitmapDescriptor.fromAssetImage(
-      ImageConfiguration(size: Size(40, 40)),
+      ImageConfiguration(size: Size(30, 30)),
       "assets/location_pin_gradient_set-red.png",
     );
     BitmapDescriptor markerBitMap2 = await BitmapDescriptor.fromAssetImage(
-      ImageConfiguration(size: Size(40, 40)),
+      ImageConfiguration(size: Size(30, 30)),
       "assets/location_d.png",
     );
     BitmapDescriptor markerBitMap3 = await BitmapDescriptor.fromAssetImage(
-      ImageConfiguration(size: Size(40, 40)),
+      ImageConfiguration(size: Size(30, 30)),
       "assets/delivey2.png",
     );
 
@@ -875,7 +875,7 @@ class _MapScreenState extends State<MapScreen> {
                                   controller: pValue.scanQnt,
                                   keyboardType: TextInputType.number,
                                   decoration: InputDecoration(
-                                      hintText: 'Scan your pickups',
+                                      hintText: 'Scan or Enter your quantity',
                                       contentPadding: EdgeInsets.all(8),
                                       prefixIcon: Padding(
                                         padding: const EdgeInsets.all(4.0),
