@@ -41,12 +41,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     });
   }
 
-  readNotification() async {
-    await CustomApi().notificationMarkAsRead(context);
-    var res = await CustomApi().notificationCount(widget.userId);
 
-    Provider.of<ProviderS>(context, listen: false).noteCount = res;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,9 +81,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                             ['notify_date'],
                                         msg: notification[index]['message'],
                                         title: notification[index]['title'],
+                                        userId: widget.userId,
                                       ),
                                     ));
-                                await readNotification();
+                               
                               },
                               child: Card(
                                 elevation: 20,

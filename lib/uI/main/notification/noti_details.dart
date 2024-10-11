@@ -1,14 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/app_details/color.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:provider/provider.dart';
 
-class NotificationDetails extends StatelessWidget {
+import '../../../api/api.dart';
+import '../../../provider/provider.dart';
+
+class NotificationDetails extends StatefulWidget {
   const NotificationDetails(
-      {super.key, required this.date, required this.msg, required this.title});
+      {super.key, required this.date, required this.msg, required this.title,required this.userId});
   final String title;
   final String msg;
   final String date;
+  final String userId;
 
+  @override
+  State<NotificationDetails> createState() => _NotificationDetailsState();
+}
+
+class _NotificationDetailsState extends State<NotificationDetails> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+    readNotification() async {
+    await CustomApi().notificationMarkAsRead(context);
+    var res = await CustomApi().notificationCount(widget.userId);
+
+    Provider.of<ProviderS>(context, listen: false).noteCount = res;
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +61,7 @@ class NotificationDetails extends StatelessWidget {
               Container(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  title,
+                  widget.title,
                   style: TextStyle(
                     fontSize: 18.dp,
                     color: black,
@@ -51,7 +73,7 @@ class NotificationDetails extends StatelessWidget {
                 height: 12,
               ),
               Text(
-                msg,
+                widget.msg,
                 style: TextStyle(
                   fontSize: 12.dp,
                   color: black1,
@@ -64,7 +86,7 @@ class NotificationDetails extends StatelessWidget {
               Container(
                 alignment: Alignment.centerRight,
                 child: Text(
-                  date,
+                  widget.date,
                   style: TextStyle(
                     fontSize: 12.dp,
                     color: black2,
