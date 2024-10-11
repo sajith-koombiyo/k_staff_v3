@@ -336,7 +336,7 @@ class CustomApi {
   }
 
 // notification  read
-  Future<void> notificationMarkAsRead(BuildContext context) async {
+  notificationMarkAsRead(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('userkey');
     var connectivityResult = await (Connectivity().checkConnectivity());
@@ -350,6 +350,7 @@ class CustomApi {
       // Make POST request
       var resp =
           await https.post(headers: headers, Uri.parse(apiUrl), body: {});
+      return resp;
     } else {
       notification().warning(context, 'No Internet');
     }

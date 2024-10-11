@@ -34,18 +34,19 @@ class _NotificationScreenState extends State<NotificationScreen> {
       isLoading = isInit;
     });
     notification = await CustomApi().getMyNotification(context);
+    var temp = await CustomApi().notificationCount(widget.userId.toString());
 
+    Provider.of<ProviderS>(context, listen: false).noteCount = temp;
     setState(() {
       notification;
       isLoading = false;
     });
   }
 
-  readNotification() async {
-    await CustomApi().notificationMarkAsRead(context);
-    var res = await CustomApi().notificationCount(widget.userId);
+  readNot() async {
+    var temp = await CustomApi().notificationCount(widget.userId.toString());
 
-    Provider.of<ProviderS>(context, listen: false).noteCount = res;
+    Provider.of<ProviderS>(context, listen: false).noteCount = temp;
   }
 
   @override
@@ -82,13 +83,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => NotificationDetails(
+                                        read: readNot,
                                         date: notification[index]
                                             ['notify_date'],
                                         msg: notification[index]['message'],
                                         title: notification[index]['title'],
+                                        userId: widget.userId,
                                       ),
                                     ));
-                                await readNotification();
                               },
                               child: Card(
                                 elevation: 20,

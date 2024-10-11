@@ -1,13 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/app_details/color.dart';
+import 'package:flutter_application_2/provider/provider.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:provider/provider.dart';
 
-class NotificationDetails extends StatelessWidget {
+import '../../../api/api.dart';
+
+class NotificationDetails extends StatefulWidget {
   const NotificationDetails(
-      {super.key, required this.date, required this.msg, required this.title});
+      {super.key,
+      required this.date,
+      required this.msg,
+      required this.title,
+      required this.userId,
+      required this.read});
   final String title;
   final String msg;
   final String date;
+  final String userId;
+  final Function read;
+
+  @override
+  State<NotificationDetails> createState() => _NotificationDetailsState();
+}
+
+class _NotificationDetailsState extends State<NotificationDetails> {
+  readNotification() async {
+    var countt = await CustomApi().notificationMarkAsRead(context);
+    print(countt);
+
+    var res = await CustomApi().notificationCount(widget.userId);
+    print(widget.userId);
+    print(res);
+
+    Provider.of<ProviderS>(context, listen: false).noteCount = res;
+  }
+
+  @override
+  void initState() {
+    readNotification();
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +58,7 @@ class NotificationDetails extends StatelessWidget {
         ),
         leading: IconButton(
             onPressed: () {
+              widget.read();
               Navigator.pop(context);
             },
             icon: Icon(
@@ -39,7 +74,7 @@ class NotificationDetails extends StatelessWidget {
               Container(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  title,
+                  widget.title,
                   style: TextStyle(
                     fontSize: 18.dp,
                     color: black,
@@ -51,7 +86,7 @@ class NotificationDetails extends StatelessWidget {
                 height: 12,
               ),
               Text(
-                msg,
+                widget.msg,
                 style: TextStyle(
                   fontSize: 12.dp,
                   color: black1,
@@ -64,7 +99,7 @@ class NotificationDetails extends StatelessWidget {
               Container(
                 alignment: Alignment.centerRight,
                 child: Text(
-                  date,
+                  widget.date,
                   style: TextStyle(
                     fontSize: 12.dp,
                     color: black2,
