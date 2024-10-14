@@ -26,7 +26,7 @@ class AllRout extends StatefulWidget {
 class _AllRoutState extends State<AllRout> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
-  Set<Polyline> _polylines = {};
+
   Position? position;
   bool isOpen = false;
   bool lConfirm = false;
@@ -44,60 +44,22 @@ class _AllRoutState extends State<AllRout> {
   String? selectval;
   List userBranchList = [];
   List branchList = [];
+  List getBranch = [];
   List todayVisitBranchList = [];
   List<LatLng> _latLong = [];
   String MarkerTempId = '';
-
+  List districtList = [];
   List<Marker> markerList = <Marker>[];
   Set<Marker> _marker = {};
+  List routList = [];
+  final List<LatLng> _polylineCoordinates = [];
 
-  var data = {
-    "r1": [
-      {
-        "shb_branch": "88",
-        "shb_order": "2",
-        "dname": "Katupotha",
-        "did": "88",
-        "lati": "7.534472",
-        "longt": "80.185883",
-        "shv_status": "null"
-      },
-      {
-        "shb_branch": "28",
-        "shb_order": "2",
-        "dname": "Galgamuwa",
-        "did": "28",
-        "lati": "7.931694",
-        "longt": "80.242803",
-        "shv_status": "null"
-      }
-    ],
-    "r2": [
-      {
-        "shb_branch": "94",
-        "shb_order": "3",
-        "dname": "Thambuththegama",
-        "did": "94",
-        "lati": "8.151445",
-        "longt": "80.293798",
-        "shv_status": "null"
-      },
-      {
-        "shb_branch": "14",
-        "shb_order": "3",
-        "dname": "Anuradhapura",
-        "did": "14",
-        "lati": "8.322275",
-        "longt": "80.403984",
-        "shv_status": "null"
-      }
-    ]
-  };
-
-  _createMarker() async {
+  // Polylines for the map.
+  final Set<Polyline> _polylines = {};
+  _createMarker(List data) async {
     BitmapDescriptor markerBitMap = await BitmapDescriptor.fromAssetImage(
       ImageConfiguration(size: Size(30, 30)),
-      "assets/1.png",
+      "assets/markp.png",
     );
     BitmapDescriptor markerBitMap2 = await BitmapDescriptor.fromAssetImage(
       ImageConfiguration(size: Size(30, 30)),
@@ -105,59 +67,61 @@ class _AllRoutState extends State<AllRout> {
     );
     Set<Marker> _markertemp = {};
 
-    data.forEach((key, points) {
-      List.generate(points.length, (index) {
-        double lat = double.parse(points[index]['lati'].toString());
-        double long = double.parse(points[index]['longt'].toString());
-        Set<Marker> _markertemp = {
-          Marker(
-              icon: points[index]['shb_order'] == '2'
-                  ? markerBitMap
-                  : markerBitMap2,
-              position: LatLng(lat, long),
-              markerId: MarkerId(points[index]['shb_branch'].toString()))
-        };
-        _marker.addAll(_markertemp);
-      });
-      setState(() {});
+    List.generate(data.length, (index) {
+      double lat = double.parse(data[index]['lati'].toString());
+      double long = double.parse(data[index]['longt'].toString());
+      Set<Marker> _markertemp = {
+        Marker(
+            infoWindow: InfoWindow(title: data[index]['dname'].toString()),
+            icon:
+                data[index]['shv_id'] == 'null' ? markerBitMap2 : markerBitMap,
+            position: LatLng(lat, long),
+            markerId: MarkerId(data[index]['shb_branch'].toString()))
+      };
+      _marker.addAll(_markertemp);
 
-      log(_marker.toString());
-      // Marker(markerId:'' )
+      _polylineCoordinates.add(LatLng(lat, long));
+      _polylines.add(Polyline(
+        polylineId: PolylineId('polyline'),
+        points: _polylineCoordinates,
+        color: Colors.blue,
+        width: 5,
+      ));
     });
-    log(_marker.toString());
+    setState(() {
+      _polylines;
+    });
   }
 
-  List<Polyline> _createPolylines() {
-    List<Polyline> polylines = [];
+  // List<Polyline> _createPolylines(List data) {
+  //   List<Polyline> polylines = [];
 
-    data.forEach((key, points) {
-      List<LatLng> coordinates = points.map((point) {
-        return LatLng(
-          double.parse(point["lati"]!),
-          double.parse(point["longt"]!),
-        );
-      }).toList();
+  //   List.generate(data.length, (index) {
+  //     polylines.add(
+  //       Polyline(
+  //         points: LatLng(lat, longitude),
+  //         color: Color.fromARGB(255, 130, 134, 130),
+  //         width: 5,
+  //       ),
+  //     );
+  //   });
 
-      polylines.add(
-        Polyline(
-          polylineId: PolylineId(key),
-          points: coordinates,
-          color: key == "r1"
-              ? Color.fromARGB(255, 216, 15, 136)
-              : const Color.fromARGB(255, 57, 244, 54),
-          width: 5,
-        ),
-      );
-    });
-
-    return polylines;
-  }
+  //   return polylines;
+  // }
 
   @override
   void initState() {
-    _createMarker();
+    allROutData();
+
     super.initState();
     fLatLong = LatLng(7.8731, 80.7718);
+  }
+
+  allROutData() async {
+    List res = await CustomApi().shutteleAllRoutData(context);
+
+    routList = res;
+    log(routList.toString());
   }
 
   @override
@@ -167,6 +131,73 @@ class _AllRoutState extends State<AllRout> {
     return Consumer<ProviderS>(
         builder: (context, provider, child) => Scaffold(
             appBar: AppBar(
+              bottom: PreferredSize(
+                preferredSize: Size(w, h / 17),
+                child: Flexible(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Card(
+                      child: Container(
+                        height: h / 17,
+                        padding: EdgeInsets.symmetric(horizontal: 15),
+                        alignment: Alignment.centerRight,
+                        width: w,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5.0),
+                          border: Border.all(
+                              color: black3,
+                              style: BorderStyle.solid,
+                              width: 0.80),
+                        ),
+                        child: DropdownButton(
+                          isExpanded: true,
+                          alignment: AlignmentDirectional.centerEnd,
+                          hint: Container(
+                            //and here
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "All Route",
+                              style: TextStyle(color: black1),
+                              textAlign: TextAlign.end,
+                            ),
+                          ),
+                          value: selectval,
+                          //implement initial value or selected value
+                          onChanged: (value) {
+                            setState(() {
+                              selectval = value
+                                  .toString(); //change selectval to new value
+                            });
+                          },
+                          items: routList.map((itemone) {
+                            return DropdownMenuItem(
+                                onTap: () async {
+                                  setState(() {
+                                    _polylines.clear();
+                                    _polylineCoordinates.clear();
+                                    _marker.clear();
+                                    selectval = null;
+                                  });
+
+                                  var res = await CustomApi()
+                                      .shutteleSelectRout(
+                                          context, itemone['sh_id']);
+
+                                  log(res.toString());
+                                  _createMarker(res);
+                                },
+                                value: itemone['sh_id'],
+                                child: Text(
+                                  itemone['sh_name'],
+                                  style: TextStyle(color: black2),
+                                ));
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
               backgroundColor: appliteBlue,
               title: Text(
                 'All Rout',
@@ -207,7 +238,7 @@ class _AllRoutState extends State<AllRout> {
                   isLoading || fLatLong == null
                       ? Loader().loader(context)
                       : GoogleMap(
-                          polylines: Set<Polyline>.of(_createPolylines()),
+                          polylines: _polylines,
                           zoomGesturesEnabled: true,
                           markers: _marker,
                           onCameraMoveStarted: () {},

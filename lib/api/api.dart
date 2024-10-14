@@ -2734,4 +2734,95 @@ class CustomApi {
       notification().warning(context, 'No Internet');
     }
   }
+
+  shutteleAllRoutData(
+    BuildContext context,
+  ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      final apiUrl = '${ApiUrl}Shuttlevisit/all_routes';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      // Make POST request
+
+      var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {});
+      var data = jsonDecode(res.body);
+      print(
+          'xxxxxxxxxxxxxxxxxxxxxxxxxxxxssssssssssssssssxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+      print(data);
+
+      if (data['status'] == 200) {
+        print(
+            'xxxxxxxxxxxxxxxxqqqqqqqqqqqqqqqqqqqxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+
+        return data['all_routes'];
+      }
+
+      if (data['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+        notification().warning(context, 'Somthing went wrong');
+        return 0;
+      }
+      if (data['status'] == 400) {
+        print('dddddddddddddddddddccccccccccccccccd');
+        notification().warning(context, data['message']);
+        return 0;
+      }
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
+
+  shutteleSelectRout(BuildContext context, String shuttleId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      final apiUrl = '${ApiUrl}Shuttlevisit/select_route';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+      // Make POST request
+
+      var res = await https.post(
+          headers: headers,
+          Uri.parse(apiUrl),
+          body: {" date ": "value2", "sh_id": shuttleId});
+      print(res.statusCode);
+      print(res);
+      var data = jsonDecode(res.body);
+      print(
+          'xxxxxxxxxxxxxxxxxxxxxxxxxxxxssssssssssssssssxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+      print(data);
+
+      if (data['status'] == 200) {
+        print(
+            'xxxxxxxxxxxxxxxxqqqqqqqqqqqqqqqqqqqxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+
+        return data['branches'];
+      }
+
+      if (data['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+        notification().warning(context, 'Somthing went wrong');
+        return 0;
+      }
+      if (data['status'] == 400) {
+        print('dddddddddddddddddddccccccccccccccccd');
+        notification().warning(context, data['message']);
+        return 0;
+      }
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
 }
