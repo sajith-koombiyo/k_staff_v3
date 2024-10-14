@@ -26,7 +26,8 @@ class AllRout extends StatefulWidget {
 class _AllRoutState extends State<AllRout> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
-
+  DateTime selectedDate = DateTime.now();
+  TextEditingController date = TextEditingController();
   Position? position;
   bool isOpen = false;
   bool lConfirm = false;
@@ -34,10 +35,10 @@ class _AllRoutState extends State<AllRout> {
   String branchName = '';
   String visitBranchId = '';
   bool isLoading = false;
+  bool routLoading = false;
   String routName = '';
   String lat = '';
   String long = '';
-  String image64 = '';
   LatLng? fLatLong;
   double mapZoom = 9;
   // List userBranchList = [];
@@ -52,34 +53,34 @@ class _AllRoutState extends State<AllRout> {
   List<Marker> markerList = <Marker>[];
   Set<Marker> _marker = {};
   List routList = [];
+  String branchId = '';
   final List<LatLng> _polylineCoordinates = [];
-
   // Polylines for the map.
   final Set<Polyline> _polylines = {};
   _createMarker(List data) async {
     BitmapDescriptor markerBitMap = await BitmapDescriptor.fromAssetImage(
       ImageConfiguration(size: Size(30, 30)),
-      "assets/markp.png",
+      "assets/markerp.png",
     );
     BitmapDescriptor markerBitMap2 = await BitmapDescriptor.fromAssetImage(
       ImageConfiguration(size: Size(30, 30)),
       "assets/2.png",
     );
     Set<Marker> _markertemp = {};
-
     List.generate(data.length, (index) {
       double lat = double.parse(data[index]['lati'].toString());
       double long = double.parse(data[index]['longt'].toString());
       Set<Marker> _markertemp = {
         Marker(
-            infoWindow: InfoWindow(title: data[index]['dname'].toString()),
+            infoWindow: InfoWindow(
+              title: "${data[index]['dname'].toString()}",
+            ),
             icon:
                 data[index]['shv_id'] == 'null' ? markerBitMap2 : markerBitMap,
             position: LatLng(lat, long),
             markerId: MarkerId(data[index]['shb_branch'].toString()))
       };
       _marker.addAll(_markertemp);
-
       _polylineCoordinates.add(LatLng(lat, long));
       _polylines.add(Polyline(
         polylineId: PolylineId('polyline'),
@@ -93,22 +94,6 @@ class _AllRoutState extends State<AllRout> {
     });
   }
 
-  // List<Polyline> _createPolylines(List data) {
-  //   List<Polyline> polylines = [];
-
-  //   List.generate(data.length, (index) {
-  //     polylines.add(
-  //       Polyline(
-  //         points: LatLng(lat, longitude),
-  //         color: Color.fromARGB(255, 130, 134, 130),
-  //         width: 5,
-  //       ),
-  //     );
-  //   });
-
-  //   return polylines;
-  // }
-
   @override
   void initState() {
     allROutData();
@@ -118,10 +103,16 @@ class _AllRoutState extends State<AllRout> {
   }
 
   allROutData() async {
+    setState(() {
+      isLoading = true;
+    });
     List res = await CustomApi().shutteleAllRoutData(context);
 
     routList = res;
     log(routList.toString());
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -131,73 +122,6 @@ class _AllRoutState extends State<AllRout> {
     return Consumer<ProviderS>(
         builder: (context, provider, child) => Scaffold(
             appBar: AppBar(
-              bottom: PreferredSize(
-                preferredSize: Size(w, h / 17),
-                child: Flexible(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Card(
-                      child: Container(
-                        height: h / 17,
-                        padding: EdgeInsets.symmetric(horizontal: 15),
-                        alignment: Alignment.centerRight,
-                        width: w,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5.0),
-                          border: Border.all(
-                              color: black3,
-                              style: BorderStyle.solid,
-                              width: 0.80),
-                        ),
-                        child: DropdownButton(
-                          isExpanded: true,
-                          alignment: AlignmentDirectional.centerEnd,
-                          hint: Container(
-                            //and here
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "All Route",
-                              style: TextStyle(color: black1),
-                              textAlign: TextAlign.end,
-                            ),
-                          ),
-                          value: selectval,
-                          //implement initial value or selected value
-                          onChanged: (value) {
-                            setState(() {
-                              selectval = value
-                                  .toString(); //change selectval to new value
-                            });
-                          },
-                          items: routList.map((itemone) {
-                            return DropdownMenuItem(
-                                onTap: () async {
-                                  setState(() {
-                                    _polylines.clear();
-                                    _polylineCoordinates.clear();
-                                    _marker.clear();
-                                    selectval = null;
-                                  });
-
-                                  var res = await CustomApi()
-                                      .shutteleSelectRout(
-                                          context, itemone['sh_id']);
-
-                                  log(res.toString());
-                                  _createMarker(res);
-                                },
-                                value: itemone['sh_id'],
-                                child: Text(
-                                  itemone['sh_name'],
-                                  style: TextStyle(color: black2),
-                                ));
-                          }).toList(),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
               backgroundColor: appliteBlue,
               title: Text(
                 'All Rout',
@@ -215,76 +139,117 @@ class _AllRoutState extends State<AllRout> {
                     Icons.arrow_back_ios_new,
                     color: white,
                   )),
-              actions: [
-                IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => BranchVisitHistory(),
-                          ));
-                    },
-                    icon: Icon(
-                      Icons.history,
-                      color: white,
-                    ))
-              ],
             ),
-            backgroundColor: Color.fromARGB(255, 229, 232, 238),
+            backgroundColor: appliteBlue,
             body: Padding(
               padding: EdgeInsets.only(bottom: isOpen ? 70 : 0),
               child: Stack(
                 children: [
                   isLoading || fLatLong == null
                       ? Loader().loader(context)
-                      : GoogleMap(
-                          polylines: _polylines,
-                          zoomGesturesEnabled: true,
-                          markers: _marker,
-                          onCameraMoveStarted: () {},
-                          padding: EdgeInsets.only(top: h / 2.0, bottom: 0),
-                          // on below line specifying map type.
-                          mapType: MapType.normal,
-                          // on below line setting user location enabled.
-                          myLocationEnabled: true,
-                          // on below line setting compass enabled.
-                          // zoomControlsEnabled: false,
-                          initialCameraPosition: CameraPosition(
-                            target: LatLng(7.8731, 80.7718),
-                            zoom: 8,
-                          ),
-                          onTap: (argument) {
-                            argument.latitude;
-                            argument.longitude;
-                            // MapUtils.openMap(
-                            //     argument.latitude, argument.longitude);
-                          },
-
-                          onMapCreated: (GoogleMapController controller) {
-                            _controller.complete(controller);
-                          },
-                        ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Card(
-                        elevation: 20,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 4),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
+                      : SizedBox(
+                          height: h,
+                          child: Column(
                             children: [
-                              Text("Route Name "),
-                              Text("-$routName",
-                                  style: TextStyle(
-                                      color: const Color.fromARGB(
-                                          255, 175, 13, 13),
-                                      fontWeight: FontWeight.bold)),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 15),
+                                  alignment: Alignment.centerRight,
+                                  width: w,
+                                  decoration: BoxDecoration(
+                                    color: white,
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    border: Border.all(
+                                        color: black3,
+                                        style: BorderStyle.solid,
+                                        width: 0.80),
+                                  ),
+                                  child: DropdownButton(
+                                    isExpanded: true,
+                                    alignment: AlignmentDirectional.centerEnd,
+                                    hint: Container(
+                                      color: white,
+                                      //and here
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        "All Route",
+                                        style: TextStyle(color: black1),
+                                        textAlign: TextAlign.end,
+                                      ),
+                                    ),
+                                    value: selectval,
+                                    //implement initial value or selected value
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectval = value
+                                            .toString(); //change selectval to new value
+                                      });
+                                    },
+                                    items: routList.map((itemone) {
+                                      return DropdownMenuItem(
+                                          onTap: () async {
+                                            setState(() {
+                                              branchId = itemone['sh_id'];
+                                              _polylines.clear();
+                                              _polylineCoordinates.clear();
+                                              _marker.clear();
+                                              selectval = null;
+                                            });
+
+                                            if (date.text.isNotEmpty) {
+                                              loadRout();
+                                            }
+                                          },
+                                          value: itemone['sh_id'],
+                                          child: Text(
+                                            itemone['sh_name'],
+                                            style: TextStyle(color: black2),
+                                          ));
+                                    }).toList(),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                  child:
+                                      customTextFieldDate('select Date', date)),
+                              Flexible(
+                                child: GoogleMap(
+                                  polylines: _polylines,
+                                  zoomGesturesEnabled: true,
+                                  markers: _marker,
+                                  onCameraMoveStarted: () {},
+                                  padding:
+                                      EdgeInsets.only(top: h / 2.0, bottom: 0),
+                                  // on below line specifying map type.
+                                  mapType: MapType.normal,
+                                  // on below line setting user location enabled.
+                                  myLocationEnabled: true,
+                                  // on below line setting compass enabled.
+                                  // zoomControlsEnabled: false,
+                                  initialCameraPosition: CameraPosition(
+                                    target: LatLng(7.8731, 80.7718),
+                                    zoom: 8,
+                                  ),
+                                  onTap: (argument) {
+                                    argument.latitude;
+                                    argument.longitude;
+                                    // MapUtils.openMap(
+                                    //     argument.latitude, argument.longitude);
+                                  },
+
+                                  onMapCreated:
+                                      (GoogleMapController controller) {
+                                    _controller.complete(controller);
+                                  },
+                                ),
+                              ),
                             ],
                           ),
-                        )),
-                  ),
+                        ),
                   isLoading ? Loader().loader(context) : SizedBox(),
+                  routLoading ? Loader().loader(context) : SizedBox(),
                   provider.isanotherUserLog ? UserLoginCheck() : SizedBox()
                 ],
               ),
@@ -308,5 +273,84 @@ class _AllRoutState extends State<AllRout> {
                     ),
                   )
                 : null));
+  }
+
+  Future<void> _selectDate() async {
+    String formattedDate = '';
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(1940, 8),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+        formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        date.text = formattedDate.toString();
+      });
+      if (branchId == '') {
+        notification().warning(context, 'Please select the branch');
+      } else {
+        setState(() {
+          _polylines.clear();
+          _polylineCoordinates.clear();
+          _marker.clear();
+        });
+        loadRout();
+      }
+    }
+  }
+
+  loadRout() async {
+    setState(() {
+      routLoading = true;
+    });
+    var res = await CustomApi()
+        .shutteleSelectRout(context, branchId, date.text.toString());
+
+    log(res.toString());
+    await _createMarker(res);
+    setState(() {
+      routLoading = false;
+    });
+  }
+
+  Widget customTextFieldDate(
+    String hint,
+    TextEditingController controller,
+  ) {
+    var w = MediaQuery.of(context).size.width;
+    final h = MediaQuery.of(context).size.height;
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SizedBox(
+        child: TextField(
+          readOnly: true,
+          controller: date,
+          onTap: () {
+            _selectDate();
+          },
+          decoration: InputDecoration(
+
+              // // labelText: hint,
+              // focusedBorder: OutlineInputBorder(
+              //   borderSide: BorderSide(color: Colors.black),
+              //   borderRadius: BorderRadius.circular(10),
+              // ),
+              // enabledBorder: OutlineInputBorder(
+              //   borderSide: BorderSide(color: Colors.black12),
+              //   borderRadius: BorderRadius.circular(10),
+              // ),
+              // border: OutlineInputBorder(
+              //   borderSide: BorderSide(width: 0.2, color: Colors.black12),
+              //   borderRadius: BorderRadius.circular(10.0),
+              // ),
+              filled: true,
+              fillColor: Colors.white,
+              suffixIcon: Icon(Icons.calendar_month),
+              hintText: 'dd/mm/yyy'),
+        ),
+      ),
+    );
   }
 }

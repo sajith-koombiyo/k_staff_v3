@@ -413,21 +413,9 @@ class _MapScreenState extends State<MapScreen> {
                       SizedBox(
                         height: 20,
                       ),
-                      InkWell(
-                        onTap: () async {
-                          final pickedFile = await _picker.pickImage(
-                              source: ImageSource.camera);
-                          if (pickedFile != null) {
-                            setstate(() {
-                              newImage = pickedFile.path;
-                              final bytes =
-                                  File(pickedFile!.path).readAsBytesSync();
-                              base64Image = base64Encode(bytes);
-                            });
-                          }
-                        },
-                        child: Center(
-                          child: DottedBorder(
+                      Row(
+                        children: [
+                          DottedBorder(
                             color: Colors.black38,
                             borderType: BorderType.RRect,
                             radius: Radius.circular(12),
@@ -481,7 +469,51 @@ class _MapScreenState extends State<MapScreen> {
                               ),
                             ),
                           ),
-                        ),
+                          Column(
+                            children: [
+                              Card(
+                                child: IconButton(
+                                    onPressed: () async {
+                                      final pickedFile =
+                                          await _picker.pickImage(
+                                              source: ImageSource.camera);
+                                      if (pickedFile != null) {
+                                        setstate(() {
+                                          newImage = pickedFile.path;
+                                          final bytes = File(pickedFile!.path)
+                                              .readAsBytesSync();
+                                          base64Image = base64Encode(bytes);
+                                        });
+                                      }
+                                    },
+                                    icon: Icon(
+                                      Icons.camera_alt,
+                                      size: 35,
+                                    )),
+                              ),
+                              Card(
+                                child: IconButton(
+                                    onPressed: () async {
+                                      final pickedFile =
+                                          await _picker.pickImage(
+                                              source: ImageSource.gallery);
+                                      if (pickedFile != null) {
+                                        setstate(() {
+                                          newImage = pickedFile.path;
+                                          final bytes = File(pickedFile!.path)
+                                              .readAsBytesSync();
+                                          base64Image = base64Encode(bytes);
+                                        });
+                                      }
+                                    },
+                                    icon: Icon(
+                                      Icons.photo,
+                                      size: 35,
+                                    )),
+                              ),
+                            ],
+                          )
+                        ],
                       ),
                       SizedBox(
                         height: 12,

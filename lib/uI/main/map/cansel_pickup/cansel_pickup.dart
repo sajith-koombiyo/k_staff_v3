@@ -76,50 +76,54 @@ class CanselPickup {
                           });
                         }
                       },
-                      child: Center(
-                        child: DottedBorder(
-                          color: Colors.black38,
-                          borderType: BorderType.RRect,
-                          radius: Radius.circular(12),
-                          padding: EdgeInsets.all(6),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.all(Radius.circular(12)),
-                            child: Container(
-                              alignment: Alignment.center,
-                              height: h / 7,
-                              width: w / 2,
-                              child: newImage != ''
-                                  ? Image.file(
-                                      height: h / 7,
-                                      width: w / 2,
-                                      File(
-                                        newImage,
-                                      ),
-                                      fit: BoxFit.fill,
-                                    )
-                                  : Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.cloud_upload_outlined,
-                                          size: 40,
-                                          color: const Color.fromARGB(
-                                              96, 77, 76, 76),
+                      child: Row(
+                        children: [
+                          DottedBorder(
+                            color: Colors.black38,
+                            borderType: BorderType.RRect,
+                            radius: Radius.circular(12),
+                            padding: EdgeInsets.all(6),
+                            child: ClipRRect(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(12)),
+                              child: Container(
+                                alignment: Alignment.center,
+                                height: h / 7,
+                                width: w / 2,
+                                child: newImage != ''
+                                    ? Image.file(
+                                        height: h / 7,
+                                        width: w / 2,
+                                        File(
+                                          newImage,
                                         ),
-                                        Text(
-                                            'Please upload \nyour image \n -Click here-',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black38,
-                                              fontSize: 11.dp,
-                                            )),
-                                      ],
-                                    ),
+                                        fit: BoxFit.fill,
+                                      )
+                                    : Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.cloud_upload_outlined,
+                                            size: 40,
+                                            color: const Color.fromARGB(
+                                                96, 77, 76, 76),
+                                          ),
+                                          Text(
+                                              'Please upload \nyour image \n -Click here-',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.black38,
+                                                fontSize: 11.dp,
+                                              )),
+                                        ],
+                                      ),
+                              ),
                             ),
                           ),
-                        ),
+                          IconButton(onPressed: () {}, icon: Icon(Icons.camera))
+                        ],
                       ),
                     ),
                     SizedBox(

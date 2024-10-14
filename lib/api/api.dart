@@ -2779,7 +2779,8 @@ class CustomApi {
     }
   }
 
-  shutteleSelectRout(BuildContext context, String shuttleId) async {
+  shutteleSelectRout(
+      BuildContext context, String shuttleId, String date) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('userkey');
     var connectivityResult = await (Connectivity().checkConnectivity());
@@ -2795,7 +2796,7 @@ class CustomApi {
       var res = await https.post(
           headers: headers,
           Uri.parse(apiUrl),
-          body: {" date ": "value2", "sh_id": shuttleId});
+          body: {" date ": date, "sh_id": shuttleId});
       print(res.statusCode);
       print(res);
       var data = jsonDecode(res.body);

@@ -882,75 +882,109 @@ class _Map2State extends State<Map2> {
                       SizedBox(
                         height: 20,
                       ),
-                      InkWell(
-                        onTap: () async {
-                          final pickedFile = await _picker.pickImage(
-                              source: ImageSource.camera);
-                          if (pickedFile != null) {
-                            setstate(() {
-                              newImage = pickedFile.path;
-                              final bytes =
-                                  File(pickedFile!.path).readAsBytesSync();
-                              base64Image = base64Encode(bytes);
-                            });
-                          }
-                        },
-                        child: Center(
-                          child: DottedBorder(
-                            color: Colors.black38,
-                            borderType: BorderType.RRect,
-                            radius: Radius.circular(12),
-                            padding: EdgeInsets.all(6),
-                            child: ClipRRect(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(12)),
-                              child: Container(
-                                alignment: Alignment.center,
-                                height: h / 7,
-                                width: w / 2,
-                                child: newImage != ''
-                                    ? Image.file(
-                                        height: h / 7,
-                                        width: w / 2,
-                                        File(
-                                          newImage,
-                                        ),
-                                        fit: BoxFit.fill,
-                                      )
-                                    : Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Icon(
-                                            Icons.cloud_upload_outlined,
-                                            size: 40,
-                                            color: const Color.fromARGB(
-                                                96, 77, 76, 76),
+                      Row(
+                        children: [
+                          Flexible(
+                            child: DottedBorder(
+                              color: Colors.black38,
+                              borderType: BorderType.RRect,
+                              radius: Radius.circular(12),
+                              padding: EdgeInsets.all(6),
+                              child: ClipRRect(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(12)),
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  height: h / 7,
+                                  width: w / 2,
+                                  child: newImage != ''
+                                      ? Image.file(
+                                          height: h / 7,
+                                          width: w / 2,
+                                          File(
+                                            newImage,
                                           ),
-                                          Text(
-                                              'Please upload \nyour image \n -Click here-',
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.black38,
-                                                fontSize: 11.dp,
-                                              )),
-                                          x == 2
-                                              ? Container(
-                                                  alignment: Alignment.center,
-                                                  child: Text(
-                                                    'image required',
-                                                    style: TextStyle(
-                                                        color: Colors.red),
-                                                  ),
-                                                )
-                                              : SizedBox()
-                                        ],
-                                      ),
+                                          fit: BoxFit.fill,
+                                        )
+                                      : Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              Icons.cloud_upload_outlined,
+                                              size: 40,
+                                              color: const Color.fromARGB(
+                                                  96, 77, 76, 76),
+                                            ),
+                                            Text(
+                                                'Please upload \nyour image \n -Click here-',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.black38,
+                                                  fontSize: 11.dp,
+                                                )),
+                                            x == 2
+                                                ? Container(
+                                                    alignment: Alignment.center,
+                                                    child: Text(
+                                                      'image required',
+                                                      style: TextStyle(
+                                                          color: Colors.red),
+                                                    ),
+                                                  )
+                                                : SizedBox()
+                                          ],
+                                        ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
+                          Column(
+                            children: [
+                              Card(
+                                child: IconButton(
+                                    onPressed: () async {
+                                      final pickedFile =
+                                          await _picker.pickImage(
+                                              source: ImageSource.camera);
+                                      if (pickedFile != null) {
+                                        setstate(() {
+                                          newImage = pickedFile.path;
+                                          final bytes = File(pickedFile!.path)
+                                              .readAsBytesSync();
+                                          base64Image = base64Encode(bytes);
+                                        });
+                                      }
+                                    },
+                                    icon: Icon(
+                                      Icons.camera_alt,
+                                      size: 35,
+                                    )),
+                              ),
+                              Card(
+                                child: IconButton(
+                                    onPressed: () async {
+                                      final pickedFile =
+                                          await _picker.pickImage(
+                                              source: ImageSource.gallery);
+                                      if (pickedFile != null) {
+                                        setstate(() {
+                                          newImage = pickedFile.path;
+                                          final bytes = File(pickedFile!.path)
+                                              .readAsBytesSync();
+                                          base64Image = base64Encode(bytes);
+                                        });
+                                      }
+                                    },
+                                    icon: Icon(
+                                      Icons.photo,
+                                      size: 35,
+                                    )),
+                              ),
+                            ],
+                          )
+                        ],
                       ),
                       SizedBox(
                         height: 12,
