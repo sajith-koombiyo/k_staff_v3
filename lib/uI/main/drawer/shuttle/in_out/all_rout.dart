@@ -355,6 +355,10 @@ class _AllRoutState extends State<AllRout> {
           _polylines.clear();
           _polylineCoordinates.clear();
           _marker.clear();
+          routName = '';
+          inTime = '';
+          outTime = '';
+          isTapMarker = false;
         });
         loadRout();
       }
@@ -363,6 +367,10 @@ class _AllRoutState extends State<AllRout> {
 
   loadRout() async {
     setState(() {
+      routName = '';
+      inTime = '';
+      outTime = '';
+      isTapMarker = false;
       routLoading = true;
     });
     var res = await CustomApi()
