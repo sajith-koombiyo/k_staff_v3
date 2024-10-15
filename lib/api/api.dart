@@ -22,6 +22,7 @@ import 'package:http/http.dart' as https;
 import '../app_details/const.dart';
 import '../uI/login_and_signup/login.dart';
 import '../uI/main/navigation/navigation.dart';
+import 'dart:io' show Platform;
 
 class CustomApi {
 //user location read
@@ -40,31 +41,37 @@ class CustomApi {
     Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var status = await Permission.location.request();
+    if (status.isDenied||status.isPermanentlyDenied) {
+     if(Platform.isIOS){
+  await  openAppSettings();
+
+     }
+  // iOS-specific code
+}
+
     Provider.of<ProviderS>(context, listen: false).permission = status;
     bool _seen = (prefs.getBool('seen') ?? false);
     if (_seen) {
-      print('ddddddddddddddddddddddddddddddddddddd');
+     
       var connectivityResult = await (Connectivity().checkConnectivity());
       if (connectivityResult == ConnectivityResult.mobile ||
           connectivityResult == ConnectivityResult.wifi) {
-        print('ddddddddddddddddddddddddddfffffffddddddddddd');
+     
         var urll = '${ApiUrl}/Version/users';
-        print(urll);
+      
         var res = await https.post(Uri.parse(urll), body: {});
-        print(res.statusCode);
+       
         var responce = jsonDecode(res.body);
-        print('dddddddsssssssssssssdddddddddddddddddddddddddddddd');
-        print(responce);
-        print('ddddddsssssssssssssssddddddddddddddddddddddddddddddd');
+    
         if (res.statusCode == 500) {
-          print('ddddddddddddddddddddddddddddddddddddd');
+       
           Provider.of<ProviderS>(context, listen: false).isServerDown = true;
         } else {
           Provider.of<ProviderS>(context, listen: false).isServerDown = false;
         }
 
         if (responce == "3.0") {
-          print('dddddddsssssssssssssssdddddddddddddddddddddddddddddd');
+       
           late String installDate;
           final DateTime date = await AppInstallDate().installDate;
           installDate = date.toString();
@@ -2706,6 +2713,51 @@ class CustomApi {
         "shv_id": shvId,
         "lati": lat,
         "longt": long,
+      });
+      var data = jsonDecode(res.body);
+      print(
+          'xxxxxxxxxxxxxxxxxxxxxxxxxxxxssssssssssssssssxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+      print(data['status']);
+
+      if (data['status'] == 200) {
+        print(
+            'xxxxxxxxxxxxxxxxqqqqqqqqqqqqqqqqqqqxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
+        notification().info(context, data['message']);
+        return 1;
+      }
+
+      if (data['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+        notification().warning(context, 'Somthing went wrong');
+        return 0;
+      }
+      if (data['status'] == 400) {
+        print('dddddddddddddddddddccccccccccccccccd');
+        notification().warning(context, data['message']);
+        return 0;
+      }
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
+
+
+    shuttleAllRout(BuildContext context,) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      final apiUrl = '${ApiUrl}Shuttlevisit/all_routes';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+    
+
+      var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {
+   
       });
       var data = jsonDecode(res.body);
       print(

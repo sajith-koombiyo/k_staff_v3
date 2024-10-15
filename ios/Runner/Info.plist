@@ -37,13 +37,13 @@
 	<key>NSCameraUsageDescription</key>
 	<string>To capture profile photo please grant camera access</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Turning on location services allows us to show your live location.</string>
+	<string>Turning On Location Services Allow us to Show Nearby Delivery Locations</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Turning on location services allows us to show your live location.</string>
+	<string>Turning On Location Services Allow us to Show Nearby Delivery Locations</string>
 	<key>NSLocationUsageDescription</key>
-	<string>Turning on location services allows us to show your live location.</string>
+	<string>Turning On Location Services Allow us to Show Nearby Delivery Locations</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Turning on location services allows us to show your live location.</string>
+	<string>Turning On Location Services Allow us to Show Nearby Delivery Locations</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Please allow access to photo library so you can easily upload your photos.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
