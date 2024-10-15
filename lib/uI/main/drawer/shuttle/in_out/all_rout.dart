@@ -36,7 +36,7 @@ class _AllRoutState extends State<AllRout> {
   String visitBranchId = '';
   bool isLoading = false;
   bool routLoading = false;
-  String routName = '';
+  bool isTapMarker = false;
   String lat = '';
   String long = '';
   LatLng? fLatLong;
@@ -54,6 +54,9 @@ class _AllRoutState extends State<AllRout> {
   Set<Marker> _marker = {};
   List routList = [];
   String branchId = '';
+  String routName = '';
+  String inTime = '';
+  String outTime = '';
   final List<LatLng> _polylineCoordinates = [];
   // Polylines for the map.
   final Set<Polyline> _polylines = {};
@@ -64,19 +67,39 @@ class _AllRoutState extends State<AllRout> {
     );
     BitmapDescriptor markerBitMap2 = await BitmapDescriptor.fromAssetImage(
       ImageConfiguration(size: Size(30, 30)),
-      "assets/2.png",
+      "assets/1.png",
+    );
+    BitmapDescriptor markerBitMap3 = await BitmapDescriptor.fromAssetImage(
+      ImageConfiguration(size: Size(30, 30)),
+      "assets/3.png",
     );
     Set<Marker> _markertemp = {};
     List.generate(data.length, (index) {
       double lat = double.parse(data[index]['lati'].toString());
       double long = double.parse(data[index]['longt'].toString());
+      print('bbbbbbbbbbb');
+      print(data[index]['shv_status']);
+      print('bbbbbbbbbbb');
       Set<Marker> _markertemp = {
         Marker(
-            infoWindow: InfoWindow(
-              title: "${data[index]['dname'].toString()}",
-            ),
-            icon:
-                data[index]['shv_id'] == 'null' ? markerBitMap2 : markerBitMap,
+            onTap: () {
+              setState(() {
+                isTapMarker = true;
+                routName = data[index]['dname'].toString();
+                inTime = data[index]['shv_in'].toString() == 'null'
+                    ? ''
+                    : data[index]['shv_in'].toString();
+                outTime = data[index]['shv_out'].toString() == 'null'
+                    ? ''
+                    : data[index]['shv_out'].toString();
+              });
+            },
+            infoWindow: InfoWindow(),
+            icon: data[index]['shv_status'].toString() == 'null'
+                ? markerBitMap
+                : data[index]['shv_status'].toString() == '1'
+                    ? markerBitMap2
+                    : markerBitMap3,
             position: LatLng(lat, long),
             markerId: MarkerId(data[index]['shb_branch'].toString()))
       };
@@ -248,6 +271,41 @@ class _AllRoutState extends State<AllRout> {
                             ],
                           ),
                         ),
+                  isTapMarker
+                      ? Positioned(
+                          top: h / 7,
+                          right: 0,
+                          child: Card(
+                            elevation: 20,
+                            color: white,
+                            child: SizedBox(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      "Rout Name - $routName",
+                                      style: TextStyle(
+                                          color: black,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    Text("In - $inTime",
+                                        style: TextStyle(
+                                            color: black,
+                                            fontWeight: FontWeight.w500)),
+                                    Text("out - $outTime",
+                                        style: TextStyle(
+                                            color: black,
+                                            fontWeight: FontWeight.w500)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      : SizedBox(),
                   isLoading ? Loader().loader(context) : SizedBox(),
                   routLoading ? Loader().loader(context) : SizedBox(),
                   provider.isanotherUserLog ? UserLoginCheck() : SizedBox()

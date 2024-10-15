@@ -2792,11 +2792,12 @@ class CustomApi {
         'userkey': '$id',
       };
       // Make POST request
-
+      print(date);
+      print("date");
       var res = await https.post(
           headers: headers,
           Uri.parse(apiUrl),
-          body: {" date ": date, "sh_id": shuttleId});
+          body: {"date": date, "sh_id": shuttleId});
       print(res.statusCode);
       print(res);
       var data = jsonDecode(res.body);
@@ -2822,6 +2823,43 @@ class CustomApi {
         notification().warning(context, data['message']);
         return 0;
       }
+    } else {
+      notification().warning(context, 'No Internet');
+    }
+  }
+
+  numberUpdate(
+    BuildContext context,
+    String riderPhone,
+  ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? id = await prefs.getString('userkey');
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      final apiUrl = '${ApiUrl}/Assignrider/users';
+      // Headers
+      Map<String, String> headers = {
+        'userkey': '$id',
+      };
+
+      // Make POST request
+      var list = await https.post(headers: headers, Uri.parse(apiUrl), body: {
+        "rider_id": riderPhone,
+      });
+      // var list;
+      var data = jsonDecode(list.body);
+      if (data['status'] == 200) {
+        notification().info(context, 'Rider assigned successfully.');
+        Navigator.pop(context);
+      }
+      if (data['status'] == 403) {
+        Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
+
+        notification().warning(context, 'Something went wrong');
+      }
+      return list;
+      //   _ids;
     } else {
       notification().warning(context, 'No Internet');
     }
