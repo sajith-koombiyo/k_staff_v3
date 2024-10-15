@@ -27,7 +27,7 @@ class Account extends StatefulWidget {
 class _AccountState extends State<Account> {
   final ImagePicker _picker = ImagePicker();
   bool imageLoading = false;
-  
+
   @override
   void initState() {
     // TODO: implement initState
@@ -56,7 +56,9 @@ class _AccountState extends State<Account> {
                 color: white,
               ),
               onPressed: () {
-                CustomDialog().numberUpdate(context, 'sss');
+                CustomDialog().numberUpdate(
+                  context,
+                );
                 // editNumber();
               },
             ),
@@ -281,8 +283,6 @@ class _AccountState extends State<Account> {
                           bottom: 40,
                           right: w / 3.5,
                           child: CircleAvatar(
-
-                            
                             backgroundColor: Colors.blue.withOpacity(0.5),
                             radius: 27,
                             child: IconButton(

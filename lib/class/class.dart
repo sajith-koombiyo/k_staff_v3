@@ -1,6 +1,6 @@
-
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/api/api.dart';
 import 'package:flutter_application_2/uI/login_and_signup/login.dart';
 import 'package:flutter_application_2/uI/widget/diloag_button.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -9,6 +9,7 @@ import 'package:quickalert/quickalert.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import '../app_details/color.dart';
+
 class Navigation {
   Nav(BuildContext context, Widget page) {
     Navigator.push(
@@ -105,6 +106,7 @@ class CustomDialog {
       confirmBtnColor: Colors.green,
     );
   }
+
   appExit(BuildContext context, String title, String desc, VoidCallback onTap) {
     QuickAlert.show(
       onConfirmBtnTap: onTap,
@@ -117,6 +119,7 @@ class CustomDialog {
       confirmBtnColor: Colors.green,
     );
   }
+
   userLoginCheck(BuildContext context) {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
@@ -187,7 +190,10 @@ class CustomDialog {
     );
   }
 
-  numberUpdate(BuildContext context, String message) {
+  numberUpdate(
+    BuildContext context,
+  ) {
+    TextEditingController message = TextEditingController();
     QuickAlert.show(
       context: context,
       type: QuickAlertType.custom,
@@ -196,6 +202,7 @@ class CustomDialog {
       showCancelBtn: true,
       customAsset: 'assets/custom.gif',
       widget: TextFormField(
+        controller: message,
         decoration: const InputDecoration(
           alignLabelWithHint: true,
           hintText: 'Enter Phone Number',
@@ -205,17 +212,27 @@ class CustomDialog {
         ),
         textInputAction: TextInputAction.next,
         keyboardType: TextInputType.phone,
-        onChanged: (value) => message = value,
+        onChanged: (value) => message.text = value,
       ),
       onConfirmBtnTap: () async {
-        if (message.length == 10) {
-          Navigator.pop(context);
-          await Future.delayed(const Duration(milliseconds: 1000));
-          await QuickAlert.show(
-            context: context,
-            type: QuickAlertType.success,
-            text: "Phone number '$message' has been saved!.",
-          );
+        if (message.text.length == 10) {
+          var res = await CustomApi().numberUpdate(context, message.text);
+          print(res);
+          print('ffffffff');
+          if (res == 1) {
+            await QuickAlert.show(
+              context: context,
+              type: QuickAlertType.success,
+              text: "Phone number '${message.text}' has been saved!.",
+            );
+            Navigator.pop(context);
+          } else {
+            await QuickAlert.show(
+              context: context,
+              type: QuickAlertType.warning,
+              text: 'Try Again',
+            );
+          }
         } else {
           await QuickAlert.show(
             context: context,
@@ -228,6 +245,7 @@ class CustomDialog {
     );
   }
 }
+
 class RPSCustomPainterDark extends CustomPainter {
   @override
   void paint(

@@ -57,6 +57,7 @@ class _AllRoutState extends State<AllRout> {
   String routName = '';
   String inTime = '';
   String outTime = '';
+  DateTime today = DateTime.now();
   final List<LatLng> _polylineCoordinates = [];
   // Polylines for the map.
   final Set<Polyline> _polylines = {};
@@ -120,6 +121,7 @@ class _AllRoutState extends State<AllRout> {
   @override
   void initState() {
     allROutData();
+    date.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
     super.initState();
     fLatLong = LatLng(7.8731, 80.7718);
@@ -291,11 +293,11 @@ class _AllRoutState extends State<AllRout> {
                                           color: black,
                                           fontWeight: FontWeight.w500),
                                     ),
-                                    Text("In - $inTime",
+                                    Text("In Time - $inTime",
                                         style: TextStyle(
                                             color: black,
                                             fontWeight: FontWeight.w500)),
-                                    Text("out - $outTime",
+                                    Text("out Time - $outTime",
                                         style: TextStyle(
                                             color: black,
                                             fontWeight: FontWeight.w500)),
@@ -389,20 +391,6 @@ class _AllRoutState extends State<AllRout> {
             _selectDate();
           },
           decoration: InputDecoration(
-
-              // // labelText: hint,
-              // focusedBorder: OutlineInputBorder(
-              //   borderSide: BorderSide(color: Colors.black),
-              //   borderRadius: BorderRadius.circular(10),
-              // ),
-              // enabledBorder: OutlineInputBorder(
-              //   borderSide: BorderSide(color: Colors.black12),
-              //   borderRadius: BorderRadius.circular(10),
-              // ),
-              // border: OutlineInputBorder(
-              //   borderSide: BorderSide(width: 0.2, color: Colors.black12),
-              //   borderRadius: BorderRadius.circular(10.0),
-              // ),
               filled: true,
               fillColor: Colors.white,
               suffixIcon: Icon(Icons.calendar_month),

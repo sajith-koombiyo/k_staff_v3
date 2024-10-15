@@ -2837,28 +2837,36 @@ class CustomApi {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
-      final apiUrl = '${ApiUrl}/Assignrider/users';
+      final apiUrl = '${ApiUrl}Profile/newphone';
       // Headers
+      print(riderPhone);
+      print(apiUrl);
       Map<String, String> headers = {
         'userkey': '$id',
       };
+      print(id);
 
       // Make POST request
       var list = await https.post(headers: headers, Uri.parse(apiUrl), body: {
-        "rider_id": riderPhone,
+        "new_phone": riderPhone,
       });
       // var list;
       var data = jsonDecode(list.body);
+      print('ffffffffff');
+      print(data);
+      print('ffffffffff');
       if (data['status'] == 200) {
-        notification().info(context, 'Rider assigned successfully.');
-        Navigator.pop(context);
+        return 1;
       }
       if (data['status'] == 403) {
         Provider.of<ProviderS>(context, listen: false).isanotherUserLog = true;
 
         notification().warning(context, 'Something went wrong');
+        return 0;
+      } else {
+        return 0;
       }
-      return list;
+
       //   _ids;
     } else {
       notification().warning(context, 'No Internet');
