@@ -1,5 +1,3 @@
-import 'package:flutter_application_2/uI/main/drawer/genaral/add_employe/add_employee.dart';
-
 class DrawerClz {
 //   1	SUP	Super Admin
 // 2	MGR	Area Manager
