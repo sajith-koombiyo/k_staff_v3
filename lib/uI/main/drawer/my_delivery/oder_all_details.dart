@@ -134,17 +134,21 @@ class _OderAllDetailsState extends State<OderAllDetails> {
                               padding: const EdgeInsets.all(12.0),
                               child: Column(
                                 children: [
-                                  Row(
+                                  Wrap(
                                     children: [
-                                      card(
-                                          'Age ${oderData[0]['oderage'].toString()} Days    ',
-                                          Color(0xfffff668)),
-                                      card(
-                                          'Attempt ${oderData[0]['attempts'].toString()}',
-                                          Color(0xfff662c3)),
-                                      card(
-                                        'Exchange',
-                                        Color.fromARGB(255, 49, 218, 100),
+                                      Row(
+                                        children: [
+                                          card(
+                                              'Age ${oderData[0]['oderage'].toString()} Days    ',
+                                              Color(0xfffff668)),
+                                          card(
+                                              'Attempt ${oderData[0]['attempts'].toString()}',
+                                              Color(0xfff662c3)),
+                                          card(
+                                            'Exchange',
+                                            Color.fromARGB(255, 49, 218, 100),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
