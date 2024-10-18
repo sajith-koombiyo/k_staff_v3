@@ -153,8 +153,11 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
             _latLong.clear();
             List.generate(todayVisitBranchList.length, (index) async {
               double lat = double.parse(todayVisitBranchList[index]['lati']);
+              log('dddddddddddddffffff');
               double long = double.parse(todayVisitBranchList[index]['longt']);
+              log(todayVisitBranchList[index]['dname'].toString());
               log(todayVisitBranchList[index]['shv_status'].toString());
+              log('dddddddddddddffffff');
               List<LatLng> _latLongTemp = [LatLng(lat, long)];
 
               Set<Marker> _markertemp = {
@@ -176,15 +179,15 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
                       });
                     },
                     // icon: BitmapDescriptor.defaultMarkerWithHue(0.4),
-                    icon: await todayVisitBranchList[index]['shv_status']
-                                .toString() ==
-                            "2"
-                        ? markerBitMap3
-                        : await todayVisitBranchList[index]['shv_status']
-                                    .toString() ==
-                                "0"
+                    icon:
+                        todayVisitBranchList[index]['shv_status'].toString() ==
+                                "1"
                             ? markerBitMap2
-                            : markerBitMap,
+                            : todayVisitBranchList[index]['shv_status']
+                                        .toString() ==
+                                    "2"
+                                ? markerBitMap3
+                                : markerBitMap,
                     infoWindow: InfoWindow(
                       onTap: () {
                         setState(() {
