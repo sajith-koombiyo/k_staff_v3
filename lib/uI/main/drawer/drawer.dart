@@ -40,7 +40,6 @@ import 'picked/assign_pickup/assign_pickup.dart';
 import 'picked/picked.dart';
 import 'reschedule/reschedule.dart';
 
-
 class customDrawer extends StatefulWidget {
   const customDrawer({super.key, required this.skey, required this.ytc});
   final GlobalKey<ScaffoldState> skey;
@@ -528,9 +527,7 @@ class _customDrawerState extends State<customDrawer> {
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        pickupDevice == '1'
-                                                            ? InOutPickupDevice()
-                                                            : InOutUpdateGoogleMap()),
+                                                        InOutUpdateGoogleMap()),
                                               );
 
                                               setState(() {
