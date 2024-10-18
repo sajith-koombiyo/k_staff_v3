@@ -44,7 +44,7 @@ class _StudentChatsState extends State<StudentChats> {
       remarkList = res;
       isLoading = false;
     });
-    log(res.toString());
+ 
   }
 
   @override

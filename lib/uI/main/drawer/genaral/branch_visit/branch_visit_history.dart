@@ -44,7 +44,7 @@ class _BranchVisitHistoryState extends State<BranchVisitHistory> {
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
 
     var res = await CustomApi().branchVisitHistroy(context);
-    log(res.toString());
+  
     setState(() {
       branchVisit = res;
       today = formattedDate;
@@ -190,7 +190,7 @@ class _BranchVisitHistoryState extends State<BranchVisitHistory> {
                                           String formattedDate =
                                               DateFormat('yyyy-MM-dd')
                                                   .format(date);
-                                          log(formattedDate);
+                                       
                                           if (today == formattedDate) {
                                             CustomDialog().alert(
                                                 context,

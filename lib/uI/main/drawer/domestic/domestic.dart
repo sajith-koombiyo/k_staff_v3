@@ -62,7 +62,7 @@ class _DomesticState extends State<Domestic> {
     });
     Provider.of<ProviderS>(context, listen: false);
     List brancheList = await CustomApi().userActiveBranches(context);
-    log(brancheList.toString());
+  
 
     setState(() {
       userBranchList = brancheList;
@@ -77,7 +77,7 @@ class _DomesticState extends State<Domestic> {
     });
 
     List rider = await CustomApi().assignRiderList(context);
-    log(rider.toString());
+   
     setState(() {
       riderList = rider;
       isLoading = false;

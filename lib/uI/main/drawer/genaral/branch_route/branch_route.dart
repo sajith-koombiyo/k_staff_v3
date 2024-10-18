@@ -68,7 +68,7 @@ class _BranchRouteState extends State<BranchRoute> {
       isLoading = true;
     });
     var res = await CustomApi().branchRoute(context, branchId);
-    log(res.toString());
+
     setState(() {
       dataList = res;
       isLoading = false;

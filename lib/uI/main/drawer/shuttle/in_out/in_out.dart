@@ -71,7 +71,7 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
     position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     if (isBranchIn) {
-      log('vvvvvvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
+  
       var res = await CustomApi().shuttleExit(
         context,
         visitBranchId,
@@ -80,12 +80,9 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
         position!.longitude.toString(),
       );
 
-      // log(res);
-      log(visitStatus);
-      log(position!.latitude.toString());
-      log(position!.longitude.toString());
+   
     } else {
-      log('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb');
+  
       var res = await CustomApi().shuttleVisitConfirm(
         context,
         visitBranchId,
@@ -126,7 +123,7 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
     // var temp = await CustomApi().branchVisitHistroy(context);
     var temp2 = await CustomApi().shutteleVisitBrnchesList(context, '');
-    log(temp2.toString());
+
     if (!mounted) return;
 
     setState(() {
@@ -153,11 +150,9 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
             _latLong.clear();
             List.generate(todayVisitBranchList.length, (index) async {
               double lat = double.parse(todayVisitBranchList[index]['lati']);
-              log('dddddddddddddffffff');
+         
               double long = double.parse(todayVisitBranchList[index]['longt']);
-              log(todayVisitBranchList[index]['dname'].toString());
-              log(todayVisitBranchList[index]['shv_status'].toString());
-              log('dddddddddddddffffff');
+           
               List<LatLng> _latLongTemp = [LatLng(lat, long)];
 
               Set<Marker> _markertemp = {
@@ -219,7 +214,7 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
             _polylines;
             _latLong;
             _marker;
-            log(_marker.toString());
+      
             isLoading = false;
           });
         }

@@ -116,7 +116,7 @@ class _YoutubeTutorialState extends State<YoutubeTutorial> {
                     size: 25.0,
                   ),
                   onPressed: () {
-                    log('Settings Tapped!');
+                 
                   },
                 ),
               ],

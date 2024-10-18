@@ -60,7 +60,7 @@ class _FindDemarcationState extends State<FindDemarcation> {
     });
     Provider.of<ProviderS>(context, listen: false);
     List brancheList = await CustomApi().userActiveBranches(context);
-    log(brancheList.toString());
+  
 
     setState(() {
       userBranchList.addAll(brancheList);
@@ -76,7 +76,7 @@ class _FindDemarcationState extends State<FindDemarcation> {
     });
 
     var res = await CustomApi().demacationDistrict(context);
-    log(res.toString());
+    
 
     setState(() {
       districtList = res;
@@ -86,13 +86,13 @@ class _FindDemarcationState extends State<FindDemarcation> {
   }
 
   getCity(String districtId) async {
-    log(districtId);
+   
     setState(() {
       isLoading = true;
     });
 
     var res = await CustomApi().demacationCity(context, districtId);
-    log(res.toString());
+   
 
     setState(() {
       cityList = res;

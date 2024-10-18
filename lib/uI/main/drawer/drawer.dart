@@ -86,7 +86,7 @@ class _customDrawerState extends State<customDrawer> {
       pickupDevice = res.toString();
       if (id != null) {
         accessGroupId = id!;
-        log(id.toString());
+ 
       }
     });
   }
@@ -349,8 +349,8 @@ class _customDrawerState extends State<customDrawer> {
                                           key = '0';
                                         });
                                       }, key, '1'),
-                                      // DrawerClz().addEmployee(accessGroupId)
-                                      //     ?
+                                      DrawerClz().addEmployee(accessGroupId)
+                                          ?
                                       tileButton('Add Employee', () {
                                         Navigator.push(
                                           context,
@@ -363,7 +363,7 @@ class _customDrawerState extends State<customDrawer> {
                                         setState(() {
                                           key = '2';
                                         });
-                                      }, key, '2'),
+                                      }, key, '2'):SizedBox(),
                                       // : SizedBox(),
                                       DrawerClz().manageUser(accessGroupId)
                                           ? tileButton('Manage Users', () {

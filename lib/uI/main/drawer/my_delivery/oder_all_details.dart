@@ -138,18 +138,14 @@ class _OderAllDetailsState extends State<OderAllDetails> {
                                     children: [
                                       card(
                                           'Age ${oderData[0]['oderage'].toString()} Days    ',
-                                          Color(0xfffff668),
-                                          Icons.access_time_outlined),
+                                          Color(0xfffff668)),
                                       card(
                                           'Attempt ${oderData[0]['attempts'].toString()}',
-                                          Color(0xfff662c3),
-                                          Icons.accessibility_rounded),
+                                          Color(0xfff662c3)),
                                       card(
-                                          oderData[0]['order_type'] == '1'
-                                              ? 'Exchange'
-                                              : 'Delivery',
-                                          Color.fromARGB(255, 114, 226, 147),
-                                          Icons.add_box_outlined),
+                                        'Exchange',
+                                        Color.fromARGB(255, 49, 218, 100),
+                                      ),
                                     ],
                                   ),
                                   Padding(
@@ -516,7 +512,7 @@ class _OderAllDetailsState extends State<OderAllDetails> {
     );
   }
 
-  Widget card(String title, Color color, IconData icon) {
+  Widget card(String title, Color color) {
     return Flexible(
       child: Card(
         elevation: 2,
@@ -530,23 +526,13 @@ class _OderAllDetailsState extends State<OderAllDetails> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      Icon(icon),
-                      Flexible(
-                        child: Text(title,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black87,
-                              fontSize: 11.dp,
-                            )),
-                      ),
-                    ],
-                  ),
-                ),
+                Text(title,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                      fontSize: 14.dp,
+                    )),
               ],
             ),
           ),

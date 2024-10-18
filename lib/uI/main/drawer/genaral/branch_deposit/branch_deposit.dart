@@ -65,7 +65,7 @@ class _BranchDepositState extends State<BranchDeposit> {
     mycontroller.addListener(() {
       if (mycontroller.position.maxScrollExtent ==
           mycontroller.position.pixels) {
-        log('hhhhhhhh');
+     
         _loadeMore();
       }
     });
@@ -106,7 +106,7 @@ class _BranchDepositState extends State<BranchDeposit> {
     });
     Provider.of<ProviderS>(context, listen: false);
     List brancheList = await CustomApi().userActiveBranches(context);
-    log(brancheList.toString());
+  
     getData('');
 
     setState(() {
@@ -117,7 +117,7 @@ class _BranchDepositState extends State<BranchDeposit> {
   }
 
   getData(String branch) async {
-    print('ddddddddddddddddddddddddd');
+    
     setState(() {
       isLoading = true;
     });
@@ -125,14 +125,14 @@ class _BranchDepositState extends State<BranchDeposit> {
     var id = await prefs.getInt(
       'accessesKey',
     );
-    print('dddddddddddddddddddddddddddaaaaaaaaaaaddd');
+   
     var res = await CustomApi().branchDeposit(
         context, '10', _page.toString(), branchListID, '', '', '');
     setState(() {
       if (id != null) {
         accessGroupId = id!;
       }
-      log(res.toString());
+     
 
       dataList = res;
       dataListTemp = res;
@@ -834,7 +834,7 @@ class _BranchDepositState extends State<BranchDeposit> {
     setState(() {});
     Provider.of<ProviderS>(context, listen: false).dataLoad = true;
     var res = await CustomApi().depositSlipImages(context, dId);
-    log(res.toString());
+  
     Provider.of<ProviderS>(context, listen: false).dImages64 = res;
     Provider.of<ProviderS>(context, listen: false).dataLoad = false;
   }
@@ -880,7 +880,7 @@ class _BranchDepositState extends State<BranchDeposit> {
   }
 
   riderListLoad(String branchId, String date) async {
-    log(date.toString());
+ 
     var res = await CustomApi().depositRiderList(context, branchId, date);
 
     Provider.of<ProviderS>(context, listen: false).dRiderList = res;
@@ -918,7 +918,7 @@ class _BranchDepositState extends State<BranchDeposit> {
                               setstate(() {
                                 isLoading = true;
                               });
-                              log(base64Image.toString());
+                              
                               var res = await CustomApi().depositAgentslip(
                                   context,
                                   dId,
@@ -1064,7 +1064,7 @@ class _BranchDepositState extends State<BranchDeposit> {
                                   onTap: () {
                                     setstate(() {
                                       riderId = itemone['rider_id'];
-                                      log(riderId);
+                                    
                                     });
                                     // getData(itemone['did']);
                                   },

@@ -101,13 +101,12 @@ class _LocationUpdateGoogleMapState extends State<LocationUpdateGoogleMap> {
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
     var temp = await CustomApi().branchVisitHistroy(context);
     var temp2 = await CustomApi().branchVisitToday(context);
-    // log(temp2.toString());
-    // delivey2.png
+ 
     if (!mounted) return;
     setState(() {
       branchList = temp;
       todayVisitBranchList = temp2;
-      log(todayVisitBranchList.toString());
+  
     });
     setState(() {
       List.generate(todayVisitBranchList.length, (index) {
@@ -137,7 +136,7 @@ class _LocationUpdateGoogleMapState extends State<LocationUpdateGoogleMap> {
       });
 
       _marker;
-      log(_marker.toString());
+  
     });
     setState(() {
       isLoading = false;

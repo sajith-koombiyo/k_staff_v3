@@ -69,7 +69,7 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
       isLoading = true;
     });
     var res = await CustomApi().deliveryApprovalsRiderList(context);
-    log(res.toString());
+
     setState(() {
       branchRiders = res;
       isLoading = false;
@@ -100,7 +100,7 @@ class _CODZeroApprovalState extends State<CODZeroApproval> {
       isLoading = true;
     });
     var res = await CustomApi().deliveryApprovals(context, id);
-    log(res.toString());
+  
     setState(() {
       dataList = res;
       isLoading = false;

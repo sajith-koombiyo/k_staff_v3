@@ -7,8 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
 Future<void> handleBckgroundMessage(RemoteMessage message) async {
-  print(message);
-  log('ddddddddddddddddddddddddddddddddddddddddddddd');
+
 }
 
 Future<void> img() async {}
@@ -45,9 +44,9 @@ class notify {
       //   FilePathAndroidBitmap(bigimg),
       //   largeIcon: FilePathAndroidBitmap(bigimg),
       // );
-      log(notification.toString());
+    
       if (notification != null) {
-        log('my notiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii');
+       
         AwesomeNotifications().createNotification(
             content: NotificationContent(
                 actionType: ActionType.KeepOnTop,

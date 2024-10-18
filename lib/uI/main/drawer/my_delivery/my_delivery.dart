@@ -167,8 +167,7 @@ class _MyDeliveryState extends State<MyDelivery> {
         connectivityResult == ConnectivityResult.wifi) {
       List temp = await CustomApi()
           .getmyorders(search.text.toString(), id.toString(), context);
-      log(temp.toString());
-      print('ddddddddddddddddddddddddddddddddddddddd');
+     
       if (temp == 1) {
         setState(() {
           isError = true;

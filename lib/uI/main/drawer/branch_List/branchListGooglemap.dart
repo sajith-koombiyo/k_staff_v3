@@ -80,7 +80,7 @@ class _BranchListGoogleMapState extends State<BranchListGoogleMap> {
     setState(() {
       _marker;
     });
-    log(_marker.toString());
+ 
   }
 
   @override
