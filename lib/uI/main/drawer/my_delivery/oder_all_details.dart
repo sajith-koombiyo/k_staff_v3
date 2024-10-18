@@ -351,19 +351,21 @@ class _OderAllDetailsState extends State<OderAllDetails> {
                               ),
                             )
                           : SizedBox(),
-                  Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Container(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Delivery Status',
-                        style: TextStyle(
-                            color: black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
+                  dataList.isNotEmpty
+                      ? Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Container(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Delivery Status',
+                              style: TextStyle(
+                                  color: black,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        )
+                      : SizedBox(),
                   dataList.isNotEmpty
                       ? SizedBox(
                           // height: h / 1.5,
