@@ -18,7 +18,8 @@ void main() async {
   await Firebase.initializeApp();
   await notify().initNotifications();
   FirebaseMessaging.instance.subscribeToTopic('allDevices');
-  FirebaseMessaging.instance.requestPermission(alert: true,sound:  true,badge: true);
+  FirebaseMessaging.instance
+      .requestPermission(alert: true, sound: true, badge: true);
   await AwesomeNotifications().initialize(
     null,
     [
@@ -33,9 +34,6 @@ void main() async {
     ],
   );
 
-  FirebaseMessaging.onMessageOpenedApp.listen((event) {
-    print(event!.notification!.body!.toString());
-  });
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => ProviderS()),
@@ -63,9 +61,7 @@ class _MyAppState extends State<MyApp> {
 
     return FlutterSizer(builder: (context, orientation, screenType) {
       return MaterialApp(
-        onGenerateRoute: (settings) {
-          
-        },
+        onGenerateRoute: (settings) {},
         navigatorKey: widget.navigatorKey,
         themeMode: ThemeMode.dark,
         debugShowCheckedModeBanner: false,

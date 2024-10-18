@@ -132,12 +132,10 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
     setState(() {
       // branchList = temp;
       if (temp2 == '') {
-        log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
         fLatLong = LatLng(7.8731, 80.7718);
         isLoading = false;
       } else {
         if (temp2['branches'] == null) {
-          log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
           todayVisitBranchList = [];
 
           isLoading = false;
@@ -172,10 +170,7 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
                                 .toString() ==
                             "null") {
                           isBranchIn = false;
-
-                          log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
                         } else {
-                          log('vvvvvvvvvvvvvvvvvvvvvvvvvvxxxxxxxxxxxxxxxxxxxxxxxvvvvvvvvvvvvvvvvv');
                           isBranchIn = true;
                         }
                       });
@@ -296,20 +291,6 @@ class _InOutUpdateGoogleMapState extends State<InOutUpdateGoogleMap> {
                     Icons.arrow_back_ios_new,
                     color: white,
                   )),
-              actions: [
-                IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => BranchVisitHistory(),
-                          ));
-                    },
-                    icon: Icon(
-                      Icons.history,
-                      color: white,
-                    ))
-              ],
             ),
             backgroundColor: Color.fromARGB(255, 229, 232, 238),
             body: Padding(
