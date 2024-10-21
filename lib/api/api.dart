@@ -41,37 +41,32 @@ class CustomApi {
     Provider.of<ProviderS>(context, listen: false).isanotherUserLog = false;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var status = await Permission.location.request();
-    if (status.isDenied||status.isPermanentlyDenied) {
-     if(Platform.isIOS){
-  await  openAppSettings();
-
-     }
-  // iOS-specific code
-}
+    if (status.isDenied || status.isPermanentlyDenied) {
+      if (Platform.isIOS) {
+        await openAppSettings();
+      }
+      // iOS-specific code
+    }
 
     Provider.of<ProviderS>(context, listen: false).permission = status;
     bool _seen = (prefs.getBool('seen') ?? false);
     if (_seen) {
-     
       var connectivityResult = await (Connectivity().checkConnectivity());
       if (connectivityResult == ConnectivityResult.mobile ||
           connectivityResult == ConnectivityResult.wifi) {
-     
         var urll = '${ApiUrl}/Version/users';
-      
+
         var res = await https.post(Uri.parse(urll), body: {});
-       
+
         var responce = jsonDecode(res.body);
-    
+
         if (res.statusCode == 500) {
-       
           Provider.of<ProviderS>(context, listen: false).isServerDown = true;
         } else {
           Provider.of<ProviderS>(context, listen: false).isServerDown = false;
         }
 
         if (responce == "3.0") {
-       
           late String installDate;
           final DateTime date = await AppInstallDate().installDate;
           installDate = date.toString();
@@ -597,7 +592,7 @@ class CustomApi {
       String rescheduleDate,
       String oId,
       String date) async {
-    print(date);
+    print(rescheduleDate);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('userkey');
     var connectivityResult = await (Connectivity().checkConnectivity());
@@ -605,6 +600,7 @@ class CustomApi {
         connectivityResult == ConnectivityResult.wifi) {
       DateTime newDate = DateTime.parse(date);
       String fomatedDate = DateFormat('yyyy-M-dd').format(newDate).toString();
+      
       print('${statusType.toString()} ddddddddddddddddddddddddddddddd');
       Map<String, String> headers = {
         'userkey': '$id',
@@ -2742,8 +2738,9 @@ class CustomApi {
     }
   }
 
-
-    shuttleAllRout(BuildContext context,) async {
+  shuttleAllRout(
+    BuildContext context,
+  ) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = await prefs.getString('userkey');
     var connectivityResult = await (Connectivity().checkConnectivity());
@@ -2754,11 +2751,8 @@ class CustomApi {
       Map<String, String> headers = {
         'userkey': '$id',
       };
-    
 
-      var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {
-   
-      });
+      var res = await https.post(headers: headers, Uri.parse(apiUrl), body: {});
       var data = jsonDecode(res.body);
       print(
           'xxxxxxxxxxxxxxxxxxxxxxxxxxxxssssssssssssssssxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');

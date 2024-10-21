@@ -86,7 +86,6 @@ class _customDrawerState extends State<customDrawer> {
       pickupDevice = res.toString();
       if (id != null) {
         accessGroupId = id!;
- 
       }
     });
   }
@@ -350,20 +349,22 @@ class _customDrawerState extends State<customDrawer> {
                                         });
                                       }, key, '1'),
                                       DrawerClz().addEmployee(accessGroupId)
-                                          ?
-                                      tileButton('Add Employee', () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => AddEmployee(
-                                                    branchId: color.userData[0]
-                                                        ['branch_id'],
-                                                  )),
-                                        );
-                                        setState(() {
-                                          key = '2';
-                                        });
-                                      }, key, '2'):SizedBox(),
+                                          ? tileButton('Add Employee', () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        AddEmployee(
+                                                          branchId:
+                                                              color.userData[0]
+                                                                  ['branch_id'],
+                                                        )),
+                                              );
+                                              setState(() {
+                                                key = '2';
+                                              });
+                                            }, key, '2')
+                                          : SizedBox(),
                                       // : SizedBox(),
                                       DrawerClz().manageUser(accessGroupId)
                                           ? tileButton('Manage Users', () {
@@ -477,15 +478,15 @@ class _customDrawerState extends State<customDrawer> {
                                       Container(),
                                     ]),
 
-                                    DrawerClz().attendance(accessGroupId)
-                                        ? CustomDrawerButton(
-                                            icon: Icons.group,
-                                            onTap: () {
-                                              navigation(Attendance());
-                                            },
-                                            text: 'Attendance',
-                                          )
-                                        : SizedBox(),
+                                    // DrawerClz().attendance(accessGroupId)
+                                    //     ? CustomDrawerButton(
+                                    //         icon: Icons.group,
+                                    //         onTap: () {
+                                    //           navigation(Attendance());
+                                    //         },
+                                    //         text: 'Attendance',
+                                    //       )
+                                    //     : SizedBox(),
                                     // DrawerClz().shuttle(accessGroupId)
                                     //     ? CustomDrawerButton(
                                     //         icon:

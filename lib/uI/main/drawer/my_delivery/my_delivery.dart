@@ -167,7 +167,8 @@ class _MyDeliveryState extends State<MyDelivery> {
         connectivityResult == ConnectivityResult.wifi) {
       List temp = await CustomApi()
           .getmyorders(search.text.toString(), id.toString(), context);
-     
+      log(temp.toString());
+      print('ddddddddddddddddddddddddddddddddddddddd');
       if (temp == 1) {
         setState(() {
           isError = true;
@@ -1049,10 +1050,11 @@ class _MyDeliveryState extends State<MyDelivery> {
     dropdownvalue = null;
     dropdownvalue2 = null;
     remarkValue = null;
-
+    final now = DateTime.now();
     Provider.of<ProviderS>(context, listen: false).progress = 0.0;
     Provider.of<ProviderS>(context, listen: false).fomatedDate =
-        DateFormat.yMMMEd().format(DateTime.now());
+        DateFormat('yyyy-M-dd')
+            .format(DateTime(now.year, now.month, now.day + 1));
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     x = 0;
@@ -1084,7 +1086,8 @@ class _MyDeliveryState extends State<MyDelivery> {
                           itemLoading = true;
                         });
 
-                        if (x == 2 && newImage.isEmpty) {
+                        if (x == 2 || x == 3 && newImage.isEmpty) {
+                          print('ddddddddddddddddddddddddd');
                           setstate(() {
                             updateBTN = false;
                           });
@@ -1557,7 +1560,8 @@ class _MyDeliveryState extends State<MyDelivery> {
                                         setstate(() {
                                           //set state will update UI and State of your App
                                           dropdownvalue2 = value.toString();
-                                          if (dropdownvalue2!.isNotEmpty) {
+                                          if (dropdownvalue2!.isNotEmpty &&
+                                              newImage.isNotEmpty) {
                                             updateBTN = true;
                                           } //change selectval to new value
                                         });
@@ -2013,11 +2017,14 @@ class _MyDeliveryState extends State<MyDelivery> {
   }
 
   Future _selectDate(BuildContext context) async {
+    final now = DateTime.now();
+    selectedDate = DateTime(now.year, now.month, now.day + 1);
+
     final DateTime? picked = await showDatePicker(
         barrierColor: black.withOpacity(0.6),
         context: context,
         initialDate: selectedDate,
-        firstDate: DateTime.now().subtract(Duration(days: 1)),
+        firstDate: DateTime(now.year, now.month, now.day + 1),
         lastDate: DateTime(2101));
     if (picked != null && picked != selectedDate) {
       setState(() {});

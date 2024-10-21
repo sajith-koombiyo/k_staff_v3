@@ -207,7 +207,17 @@ class DrawerClz {
   }
 
   shuttle(int accessId) {
-    List data = [1, 27];
+    List data = [
+      1,
+      27,
+      2,
+      3,
+      5,
+      8,
+      12,
+      16,
+      18,
+    ];
 
     if (data.contains(accessId) == true) {
       return true;
