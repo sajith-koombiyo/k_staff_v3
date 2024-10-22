@@ -31,12 +31,12 @@ class notify {
     FirebaseMessaging.onBackgroundMessage(handleBckgroundMessage);
 
     FirebaseMessaging.onMessage.listen((message) async {
-      print(message);
+  
       final notification = message.notification;
 
-      print(notification);
+      log(notification.toString());
 
-      var url = message.notification?.android?.imageUrl;
+      var url ;
       // String imgurl = await url.toString();
       // https://via.placeholder.com/150/FF0000/FFFFFF?Text=yttags.com
       // final bigimg = await Utils.downloadFile(imgurl, "icon1");
@@ -44,7 +44,13 @@ class notify {
       //   FilePathAndroidBitmap(bigimg),
       //   largeIcon: FilePathAndroidBitmap(bigimg),
       // );
-    
+    if(Platform.isAndroid)
+    {
+      url = message.notification?.android?.imageUrl;
+    }else{
+url = message.notification?.apple?.imageUrl;
+
+    }
       if (notification != null) {
        
         AwesomeNotifications().createNotification(
@@ -54,27 +60,13 @@ class notify {
                 //actionType : ActionType.DismissAction,
                 color: Colors.black,
                 backgroundColor: Colors.black,
-                bigPicture: notification.android!.imageUrl,
+                bigPicture: url,
+                
                 id: notification.hashCode,
                 channelKey: 'call_channel',
                 title: notification.title,
                 body: notification.body));
 
-        // localNotificationsPlugin.show(
-        //     notification.hashCode,
-        //     notification.title,
-        //     notification.body,
-        //     NotificationDetails(
-        //         android: AndroidNotificationDetails(
-        //       channel.id, channel.name,
-        //       channelDescription: channel.description,
-        //       icon: "appicon",
-        //       playSound: true,
-        //       // styleInformation: styleimg,
-//0703247259
-        //       // other properties...
-        //     )),
-        //     payload: jsonEncode(message.notification?.android?.imageUrl));
       }
     });
   }
