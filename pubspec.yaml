@@ -43,7 +43,6 @@ dependencies:
   badges: ^3.1.2
   permission_handler:
   dio: ^5.4.0
-  telephony:
   toggle_switch: ^2.1.0
   # video_player: ^2.8.2
   # chewie:

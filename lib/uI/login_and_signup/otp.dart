@@ -10,7 +10,6 @@ import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
 
-import 'package:telephony/telephony.dart';
 import '../../app_details/color.dart';
 import '../../class/class.dart';
 
@@ -38,39 +37,10 @@ class _OTPState extends State<OTP> {
   String body = '';
   String msg = '';
   String otp = '';
-  Telephony telephony = Telephony.instance;
+ 
   @override
   void initState() {
-    if (Platform.isAndroid) {
-      telephony.listenIncomingSms(
-        onNewMessage: (SmsMessage message) {
-          setState(() {
-            body = message.address.toString();
-            msg = message.body.toString();
-          }); //+977981******67, sender nubmer
 
-          setState(() {
-            if (body == 'Koombiyo') {
-              otpController.set([
-                message.body![0],
-                message.body![1],
-                message.body![2],
-                message.body![3],
-                message.body![4],
-                message.body![5],
-                message.body![6]
-              ]);
-
-              otpController;
-            }
-          });
-        },
-        listenInBackground: false,
-      );
-      // Android-specific code
-    } else if (Platform.isIOS) {
-      // iOS-specific code
-    }
 //0773094300
 
     // TODO: implement initState

@@ -8,7 +8,7 @@ import 'package:flutter_application_2/class/class.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:lottie/lottie.dart';
-import 'package:telephony/telephony.dart';
+
 
 import '../../app_details/color.dart';
 import '../widget/main_button.dart';
@@ -22,21 +22,11 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   bool isLoading = false;
-  Telephony telephony = Telephony.instance;
+
 
   @override
   void initState() {
-    if (Platform.isAndroid) {
-      telephony.listenIncomingSms(
-        onNewMessage: (SmsMessage message) {
-          //+977981******67, sender nubmer
-        },
-        listenInBackground: false,
-      );
-      // Android-specific code
-    } else if (Platform.isIOS) {
-      // iOS-specific code
-    }
+ 
     //st initState
     super.initState();
   }
