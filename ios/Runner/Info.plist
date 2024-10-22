@@ -48,8 +48,8 @@
 	<string>Please allow access to photo library so you can easily upload your photos.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Please allow access to photo library so you can easily upload your photos.</string>
-	<key>aps-environment</key>
-	<string>production</string>
+	<!-- <key>aps-environment</key>
+	<string>production</string> -->
 	<key>NSPrivacyAccessedAPITypes</key>
 	<array>
 		<dict>
