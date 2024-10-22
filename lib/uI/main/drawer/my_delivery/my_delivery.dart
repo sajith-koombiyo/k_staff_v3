@@ -80,6 +80,9 @@ class _MyDeliveryState extends State<MyDelivery> {
   late StreamSubscription _streamSubscription;
   @override
   void initState() {
+    // dataList =[{'oid': '16774248', 'waybill_id': '54364255', 'cod_final': '0.00', 'order_type': '0', 'cust_name': 'Koombiyo Delivery office use only', 'name': 'Sajith Madhusanka', 'address': '9/B Egodawatta Road', 'phone': '0777813079', 'status': 'Out for Delivery', 'cust_internal': '1', 'prev_waybill': null, 'ex_bag_waybill': null, 'oderage': '11', 'attempts': '0'},
+   
+    // ];
     isOnline();
     // // offlineDeliveryupdateApi();
     // firstData();
@@ -466,13 +469,13 @@ class _MyDeliveryState extends State<MyDelivery> {
                                   ],
                                 ))
                             : SizedBox(
-                                height: h,
+                                height: dataList.length <=2 ?h:null,
                                 width: w,
                                 child: ListView.builder(
                                   shrinkWrap: true,
                                   controller: _scrollController,
                                   physics: NeverScrollableScrollPhysics(),
-                                  padding: EdgeInsets.all(0),
+                                  padding: EdgeInsets.only(bottom: 100),
                                   itemCount: dataList.length,
                                   itemBuilder: (context, index) {
                                     print(dataList);
@@ -493,7 +496,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                                                   dropdownvalue = null;
                                                   codController.clear();
                                                 });
-
+                                                    
                                                 itemDetails(
                                                     dataList[index]
                                                         ['waybill_id'],
