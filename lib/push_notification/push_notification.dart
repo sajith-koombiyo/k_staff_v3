@@ -49,7 +49,7 @@ class notify {
       url = message.notification?.android?.imageUrl;
     }else{
 url = message.notification?.apple?.imageUrl;
-print(url);
+
     }
       if (notification != null) {
        
