@@ -1086,12 +1086,15 @@ class _MyDeliveryState extends State<MyDelivery> {
                           itemLoading = true;
                         });
 
-                        if (x == 2 || x == 3 && newImage.isEmpty) {
+                        if (x == 2 && newImage.isEmpty) {
                           print('ddddddddddddddddddddddddd');
                           setstate(() {
                             updateBTN = false;
                           });
                         } else {
+                          setstate(() {
+                            updateBTN = false;
+                          });
                           if (oderType == '1' && x == 1 || x == 2) {
                             if (x == 2) {
                               print('ccccddddddddddddddddddddddddcccccccc');
@@ -1560,8 +1563,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                                         setstate(() {
                                           //set state will update UI and State of your App
                                           dropdownvalue2 = value.toString();
-                                          if (dropdownvalue2!.isNotEmpty &&
-                                              newImage.isNotEmpty) {
+                                          if (dropdownvalue2!.isNotEmpty) {
                                             updateBTN = true;
                                           } //change selectval to new value
                                         });
@@ -1742,7 +1744,9 @@ class _MyDeliveryState extends State<MyDelivery> {
                                                     color: Colors.black38,
                                                     fontSize: 12.dp,
                                                   )),
-                                              x == 2 || codValue <= 100.00
+                                              x == 2 ||
+                                                      x == 1 &&
+                                                          codValue <= 100.00
                                                   ? Container(
                                                       alignment:
                                                           Alignment.center,
