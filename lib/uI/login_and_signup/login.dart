@@ -9,7 +9,6 @@ import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:lottie/lottie.dart';
 
-
 import '../../app_details/color.dart';
 import '../widget/main_button.dart';
 
@@ -23,14 +22,11 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   bool isLoading = false;
 
-
   @override
   void initState() {
- 
     //st initState
     super.initState();
   }
-
 
   bool isVisible = true;
   TextEditingController userNameController = TextEditingController();

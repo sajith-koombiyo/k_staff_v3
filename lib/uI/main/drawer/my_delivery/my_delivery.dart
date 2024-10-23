@@ -81,7 +81,7 @@ class _MyDeliveryState extends State<MyDelivery> {
   @override
   void initState() {
     // dataList =[{'oid': '16774248', 'waybill_id': '54364255', 'cod_final': '0.00', 'order_type': '0', 'cust_name': 'Koombiyo Delivery office use only', 'name': 'Sajith Madhusanka', 'address': '9/B Egodawatta Road', 'phone': '0777813079', 'status': 'Out for Delivery', 'cust_internal': '1', 'prev_waybill': null, 'ex_bag_waybill': null, 'oderage': '11', 'attempts': '0'},
-   
+
     // ];
     isOnline();
     // // offlineDeliveryupdateApi();
@@ -325,7 +325,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                         ],
                       )),
                   title: Text(
-                    'My Delivery',
+                    'My Delivery (${provider.orderPendingCount})',
                     style: TextStyle(
                       fontSize: 18.dp,
                       color: white,
@@ -399,12 +399,27 @@ class _MyDeliveryState extends State<MyDelivery> {
                                             width: w / 1, child: serchBar()),
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
-                                          child: Text('Track Orders',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w400,
-                                                color: white,
-                                                fontSize: 22.dp,
-                                              )),
+                                          child: Row(
+                                            children: [
+                                              Text('Track Orders',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w400,
+                                                    color: white,
+                                                    fontSize: 22.dp,
+                                                  )),
+                                              SizedBox(
+                                                width: 10,
+                                              ),
+                                              Text(
+                                                  "(${provider.orderPendingCount})",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w400,
+                                                    color: Color.fromARGB(
+                                                        255, 201, 255, 76),
+                                                    fontSize: 18.dp,
+                                                  )),
+                                            ],
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -469,7 +484,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                                   ],
                                 ))
                             : SizedBox(
-                                height: dataList.length <=2 ?h:null,
+                                height: dataList.length <= 2 ? h : null,
                                 width: w,
                                 child: ListView.builder(
                                   shrinkWrap: true,
@@ -496,7 +511,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                                                   dropdownvalue = null;
                                                   codController.clear();
                                                 });
-                                                    
+
                                                 itemDetails(
                                                     dataList[index]
                                                         ['waybill_id'],

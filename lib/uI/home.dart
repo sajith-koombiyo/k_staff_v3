@@ -159,7 +159,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     double out = double.parse(dataList[0]['outstanding']);
     double dp = double.parse(dataList[0]['deposit']);
     double cod = double.parse(dataList[0]['total_cod']);
-
+    Provider.of<ProviderS>(context, listen: false).orderPendingCount =
+        dataList.isEmpty ? "0" : dataList[0]['total_pending'].toString();
     var totalOut = (cod + out - dp);
     var cashOut = out - dp;
     totalOutstanding = double.parse(totalOut.toString()).toStringAsFixed(2);
@@ -247,13 +248,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                       PageTransition(
                                         duration: Duration(milliseconds: 200),
                                         type: PageTransitionType.bottomToTop,
-                                        child:
-                                             DrawerClz()
-                                                    .oderAllDetail(accessGroupId)
-                                                ? MyDelivery(isFromHome: true)
-                                                :
-
-                                            OderAllDetails(),
+                                        child: DrawerClz()
+                                                .oderAllDetail(accessGroupId)
+                                            ? MyDelivery(isFromHome: true)
+                                            : OderAllDetails(),
                                       ),
                                     );
 

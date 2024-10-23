@@ -371,7 +371,7 @@ class _NavigationScreenState extends State<NavigationScreen>
                         buttonBackgroundColor:
                             Color.fromARGB(255, 192, 240, 247),
                         backgroundColor: appliteBlue,
-                        color: const Color.fromARGB(255, 211, 235, 255),
+                        color: Color.fromARGB(255, 211, 241, 255),
                         items: [
                           CurvedNavigationBarItem(
                             child: Icon(Icons.home_outlined),
@@ -383,7 +383,9 @@ class _NavigationScreenState extends State<NavigationScreen>
                           ),
                           CurvedNavigationBarItem(
                             child: provider.noteCount == '0'
-                                ? Icon(Icons.notification_important)
+                                ? Icon(
+                                    Icons.notification_important_outlined,
+                                  )
                                 : badges.Badge(
                                     badgeContent: Text(
                                       provider.noteCount,
@@ -469,7 +471,9 @@ class _NavigationScreenState extends State<NavigationScreen>
                                     label: 'Map',
                                   ),
                                   CurvedNavigationBarItem(
-                                    child: Icon(Icons.newspaper),
+                                    child: Icon(
+                                      Icons.notification_important_outlined,
+                                    ),
                                     label: 'Notification',
                                   ),
                                   CurvedNavigationBarItem(
@@ -661,7 +665,7 @@ class _NavigationScreenState extends State<NavigationScreen>
                                   ),
                                   TipButton(
                                     button: button3,
-                                    icon: Icons.newspaper,
+                                    icon: Icons.notification_important_outlined,
                                   ),
                                   TipButton(
                                     button: button4,
