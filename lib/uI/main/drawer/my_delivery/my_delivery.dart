@@ -161,6 +161,7 @@ class _MyDeliveryState extends State<MyDelivery> {
     var connectivityResult = await (Connectivity().checkConnectivity());
 
     setState(() {
+      search.clear();
       isLoading = load;
     });
 
@@ -410,8 +411,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                                               SizedBox(
                                                 width: 10,
                                               ),
-                                              Text(
-                                                  "(${provider.orderPendingCount})",
+                                              Text("(${dataList.length})",
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.w400,
                                                     color: Color.fromARGB(
@@ -937,6 +937,7 @@ class _MyDeliveryState extends State<MyDelivery> {
       false,
     );
     codController.clear();
+    search.clear();
     await statusUpdate();
   }
 
@@ -983,8 +984,6 @@ class _MyDeliveryState extends State<MyDelivery> {
     print(data);
     if (data.isNotEmpty) {
       List.generate(data.length, (index) async {
-        print(
-            'dataaaaaaaaaaaaaaaaaaaaaaaaadddddddddddddddddddddddddddddaaaaaaaa');
         int status = int.parse(data[index]['statusType'].toString());
         var res = await CustomApi().oderData(
           status,
@@ -997,12 +996,8 @@ class _MyDeliveryState extends State<MyDelivery> {
           data[index]['oId'].toString(),
           data[index]['date'].toString(),
         );
-        print('////////////////////');
-        print(res);
-        print('////////////////////');
+
         if (res == 200) {
-          print(
-              '///////xxxxxxxxx////////////////////////////////////////////////////////////////');
           var ress = await sqlDb.deleteData(
               'delete from pending where oId = "${data[index]['oId'].toString()}"');
           await getData(
@@ -1016,10 +1011,7 @@ class _MyDeliveryState extends State<MyDelivery> {
           );
         }
       });
-    } else {
-      print(
-          'udate api datasssssssssssssssssssssssssssssssssssssssssssssssssss empty');
-    }
+    } else {}
 
     await getData(
       true,
@@ -1042,32 +1034,24 @@ class _MyDeliveryState extends State<MyDelivery> {
 
         print(res);
         if (res == 200) {
-          print('offlineExchangeApi update 200');
-          print(
-              '///////xxxxxxxxx///////////////////////////////////qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/////////////////////////////');
           var ress = await sqlDb.deleteData(
               'delete from exchange_order where oId = "${data[index]['oId'].toString()}"');
-        } else {
-          print(
-              'ddddddddddddddsssssssssssssssssssssssssssssssssssssssssssssssssdddddd');
-        }
+        } else {}
       });
 
       // statusUpdate();
-    } else {
-      print('exchange order data empty');
-    }
+    } else {}
     await offlineDeliveryupdateApi();
   }
 
   itemDetails(String waybill, bool updateBTN, String cod, String oId,
       String oderType, String exchangeWayBill, String pWaybill) {
     double codValue = double.parse(cod);
-    print(oderType);
-    print('ddddddddddddddddddddddd');
+
     dropdownvalue = null;
     dropdownvalue2 = null;
     remarkValue = null;
+    // oderType = '1';
     final now = DateTime.now();
     Provider.of<ProviderS>(context, listen: false).progress = 0.0;
     Provider.of<ProviderS>(context, listen: false).fomatedDate =
@@ -1095,17 +1079,21 @@ class _MyDeliveryState extends State<MyDelivery> {
               DialogButton(
                 buttonHeight: h / 14,
                 width: w,
-                text: oderType == '1' && x == 1 || x == 2 ? 'Exchange' : 'Save',
+                text: oderType == '1' && x == 4
+                    ? "Save"
+                    : oderType == '1'
+                        ? 'Exchange'
+                        : 'Save',
                 color:
                     updateBTN ? Color.fromARGB(255, 8, 152, 219) : Colors.grey,
                 onTap: updateBTN
                     ? () async {
                         setstate(() {
+                          search.clear();
                           itemLoading = true;
                         });
 
                         if (x == 2 && newImage.isEmpty) {
-                          print('ddddddddddddddddddddddddd');
                           setstate(() {
                             updateBTN = false;
                           });
@@ -1113,39 +1101,11 @@ class _MyDeliveryState extends State<MyDelivery> {
                           setstate(() {
                             updateBTN = false;
                           });
-                          if (oderType == '1' && x == 1 || x == 2) {
-                            if (x == 2) {
-                              print('ccccddddddddddddddddddddddddcccccccc');
-                              if (dropdownvalue != null ||
-                                  remark != '' ||
-                                  dropdownvalue2 != null ||
-                                  x == 1) {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => Exchange(
-                                        exchangeBagWaybill: exchangeWayBill,
-                                        pWaybill: pWaybill,
-                                        backDataLoad: backDataLoad,
-                                        statusTyp: x,
-                                        waybill: waybill,
-                                        dropdownvalueItem: dropdownvalueItem,
-                                        dropdownvalueItem2: x == 4
-                                            ? remark.toString()
-                                            : dropdownvalueItem2,
-                                        codController: codController.text,
-                                        date: provider.fomatedDate,
-                                        oderId: oId,
-                                      ),
-                                    ));
-                              } else {
-                                notification().warning(
-                                    context, 'please select the reason');
-                              }
-                            } else {
-                              print('.......');
-                              print(remark);
-                              print('.......');
+                          if (oderType == '1' && x != 4) {
+                            if (dropdownvalue != null ||
+                                remark != '' ||
+                                dropdownvalue2 != null ||
+                                x == 1) {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -1164,6 +1124,9 @@ class _MyDeliveryState extends State<MyDelivery> {
                                       oderId: oId,
                                     ),
                                   ));
+                            } else {
+                              notification()
+                                  .warning(context, 'please select the reason');
                             }
                           } else {
                             if (dropdownvalue != null ||
@@ -1202,7 +1165,9 @@ class _MyDeliveryState extends State<MyDelivery> {
                                   getData(
                                     false,
                                   );
+                                  isOnline();
                                   codController.clear();
+                                  search.clear();
                                 }
                               }
                             } else {
@@ -1272,6 +1237,8 @@ class _MyDeliveryState extends State<MyDelivery> {
                                     remarkValue = null;
                                     dropdownvalueItem2 = '';
                                     codController.clear();
+
+                                    backDataLoad();
                                   });
                                   Navigator.pop(context);
                                 },
