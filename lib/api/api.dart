@@ -75,7 +75,7 @@ class CustomApi {
           Provider.of<ProviderS>(context, listen: false).isServerDown = false;
         }
         var responce = jsonDecode(res.body);
-        if (responce == "3.0") {
+        if (responce == "3.1") {
           late String installDate;
           final DateTime date = await AppInstallDate().installDate;
           installDate = date.toString();
