@@ -58,14 +58,23 @@ class CustomApi {
 
         var res = await https.post(Uri.parse(urll), body: {});
 
-        var responce = jsonDecode(res.body);
-
-        if (res.statusCode == 500) {
+        if (res.statusCode == 500 ||
+            res.statusCode == 501 ||
+            res.statusCode == 502 ||
+            res.statusCode == 503 ||
+            res.statusCode == 504 ||
+            res.statusCode == 506 ||
+            res.statusCode == 507 ||
+            res.statusCode == 508 ||
+            res.statusCode == 509 ||
+            res.statusCode == 510 ||
+            res.statusCode == 511) {
+          print(res.statusCode);
           Provider.of<ProviderS>(context, listen: false).isServerDown = true;
         } else {
           Provider.of<ProviderS>(context, listen: false).isServerDown = false;
         }
-
+        var responce = jsonDecode(res.body);
         if (responce == "3.0") {
           late String installDate;
           final DateTime date = await AppInstallDate().installDate;
@@ -600,7 +609,7 @@ class CustomApi {
         connectivityResult == ConnectivityResult.wifi) {
       DateTime newDate = DateTime.parse(date);
       String fomatedDate = DateFormat('yyyy-M-dd').format(newDate).toString();
-      
+
       print('${statusType.toString()} ddddddddddddddddddddddddddddddd');
       Map<String, String> headers = {
         'userkey': '$id',
