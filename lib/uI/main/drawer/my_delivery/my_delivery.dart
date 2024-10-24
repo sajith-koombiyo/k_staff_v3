@@ -326,7 +326,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                         ],
                       )),
                   title: Text(
-                    'My Delivery (${provider.orderPendingCount})',
+                    'My Delivery (${dataListTemp.length})',
                     style: TextStyle(
                       fontSize: 18.dp,
                       color: white,
@@ -411,7 +411,7 @@ class _MyDeliveryState extends State<MyDelivery> {
                                               SizedBox(
                                                 width: 10,
                                               ),
-                                              Text("(${dataList.length})",
+                                              Text("(${dataListTemp.length})",
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.w400,
                                                     color: Color.fromARGB(
