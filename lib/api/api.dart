@@ -19,6 +19,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as https;
+import 'package:store_redirect/store_redirect.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../app_details/const.dart';
 import '../uI/login_and_signup/login.dart';
 import '../uI/main/navigation/navigation.dart';
@@ -131,7 +133,25 @@ class CustomApi {
                       exit(0);
                     },
                     child: Text('IGNORE')),
-                TextButton(onPressed: () {}, child: Text('UPDATE NOW'))
+                TextButton(
+                    onPressed: () {
+                      if (Platform.isAndroid || Platform.isIOS) {
+                        final appId = Platform.isAndroid
+                            ? 'com.koombiyo.staff'
+                            : 'com.koombiyo.koombiyoStafff';
+                        // https://play.google.com/store/apps/details?id=com.koombiyo.staff
+                        final url = Uri.parse(
+                          Platform.isAndroid
+                              ? "https://play.google.com/store/apps/details?id=com.koombiyo.staff"
+                              : "https://apps.apple.com/app/id$appId",
+                        );
+                        launchUrl(
+                          url,
+                          mode: LaunchMode.externalApplication,
+                        );
+                      }
+                    },
+                    child: Text('UPDATE NOW'))
               ],
               content: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
